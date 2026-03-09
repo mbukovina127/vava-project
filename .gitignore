@@ -1,3 +1,8 @@
+# Things I think are not necessary
+build/
+.gradle/
+.idea/
+
 # Compiled class file
 *.class
 
