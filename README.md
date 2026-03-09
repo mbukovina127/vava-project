@@ -19,7 +19,7 @@ Shippin is a Java desktop application built using Gradle. This project is under 
 
 ## Project Structure
 The project follows a standard Gradle Java project layout with a layered architecture.
-
+```txt
 Shippin/
 ├─ build.gradle
 ├─ settings.gradle
@@ -37,7 +37,7 @@ Shippin/
 │  └─ test/
 │     └─ java/
 └─ doc/
-
+```
 ## Requirements
 - Java 25
 
