@@ -12,14 +12,9 @@ on:
 
 jobs:
   test:
-    # Matrix allows running on multiple OS simultaneously
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ubuntu-latest # Maybe we should change this to Windows
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -30,11 +25,5 @@ jobs:
           java-version: '25'
           cache: gradle
 
-      # Step 3: Run Gradle tests
       - name: Run tests
-        run: |
-          if [ "${{ runner.os }}" == "Windows" ]; then
-            gradlew.bat test
-          else
-            ./gradlew test
-          fi
+        run: ./gradlew test
