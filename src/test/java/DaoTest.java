@@ -1,16 +1,18 @@
-package org.shippin.app;
-
-import org.shippin.app.DAO.DBConnector;
-import org.shippin.app.DAO.UserDAO;
-import org.shippin.app.models.User;
+import org.junit.jupiter.api.Test;
+import org.shippin.database.DBConnector;
+import org.shippin.database.dao.UserDAO;
+import org.shippin.database.Config;
+import org.shippin.models.User;
 
 import java.sql.SQLException;
 
-
-//temporary class for test
-public class dbtest {
-    public static void test_dao(){
-      Config  cfg=new Config();
+/**
+ * Tests Dao
+ */
+public class DaoTest {
+    @Test
+    public void test_dao(){
+      Config cfg=new Config();
 
         DBConnector dbc = new DBConnector(cfg);
 
@@ -20,16 +22,7 @@ public class dbtest {
             throw new RuntimeException(e);
         }
 
-
         UserDAO Udao = new UserDAO(dbc.getConnection());
-
-        User jozko = new User("jozko", "admin");
-
-        try {
-            Udao.insert(jozko);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
 
         User u = null;

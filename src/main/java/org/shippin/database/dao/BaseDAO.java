@@ -1,7 +1,7 @@
-package org.shippin.app.DAO;
+package org.shippin.database.dao;
 
 import java.sql.Connection;
-import java.sql.SQLException;
+
 public abstract class BaseDAO {
 
     protected Connection connection;

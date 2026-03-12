@@ -1,10 +1,9 @@
-package org.shippin.app.DAO;
-
-import org.shippin.app.Config;
+package org.shippin.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 
 public class DBConnector {
 

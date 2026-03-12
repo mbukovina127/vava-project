@@ -1,6 +1,6 @@
-package org.shippin.app.DAO;
+package org.shippin.database.dao;
 
-import org.shippin.app.models.User;
+import org.shippin.models.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

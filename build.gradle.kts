@@ -34,8 +34,8 @@ dependencies {
     //JDBC
     implementation("org.postgresql:postgresql:42.7.10")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    //JUnit
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
