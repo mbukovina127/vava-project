@@ -37,4 +37,4 @@
 
 - region_name → name of the region.
 
-![VAVA_database.png](../assets/VAVA_database.png)
+![VAVA_database.png](../assets/VAVA_database_v1.png)
