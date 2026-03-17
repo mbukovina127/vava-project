@@ -2,7 +2,7 @@ package org.shippin.domain;
 
 import java.util.List;
 
-public class RegionTable extends EntityTable<RegionTableEntry>{
+public class RegionTable implements EntityTable<RegionTableEntry>{
     @Override
     public List<RegionTableEntry> getEntries() {
         return List.of();

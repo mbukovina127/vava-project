@@ -7,7 +7,6 @@ import org.shippin.domain.enums.Role;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class User {
 
     private int id;

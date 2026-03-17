@@ -11,6 +11,6 @@ public class Range {
     private int min;
     private int max;
     public boolean contains(int n) {
-        return False;
+        return false;
     }
 }

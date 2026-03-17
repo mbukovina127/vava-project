@@ -24,7 +24,6 @@ public class DaoTest {
 
         UserDAO Udao = new UserDAO(dbc.getConnection());
 
-
         User u = null;
         try {
             u = Udao.GetUser(1);
