@@ -1,17 +1,15 @@
-package org.shippin.models;
+package org.shippin.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class User {
-
+@AllArgsConstructor
+public class BriefWarehouse {
     private int id;
     private String name;
-    private String role;
-
+    private String regionName;
+//    private Coordinates coordinates;
 }
-

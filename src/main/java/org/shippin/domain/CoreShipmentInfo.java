@@ -1,0 +1,4 @@
+package org.shippin.domain;
+
+public interface CoreShipmentInfo{
+}
