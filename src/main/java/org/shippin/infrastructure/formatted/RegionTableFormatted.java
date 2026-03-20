@@ -19,7 +19,6 @@ public class RegionTableFormatted implements Table {
         this.rows = rows;
     }
 
-    // Convenience method (template)
     public void addRow(RegionTableRow row) {
         rows.add(row);
     }

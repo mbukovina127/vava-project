@@ -64,18 +64,17 @@ public class PriceListCsvParser implements CsvParser {
     @Override
     public String exportToCsv(Table table) {
         //safety check
-        if (!(table instanceof PriceListFormatted)) {
+        if (!(table instanceof PriceListFormatted plf)) {
             return "";
         }
 
-        PriceListFormatted plf = (PriceListFormatted) table;
         List<Row> rows = plf.getRows();
         if (rows.isEmpty()) {
             return "";
         }
 
         // optain regions (from first line)
-        PriceListRow firstRow = (PriceListRow) rows.get(0);
+        PriceListRow firstRow = (PriceListRow) rows.getFirst();
         List<String> regionCodes = new ArrayList<>(firstRow.getRegions().keySet());
         int numRegions = regionCodes.size();
 
@@ -86,7 +85,7 @@ public class PriceListCsvParser implements CsvParser {
         sb.append(";".repeat(Math.max(0, numRegions - 1)));
         sb.append("\n");
 
-
+        //add region codes
         sb.append(";;");
         sb.append(String.join(";", regionCodes));
         sb.append("\n");
@@ -117,7 +116,7 @@ public class PriceListCsvParser implements CsvParser {
 
     private float parseFloat(String s) {
         if (s == null || s.trim().isEmpty()) return 0f;
-        String normalized = s.trim().replace(',', '.');
+        String normalized = s.trim().replace(',', '.').replaceAll("[^0-9.\\-]", "");
         try {
             return Float.parseFloat(normalized);
         } catch (NumberFormatException e) {

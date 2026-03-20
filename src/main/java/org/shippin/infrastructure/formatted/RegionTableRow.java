@@ -2,10 +2,11 @@ package org.shippin.infrastructure.formatted;
 
 import org.shippin.infrastructure.table.Row;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RegionTableRow implements Row {
     private String regionCode;
-    private ArrayList<Range> ranges = new ArrayList<>();
+    private List<Range> ranges = new ArrayList<>();
 
     public RegionTableRow() {}
 
@@ -15,6 +16,12 @@ public class RegionTableRow implements Row {
 
     public String getRegionCode() { return regionCode; }
     public void setRegionCode(String regionCode) { this.regionCode = regionCode; }
-    public ArrayList<Range> getRanges() { return ranges; }
-    public void setRanges(ArrayList<Range> ranges) { this.ranges = ranges; }
+    public List<Range> getRanges() { return ranges; }
+    public void setRanges(List<Range> ranges) { this.ranges = ranges; }
+
+    public void addRange(Range range) {
+        if (range != null) {
+            ranges.add(range);
+        }
+    }
 }
