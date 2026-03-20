@@ -1,5 +1,6 @@
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
+import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
 import org.shippin.infrastructure.formatted.*;
 import org.shippin.infrastructure.table.Row;
 
@@ -116,6 +117,35 @@ KE;;04000-04900;04902-04912;04919-04960;;
         System.out.println("total " + regionLines.length + " lines");
 
 
+        // SmallPriceListCsvParser test
 
+        String smallPriceCsv = """
+                Hmotnosť;Cena
+                do 1 kg;3,29
+                do 3 kg;3,57
+                do 5 kg;3,64
+                do 10 kg;4,12
+                do 15 kg;4,91
+                do 20 kg;5,85
+                do 25 kg;6,82
+                do 30 kg;7,59
+                """;
+
+        SmallPriceListCsvParser smallParser = new SmallPriceListCsvParser();
+        SmallPriceListFormatted smallTable = (SmallPriceListFormatted) smallParser.parseFromCsv(smallPriceCsv);
+
+        System.out.println("\n=== SMALL PRICE LIST PARSER ===");
+        System.out.println("Loaded " + smallTable.getRows().size() + " rows");
+
+        SmallPriceListRow firstSmallPriceRow = (SmallPriceListRow) smallTable.getRows().get(0);
+        System.out.println("First entry: up to " + firstSmallPriceRow.getWeight() + " kg " + firstSmallPriceRow.getCost() + " €");
+
+        String exportedSmall = smallParser.exportToCsv(smallTable);
+        System.out.println("\nExported small price list:");
+        String[] SmallLines = exportedSmall.split("\n");
+        for (String line : SmallLines) {
+            System.out.println(line);
+        }
+        System.out.println("total " + SmallLines.length + " lines");
     }
 }
