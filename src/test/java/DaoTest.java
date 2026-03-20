@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
 import org.shippin.database.Config;
-import org.shippin.models.User;
+import org.shippin.domain.User;
 
 import java.sql.SQLException;
 
@@ -23,7 +23,6 @@ public class DaoTest {
         }
 
         UserDAO Udao = new UserDAO(dbc.getConnection());
-
 
         User u = null;
         try {
