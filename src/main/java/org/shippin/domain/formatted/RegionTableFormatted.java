@@ -12,8 +12,8 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegionTableFormatted implements Table {
-    private List<Row> rows = new ArrayList<>();
+public class RegionTableFormatted implements Table<RegionTableRow> {
+    private List<RegionTableRow> rows = new ArrayList<>();
 
     public void addRow(RegionTableRow row) {
         rows.add(row);

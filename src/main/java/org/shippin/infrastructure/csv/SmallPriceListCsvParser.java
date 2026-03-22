@@ -62,7 +62,7 @@ public class SmallPriceListCsvParser implements CsvParser {
             return "";
         }
 
-        List<Row> rows = splf.getRows();
+        List<SmallPriceListRow> rows = splf.getRows();
         if (rows.isEmpty()) {
             return "";
         }

@@ -84,7 +84,7 @@ public class RegionTableCsvParser implements CsvParser {
             return "";
         }
 
-        List<Row> rows = rtf.getRows();
+        List<RegionTableRow> rows = rtf.getRows();
         if (rows.isEmpty()) {
             return "";
         }

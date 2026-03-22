@@ -68,7 +68,7 @@ public class PriceListCsvParser implements CsvParser {
             return "";
         }
 
-        List<Row> rows = plf.getRows();
+        List<PriceListRow> rows = plf.getRows();
         if (rows.isEmpty()) {
             return "";
         }
