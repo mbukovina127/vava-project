@@ -1,4 +1,4 @@
-package org.shippin.infrastructure.formatted;
+package org.shippin.domain.formatted;
 
 public class WarehouseFormatted {
     private String title;

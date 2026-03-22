@@ -1,9 +1,9 @@
 package org.shippin.infrastructure.csv;
 
-import org.shippin.infrastructure.formatted.SmallPriceListFormatted;
-import org.shippin.infrastructure.formatted.SmallPriceListRow;
-import org.shippin.infrastructure.table.Row;
-import org.shippin.infrastructure.table.Table;
+import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.domain.Row;
+import org.shippin.domain.Table;
 
 import java.util.List;
 

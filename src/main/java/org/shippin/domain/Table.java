@@ -1,4 +1,5 @@
-package org.shippin.infrastructure.table;
+package org.shippin.domain;
+
 import java.util.List;
 
 public interface Table {

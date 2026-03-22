@@ -1,9 +1,9 @@
 package org.shippin.infrastructure.csv;
 
-import org.shippin.infrastructure.formatted.PriceListFormatted;
-import org.shippin.infrastructure.formatted.PriceListRow;
-import org.shippin.infrastructure.table.Table;
-import org.shippin.infrastructure.table.Row;
+import org.shippin.domain.formatted.PriceListFormatted;
+import org.shippin.domain.formatted.PriceListRow;
+import org.shippin.domain.Table;
+import org.shippin.domain.Row;
 import java.util.ArrayList;
 import java.util.List;
 

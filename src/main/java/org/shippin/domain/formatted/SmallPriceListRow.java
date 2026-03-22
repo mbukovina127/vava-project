@@ -1,6 +1,6 @@
-package org.shippin.infrastructure.formatted;
+package org.shippin.domain.formatted;
 
-import org.shippin.infrastructure.table.Row;
+import org.shippin.domain.Row;
 
 public class SmallPriceListRow implements Row {
     private float weight;

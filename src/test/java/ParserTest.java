@@ -1,8 +1,9 @@
+import org.shippin.domain.formatted.*;
+import org.shippin.util.Range;
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
 import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
-import org.shippin.infrastructure.formatted.*;
-import org.shippin.infrastructure.table.Row;
+import org.shippin.domain.Row;
 
 public class ParserTest {
 
@@ -96,7 +97,7 @@ KE;;04000-04900;04902-04912;04919-04960;;
             RegionTableRow r = (RegionTableRow) row;
             for (Range rg : r.getRanges()) {
                 if (rg.contains(testPsc)) {
-                    System.out.println("→ belongs to region " + r.getRegionCode() +
+                    System.out.println("belongs to region " + r.getRegionCode() +
                             " (range " + rg.getMin() + "-" + rg.getMax() + ")");
                     found = true;
                     break;

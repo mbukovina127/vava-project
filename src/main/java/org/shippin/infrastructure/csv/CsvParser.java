@@ -1,6 +1,6 @@
 package org.shippin.infrastructure.csv;
 
-import org.shippin.infrastructure.table.Table;
+import org.shippin.domain.Table;
 
 public interface CsvParser {
     Table parseFromCsv(String text);

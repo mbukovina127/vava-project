@@ -1,7 +1,7 @@
-package org.shippin.infrastructure.formatted;
+package org.shippin.domain.formatted;
 
-import org.shippin.infrastructure.table.Row;
-import org.shippin.infrastructure.table.Table;
+import org.shippin.domain.Row;
+import org.shippin.domain.Table;
 import java.util.ArrayList;
 import java.util.List;
 

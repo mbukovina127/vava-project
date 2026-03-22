@@ -1,10 +1,10 @@
 package org.shippin.infrastructure.csv;
 
-import org.shippin.infrastructure.formatted.Range;
-import org.shippin.infrastructure.formatted.RegionTableFormatted;
-import org.shippin.infrastructure.formatted.RegionTableRow;
-import org.shippin.infrastructure.table.Row;
-import org.shippin.infrastructure.table.Table;
+import org.shippin.util.Range;
+import org.shippin.domain.formatted.RegionTableFormatted;
+import org.shippin.domain.formatted.RegionTableRow;
+import org.shippin.domain.Row;
+import org.shippin.domain.Table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
