@@ -1,36 +1,52 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
 import org.shippin.database.Config;
-import org.shippin.models.User;
+import org.shippin.domain.User;
+import org.shippin.domain.enums.Role;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Tests Dao
  */
 public class DaoTest {
     @Test
-    public void test_dao(){
-      Config cfg=new Config();
+    public void test_dao() throws SQLException{
+        Config cfg=new Config();
 
         DBConnector dbc = new DBConnector(cfg);
+        dbc.connect();
 
-        try {
-            dbc.connect();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
         UserDAO Udao = new UserDAO(dbc.getConnection());
-
-
-        User u = null;
-        try {
-            u = Udao.GetUser(1);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        //testing environment
+        try (Statement stmt = dbc.getConnection().createStatement()) {
+            stmt.execute("CREATE SCHEMA IF NOT EXISTS balicky");
+            stmt.execute("SET search_path TO balicky");
+            stmt.execute("DROP TABLE IF EXISTS users");
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                  id SERIAL PRIMARY KEY,
+                  name VARCHAR(100) NOT NULL UNIQUE,
+                  email VARCHAR(255),
+                  role INT NOT NULL
+                );
+                """);
         }
-        System.out.println(u.getName());
+
+        User test_user = new User(1,"John Green", "j.green@stuba.sk", Role.USER);
+
+        Udao.insert(test_user);
+
+        User fetched_user = Udao.GetUser(1);
+
+        Assertions.assertNotNull(fetched_user);
+        Assertions.assertEquals("John Green", fetched_user.getName());
+        Assertions.assertEquals("j.green@stuba.sk", fetched_user.getEmail());
+        Assertions.assertEquals(Role.USER, fetched_user.getRole());
+
     }
 }
