@@ -1,6 +1,5 @@
 package org.shippin.domain.formatted;
 
-import org.shippin.domain.Row;
 import org.shippin.domain.Table;
 import java.util.ArrayList;
 import java.util.List;

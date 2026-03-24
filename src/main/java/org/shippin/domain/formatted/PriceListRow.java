@@ -19,11 +19,4 @@ public class PriceListRow implements Row {
         this.weight = weight;
         this.volume = volume;
     }
-
-    public float getWeight() { return weight; }
-    public void setWeight(float weight) { this.weight = weight; }
-    public float getVolume() { return volume; }
-    public void setVolume(float volume) { this.volume = volume; }
-    public LinkedHashMap<String, Float> getRegions() { return regions; }
-    public void setRegions(LinkedHashMap<String, Float> regions) { this.regions = regions; }
 }
