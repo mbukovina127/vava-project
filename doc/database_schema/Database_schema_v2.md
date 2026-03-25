@@ -9,7 +9,7 @@ Database users:
 - User → Can make a shipment, but cant change data in the other tables accept shipping and only add to the shipment table.
 - Admin → Can access and update all the tables.
 
-![VAVA_database.png](../assets/VAVA_database_v2.png)
+![VAVA_database.png](../assets/VAVA_database_v3.png)
 
 ## Shipment
 * dest_psc → destination psc.
@@ -50,7 +50,7 @@ Database users:
 * up_bound → upper bound of possible postal codes.
 * down_bound → down bound of possible postal codes.
 
-# Parameters
+# Parameters_list
 * weight → weight of potential package in KG.
 * volume → volume of the potential package in m^3.
 * cost → cost of the package given the weight and volume in €.
