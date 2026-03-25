@@ -3,15 +3,15 @@ package org.shippin.infrastructure.csv;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.domain.Table;
-import org.shippin.domain.Row;
+import org.shippin.util.NumberUtils;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PriceListCsvParser implements CsvParser {
+public class PriceListCsvParser implements CsvParser<PriceListRow> {
 
     @Override
-    public Table parseFromCsv(String text) {
+    public Table<PriceListRow> parseFromCsv(String text) {
         PriceListFormatted table = new PriceListFormatted();
 
         //safety check
@@ -42,15 +42,15 @@ public class PriceListCsvParser implements CsvParser {
             String[] fields = line.split(";");
             if (fields.length < 2 + regionCodes.size()) continue;
 
-            float weight = parseFloat(fields[0]);
-            float volume = parseFloat(fields[1]);
+            float weight = NumberUtils.parseFloat(fields[0]);
+            float volume = NumberUtils.parseFloat(fields[1]);
 
             PriceListRow row = new PriceListRow(weight, volume);
 
             for (int j = 0; j < regionCodes.size(); j++) {
                 int colIndex = 2 + j;
                 if (colIndex < fields.length) {
-                    float price = parseFloat(fields[colIndex]);
+                    float price = NumberUtils.parseFloat(fields[colIndex]);
                     row.getRegions().put(regionCodes.get(j), price);
                 }
             }
@@ -62,7 +62,7 @@ public class PriceListCsvParser implements CsvParser {
     }
 
     @Override
-    public String exportToCsv(Table table) {
+    public String exportToCsv(Table<PriceListRow> table) {
         //safety check
         if (!(table instanceof PriceListFormatted plf)) {
             return "";
@@ -74,7 +74,7 @@ public class PriceListCsvParser implements CsvParser {
         }
 
         // optain regions (from first line)
-        PriceListRow firstRow = (PriceListRow) rows.getFirst();
+        PriceListRow firstRow = rows.getFirst();
         List<String> regionCodes = new ArrayList<>(firstRow.getRegions().keySet());
         int numRegions = regionCodes.size();
 
@@ -91,16 +91,15 @@ public class PriceListCsvParser implements CsvParser {
         sb.append("\n");
 
         //build data for each line
-        for (Row r : rows) {
-            PriceListRow row = (PriceListRow) r;
+        for (PriceListRow row : rows) {
 
-            String weightStr = formatFloat(row.getWeight());
-            String volumeStr = formatFloat(row.getVolume());
+            String weightStr = NumberUtils.formatFloat(row.getWeight());
+            String volumeStr = NumberUtils.formatFloat(row.getVolume());
 
             List<String> priceStrs = new ArrayList<>();
             for (String reg : regionCodes) {
                 Float price = row.getRegions().get(reg);
-                priceStrs.add(formatFloat(price != null ? price : 0f));
+                priceStrs.add(NumberUtils.formatFloat(price != null ? price : 0f));
             }
 
             sb.append(weightStr)
@@ -114,18 +113,4 @@ public class PriceListCsvParser implements CsvParser {
         return sb.toString();
     }
 
-    private float parseFloat(String s) {
-        if (s == null || s.trim().isEmpty()) return 0f;
-        String normalized = s.trim().replace(',', '.').replaceAll("[^0-9.\\-]", "");
-        try {
-            return Float.parseFloat(normalized);
-        } catch (NumberFormatException e) {
-            return 0f;
-        }
-    }
-
-    private String formatFloat(float f) {
-        String s = String.format("%.2f", f);
-        return s.replace('.', ',');
-    }
 }

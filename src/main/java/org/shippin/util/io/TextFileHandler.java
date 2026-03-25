@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class TextFileHandler {
@@ -30,7 +29,7 @@ public class TextFileHandler {
         }
 
         try {
-            // create parent directories if they dont exist
+            // create parent directories if they don't exist
             Files.createDirectories(file.toPath().getParent());
             Files.writeString(file.toPath(), content, StandardCharsets.UTF_8,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

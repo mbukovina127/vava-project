@@ -2,16 +2,16 @@ package org.shippin.infrastructure.csv;
 
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
-import org.shippin.domain.Row;
 import org.shippin.domain.Table;
+import org.shippin.util.NumberUtils;
 
 import java.util.List;
 
 
-public class SmallPriceListCsvParser implements CsvParser {
+public class SmallPriceListCsvParser implements CsvParser<SmallPriceListRow> {
 
     @Override
-    public Table parseFromCsv(String text) {
+    public Table<SmallPriceListRow> parseFromCsv(String text) {
         SmallPriceListFormatted table = new SmallPriceListFormatted();
 
         //safety check
@@ -46,7 +46,7 @@ public class SmallPriceListCsvParser implements CsvParser {
                 }
             }
 
-            float cost = parseFloat(costStr);
+            float cost = NumberUtils.parseFloat(costStr);
 
             SmallPriceListRow row = new SmallPriceListRow(weightLimit, cost);
             table.addRow(row);
@@ -56,7 +56,7 @@ public class SmallPriceListCsvParser implements CsvParser {
     }
 
     @Override
-    public String exportToCsv(Table table) {
+    public String exportToCsv(Table<SmallPriceListRow> table) {
         //safety check
         if (!(table instanceof SmallPriceListFormatted splf)) {
             return "";
@@ -72,36 +72,19 @@ public class SmallPriceListCsvParser implements CsvParser {
         // Header
         sb.append("Hmotnosť;Cena\n");
 
-        for (Row r : rows) {
-            SmallPriceListRow row = (SmallPriceListRow) r;
+        for (SmallPriceListRow row : rows) {
             float weight = row.getWeight();
             float cost   = row.getCost();
 
             // Format weight as "do X kg"
-            String weightStr = "do " + formatFloat(weight) + " kg";
+            String weightStr = "do " + NumberUtils.formatFloat(weight) + " kg";
 
             sb.append(weightStr)
                     .append(";")
-                    .append(formatFloat(cost))
+                    .append(NumberUtils.formatFloat(cost))
                     .append("\n");
         }
 
         return sb.toString();
-    }
-
-    private float parseFloat(String s) {
-        if (s == null || s.trim().isEmpty()) return 0f;
-        String normalized = s.trim().replace(',', '.').replaceAll("[^0-9.\\-]", "");
-        try {
-            return Float.parseFloat(normalized);
-        } catch (NumberFormatException e) {
-            return 0f;
-        }
-    }
-
-
-    private String formatFloat(float f) {
-        String s = String.format("%.2f", f);
-        return s.replace('.', ',');
     }
 }

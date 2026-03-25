@@ -1,8 +1,9 @@
 package org.shippin.infrastructure.csv;
 
 import org.shippin.domain.Table;
+import org.shippin.domain.Row;
 
-public interface CsvParser {
-    Table parseFromCsv(String text);
-    String exportToCsv(Table table);
+public interface CsvParser<R extends Row> {
+    Table<R> parseFromCsv(String text);
+    String exportToCsv(Table<R> table);
 }

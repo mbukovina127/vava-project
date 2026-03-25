@@ -3,7 +3,6 @@ package org.shippin.infrastructure.csv;
 import org.shippin.util.Range;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
-import org.shippin.domain.Row;
 import org.shippin.domain.Table;
 
 import java.util.ArrayList;
@@ -12,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RegionTableCsvParser implements CsvParser {
+public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
 
     @Override
-    public Table parseFromCsv(String text) {
+    public Table<RegionTableRow> parseFromCsv(String text) {
         RegionTableFormatted table = new RegionTableFormatted();
 
         //safety check
@@ -54,10 +53,10 @@ public class RegionTableCsvParser implements CsvParser {
                             int end   = Integer.parseInt(parts[1].trim());
                             rangesThisLine.add(new Range(start, end));
                         } catch (NumberFormatException e) {
-
+                            // ignore invalid range
                         }
                     }
-                } else if (!cell.isEmpty()) {
+                } else {
                     try {
                         int code = Integer.parseInt(cell.trim());
                         rangesThisLine.add(new Range(code, code));
@@ -65,7 +64,7 @@ public class RegionTableCsvParser implements CsvParser {
                 }
             }
 
-            regionToRanges.computeIfAbsent(regionCode, k -> new ArrayList<>()).addAll(rangesThisLine);
+            regionToRanges.computeIfAbsent(regionCode, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {
@@ -78,7 +77,7 @@ public class RegionTableCsvParser implements CsvParser {
     }
 
     @Override
-    public String exportToCsv(Table table) {
+    public String exportToCsv(Table<RegionTableRow> table) {
         //safety chcek
         if (!(table instanceof RegionTableFormatted rtf)) {
             return "";
@@ -95,8 +94,7 @@ public class RegionTableCsvParser implements CsvParser {
         sb.append("Rozdelenie PSČ:;;;;;;\n");
 
         //build data for each line
-        for (Row r : rows) {
-            RegionTableRow row = (RegionTableRow) r;
+        for (RegionTableRow row : rows) {
             String code = row.getRegionCode();
             List<Range> ranges = row.getRanges();
 
