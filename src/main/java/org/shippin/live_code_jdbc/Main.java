@@ -17,6 +17,8 @@ public class Main {
         selectUsers();
         insertUser("Viki", "Nova", 21, "viki@test.com");
         selectUsers();
+		tryCatchExample();
+        tryCatchExampleWithError();
         batchOperation();
         //updateUser("first_name","Maximilian",id);
         //deleteUser(id);
@@ -150,7 +152,82 @@ public class Main {
 	        }
     	}
     
+	public static void tryCatchExample() {
+        URL dbUrl = Main.class.getResource("/users.db");
+        if (dbUrl == null) {
+            logger.error("users.db not found in resources");
+            return;
+        }
 
+        try {
+            String path = Paths.get(dbUrl.toURI()).toString();
+            String url = "jdbc:sqlite:" + path;
+
+            String sql = "SELECT id, first_name, last_name, email, age FROM users LIMIT 5";
+
+            System.out.println("tryCatchExample - first 5 users:");
+            try (Connection conn = DriverManager.getConnection(url);
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+
+                while (rs.next()) {
+                    System.out.println(
+                            rs.getInt("id") + " | " +
+                                    rs.getString("first_name") + " " +
+                                    rs.getString("last_name") + " | " +
+                                    rs.getString("email") + " | " +
+                                    rs.getInt("age")
+                    );
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Database error while reading users.");
+                System.out.println("Message: " + e.getMessage());
+                System.out.println("SQL state: " + e.getSQLState());
+                System.out.println("Error code: " + e.getErrorCode());
+
+                logger.error("SQL error in tryCatchExample", e);
+            }
+
+        } catch (URISyntaxException e) {
+            logger.error("Invalid path to users.db", e);
+        }
+    }
+    
+    public static void tryCatchExampleWithError() {
+        URL dbUrl = Main.class.getResource("/users.db");
+        if (dbUrl == null) {
+            logger.error("users.db not found in resources");
+            return;
+        }
+
+        try {
+            String path = Paths.get(dbUrl.toURI()).toString();
+            String url = "jdbc:sqlite:" + path;
+
+            // intentionally wrong table name to trigger SQLException
+            String sql = "SELECT * FROM userz LIMIT 5";
+
+            System.out.println("tryCatchExampleWithError - first 5 users:");
+            try (Connection conn = DriverManager.getConnection(url);
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+
+                System.out.println("This line will not be reached if SQL fails.");
+
+            } catch (SQLException e) {
+                System.out.println("Database error occurred.");
+                System.out.println("Message: " + e.getMessage());
+                System.out.println("SQL state: " + e.getSQLState());
+                System.out.println("Error code: " + e.getErrorCode());
+
+                logger.error("SQL error in tryCatchExampleWithError", e);
+            }
+
+        } catch (URISyntaxException e) {
+            logger.error("Invalid path to users.db", e);
+        }
+    }
 
     public static void batchOperation() {
         try {
