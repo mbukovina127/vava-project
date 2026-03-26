@@ -18,6 +18,8 @@ public class Main {
         insertUser("Viki", "Nova", 21, "viki@test.com");
         selectUsers();
         batchOperation();
+        //updateUser("first_name","Maximilian",id);
+        //deleteUser(id);
 
         try {
             new Examples().run();
@@ -90,6 +92,64 @@ public class Main {
             logger.error("Error inserting user", e);
         }
     }
+
+     public static void updateUser(String column, String newValue, int id) {
+    	try 
+    	{
+    		URL dbUrl = Main.class.getResource("/users.db");
+            if (dbUrl == null) {
+                logger.error("users.db not found in resources");
+                return;
+            }
+	
+            String path = Paths.get(dbUrl.toURI()).toString();
+            String url = "jdbc:sqlite:" + path;
+	
+	    	String sql = "UPDATE users SET " + column + " = ? WHERE id = ?";
+	
+	    	try (Connection conn = DriverManager.getConnection(url);
+	    	     PreparedStatement ps = conn.prepareStatement(sql)) {
+	
+	    	        ps.setString(1, newValue);
+	    	        ps.setInt(2, id);
+	
+	    	        int rows = ps.executeUpdate();
+	    	        System.out.println("Updated " + rows + " row(s)");
+	    	    }
+	
+	    	} catch (Exception e) {
+	            logger.error("Error updating users", e);
+	        }
+    	}
+    
+    public static void deleteUser(int id) {
+    	try 
+    	{
+    		URL dbUrl = Main.class.getResource("/users.db");
+            if (dbUrl == null) {
+                logger.error("users.db not found in resources");
+                return;
+            }
+	
+            String path = Paths.get(dbUrl.toURI()).toString();
+            String url = "jdbc:sqlite:" + path;
+	
+	    	String sql = "DELETE FROM users WHERE id = ?";
+	
+	    	try (Connection conn = DriverManager.getConnection(url);
+	    	     PreparedStatement ps = conn.prepareStatement(sql)) {
+	
+	    	        ps.setInt(1, id);
+	
+	    	        int rows = ps.executeUpdate();
+	    	        System.out.println("Deleted " + rows + " row(s)");
+	    	    }
+	
+	    	} catch (Exception e) {
+	            logger.error("Error deleting users", e);
+	        }
+    	}
+    
 
 
     public static void batchOperation() {
