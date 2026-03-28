@@ -9,7 +9,7 @@ group = "org.shippin"
 version = "1.0-SNAPSHOT"
 
 application {
-    mainClass.set("org.shippin.live_code_jdbc.Main")
+    mainClass.set("org.shippin.app.Main")
 }
 
 repositories {
@@ -37,15 +37,8 @@ dependencies {
     //JUnit
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    //sqlite
-    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.named<JavaExec>("run") {
-    jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
 }
