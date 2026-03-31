@@ -9,11 +9,11 @@
 --Additional Service DAO
 
 --GetAll()
-SELECT * FROM Service s JOIN Service_list sl ON s.service_ID = sl.service_ID;
+SELECT * FROM Service;
 
---GetAllByID(ID)
+--GetAllByID(ID) get all services linked to the shipment id
 SELECT * FROM Service s JOIN Service_list sl ON s.service_ID = sl.service_ID
-WHERE s.service_ID = 1; --(Temporary ID)
+WHERE sl.shipment_ID = 1; --(Temporary ID)
 
 ------------------------------------------------------------------------------------------------------
 --ShipmentDAO
@@ -56,13 +56,14 @@ DO UPDATE SET
 	sp_ID = EXCLUDED.sp_ID;
 
 --getByID(ID)
-SELECT s.*, se.service_name FROM Shipment s
+SELECT * FROM Shipment s
 JOIN Service_list sl ON s.shipment_ID = sl.shipment_ID
 JOIN Service se ON sl.service_ID = se.service_ID
+JOIN History h ON s.shipment_id = h.shipment_id
 WHERE s.shipment_ID = 1; --(Temporary ID)
 
 --delete(ID)
-DELETE FROM Shipment WHERE shipment_ID = 1; --test input
+DELETE FROM Shipment WHERE shipment_ID = 1; --test input // treba cascade?
 
 --getBriefAllRecent(number of days)
 SELECT * FROM Shipment s
@@ -147,11 +148,24 @@ INSERT INTO Parameter_list(weight,volume,cost,region_id)
 VALUES(1, 1, 1, 1);
 
 --setRegionTable(RegionTable)
+INSERT INTO Region(warehouse_id, region_name) VALUES(1, 'Kokotice');
+
+INSERT INTO Parameter_list(region_id, weight, volume, cost)
+VALUES(1, 2, 2, 4);
+
+INSERT INTO Postal_code_list(region_id, postal_code_id)
+VALUES(1, 1);
+
+INSERT INTO Postal_code(up_bound, down_bound) VALUES(12345, 54321);
 --updateCoreInfo(warehouse)
---getConstraints(ID)
-SELECT *
-FROM information_schema.table_constraints
-WHERE table_name = 'warehouse';
+UPDATE Warehouse SET
+    storage_region = 10000,
+    warehouse_region_name = 'Bratislava',
+    latitude = 48.1234,
+    longitude = 17.9999,
+    price_list_file = 'random'
+WHERE warehouse_id = 1;
+
 ------------------------------------------------------------------------------------------------------
 --SmallPriceListDAO
 
@@ -164,10 +178,4 @@ VALUES (5, 10);
 
 --getPrice(weight)
 SELECT sp.cost_sp FROM sp_price_list sp WHERE sp.weight_sp = 5;
-
---getConstraints()
-
-SELECT *
-FROM information_schema.table_constraints
-WHERE table_name = 'sp_price_list';
 ------------------------------------------------------------------------------------------------------
