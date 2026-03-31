@@ -1,5 +1,6 @@
 package org.shippin.app.DAO;
 import org.shippin.app.models.Region;
+import org.shippin.app.models.WareHouse;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -87,12 +88,12 @@ public class RegionDAO extends BaseDAO {
     /**
      * add region to warehouse
      */
-    public int insertRegion(String regionName, String warehouseName) throws SQLException {
+    public int insertRegion(String regionName, int warehouseid) throws SQLException {
         String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, regionName);
-        stmt.setString(2, warehouseName);
+        stmt.setInt(2, warehouseid);
         stmt.executeUpdate();
 
         ResultSet keys = stmt.getGeneratedKeys();
@@ -124,8 +125,8 @@ public class RegionDAO extends BaseDAO {
     /**
      * insert full region with PSC ranges
      */
-    public void insertFullRegion(Region region) throws SQLException {
-            int regionID = insertRegion(region.getCode(), region.getSourceWarehouse());
+    public void insertFullRegion(Region region, WareHouse wareHouse) throws SQLException {
+            int regionID = insertRegion(region.getCode(), wareHouse.getId());
             if (regionID == -1){
                 throw new SQLException("Failed to insert region: " + region.getCode());
             }

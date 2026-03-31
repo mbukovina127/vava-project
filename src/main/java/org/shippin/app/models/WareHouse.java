@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 public class WareHouse {
+    public int getId() {
+        return id;
+    }
+
     private int id;
     private String name;
     private Map<String, List<PriceListItem>> priceList;
     private ArrayList<Region> regions;
 
-
+//warehouse
     public WareHouse(int id) {
         this.id = id;
     }
