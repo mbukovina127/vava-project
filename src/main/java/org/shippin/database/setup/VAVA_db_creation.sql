@@ -17,6 +17,8 @@ CREATE TABLE Warehouse (
 	warehouse_ID SERIAL PRIMARY KEY,
 	storage_region INT NOT NULL,
 	warehouse_region_name TEXT NOT NULL,
+    latitude  DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
 	price_list_file TEXT NOT NULL
 );
 
