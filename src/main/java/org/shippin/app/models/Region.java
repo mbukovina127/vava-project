@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Region {
-    private String sourceWarehouse;
     private String code;
     private ArrayList<Integer> psc;
 
@@ -40,13 +39,6 @@ public class Region {
     }
 
 
-    public String getSourceWarehouse() {
-        return sourceWarehouse;
-    }
-
-    public void setSourceWarehouse(String sourceWarehouse) {
-        this.sourceWarehouse = sourceWarehouse;
-    }
 
     public String getCode() {
         return code;
