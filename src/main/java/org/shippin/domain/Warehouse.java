@@ -7,4 +7,6 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 public class Warehouse extends CoreWarehouseInfo{
+    public Warehouse() {
+    }
 }

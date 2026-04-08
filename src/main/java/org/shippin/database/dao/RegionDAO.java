@@ -1,12 +1,12 @@
-package org.shippin.app.DAO;
-import org.shippin.app.models.Region;
-import org.shippin.app.models.WareHouse;
+package org.shippin.database.dao;
+import org.shippin.domain.Range;
+import org.shippin.domain.Warehouse;
+
+import org.shippin.domain.RegionTable;
+import org.shippin.domain.RegionTableEntry;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegionDAO extends BaseDAO {
 
@@ -17,31 +17,45 @@ public class RegionDAO extends BaseDAO {
     /**
      * gets all regions for warehouse
      */
-    public List<Region> getRegionsForWarehouse(String warehouseName) throws SQLException {
+    public RegionTable getRegionsForWarehouse(String warehouseName) throws SQLException {
         String sql = ""; //TODO
-
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
         ResultSet rs = stmt.executeQuery();
 
-        Map<String, Region> regionMap = new LinkedHashMap<>();
+
+        Map<Integer, RegionTableEntry> regionMap = new HashMap<>();
 
         while (rs.next()) {
-            String regionName = rs.getString("region_name");
+            int regionId = rs.getInt("region_id"); // id in "Region" table
+            String regionCode = rs.getString("region_name"); //BA1 BA2
+
             int upBound = rs.getInt("up_bound");
             int downBound = rs.getInt("down_bound");
 
-            Region region = regionMap.computeIfAbsent(regionName, Region::new);
-            region.addZoneRange(downBound + "-" + upBound);
+            Range range = new Range(downBound, upBound);
+
+            // create entry if not exists
+            RegionTableEntry entry = regionMap.get(regionId);
+            if (entry == null) {
+                entry = new RegionTableEntry(regionId, new ArrayList<>(), regionCode);
+                regionMap.put(regionId, entry);
+            }
+
+            // add range to region
+            entry.addRange(range);
         }
 
-        return new ArrayList<>(regionMap.values());
+        RegionTable table = new RegionTable();
+        table.setEntries(new ArrayList<>(regionMap.values()));
+
+        return table;
     }
 
     /**
      * get region by warehouse&name
      */
-    public Region getRegion(String warehouseName, String regionName) throws SQLException {
+    public RegionTableEntry getRegion(String warehouseName, String regionName) throws SQLException {
         String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -49,40 +63,40 @@ public class RegionDAO extends BaseDAO {
         stmt.setString(2, regionName);
         ResultSet rs = stmt.executeQuery();
 
-        Region region = null;
+        RegionTableEntry entry = null;
 
         while (rs.next()) {
-            if (region == null) {
-                region = new Region(rs.getString("region_name"));
+            if (entry == null) {
+                entry = new RegionTableEntry(rs.getInt("id"), new ArrayList<>(), rs.getString("region_name"));
             }
-            region.addZoneRange(rs.getInt("down_bound") + "-" + rs.getInt("up_bound"));
+            entry.addRange(new Range(rs.getInt("down_bound"), rs.getInt("up_bound")));
         }
 
-        return region;
+        return entry;
     }
 
     /**
      * get region by warehouseName& PSC
      */
-    public Region getRegionByPsc(String warehouseName, int psc) throws SQLException {
+    public RegionTableEntry getRegionByPsc(String warehouseName, int psc) throws SQLException {
         String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
         stmt.setInt(2, psc);
-        stmt.setInt(3, psc);
         ResultSet rs = stmt.executeQuery();
 
-        Region region = null;
+        RegionTableEntry entry = null;
 
         while (rs.next()) {
-            if (region == null) {
-                region = new Region(rs.getString("region_name"));
+            if (entry == null) {
+                entry = new RegionTableEntry(rs.getInt("id"), new ArrayList<>(), rs.getString("region_name"));
             }
-            region.addZoneRange(rs.getInt("down_bound") + "-" + rs.getInt("up_bound"));
+            entry.addRange(new Range(rs.getInt("down_bound"), rs.getInt("up_bound")));
         }
 
-        return region;
+        return entry;
+
     }
 
     /**
@@ -125,28 +139,22 @@ public class RegionDAO extends BaseDAO {
     /**
      * insert full region with PSC ranges
      */
-    public void insertFullRegion(Region region, WareHouse wareHouse) throws SQLException {
-            int regionID = insertRegion(region.getCode(), wareHouse.getId());
+    public void insertFullRegion(RegionTableEntry region, Warehouse wareHouse) throws SQLException {
+            int regionID = insertRegion(region.getRegionCode(), wareHouse.getId());
             if (regionID == -1){
-                throw new SQLException("Failed to insert region: " + region.getCode());
+                throw new SQLException("Failed to insert region: " + region.getRegionCode());
             }
 
-            List<Integer> pscList = region.getPscList();
-            int rangeStart = pscList.get(0);
-            int prev = rangeStart;
+        List<Range> ranges = region.getRanges();
 
-            for (int i = 1; i <= pscList.size(); i++) {
-                boolean last = (i == pscList.size());
-                int curr = last ? -1 : pscList.get(i);
+        for (Range r : ranges) {
+            insertPSCRange(regionID, r.getMin(), r.getMax());
+        }
 
-                if (last || curr != prev + 1) {
-                    insertPSCRange(regionID, rangeStart, prev);
-                    rangeStart = last ? -1 : curr;
-                }
-                prev = curr;
-            }
-
-            connection.commit();
+        connection.commit();
 
     }
+
+
+
 }
