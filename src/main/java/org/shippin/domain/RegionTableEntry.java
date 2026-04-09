@@ -1,5 +1,7 @@
 package org.shippin.domain;
 
+import org.shippin.util.Range;
+
 import java.util.ArrayList;
 import java.util.List;
 

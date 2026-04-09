@@ -17,7 +17,6 @@ public class UserDAO extends BaseDAO {
     public void insert(User user) throws SQLException {
 
         String sql = "INSERT INTO users(name,email,role) VALUES (?,?,?)";
-
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, user.getName());

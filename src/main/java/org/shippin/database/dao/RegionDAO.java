@@ -1,5 +1,5 @@
 package org.shippin.database.dao;
-import org.shippin.domain.Range;
+import org.shippin.util.Range;
 import org.shippin.domain.Warehouse;
 
 import org.shippin.domain.RegionTable;
