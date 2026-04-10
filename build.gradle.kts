@@ -9,7 +9,7 @@ group = "org.shippin"
 version = "1.0-SNAPSHOT"
 
 application {
-    mainClass.set("org.shippin.app.Main")
+    mainClass.set("org.shippin.app.Launcher")
 }
 
 repositories {
