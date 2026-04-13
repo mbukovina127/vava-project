@@ -1,4 +1,4 @@
-package application;
+package org.shippin.app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

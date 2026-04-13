@@ -1,4 +1,4 @@
-package application;
+package org.shippin.app;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.*;

@@ -1,4 +1,4 @@
-package application;
+package org.shippin.app;
 
 import com.google.gson.Gson;
 import java.net.URI;
