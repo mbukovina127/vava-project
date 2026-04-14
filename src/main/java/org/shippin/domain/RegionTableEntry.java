@@ -1,5 +1,7 @@
 package org.shippin.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.shippin.util.Range;
 
 import java.util.ArrayList;
@@ -8,11 +10,8 @@ import java.util.List;
 public class RegionTableEntry implements EntityEntry {
     private int id;
     private ArrayList<Range> ranges;
-
-    public String getRegionCode() {
-        return regionCode;
-    }
-
+    @Setter
+    @Getter
     private String regionCode;
 
     public RegionTableEntry(int id, ArrayList<Range> ranges, String regionCode) {
@@ -25,11 +24,8 @@ public class RegionTableEntry implements EntityEntry {
         return new ArrayList<>(ranges);
     }
 
-    public void setRanges(ArrayList<Range> ranges) {
-        this.ranges = ranges;
-    }
-
     public void addRange(Range range){
         this.ranges.add(range);
     }
+
 }
