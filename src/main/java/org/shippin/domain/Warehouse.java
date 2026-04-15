@@ -1,11 +1,11 @@
 package org.shippin.domain;
 
 import lombok.AllArgsConstructor;
-import org.shippin.domain.formatted.PriceListFormatted;
-import org.shippin.domain.formatted.RegionTableFormatted;
+import lombok.Data;
 
 
-@AllArgsConstructor
+@Data
 public class Warehouse extends CoreWarehouseInfo{
-
+    private PriceList priceList;
+    private RegionTable regionTable;
 }

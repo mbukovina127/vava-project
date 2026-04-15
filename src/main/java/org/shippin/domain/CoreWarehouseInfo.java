@@ -9,28 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class CoreWarehouseInfo {
     private int id;
-    private String name;
-    private String regionName;
-    private PriceList priceList;
-    private RegionTable regionTable;
+    private String name; //SK 83104 Bratislava
+    private String regionName; //ZBS-BA aka filename aka excel sheet name
 
-    public int getId() {
-        return id;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getRegionName() {
-        return regionName;
-    }
-
-    public PriceList getPriceList() {
-        return priceList;
-    }
-
-    public RegionTable getRegionTable() {
-        return regionTable;
-    }
 }

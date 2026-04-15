@@ -40,29 +40,23 @@ public class WarehouseDAO extends BaseDAO {
         return warehouse;
     }
 
-
+    /**
+     * inserts warehouse core info
+     */
     public void upsertWarehouse(Warehouse w) throws SQLException {
-        String sql = """
-                INSERT INTO Warehouse(warehouse_id, storage_region, warehouse_region_name, price_list_file)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT (warehouse_id)
-                DO UPDATE SET
-                    warehouse_id = EXCLUDED.warehouse_id,
-                    storage_region = EXCLUDED.storage_region,
-                    warehouse_region_name = EXCLUDED.warehouse_region_name,
-                    price_list_file = EXCLUDED.price_list_file
-                """;
+        String sql = "";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
-        //stmt.setInt(2, w.getStorageRegion()); //FIXME
-        stmt.setString(3, w.getName());
-        //stmt.setString(4, w.getPriceListFile()); //FIXME
+        stmt.setString(2, w.getName()); //SK PSC+region aka name
+        stmt.setString(4, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
 
         stmt.executeUpdate();
     }
 
-
+    /**
+     * inserts warehouse core info with both tables
+     */
     public void insertFullWarehouse(Warehouse warehouse) throws SQLException {
 
         try {

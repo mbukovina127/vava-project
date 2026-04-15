@@ -53,14 +53,15 @@ public class RegionDAO extends BaseDAO {
     }
 
     /**
-     * get region by warehouse&name
+     * get region by warehouse&region code
+     *
      */
-    public RegionTableEntry getRegion(String warehouseName, String regionName) throws SQLException {
+    public RegionTableEntry getRegion(String warehouseName, String regionCode) throws SQLException {
         String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
-        stmt.setString(2, regionName);
+        stmt.setString(2, regionCode);
         ResultSet rs = stmt.executeQuery();
 
         RegionTableEntry entry = null;
