@@ -13,4 +13,6 @@ public class PriceListEntry implements EntityEntry {
     private float volume;
     private float cost;
     private String zone;
+
+
 }

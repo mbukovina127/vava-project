@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class CoreWarehouseInfo {
     private int id;
-    private String name;
-    private String regionName;
-    private PriceList priceList;
-    private RegionTable regionTable;
+    private String name; //SK 83104 Bratislava
+    private String regionName; //ZBS-BA aka filename aka excel sheet name
+
+
 }
