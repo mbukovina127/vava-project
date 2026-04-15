@@ -35,6 +35,11 @@ dependencies {
     //JDBC
     implementation("org.postgresql:postgresql:42.7.10")
 
+    // Google JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+    // Map viewer
+    implementation("org.jxmapviewer:jxmapviewer2:2.6")
+
     //JUnit
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
