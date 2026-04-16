@@ -22,7 +22,7 @@ public class ShipmentDAO extends BaseDAO {
         sh.setTotalCost(rs.getFloat("total_cost"));
         sh.setDeliveryDate(rs.getTimestamp("delivery_date"));
         sh.setDestinationPostalCode(rs.getString("destination_postal_code"));
-        sh.setServices(getServices(sh.getId()));
+        sh.setServices(getShipmentServices(sh.getId()));
         return sh;
     }
 
@@ -46,7 +46,7 @@ public class ShipmentDAO extends BaseDAO {
             sh.setDestinationPostalCode(rs.getString("destination_postal_code"));
 
             // services
-            sh.setServices(getServices(shipmentID));
+            sh.setServices(getShipmentServices(shipmentID));
 
             return sh;
         }
@@ -54,12 +54,32 @@ public class ShipmentDAO extends BaseDAO {
         return null;
     }
 
-    public ArrayList<AdditionalService> getServices(int shipmentID) throws SQLException {
+    public ArrayList<AdditionalService> getShipmentServices(int shipmentID) throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, shipmentID);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            AdditionalService as = new AdditionalService(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getFloat("price"),
+                    rs.getFloat("weight")
+            );
+            serviceList.add(as);
+        }
+
+        return serviceList;
+    }
+
+    public ArrayList<AdditionalService> getSAllServices() throws SQLException {
+        ArrayList<AdditionalService> serviceList = new ArrayList<>();
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
