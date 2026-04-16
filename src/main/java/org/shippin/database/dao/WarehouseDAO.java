@@ -1,8 +1,11 @@
 package org.shippin.database.dao;
 
+import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Warehouse;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WarehouseDAO extends BaseDAO {
     public WarehouseDAO(Connection conn) {
@@ -10,7 +13,7 @@ public class WarehouseDAO extends BaseDAO {
     }
 
     public Warehouse getById(int id) throws SQLException {
-        String sql = "";
+        String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -40,11 +43,53 @@ public class WarehouseDAO extends BaseDAO {
         return warehouse;
     }
 
+
+    public List<BriefWarehouse> getAllBriefWarehouses() throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        List<BriefWarehouse> list = new ArrayList<>();
+
+        while (rs.next()) {
+            BriefWarehouse bw = new BriefWarehouse(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("region_name")
+            );
+            list.add(bw);
+        }
+
+        return list;
+    }
+
+    public BriefWarehouse getlBriefWarehouse(int briefWarehouseID) throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, briefWarehouseID);
+
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            BriefWarehouse bw = new BriefWarehouse(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("region_name")
+            );
+            return bw;
+        }
+        return null;
+    }
+
+
     /**
      * inserts warehouse core info
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
-        String sql = "";
+        String sql = ""; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());

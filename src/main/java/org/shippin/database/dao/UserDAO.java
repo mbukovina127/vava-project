@@ -16,7 +16,7 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO users(name,email,role) VALUES (?,?,?)";
+        String sql = "";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, user.getName());
@@ -28,7 +28,7 @@ public class UserDAO extends BaseDAO {
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT * FROM balicky.users WHERE id=?";
+        String sql = "";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
