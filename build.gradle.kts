@@ -44,6 +44,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(kotlin("stdlib-jdk8"))
+
+    //jqwik
+    implementation("net.jqwik:jqwik:1.9.3")
 }
 
 tasks.test {
