@@ -1,0 +1,11 @@
+/* ============================================
+   register-page.css — Register screen overrides
+   Always load AFTER shipinn.css:
+     stylesheets="@shipinn.css, @register-page.css"
+   ============================================ */
+
+/* Name/Surname GridPane row */
+.name-row {
+    -fx-pref-width: 360;
+    -fx-max-width: 360;
+}

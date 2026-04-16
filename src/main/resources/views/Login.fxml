@@ -2,142 +2,72 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<AnchorPane
+<StackPane
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml"
     fx:controller="org.shippin.controller.LoginController"
     prefWidth="1440"
     prefHeight="820"
-    style="-fx-background-color: #FFE4CC;">
+    styleClass="root-pane"
+    stylesheets="@../css/shipinn.css, @../css/login-page.css">
 
-    <!-- App Logo / Brand area (top-left) -->
-    <ImageView
-        fx:id="logoImageView"
-        layoutX="578"
-        layoutY="177"
-        fitWidth="284"
-        fitHeight="88"
-        preserveRatio="true"
-        AnchorPane.leftAnchor="578"
-        AnchorPane.topAnchor="177"/>
+    <VBox
+        styleClass="card"
+        maxWidth="380"
+        spacing="0"
+        alignment="TOP_CENTER">
 
-    <!-- Title Label "Email" -->
-    <Label
-        fx:id="emailLabel"
-        text="Email"
-        layoutX="437"
-        layoutY="322"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="322"/>
+        <!-- Logo -->
+        <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
+            <Label styleClass="logo-name" text="Shipinn"/>
+        </HBox>
 
-    <!-- Email TextField -->
-    <TextField
-        fx:id="emailTextField"
-        promptText="Enter your email"
-        layoutX="436"
-        layoutY="337"
-        prefWidth="568"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="337"/>
+        <!-- Email -->
+        <Label styleClass="field-label" text="Email"/>
+        <TextField
+            fx:id="emailTextField"
+            styleClass="input-field"
+            promptText="Value"/>
 
-    <!-- Password Label -->
-    <Label
-        fx:id="passwordLabel"
-        text="Password"
-        layoutX="437"
-        layoutY="417"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="417"/>
+        <!-- Spacer -->
+        <Region prefHeight="12"/>
 
-    <!-- Password PasswordField -->
-    <PasswordField
-        fx:id="passwordField"
-        promptText="Enter your password"
-        layoutX="436"
-        layoutY="432"
-        prefWidth="568"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="432"/>
+        <!-- Password -->
+        <Label styleClass="field-label" text="Password"/>
+        <PasswordField
+            fx:id="passwordField"
+            styleClass="input-field"
+            promptText="Value"/>
 
-    <!-- Error / Status Label -->
-    <Label
-        fx:id="statusLabel"
-        text=""
-        layoutX="436"
-        layoutY="492"
-        prefWidth="568"
-        style="-fx-text-fill: #cc0000; -fx-font-size: 12px;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="492"/>
-
-    <!-- Forgot Password link -->
-    <Hyperlink
-        fx:id="forgotPasswordLink"
-        text="Forgot password?"
-        layoutX="436"
-        layoutY="510"
-        onAction="#onForgotPassword"
-        style="-fx-font-size: 13px; -fx-text-fill: #1E1E1E;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="510"/>
-
-    <!-- Login Button -->
-    <Button
-        fx:id="loginButton"
-        text="Login"
-        layoutX="436"
-        layoutY="545"
-        prefWidth="568"
-        prefHeight="44"
-        onAction="#onLogin"
-        style="-fx-background-color: #5D3F25;
-               -fx-text-fill: white;
-               -fx-font-size: 15px;
-               -fx-font-weight: bold;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-cursor: hand;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="545"/>
-
-    <!-- Register redirect -->
-    <HBox
-        layoutX="436"
-        layoutY="605"
-        spacing="6"
-        alignment="CENTER_LEFT"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="605">
+        <!-- Status / error label -->
         <Label
-            text="Don't have an account?"
-            style="-fx-font-size: 13px; -fx-text-fill: #1E1E1E;"/>
-        <Hyperlink
-            fx:id="registerLink"
-            text="Register"
-            onAction="#onGoToRegister"
-            style="-fx-font-size: 13px; -fx-text-fill: #5D3F25; -fx-font-weight: bold;"/>
-    </HBox>
+            fx:id="statusLabel"
+            styleClass="status-label"
+            text=""
+            wrapText="true"
+            maxWidth="360"/>
 
-</AnchorPane>
+        <!-- Login button -->
+        <Button
+            fx:id="loginButton"
+            styleClass="btn"
+            text="Log in"
+            maxWidth="Infinity"
+            onAction="#onLogin"/>
+
+        <!-- Register link -->
+        <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
+            <Label styleClass="muted-text" text="Don't have an account?"/>
+            <Hyperlink
+                fx:id="registerLink"
+                styleClass="register-link"
+                text="Register here"
+                onAction="#onGoToRegister"/>
+        </HBox>
+
+    </VBox>
+
+</StackPane>
