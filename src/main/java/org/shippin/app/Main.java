@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.NavigationUtilities;
-import org.shippin.dto.ShippinScreen;
 
 @Log4j2
 public class Main extends Application {
