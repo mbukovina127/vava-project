@@ -24,6 +24,7 @@ javafx {
 
 dependencies {
 
+
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")

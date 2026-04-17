@@ -1,5 +1,5 @@
 package org.shippin.dto;
 
-public enum ShippinScreen {
+public enum Screens {
     LOGIN, REGISTER, HOME
 }

@@ -1,106 +1,77 @@
 package org.shippin.controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
-public class CostEstimationController {
+import java.net.URL;
+import java.util.ResourceBundle;
 
-    // ── Top nav bar ──────────────────────────────────────────────────────────
-    @FXML private HBox      topNavBar;
-    @FXML private ImageView brandLogoImageView;
-    @FXML private Label     appNameLabel;
-    @FXML private Hyperlink navLink1;
-    @FXML private Hyperlink navLink2;
-    @FXML private Hyperlink navLink3;
-    @FXML private Hyperlink navLink4;
-    @FXML private Hyperlink navLink5;
-    @FXML private Label     currentDateLabel;
-    @FXML private Button    profileButton;
+public class CostEstimationController implements Initializable {
 
-    // ── Left sidebar ─────────────────────────────────────────────────────────
-    @FXML private VBox   leftSidebar;
-    @FXML private Button sidebarBtn1;
-    @FXML private Button sidebarBtn2;
-    @FXML private Button sidebarBtn3;
-    @FXML private Button sidebarBtn4;
-    @FXML private Button sidebarBtn5;
-    @FXML private Button sidebarBtn6;
-
-    // ── Content header ───────────────────────────────────────────────────────
+    // ── Title / Date ─────────────────────────────────────────────────────────
     @FXML private Label     sectionTitleLabel;
-    @FXML private TextField searchField;
+    @FXML private TextField dateField;
 
-    // ── Shipment details (left column) ───────────────────────────────────────
-    @FXML private Label              originLabel;
-    @FXML private TextField          originField;
-    @FXML private Label              destinationLabel;
-    @FXML private TextField          destinationField;
-    @FXML private Label              shipmentTypeLabel;
-    @FXML private ComboBox<String>   shipmentTypeCombo;
+    // ── Type toggles ─────────────────────────────────────────────────────────
+    @FXML private CheckBox chkSmallPackage;
+    @FXML private CheckBox chkShipment;
 
-    // ── Cargo details (right column) ─────────────────────────────────────────
-    @FXML private Label              weightLabel;
-    @FXML private TextField          weightField;
-    @FXML private Label              volumeLabel;
-    @FXML private TextField          volumeField;
-    @FXML private Label              cargoTypeLabel;
-    @FXML private ComboBox<String>   cargoTypeCombo;
+    // ── Postal codes ─────────────────────────────────────────────────────────
+    @FXML private ComboBox<String> fromCombo;
+    @FXML private TextField        destinationField;
 
-    // ── Address details grid ─────────────────────────────────────────────────
-    @FXML private CheckBox  chkRow1;
-    @FXML private TextField addRow1;
-    @FXML private TextField addrDetailRow1;
-    @FXML private TextField addrRow1;
+    // ── Size row ─────────────────────────────────────────────────────────────
+    @FXML private TextField weightField;
+    @FXML private TextField volumeField;
 
-    @FXML private CheckBox  chkRow2;
-    @FXML private TextField addRow2;
-    @FXML private TextField addrDetailRow2;
-    @FXML private TextField addrRow2;
+    // ── Coefficients row ─────────────────────────────────────────────────────
+    @FXML private TextField fuelSurchargeField;
+    @FXML private TextField tollField;
 
-    @FXML private CheckBox  chkRow3;
-    @FXML private TextField addRow3;
-    @FXML private TextField addrDetailRow3;
-    @FXML private TextField addrRow3;
+    // ── Additional fees — Obstarávané služby ─────────────────────────────────
+    @FXML private CheckBox chkAdditionalFees;
+    @FXML private CheckBox chkADR;
+    @FXML private CheckBox chkDobierka;
+    @FXML private CheckBox chkPripoistenie;
+    @FXML private CheckBox chkVratenieEUP;
 
-    @FXML private CheckBox  chkRow4;
-    @FXML private TextField addRow4;
-    @FXML private TextField addrDetailRow4;
-    @FXML private TextField addrRow4;
+    // ── Additional fees — Produkty pre ZBS ───────────────────────────────────
+    @FXML private CheckBox chkPremium;
+    @FXML private CheckBox chkFIX;
+    @FXML private CheckBox chkPremium10;
+    @FXML private CheckBox chkFIX10;
+    @FXML private CheckBox chkPremium13;
+    @FXML private CheckBox chkFIX13;
 
     // ── Result / status ──────────────────────────────────────────────────────
     @FXML private Label  statusLabel;
     @FXML private HBox   resultBox;
     @FXML private Label  estimatedCostLabel;
+
+    // ── Buttons ──────────────────────────────────────────────────────────────
     @FXML private Button resetButton;
     @FXML private Button computeButton;
 
-    // ── Nav handlers ─────────────────────────────────────────────────────────
-    @FXML private void onNavHome() {}
-    @FXML private void onNavNewShipment() {}
-    @FXML private void onNavSchedule() {}
-    @FXML private void onNavShipmentOrder() {}
-    @FXML private void onNavCostEstimate() {}
-    @FXML private void onProfileClicked() {}
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // ── Sidebar handlers ─────────────────────────────────────────────────────
-    @FXML private void onSidebarBtn1() {}
-    @FXML private void onSidebarBtn2() {}
-    @FXML private void onSidebarBtn3() {}
-    @FXML private void onSidebarBtn4() {}
-    @FXML private void onSidebarBtn5() {}
-    @FXML private void onSidebarBtn6() {}
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Populate From combo
+        fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
+        fromCombo.setValue("Sklad BA");
+
+        // Additional fees body visibility bound to header checkbox
+//        chkAdditionalFees.selectedProperty().addListener((obs, oldVal, selected) -> {
+//            // TODO: show/hide fees section if needed
+//        });
+    }
 
     // ── Action handlers ──────────────────────────────────────────────────────
-    @FXML
-    private void onReset() {
-
-    }
 
     @FXML
-    private void onComputeCost() {
-
-    }
+    private void onReset() {}
+    @FXML
+    private void onComputeCost() {}
 }

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="org.shippin.controller.MenuController"
+        styleClass="menu-root"
+        stylesheets="@../css/menu-page.css"
+        prefWidth="1440"
+        prefHeight="820"
+        minWidth="1440"
+        minHeight="820"
+        maxWidth="1440"
+        maxHeight="820">
+
+    <top>
+        <HBox
+                fx:id="topNavBar"
+                prefHeight="100"
+                prefWidth="1440"
+                alignment="CENTER_LEFT"
+                styleClass="nav-bar">
+
+            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                <ImageView
+                        fx:id="brandLogoImageView"
+                        fitWidth="55"
+                        fitHeight="55"
+                        preserveRatio="true"/>
+                <Label
+                        fx:id="appNameLabel"
+                        text="Shipinn"
+                        styleClass="nav-app-name"/>
+            </HBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="14">
+                <Label
+                        fx:id="currentDateLabel"
+                        text=""
+                        styleClass="nav-date"/>
+                <Button
+                        fx:id="profileButton"
+                        onAction="#onProfileClicked"
+                        styleClass="profile-btn"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox
+                fx:id="leftSidebar"
+                prefWidth="100"
+                prefHeight="720"
+                spacing="0"
+                alignment="TOP_CENTER"
+                styleClass="sidebar">
+
+            <Button
+                    fx:id="sidebarBtn1"
+                    onAction="#onSidebarBtn1"
+                    styleClass="sidebar-btn-active">
+                <VBox.margin>
+                    <Insets top="14" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+            <Button
+                    fx:id="sidebarBtn2"
+                    onAction="#onSidebarBtn2"
+                    styleClass="sidebar-btn">
+                <VBox.margin>
+                    <Insets top="100" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+            <Button
+                    fx:id="sidebarBtn3"
+                    onAction="#onSidebarBtn3"
+                    styleClass="sidebar-btn">
+                <VBox.margin>
+                    <Insets top="100" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+            <Button
+                    fx:id="sidebarBtn4"
+                    onAction="#onSidebarBtn4"
+                    styleClass="sidebar-btn">
+                <VBox.margin>
+                    <Insets top="100" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+            <Button
+                    fx:id="sidebarBtn5"
+                    onAction="#onSidebarBtn5"
+                    styleClass="sidebar-btn">
+                <VBox.margin>
+                    <Insets top="100" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+            <Button
+                    fx:id="sidebarBtn6"
+                    onAction="#onSidebarBtn6"
+                    styleClass="sidebar-btn">
+                <VBox.margin>
+                    <Insets top="100" left="13" right="14"/>
+                </VBox.margin>
+            </Button>
+
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    pannable="true"
+                    styleClass="content-scroll">
+            <content>
+                <StackPane fx:id="contentArea"
+                           styleClass="content-area"
+                           maxWidth="Infinity"
+                           maxHeight="Infinity">
+                    <padding>
+                        <Insets top="24" right="24" bottom="24" left="24"/>
+                    </padding>
+                </StackPane>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
