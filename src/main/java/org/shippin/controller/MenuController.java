@@ -59,6 +59,7 @@ public class MenuController implements Initializable {
             var resource = getClass().getResource(Screens.resolveScreen(screen));
             Node node = FXMLLoader.load(resource);
             contentArea.getChildren().setAll(node);
+            log.debug("Loaded screen: {}, into the main container", screen);
         } catch (IOException e) {
             log.error("Failed to load screen: {}", screen, e);
         }
@@ -72,42 +73,54 @@ public class MenuController implements Initializable {
         for (int i = 0; i < NAV_ITEMS.size(); i++) {
             NavItem item = NAV_ITEMS.get(i);
             Button btn = new Button();
-            btn.getStyleClass().add(i == 0 ? "sidebar-btn-active" : "sidebar-btn"); // the first is active
+            boolean isFirst = i == 0;
+            btn.getStyleClass().add(isFirst ? "sidebar-btn-active" : "sidebar-btn");
 
+            ImageView icon = null;
             if (!item.icon_dark().isEmpty()) {
-                var stream = getClass().getResourceAsStream(item.icon_dark());
+                String initialIcon = isFirst ? item.icon_light() : item.icon_dark();
+                var stream = getClass().getResourceAsStream(initialIcon);
                 if (stream != null) {
-                    ImageView icon = new ImageView(new Image(stream));
+                    icon = new ImageView(new Image(stream));
                     icon.setFitWidth(40);
                     icon.setFitHeight(40);
                     icon.setPreserveRatio(true);
                     btn.setGraphic(icon);
                 } else {
-                    log.warn("Icon not found: {}", item.icon_dark());
+                    log.warn("Icon for menu item: {} - not found: {}", item, initialIcon);
                 }
             }
 
-            Insets margin = new Insets(10, 5, 0, 5); // the first one has 0
-
-            VBox.setMargin(btn, margin);
-
+            final ImageView finalIcon = icon;
+            VBox.setMargin(btn, new Insets(10, 5, 0, 5));
             buttons.add(btn);
+
             btn.setOnAction(e -> {
                 if (item.screen() == null) {
                     log.error("Cannot load null screen, (btn= {}, item= {})", btn, item);
                     return;
                 }
-                buttons.forEach(b -> {
+                for (int j = 0; j < buttons.size(); j++) {
+                    Button b = buttons.get(j);
                     b.getStyleClass().setAll("sidebar-btn");
-                });
-                loadPage(item.screen);
+                    NavItem ni = NAV_ITEMS.get(j);
+                    if (!ni.icon_dark().isEmpty()) {
+                        var s = getClass().getResourceAsStream(ni.icon_dark());
+                        if (s != null) ((ImageView) b.getGraphic()).setImage(new Image(s));
+                    }
+                }
                 btn.getStyleClass().setAll("sidebar-btn-active");
+                if (finalIcon != null) {
+                    var s = getClass().getResourceAsStream(item.icon_light());
+                    if (s != null) finalIcon.setImage(new Image(s));
+                }
+                loadPage(item.screen());
             });
 
             leftSidebar.getChildren().add(btn);
         }
 
-        loadPage(NAV_ITEMS.get(0).screen);
+        loadPage(NAV_ITEMS.get(0).screen());
     }
 
     @FXML private void onProfileClicked() {}
