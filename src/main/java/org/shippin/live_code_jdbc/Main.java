@@ -1,9 +1,14 @@
 package org.shippin.live_code_jdbc;
 
-import java.net.URISyntaxException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.nio.file.Paths;
 import java.net.URL;
+import java.net.URISyntaxException;
+import java.sql.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,17 +22,19 @@ public class Main {
         selectUsers();
         insertUser("Viki", "Nova", 21, "viki@test.com");
         selectUsers();
-		tryCatchExample();
-        tryCatchExampleWithError();
-        batchOperation();
-        //updateUser("first_name","Maximilian",id);
-        //deleteUser(id);
+		//tryCatchExample();
+        //tryCatchExampleWithError();
+        //batchOperation();
+        //updateUser("first_name","Maximilian",8);
 
-        try {
-            new Examples().run();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        deleteUser(8);
+        selectUsers();
+
+//        try {
+//            new Examples().run();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 
@@ -45,7 +52,7 @@ public class Main {
             try (Connection conn = DriverManager.getConnection(url);
                  Statement stmt = conn.createStatement();
 
-                 ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE first_name LIKE 'V%'  LIMIT 5")) {
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE first_name LIKE 'M%'  LIMIT 2,5")) {
 
                 System.out.println("SELECT * FROM users LIMIT 5:");
                 while (rs.next()) {
@@ -74,10 +81,12 @@ public class Main {
             String path = Paths.get(dbUrl.toURI()).toString();
             String url = "jdbc:sqlite:" + path;
 
-            String sql = "INSERT INTO users (first_name, last_name, age, email) VALUES (?, ?, ?, ?)";
-
             try (Connection conn = DriverManager.getConnection(url);
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                 PreparedStatement ps = conn.prepareStatement(
+                            "INSERT INTO users " +
+                                 "(first_name, last_name, age, email)" +
+                                 " VALUES (?, ?, ?, ?)"
+                 )) {
 
                 ps.setString(1, name);
                 ps.setString(2, surname);
@@ -85,6 +94,7 @@ public class Main {
                 ps.setString(4, email);
 
                 int rows = ps.executeUpdate();
+
                 System.out.println("Inserted " + rows + " row(s) with name=" + name + " " + surname +
                         " age=" + age + " email=" + email);
 
@@ -96,62 +106,62 @@ public class Main {
     }
 
      public static void updateUser(String column, String newValue, int id) {
-    	try 
+    	try
     	{
-    		URL dbUrl = Main.class.getResource("/users.db");
+            URL dbUrl = Main.class.getResource("/users.db");
             if (dbUrl == null) {
                 logger.error("users.db not found in resources");
                 return;
             }
-	
+
             String path = Paths.get(dbUrl.toURI()).toString();
             String url = "jdbc:sqlite:" + path;
-	
+
 	    	String sql = "UPDATE users SET " + column + " = ? WHERE id = ?";
-	
+
 	    	try (Connection conn = DriverManager.getConnection(url);
 	    	     PreparedStatement ps = conn.prepareStatement(sql)) {
-	
+
 	    	        ps.setString(1, newValue);
 	    	        ps.setInt(2, id);
-	
+
 	    	        int rows = ps.executeUpdate();
 	    	        System.out.println("Updated " + rows + " row(s)");
 	    	    }
-	
+
 	    	} catch (Exception e) {
 	            logger.error("Error updating users", e);
 	        }
     	}
-    
+
     public static void deleteUser(int id) {
-    	try 
+    	try
     	{
     		URL dbUrl = Main.class.getResource("/users.db");
             if (dbUrl == null) {
                 logger.error("users.db not found in resources");
                 return;
             }
-	
+
             String path = Paths.get(dbUrl.toURI()).toString();
             String url = "jdbc:sqlite:" + path;
-	
+
 	    	String sql = "DELETE FROM users WHERE id = ?";
-	
+
 	    	try (Connection conn = DriverManager.getConnection(url);
 	    	     PreparedStatement ps = conn.prepareStatement(sql)) {
-	
+
 	    	        ps.setInt(1, id);
-	
+
 	    	        int rows = ps.executeUpdate();
 	    	        System.out.println("Deleted " + rows + " row(s)");
 	    	    }
-	
+
 	    	} catch (Exception e) {
 	            logger.error("Error deleting users", e);
 	        }
     	}
-    
+
 	public static void tryCatchExample() {
         URL dbUrl = Main.class.getResource("/users.db");
         if (dbUrl == null) {
@@ -193,7 +203,7 @@ public class Main {
             logger.error("Invalid path to users.db", e);
         }
     }
-    
+
     public static void tryCatchExampleWithError() {
         URL dbUrl = Main.class.getResource("/users.db");
         if (dbUrl == null) {
