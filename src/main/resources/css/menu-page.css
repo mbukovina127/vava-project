@@ -1,0 +1,149 @@
+/* ============================================
+   menu.css — Styles for Menu.fxml
+   Consistent with shipinn.css base theme
+   ============================================ */
+
+/* ---------- Root ---------- */
+.menu-root {
+    -fx-background-color: #FFFFFF;
+}
+
+/* ---------- Top nav bar ---------- */
+.nav-bar {
+    -fx-background-color: #F5D9C4;
+    -fx-border-color: #1D0000;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 20 0 20;
+}
+
+/* App name label */
+.nav-app-name {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* Nav hyperlinks */
+.nav-link {
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-text-fill: #2C2C2C;
+    -fx-border-color: transparent;
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.nav-link:hover {
+    -fx-text-fill: #5D3F25;
+    -fx-underline: true;
+}
+
+/* Active / bold nav link */
+.nav-link-active {
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-border-color: transparent;
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.nav-link-active:hover {
+    -fx-text-fill: #5D3F25;
+}
+
+/* Date label */
+.nav-date {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B5B52;
+}
+
+/* Profile circle button */
+.profile-btn {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-min-width: 50;
+    -fx-min-height: 50;
+    -fx-pref-width: 50;
+    -fx-pref-height: 50;
+}
+
+.profile-btn:hover {
+    -fx-background-color: #F5D9C4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
+}
+
+.profile-btn:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+}
+
+/* ---------- Left sidebar ---------- */
+.sidebar {
+    -fx-background-color: #F5D9C4;
+    -fx-border-color: #1D0000;
+    -fx-border-width: 0 2 0 0;
+}
+
+/* Sidebar button — default (inactive) */
+.sidebar-btn {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 2;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-cursor: hand;
+    -fx-pref-width: 73;
+    -fx-pref-height: 73;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #F5D9C4;
+    -fx-effect: dropshadow(gaussian, rgba(93,63,37,0.2), 8, 0, 0, 2);
+}
+
+.sidebar-btn:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* Sidebar button — active state */
+.sidebar-btn-active {
+    -fx-background-color: #5D3F25;
+    -fx-border-color: #1D0000;
+    -fx-border-width: 2;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-cursor: hand;
+    -fx-pref-width: 73;
+    -fx-pref-height: 73;
+}
+
+.sidebar-btn-active:hover {
+    -fx-background-color: #7A5232;
+    -fx-effect: dropshadow(gaussian, rgba(93,63,37,0.35), 10, 0, 0, 3);
+}
+
+/* ---------- Content / ScrollPane ---------- */
+
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.content-area {
+    -fx-background-color: transparent;
+}
+
+.content-scroll > .viewport {
+    -fx-background-color: transparent;
+}

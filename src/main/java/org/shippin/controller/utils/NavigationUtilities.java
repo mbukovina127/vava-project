@@ -34,7 +34,7 @@ public class NavigationUtilities {
         return switch (screen) {
             case LOGIN -> "/views/Login.fxml";
             case REGISTER -> "/views/Register.fxml";
-            case HOME -> "/views/Cost_estimation.fxml";
+            case HOME -> "/views/Menu.fxml";
         };
     }
 }

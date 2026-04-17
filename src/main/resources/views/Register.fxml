@@ -1,224 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml"
-    fx:controller="org.shippin.controller.RegisterController"
-    prefWidth="1440"
-    prefHeight="820"
-    style="-fx-background-color: #FFE4CC;">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-    <!-- App Logo / Brand area -->
-    <ImageView
-        fx:id="logoImageView"
-        layoutX="578"
-        layoutY="177"
-        fitWidth="284"
-        fitHeight="88"
-        preserveRatio="true"
-        AnchorPane.leftAnchor="578"
-        AnchorPane.topAnchor="177"/>
+<StackPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="org.shippin.controller.RegisterController"
+        prefWidth="1440"
+        prefHeight="820"
+        styleClass="root-pane"
+        stylesheets="@../css/shipinn.css, @../css/register-page.css">
 
-    <!-- Page Title -->
-    <Label
-        fx:id="pageTitleLabel"
-        text="Name"
-        layoutX="437"
-        layoutY="236"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="236"/>
+    <VBox
+            styleClass="card"
+            maxWidth="380"
+            spacing="0"
+            alignment="TOP_CENTER">
 
-    <!-- First Name TextField (left half) -->
-    <TextField
-        fx:id="firstNameField"
-        promptText="First name"
-        layoutX="436"
-        layoutY="266"
-        prefWidth="265"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="266"/>
+        <!-- Logo -->
+        <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
+            <Label styleClass="logo-name" text="Shipinn"/>
+        </HBox>
 
-    <!-- Last Name TextField (right half) -->
-    <TextField
-        fx:id="lastNameField"
-        promptText="Last name"
-        layoutX="723"
-        layoutY="266"
-        prefWidth="281"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="723"
-        AnchorPane.topAnchor="266"/>
+        <!-- Name + Surname row -->
+        <GridPane styleClass="name-row" hgap="12">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
 
-    <!-- Email Label -->
-    <Label
-        fx:id="emailLabel"
-        text="Email"
-        layoutX="437"
-        layoutY="346"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="346"/>
+            <!-- Name -->
+            <VBox GridPane.columnIndex="0" spacing="4">
+                <Label styleClass="field-label" text="Name"/>
+                <TextField
+                        fx:id="firstNameField"
+                        styleClass="input-field"
+                        promptText="Value"/>
+            </VBox>
 
-    <!-- Email TextField -->
-    <TextField
-        fx:id="emailField"
-        promptText="Enter your email"
-        layoutX="436"
-        layoutY="361"
-        prefWidth="568"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="361"/>
+            <!-- Surname -->
+            <VBox GridPane.columnIndex="1" spacing="4">
+                <Label styleClass="field-label" text="Surname"/>
+                <TextField
+                        fx:id="lastNameField"
+                        styleClass="input-field"
+                        promptText="Value"/>
+            </VBox>
+        </GridPane>
 
-    <!-- Password Label -->
-    <Label
-        fx:id="passwordLabel"
-        text="Password"
-        layoutX="437"
-        layoutY="441"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="441"/>
+        <!-- Spacer -->
+        <Region prefHeight="12"/>
 
-    <!-- Password PasswordField -->
-    <PasswordField
-        fx:id="passwordField"
-        promptText="Create a password"
-        layoutX="436"
-        layoutY="456"
-        prefWidth="568"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="456"/>
+        <!-- Email -->
+        <Label styleClass="field-label" text="Email"/>
+        <TextField
+                fx:id="emailField"
+                styleClass="input-field"
+                promptText="Value"/>
 
-    <!-- Confirm Password Label -->
-    <Label
-        fx:id="confirmPasswordLabel"
-        text="Confirm Password"
-        layoutX="437"
-        layoutY="536"
-        style="-fx-font-size: 14px; -fx-text-fill: #1E1E1E; -fx-font-family: 'System';"
-        AnchorPane.leftAnchor="437"
-        AnchorPane.topAnchor="536"/>
+        <!-- Spacer -->
+        <Region prefHeight="12"/>
 
-    <!-- Confirm Password PasswordField -->
-    <PasswordField
-        fx:id="confirmPasswordField"
-        promptText="Repeat your password"
-        layoutX="436"
-        layoutY="551"
-        prefWidth="568"
-        prefHeight="44"
-        style="-fx-background-color: rgba(255,255,255,0.96);
-               -fx-border-color: black;
-               -fx-border-width: 1.5;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-font-size: 14px;
-               -fx-padding: 0 12 0 12;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="551"/>
+        <!-- Password -->
+        <Label styleClass="field-label" text="Password"/>
+        <PasswordField
+                fx:id="passwordField"
+                styleClass="input-field"
+                promptText="Value"/>
 
-    <!-- Error / Status Label -->
-    <Label
-        fx:id="statusLabel"
-        text=""
-        layoutX="436"
-        layoutY="608"
-        prefWidth="568"
-        style="-fx-text-fill: #cc0000; -fx-font-size: 12px;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="608"/>
+        <!-- Spacer -->
+        <Region prefHeight="12"/>
 
-    <!-- Terms and Conditions checkbox -->
-    <HBox
-        layoutX="436"
-        layoutY="622"
-        spacing="8"
-        alignment="CENTER_LEFT"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="622">
-        <CheckBox
-            fx:id="termsCheckBox"
-            style="-fx-font-size: 13px;"/>
+        <!-- Repeat Password -->
+        <Label styleClass="field-label" text="Repeat Password"/>
+        <PasswordField
+                fx:id="confirmPasswordField"
+                styleClass="input-field"
+                promptText="Value"/>
+
+        <!-- Status / error label -->
         <Label
-            text="I agree to the "
-            style="-fx-font-size: 13px; -fx-text-fill: #1E1E1E;"/>
-        <Hyperlink
-            fx:id="termsLink"
-            text="Terms and Conditions"
-            onAction="#onShowTerms"
-            style="-fx-font-size: 13px; -fx-text-fill: #5D3F25; -fx-font-weight: bold;"/>
-    </HBox>
+                fx:id="statusLabel"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
-    <!-- Register Button -->
-    <Button
-        fx:id="registerButton"
-        text="Register"
-        layoutX="436"
-        layoutY="655"
-        prefWidth="568"
-        prefHeight="44"
-        onAction="#onRegister"
-        style="-fx-background-color: #5D3F25;
-               -fx-text-fill: white;
-               -fx-font-size: 15px;
-               -fx-font-weight: bold;
-               -fx-border-radius: 8;
-               -fx-background-radius: 8;
-               -fx-cursor: hand;"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="655"/>
+        <!-- Sign up button -->
+        <Button
+                fx:id="registerButton"
+                styleClass="btn"
+                text="Sign up as user"
+                maxWidth="Infinity"
+                onAction="#onRegister"/>
 
-    <!-- Login redirect -->
-    <HBox
-        layoutX="436"
-        layoutY="715"
-        spacing="6"
-        alignment="CENTER_LEFT"
-        AnchorPane.leftAnchor="436"
-        AnchorPane.topAnchor="715">
-        <Label
-            text="Already have an account?"
-            style="-fx-font-size: 13px; -fx-text-fill: #1E1E1E;"/>
-        <Hyperlink
-            fx:id="loginLink"
-            text="Login"
-            onAction="#onGoToLogin"
-            style="-fx-font-size: 13px; -fx-text-fill: #5D3F25; -fx-font-weight: bold;"/>
-    </HBox>
+        <!-- Login link -->
+        <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
+            <Label styleClass="muted-text" text="Already have an account?"/>
+            <Hyperlink
+                    fx:id="loginLink"
+                    styleClass="register-link"
+                    text="Log in here"
+                    onAction="#onGoToLogin"/>
+        </HBox>
 
-</AnchorPane>
+    </VBox>
+
+</StackPane>
