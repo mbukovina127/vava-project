@@ -2,8 +2,6 @@ package org.shippin.controller.utils;
 
 import org.shippin.dto.RegPattern;
 
-import java.util.regex.Pattern;
-
 public class InputValidator {
 
     public static boolean isValidLength(String value) {
