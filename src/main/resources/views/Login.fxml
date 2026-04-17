@@ -30,7 +30,7 @@
         <TextField
                 fx:id="emailTextField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="email"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
@@ -41,7 +41,7 @@
         <PasswordField
                 fx:id="passwordField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="password"/>
 
         <!-- Status / error label -->
         <Label
