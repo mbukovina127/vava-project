@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    kotlin("jvm")
 
 }
 
@@ -9,7 +10,7 @@ group = "org.shippin"
 version = "1.0-SNAPSHOT"
 
 application {
-    mainClass.set("org.shippin.app.Main")
+    mainClass.set("org.shippin.app.Launcher")
 }
 
 repositories {
@@ -42,8 +43,15 @@ dependencies {
     //JUnit
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(kotlin("stdlib-jdk8"))
+
+    //jqwik
+    implementation("net.jqwik:jqwik:1.9.3")
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(25)
 }

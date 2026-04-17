@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 public abstract class CoreShipmentInfo{
     private int id;
-    private String name;
+    //private String name;
     private Date deliveryDate; // TODO by malo mat iny nazov
     //    private String sourcePostalCode;
     private String destinationPostalCode;

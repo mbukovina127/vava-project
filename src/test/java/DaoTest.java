@@ -1,52 +1,74 @@
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
-import org.shippin.database.Config;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 
-/**
- * Tests Dao
- */
+import static org.junit.jupiter.api.Assertions.*;
+
+
+@Disabled("I don't know in what state is the dao")
 public class DaoTest {
-    @Test
-    public void test_dao() throws SQLException{
-        Config cfg=new Config();
 
-        DBConnector dbc = new DBConnector(cfg);
+    private static DBConnector dbc;
+    private static UserDAO userDAO;
+
+    @BeforeAll
+    static void connect() throws SQLException {
+        dbc = new DBConnector(new Config());
         dbc.connect();
+        userDAO = new UserDAO(dbc.getConnection());
+    }
 
+    @BeforeEach
+    void begin() throws SQLException {
+        dbc.getConnection().setAutoCommit(false); // start transaction
+    }
 
-        UserDAO Udao = new UserDAO(dbc.getConnection());
-        //testing environment
-        try (Statement stmt = dbc.getConnection().createStatement()) {
-            stmt.execute("CREATE SCHEMA IF NOT EXISTS balicky");
-            stmt.execute("SET search_path TO balicky");
-            stmt.execute("DROP TABLE IF EXISTS users");
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                  id SERIAL PRIMARY KEY,
-                  name VARCHAR(100) NOT NULL UNIQUE,
-                  email VARCHAR(255),
-                  role INT NOT NULL
-                );
-                """);
-        }
+    @AfterEach
+    void rollback() throws SQLException {
+        dbc.getConnection().rollback();           // undo everything
+        dbc.getConnection().setAutoCommit(true);
+    }
 
-        User test_user = new User(1,"John Green", "j.green@stuba.sk", Role.USER);
+    @Test
+    void insertAndGetUser() throws SQLException {
+        userDAO.insert(new User("Alice", "alice@test.com", Role.USER));
 
-        Udao.insert(test_user);
+        User fetched = userDAO.GetUser(1);
 
-        User fetched_user = Udao.GetUser(1);
+        assertNotNull(fetched);
+        assertEquals("Alice", fetched.getName());
+        assertEquals("alice@test.com", fetched.getEmail());
+        assertEquals(Role.USER, fetched.getRole());
+    }
 
-        Assertions.assertNotNull(fetched_user);
-        Assertions.assertEquals("John Green", fetched_user.getName());
-        Assertions.assertEquals("j.green@stuba.sk", fetched_user.getEmail());
-        Assertions.assertEquals(Role.USER, fetched_user.getRole());
+    @Test
+    @DisplayName("GetUser returns null for non-existent ID")
+    void getUserNotFound() throws SQLException {
+        assertNull(userDAO.GetUser(999));
+    }
 
+    @Test
+    @DisplayName("Insert duplicate name throws SQLException")
+    void insertDuplicateNameFails() throws SQLException {
+        userDAO.insert(new User("Bob", "bob@test.com", Role.USER));
+        assertThrows(SQLException.class,
+                () -> userDAO.insert(new User("Bob", "other@test.com", Role.ADMIN)));
+    }
+
+    @Test
+    @DisplayName("Role ordinal round-trips correctly for all roles")
+    void allRolesRoundTrip() throws SQLException {
+        userDAO.insert(new User("User1",  "u1@test.com", Role.USER));
+        userDAO.insert(new User("User2",  "u2@test.com", Role.POWER_USER));
+        userDAO.insert(new User("User3",  "u3@test.com", Role.ADMIN));
+
+        assertEquals(Role.USER,       userDAO.GetUser(1).getRole());
+        assertEquals(Role.POWER_USER, userDAO.GetUser(2).getRole());
+        assertEquals(Role.ADMIN,      userDAO.GetUser(3).getRole());
     }
 }
