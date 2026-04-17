@@ -102,6 +102,8 @@
     -fx-cursor: hand;
     -fx-pref-width: 73;
     -fx-pref-height: 73;
+    -fx-alignment: center;
+    -fx-content-display: graphic-only;
 }
 
 .sidebar-btn:hover {
@@ -124,6 +126,8 @@
     -fx-cursor: hand;
     -fx-pref-width: 73;
     -fx-pref-height: 73;
+    -fx-alignment: center;
+    -fx-content-display: graphic-only;
 }
 
 .sidebar-btn-active:hover {

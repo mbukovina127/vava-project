@@ -5,16 +5,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import lombok.extern.log4j.Log4j2;
+import org.shippin.dto.Screens;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
+@Log4j2
 public class MenuController implements Initializable {
+    private record NavItem(Screens screen, String name, String icon_light, String icon_dark) {}
 
     // ── Top nav bar ──────────────────────────────────────────────────────────
     @FXML private HBox      topNavBar;
@@ -30,12 +41,11 @@ public class MenuController implements Initializable {
 
     // ── Left sidebar ─────────────────────────────────────────────────────────
     @FXML private VBox   leftSidebar;
-    @FXML private Button sidebarBtn1;
-    @FXML private Button sidebarBtn2;
-    @FXML private Button sidebarBtn3;
-    @FXML private Button sidebarBtn4;
-    @FXML private Button sidebarBtn5;
-    @FXML private Button sidebarBtn6;
+    private static final List<NavItem> NAV_ITEMS = List.of(
+            new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
+            new NavItem(Screens.LOGIN, "LOGIN", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
+            new NavItem(null, "Home", "", "")
+    );
 
 
     // CONTENT
@@ -43,67 +53,81 @@ public class MenuController implements Initializable {
 
 
     // ── Action handlers ──────────────────────────────────────────────────────
-    private void loadPage(String path) {
+    private void loadPage(Screens screen) {
+        // TODO place for privilage verification
         try {
-            var resource = getClass().getResource(path);
-            System.out.println("RESOURCE = " + resource);
-
+            var resource = getClass().getResource(Screens.resolveScreen(screen));
             Node node = FXMLLoader.load(resource);
             contentArea.getChildren().setAll(node);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to load screen: {}", screen, e);
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        loadPage("/views/CostEstimation.fxml");
+        List<Button> buttons = new ArrayList<>();
+
+        for (int i = 0; i < NAV_ITEMS.size(); i++) {
+            NavItem item = NAV_ITEMS.get(i);
+            Button btn = new Button();
+            btn.getStyleClass().add(i == 0 ? "sidebar-btn-active" : "sidebar-btn"); // the first is active
+
+            if (!item.icon_dark().isEmpty()) {
+                var stream = getClass().getResourceAsStream(item.icon_dark());
+                if (stream != null) {
+                    ImageView icon = new ImageView(new Image(stream));
+                    icon.setFitWidth(40);
+                    icon.setFitHeight(40);
+                    icon.setPreserveRatio(true);
+                    btn.setGraphic(icon);
+                } else {
+                    log.warn("Icon not found: {}", item.icon_dark());
+                }
+            }
+
+            Insets margin = new Insets(10, 5, 0, 5); // the first one has 0
+
+            VBox.setMargin(btn, margin);
+
+            buttons.add(btn);
+            btn.setOnAction(e -> {
+                if (item.screen() == null) {
+                    log.error("Cannot load null screen, (btn= {}, item= {})", btn, item);
+                    return;
+                }
+                buttons.forEach(b -> {
+                    b.getStyleClass().setAll("sidebar-btn");
+                });
+                loadPage(item.screen);
+                btn.getStyleClass().setAll("sidebar-btn-active");
+            });
+
+            leftSidebar.getChildren().add(btn);
+        }
+
+        loadPage(NAV_ITEMS.get(0).screen);
     }
-
-//    @FXML private void onNavHome() {
-//        loadPage("/views/Cost_estimation.fxml");
-//    }
-//    @FXML private void onNavNewShipment() {
-//        loadPage("/views/CostEstimation.fxml");
-//    }
-//    @FXML private void onNavSchedule() {}
-//    @FXML private void onNavShipmentOrder() {}
-//    @FXML private void onNavCostEstimate() {}
-
 
     @FXML private void onProfileClicked() {}
-    @FXML private void onSidebarBtn1() {
-        setActive(sidebarBtn1);
-        loadPage("/views/CostEstimation.fxml");
-    }
-    @FXML private void onSidebarBtn2() {
-        setActive(sidebarBtn2);
-        loadPage("/views/Test.fxml");
-    }
-    @FXML private void onSidebarBtn3() {
-
-    }
-    @FXML private void onSidebarBtn4() {}
-    @FXML private void onSidebarBtn5() {}
-    @FXML private void onSidebarBtn6() {}
 
     private void setActive(Button activeBtn) {
         // remove active from all
-        sidebarBtn1.getStyleClass().remove("sidebar-btn-active");
-        sidebarBtn2.getStyleClass().remove("sidebar-btn-active");
-        sidebarBtn3.getStyleClass().remove("sidebar-btn-active");
-        sidebarBtn4.getStyleClass().remove("sidebar-btn-active");
-        sidebarBtn5.getStyleClass().remove("sidebar-btn-active");
-        sidebarBtn6.getStyleClass().remove("sidebar-btn-active");
-
-        // add normal class back (optional safety)
-        sidebarBtn1.getStyleClass().add("sidebar-btn");
-        sidebarBtn2.getStyleClass().add("sidebar-btn");
-        sidebarBtn3.getStyleClass().add("sidebar-btn");
-        sidebarBtn4.getStyleClass().add("sidebar-btn");
-        sidebarBtn5.getStyleClass().add("sidebar-btn");
-        sidebarBtn6.getStyleClass().add("sidebar-btn");
+//        sidebarBtn1.getStyleClass().remove("sidebar-btn-active");
+//        sidebarBtn2.getStyleClass().remove("sidebar-btn-active");
+//        sidebarBtn3.getStyleClass().remove("sidebar-btn-active");
+//        sidebarBtn4.getStyleClass().remove("sidebar-btn-active");
+//        sidebarBtn5.getStyleClass().remove("sidebar-btn-active");
+//        sidebarBtn6.getStyleClass().remove("sidebar-btn-active");
+//
+//        // add normal class back (optional safety)
+//        sidebarBtn1.getStyleClass().add("sidebar-btn");
+//        sidebarBtn2.getStyleClass().add("sidebar-btn");
+//        sidebarBtn3.getStyleClass().add("sidebar-btn");
+//        sidebarBtn4.getStyleClass().add("sidebar-btn");
+//        sidebarBtn5.getStyleClass().add("sidebar-btn");
+//        sidebarBtn6.getStyleClass().add("sidebar-btn");
 
         // remove normal from clicked
         activeBtn.getStyleClass().remove("sidebar-btn");

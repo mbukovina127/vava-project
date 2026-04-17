@@ -60,59 +60,7 @@
                 alignment="TOP_CENTER"
                 styleClass="sidebar">
 
-            <Button
-                    fx:id="sidebarBtn1"
-                    onAction="#onSidebarBtn1"
-                    styleClass="sidebar-btn-active">
-                <VBox.margin>
-                    <Insets top="14" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
-
-            <Button
-                    fx:id="sidebarBtn2"
-                    onAction="#onSidebarBtn2"
-                    styleClass="sidebar-btn">
-                <VBox.margin>
-                    <Insets top="100" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
-
-            <Button
-                    fx:id="sidebarBtn3"
-                    onAction="#onSidebarBtn3"
-                    styleClass="sidebar-btn">
-                <VBox.margin>
-                    <Insets top="100" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
-
-            <Button
-                    fx:id="sidebarBtn4"
-                    onAction="#onSidebarBtn4"
-                    styleClass="sidebar-btn">
-                <VBox.margin>
-                    <Insets top="100" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
-
-            <Button
-                    fx:id="sidebarBtn5"
-                    onAction="#onSidebarBtn5"
-                    styleClass="sidebar-btn">
-                <VBox.margin>
-                    <Insets top="100" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
-
-            <Button
-                    fx:id="sidebarBtn6"
-                    onAction="#onSidebarBtn6"
-                    styleClass="sidebar-btn">
-                <VBox.margin>
-                    <Insets top="100" left="13" right="14"/>
-                </VBox.margin>
-            </Button>
+            <!--This is where the menu is loaded-->
 
         </VBox>
     </left>

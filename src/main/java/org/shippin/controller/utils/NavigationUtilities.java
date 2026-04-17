@@ -17,8 +17,12 @@ public class NavigationUtilities {
         primaryStage = stage;
     }
 
+    /**
+     * Navigate to a specific screen using Screens enum
+     * @param screen
+     */
     public static void navigateTo(Screens screen) {
-        String path = resolveScreen(screen);
+        String path = Screens.resolveScreen(screen);
         try {
             FXMLLoader loader = new FXMLLoader(NavigationUtilities.class.getResource(path));
             Parent root = loader.load();
@@ -28,13 +32,5 @@ public class NavigationUtilities {
             log.error("Failed to load screen: {}", screen, e);
             throw new RuntimeException("Failed to load screen: " + screen, e);
         }
-    }
-
-    private static String resolveScreen(Screens screen) {
-        return switch (screen) {
-            case LOGIN -> "/views/Login.fxml";
-            case REGISTER -> "/views/Register.fxml";
-            case HOME -> "/views/Menu.fxml";
-        };
     }
 }
