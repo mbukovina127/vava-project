@@ -1,0 +1,270 @@
+/* ============================================
+   cost_estimation.css — Cost Estimation screen
+   Consistent with shipinn.css base theme
+   ============================================ */
+
+/* ---------- Root ---------- */
+.ce-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+}
+
+/* ---------- Title row ---------- */
+.ce-title-row {
+    -fx-padding: 0 0 18 0;
+}
+
+.ce-title {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+.ce-date-label {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C2C2C;
+}
+
+.ce-date-field {
+    -fx-pref-width: 130;
+    -fx-pref-height: 34;
+}
+
+/* ---------- Toggle checkboxes (Small Package / Shipment) ---------- */
+.ce-toggle-row {
+    -fx-padding: 0 0 14 0;
+}
+
+.ce-toggle {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+    -fx-cursor: hand;
+}
+
+.ce-toggle:selected {
+    -fx-text-fill: #1E1E1E;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Field rows (Postal codes, Size, Coefficients) ---------- */
+.ce-field-row {
+    -fx-padding: 6 0 6 0;
+    -fx-min-height: 50;
+}
+
+.ce-row-label {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+.ce-sub-label {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+    -fx-padding: 0 8 0 0;
+}
+
+/* ---------- Shared input-field (from shipinn.css, duplicated for standalone use) ---------- */
+.input-field {
+    -fx-pref-height: 36;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8C0AE;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-padding: 0 12 0 12;
+    -fx-prompt-text-fill: #C4A899;
+}
+
+.input-field:focused {
+    -fx-border-color: #9A7A6E;
+    -fx-effect: dropshadow(gaussian, rgba(154,122,110,0.25), 6, 0, 0, 0);
+}
+
+/* ---------- From ComboBox ---------- */
+.ce-combo {
+    -fx-pref-height: 36;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8C0AE;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-cursor: hand;
+}
+
+.ce-combo:focused {
+    -fx-border-color: #9A7A6E;
+}
+
+/* ---------- To: field + icon button ---------- */
+.ce-to-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8C0AE;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-pref-height: 36;
+}
+
+.ce-to-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-prompt-text-fill: #C4A899;
+    -fx-padding: 0 0 0 10;
+    -fx-pref-width: 170;
+}
+
+.ce-to-field:focused {
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+.ce-icon-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 16px;
+    -fx-text-fill: #6B5B52;
+    -fx-cursor: hand;
+    -fx-padding: 0 8 0 4;
+}
+
+.ce-icon-btn:hover {
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ---------- Separator ---------- */
+.ce-separator {
+    -fx-background-color: #D8C0AE;
+}
+
+/* ---------- Additional fees header ---------- */
+.ce-fees-header-row {
+    -fx-padding: 8 0 10 0;
+}
+
+/* ---------- Fees body ---------- */
+.ce-fees-body {
+    -fx-padding: 0 0 16 0;
+}
+
+.ce-fees-group-label {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+.ce-check {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+    -fx-cursor: hand;
+}
+
+.ce-check:selected {
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ---------- Result box ---------- */
+.ce-result-box {
+    -fx-padding: 12 18;
+    -fx-background-color: #F5EDE0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.ce-result-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+.ce-result-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5D3F25;
+}
+
+/* ---------- Status label ---------- */
+.status-label {
+    -fx-text-fill: #cc0000;
+    -fx-font-size: 12px;
+}
+
+/* ---------- Bottom row ---------- */
+.ce-bottom-row {
+    -fx-padding: 16 0 0 0;
+}
+
+.ce-dots {
+    -fx-font-size: 18px;
+    -fx-text-fill: #C4A899;
+    -fx-letter-spacing: 4;
+}
+
+/* Reset button */
+.ce-btn-reset {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1E1E1E;
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-pref-width: 130;
+    -fx-pref-height: 46;
+}
+
+.ce-btn-reset:hover {
+    -fx-background-color: #F5EDE0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 2);
+}
+
+.ce-btn-reset:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* Compute button */
+.ce-btn-compute {
+    -fx-background-color: #1E1E1E;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #1E1E1E;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-pref-width: 200;
+    -fx-pref-height: 46;
+}
+
+.ce-btn-compute:hover {
+    -fx-background-color: #3a3a3a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 14, 0, 0, 4);
+}
+
+.ce-btn-compute:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}

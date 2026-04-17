@@ -64,6 +64,7 @@
         <!-- Spacer -->
         <Region prefHeight="12"/>
 
+<!--        TODO: urobit očko ;)-->
         <!-- Password -->
         <Label styleClass="field-label" text="Password"/>
         <PasswordField
@@ -74,6 +75,7 @@
         <!-- Spacer -->
         <Region prefHeight="12"/>
 
+<!--        TODO: urobit očko ;)-->
         <!-- Repeat Password -->
         <Label styleClass="field-label" text="Repeat Password"/>
         <PasswordField

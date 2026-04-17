@@ -58,7 +58,7 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        loadPage("/views/Cost_estimation.fxml");
+        loadPage("/views/CostEstimation.fxml");
     }
 
 //    @FXML private void onNavHome() {
@@ -75,13 +75,15 @@ public class MenuController implements Initializable {
     @FXML private void onProfileClicked() {}
     @FXML private void onSidebarBtn1() {
         setActive(sidebarBtn1);
-        loadPage("/views/Cost_estimation.fxml");
+        loadPage("/views/CostEstimation.fxml");
     }
     @FXML private void onSidebarBtn2() {
         setActive(sidebarBtn2);
-        loadPage("/views/CostEstimation.fxml");
+        loadPage("/views/Test.fxml");
     }
-    @FXML private void onSidebarBtn3() {}
+    @FXML private void onSidebarBtn3() {
+
+    }
     @FXML private void onSidebarBtn4() {}
     @FXML private void onSidebarBtn5() {}
     @FXML private void onSidebarBtn6() {}

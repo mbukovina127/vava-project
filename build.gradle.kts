@@ -24,6 +24,7 @@ javafx {
 
 dependencies {
 
+
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
@@ -44,6 +45,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(kotlin("stdlib-jdk8"))
+
+    // TEST
+    implementation("net.jqwik:jqwik:1.9.3")
 }
 
 tasks.test {
