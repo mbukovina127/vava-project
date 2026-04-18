@@ -73,37 +73,76 @@ public class InputValidator {
         return value != null && !value.isBlank();
     }
 
-
-
     // TODO: max dlzka inputu?
-    public static List<String> validateLogin(String email, String password)
+    public static String validateEmail(String email)
     {
-        List<String> errors = new ArrayList<>();
-
-        // EMAIL CHECK ERR
         if (!isNotBlank(email))
         {
-            errors.add("Email je povinný.");
+            return "Email is required.";
         }
         else if (!isValidEmail(email))
         {
-            errors.add("Email nemá správny formát. Príklad: test@gmail.com");
+            return "Email format is invalid. Example: test@gmail.com";
         }
+        return "";
+    }
 
-        // PASSWORD CHECK ERR
+    // TODO: max dlzka inputu?
+    public static String validatePassword(String password)
+    {
         if (!isNotBlank(password))
         {
-            errors.add("Heslo je povinné.");
+            return "Password is required.";
         }
         else
         {
             if (!isValidPassword(password))
             {
-                errors.add("Heslo musí mať min. 8 znakov, veľké/malé písmeno, číslo a špeciálny znak.");
+                return "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.";
             }
         }
+        return "";
+    }
 
-        return errors;
+    // TODO: max dlzka inputu?
+    public static String validateFirstName(String firstName)
+    {
+        if (!isNotBlank(firstName))
+        {
+            return "First name is required.";
+        }
+        else
+        {
+            if (!matches(firstName, RegPattern.NAME))
+            {
+                return "Name can contain only letters, spaces, hyphens, or apostrophes between words.";
+            }
+        }
+        return "";
+    }
+
+    public static String validateLastName(String lastName)
+    {
+        if (!isNotBlank(lastName))
+        {
+            return "Last name is required.";
+        }
+        else
+        {
+            if (!matches(lastName, RegPattern.NAME))
+            {
+                return "Name can contain only letters, spaces, hyphens, or apostrophes between words.";
+            }
+        }
+        return "";
+    }
+
+    public static String comparePasswords(String password, String repeatedPassword)
+    {
+        if (!password.equals(repeatedPassword)) {
+            return "Passwords do not match.";
+        }
+        return "";
     }
 
 }

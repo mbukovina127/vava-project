@@ -19,7 +19,8 @@ public class LoginController {
 
     @FXML private TextField emailTextField;
     @FXML private PasswordField passwordField;
-    @FXML private Label statusLabel;
+    @FXML private Label statusLabelEmail;
+    @FXML private Label statusLabelPass;
 
     @FXML private void onLogin()
     {
@@ -28,10 +29,13 @@ public class LoginController {
         String password = passwordField.getText();
 
         // SYNTACTICAL VERIFICATION OF INPUT
-        List<String> errors = InputValidator.validateLogin(email, password);
+        String emailError = InputValidator.validateEmail(email);
+        String passwordError = InputValidator.validatePassword(password);
 
-        if (!errors.isEmpty()) {
-            statusLabel.setText(String.join("\n", errors));
+        if (!emailError.isEmpty() || !passwordError.isEmpty())
+        {
+            statusLabelEmail.setText(emailError);
+            statusLabelPass.setText(passwordError);
             return;
         }
 

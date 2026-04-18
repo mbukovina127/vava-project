@@ -32,8 +32,16 @@
                 styleClass="input-field"
                 promptText="email"/>
 
-        <!-- Spacer -->
-        <Region prefHeight="12"/>
+        <!-- error label (email) -->
+        <Label
+                fx:id="statusLabelEmail"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
+
+<!--        &lt;!&ndash; Spacer &ndash;&gt;-->
+<!--        <Region prefHeight="12"/>-->
 
 <!--        TODO: urobit očko ;)-->
         <!-- Password -->
@@ -43,9 +51,9 @@
                 styleClass="input-field"
                 promptText="password"/>
 
-        <!-- Status / error label -->
+        <!-- error label (password) -->
         <Label
-                fx:id="statusLabel"
+                fx:id="statusLabelPass"
                 styleClass="status-label"
                 text=""
                 wrapText="true"

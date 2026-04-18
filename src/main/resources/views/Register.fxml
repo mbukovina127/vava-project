@@ -38,7 +38,7 @@
                 <TextField
                         fx:id="firstNameField"
                         styleClass="input-field"
-                        promptText="Value"/>
+                        promptText="first name"/>
             </VBox>
 
             <!-- Surname -->
@@ -47,9 +47,19 @@
                 <TextField
                         fx:id="lastNameField"
                         styleClass="input-field"
-                        promptText="Value"/>
+                        promptText="last name"/>
+
             </VBox>
+
         </GridPane>
+
+        <!-- error label (ame) -->
+        <Label
+                fx:id="statusLabelName"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
@@ -59,7 +69,15 @@
         <TextField
                 fx:id="emailField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="email"/>
+
+        <!-- error label (email) -->
+        <Label
+                fx:id="statusLabelEmail"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
@@ -70,7 +88,15 @@
         <PasswordField
                 fx:id="passwordField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="password"/>
+
+        <!-- error label (password) -->
+        <Label
+                fx:id="statusLabelPass"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
@@ -81,11 +107,11 @@
         <PasswordField
                 fx:id="confirmPasswordField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="password"/>
 
-        <!-- Status / error label -->
+        <!-- error label (email) -->
         <Label
-                fx:id="statusLabel"
+                fx:id="statusLabelPassConfirm"
                 styleClass="status-label"
                 text=""
                 wrapText="true"
