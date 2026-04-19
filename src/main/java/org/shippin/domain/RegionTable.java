@@ -1,15 +1,20 @@
 package org.shippin.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RegionTable implements EntityTable<RegionTableEntry>{
+
+    private List<RegionTableEntry> entries = new ArrayList<>();
+
     @Override
     public List<RegionTableEntry> getEntries() {
-        return List.of();
+        return entries;
     }
 
     @Override
     public boolean setEntries(List<RegionTableEntry> entries) {
-        return false;
+        this.entries = entries;
+        return true;
     }
 }
