@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 @Log4j2
@@ -43,7 +42,7 @@ public class MenuController implements Initializable {
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
-            new NavItem(Screens.LOGIN, "LOGIN", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
+            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
             new NavItem(null, "Home", "", "")
     );
 
@@ -51,23 +50,38 @@ public class MenuController implements Initializable {
     // CONTENT
     @FXML private StackPane contentArea;
 
-
-    // ── Action handlers ──────────────────────────────────────────────────────
-    private void loadPage(Screens screen) {
-        // TODO place for privilage verification
+    // package-private — len BaseController to vidí
+    void loadScreen(Screens screen, Object data) {
         try {
-            var resource = getClass().getResource(Screens.resolveScreen(screen));
-            Node node = FXMLLoader.load(resource);
+            URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
+            if (fxmlUrl == null) {
+                throw new IllegalStateException("FXML not found: " + Screens.resolveScreen(screen));
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Node node = loader.load();
+
+            Object ctrl = loader.getController();
+
+            if (ctrl instanceof BaseController<?> bc) {
+                bc.setMenuController(this);
+            }
+
+            if (ctrl instanceof Navigatable nav) {
+                nav.onNavigatedTo(data);
+            }
+
             contentArea.getChildren().setAll(node);
-            log.debug("Loaded screen: {}, into the main container", screen);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             log.error("Failed to load screen: {}", screen, e);
+            throw new RuntimeException("Failed to load screen: " + screen, e);
         }
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
+    public void initialize(URL location, ResourceBundle resources)
+    {
         List<Button> buttons = new ArrayList<>();
 
         for (int i = 0; i < NAV_ITEMS.size(); i++) {
@@ -114,13 +128,13 @@ public class MenuController implements Initializable {
                     var s = getClass().getResourceAsStream(item.icon_light());
                     if (s != null) finalIcon.setImage(new Image(s));
                 }
-                loadPage(item.screen());
+                loadScreen(item.screen(),null);
             });
 
             leftSidebar.getChildren().add(btn);
         }
 
-        loadPage(NAV_ITEMS.get(0).screen());
+        loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
 
     @FXML private void onProfileClicked() {}

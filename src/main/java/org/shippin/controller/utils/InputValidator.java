@@ -139,7 +139,8 @@ public class InputValidator {
 
     public static String comparePasswords(String password, String repeatedPassword)
     {
-        if (!password.equals(repeatedPassword)) {
+        if (!password.equals(repeatedPassword))
+        {
             return "Passwords do not match.";
         }
         return "";

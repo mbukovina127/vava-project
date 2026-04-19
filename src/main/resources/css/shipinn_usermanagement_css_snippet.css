@@ -1,0 +1,92 @@
+/* ═══════════════════════════════════════════════════════════
+   User Management screen  –  append to shipinn.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Header ─────────────────────────────────────────────────── */
+.um-header {
+    -fx-padding: 24 24 16 24;
+}
+
+/* ── List container ─────────────────────────────────────────── */
+.um-list {
+    -fx-padding: 16 24 16 24;
+}
+
+/* ── Single user row ────────────────────────────────────────── */
+.um-row {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 20;
+    -fx-pref-height: 56;
+}
+
+/* ── Name label ─────────────────────────────────────────────── */
+.um-user-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ── Role pill container ─────────────────────────────────────── */
+.um-role-box {
+    -fx-spacing: 0;
+}
+
+/* ── Role toggle buttons (base) ─────────────────────────────── */
+.um-role-btn {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-pref-width: 80;
+    -fx-pref-height: 36;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+.um-role-btn:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+/* rounded left edge */
+.um-role-left {
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-radius: 6 0 0 6;
+}
+/* flat middle */
+.um-role-mid {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+/* rounded right edge */
+.um-role-right {
+    -fx-background-radius: 0 6 6 0;
+    -fx-border-radius: 0 6 6 0;
+}
+
+/* ── Active colours ─────────────────────────────────────────── */
+.um-active-user {
+    -fx-background-color: #f5e642;   /* yellow */
+    -fx-text-fill: #222222;
+}
+.um-active-power {
+    -fx-background-color: #f5a623;   /* orange */
+    -fx-text-fill: #ffffff;
+}
+.um-active-admin {
+    -fx-background-color: #e05555;   /* red/pink */
+    -fx-text-fill: #ffffff;
+}
+
+/* ── Delete button ───────────────────────────────────────────── */
+.um-btn-delete {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-padding: 4 8 4 8;
+}
+.um-btn-delete:hover {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 6;
+}

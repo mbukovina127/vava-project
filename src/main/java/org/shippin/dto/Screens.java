@@ -1,7 +1,7 @@
 package org.shippin.dto;
 
 public enum Screens {
-    LOGIN, REGISTER, HOME, COST_ESTIMATION;
+    LOGIN, REGISTER, HOME, COST_ESTIMATION,COST_BREAKDOWN, USER_MANAGEMENT;
 
     /**
      * @param screen
@@ -13,6 +13,8 @@ public enum Screens {
             case REGISTER -> "/views/Register.fxml";
             case HOME -> "/views/Menu.fxml";
             case COST_ESTIMATION -> "/views/CostEstimation.fxml";
+            case COST_BREAKDOWN -> "/views/CostBreakdown.fxml";
+            case USER_MANAGEMENT -> "/views/UserManagement.fxml";
         };
     }
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="org.shippin.controller.CostBreakdownController"
+        styleClass="cb-root"
+        stylesheets="@../css/shipinn.css"
+        prefWidth="1340"
+        spacing="0">
+
+    <Label
+            text="Shipment costs breakdown"
+            styleClass="page-title cb-title"/>
+
+    <!-- Main breakdown grid, populated dynamically from CostEstimationInput -->
+    <GridPane fx:id="breakdownGrid" styleClass="cb-grid" hgap="0" vgap="4">
+        <columnConstraints>
+            <!-- Label column -->
+            <ColumnConstraints hgrow="ALWAYS"/>
+            <!-- Value column, right-aligned -->
+            <ColumnConstraints minWidth="120" halignment="RIGHT"/>
+        </columnConstraints>
+        <padding><Insets top="16" right="24" bottom="8" left="24"/></padding>
+    </GridPane>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <HBox styleClass="cb-bottom-row" alignment="CENTER_LEFT" spacing="0">
+
+        <Button
+                fx:id="deleteButton"
+                text="Delete"
+                onAction="#onDelete"
+                styleClass="cb-btn-delete"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button
+                fx:id="printPdfButton"
+                text="Print PDF"
+                onAction="#onPrintPdf"
+                styleClass="btn-mid"
+                prefWidth="160"
+                prefHeight="46"/>
+
+        <Button
+                fx:id="saveButton"
+                text="Save estimation"
+                onAction="#onSave"
+                styleClass="btn"
+                prefWidth="200"
+                prefHeight="46">
+            <HBox.margin><Insets left="16"/></HBox.margin>
+        </Button>
+
+    </HBox>
+
+</VBox>

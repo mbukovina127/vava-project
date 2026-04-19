@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  Root is a StackPane so we can layer:
+    [0] the normal page content (VBox)
+    [1] dim overlay (Region, hidden by default)
+    [2] the dialog card (VBox, hidden by default)
+-->
+<StackPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="org.shippin.controller.UserManagementController"
+        stylesheets="@../css/shipinn.css,@../css/shipinn_usermanagement_css_snippet.css,@../css/shipinn_dialog_css_snippet.css"
+        prefWidth="1340">
+
+    <!-- ── Page content ─────────────────────────────────────────────────── -->
+    <VBox styleClass="cb-root" spacing="0">
+
+        <HBox alignment="CENTER_LEFT" styleClass="um-header">
+            <Label text="User management" styleClass="page-title cb-title" HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button
+                    fx:id="addUserButton"
+                    text="+ Add new user"
+                    onAction="#onAddUser"
+                    styleClass="btn"
+                    prefHeight="46"/>
+        </HBox>
+
+        <VBox fx:id="userListContainer" styleClass="um-list" spacing="10">
+            <padding><Insets top="16" right="0" bottom="16" left="0"/></padding>
+        </VBox>
+
+    </VBox>
+
+    <!-- ── Dim overlay (invisible until dialog opens) ───────────────────── -->
+    <Region
+            fx:id="dimOverlay"
+            styleClass="um-dim-overlay"
+            visible="false"
+            mouseTransparent="false"
+            onMouseClicked="#onOverlayClicked"/>
+
+    <!-- ── Dialog card (invisible until dialog opens) ───────────────────── -->
+    <VBox
+            fx:id="dialogCard"
+            styleClass="dialog-root"
+            visible="false"
+            maxWidth="420"
+            maxHeight="-Infinity"
+            spacing="0"
+            StackPane.alignment="CENTER">
+
+        <Label text="Add new user" styleClass="dialog-title">
+            <VBox.margin><Insets top="28" right="28" bottom="20" left="28"/></VBox.margin>
+        </Label>
+
+        <GridPane styleClass="dialog-form" hgap="12" vgap="14">
+            <padding><Insets right="28" bottom="0" left="28"/></padding>
+
+            <Label text="Name"    GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
+            <Label text="Surname" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
+
+            <TextField fx:id="nameField"    promptText="Value"
+                       GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="dialog-field"/>
+            <TextField fx:id="surnameField" promptText="Value"
+                       GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="dialog-field"/>
+
+            <Label text="Email" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
+            <TextField fx:id="emailField" promptText="Value"
+                       GridPane.columnIndex="0" GridPane.rowIndex="3"
+                       GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <Label text="Password" GridPane.columnIndex="0" GridPane.rowIndex="4"
+                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
+            <PasswordField fx:id="passwordField" promptText="Value"
+                           GridPane.columnIndex="0" GridPane.rowIndex="5"
+                           GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <Label text="Repeat Password" GridPane.columnIndex="0" GridPane.rowIndex="6"
+                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
+            <PasswordField fx:id="repeatPasswordField" promptText="Value"
+                           GridPane.columnIndex="0" GridPane.rowIndex="7"
+                           GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+            </columnConstraints>
+        </GridPane>
+
+        <Label fx:id="statusLabel" styleClass="dialog-status" wrapText="true">
+            <VBox.margin><Insets top="10" right="28" bottom="0" left="28"/></VBox.margin>
+        </Label>
+
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox.margin><Insets top="28" right="28" bottom="28" left="28"/></VBox.margin>
+            <Button text="Cancel"   onAction="#onCancel" styleClass="cb-btn-delete" prefWidth="140" prefHeight="46"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Add user" onAction="#onConfirmAddUser" styleClass="btn" prefWidth="180" prefHeight="46"/>
+        </HBox>
+
+    </VBox>
+
+</StackPane>
