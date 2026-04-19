@@ -10,8 +10,6 @@ import java.util.Objects;
 
 /**
  * Tests for WarehouseConvertor (bidirectional conversion between formatted CSV and domain DB models)
- *
- * Note(TODO): SmallPriceList converter/tests pending - waiting for SmallPriceListDAO to be implemented
  */
 public class WarehouseConvertorTest {
 
@@ -30,6 +28,8 @@ public class WarehouseConvertorTest {
         testToWarehouseFormatted_RegionTableConversion();
         testToWarehouse_NullPriceListAndRegionTable();
         testRoundTrip_FormattedToWarehouseAndBack();
+        testSmallPriceList_Conversion();
+        testSmallPriceListFormatted_Conversion();
 
         System.out.println("\n=== Results: " + passed + " passed, " + failed + " failed ===");
     }
@@ -245,6 +245,62 @@ public class WarehouseConvertorTest {
         assertEquals("roundtrip regionTable row count",
                 original.getRegionTable().getRows().size(),
                 roundTripped.getRegionTable().getRows().size());
+    }
+
+    private static void testSmallPriceList_Conversion() {
+        System.out.println("-- testSmallPriceList_Conversion --");
+
+        SmallPriceListFormatted formatted = new SmallPriceListFormatted();
+        formatted.addRow(new SmallPriceListRow(1f, 3.29f));
+        formatted.addRow(new SmallPriceListRow(3f, 3.57f));
+        formatted.addRow(new SmallPriceListRow(5f, 3.64f));
+
+        SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(formatted);
+
+        assertNotNull("smallPriceList", smallPriceList);
+        List<SmallPriceListEntry> entries = smallPriceList.getEntries();
+        assertEquals("smallPriceList entry count", 3, entries.size());
+
+        SmallPriceListEntry first = entries.getFirst();
+        assertFloatEquals("first entry weight", 1f, first.getWeight());
+        assertFloatEquals("first entry cost", 3.29f, first.getCost());
+
+        SmallPriceListEntry second = entries.get(1);
+        assertFloatEquals("second entry weight", 3f, second.getWeight());
+        assertFloatEquals("second entry cost", 3.57f, second.getCost());
+
+        SmallPriceListEntry third = entries.get(2);
+        assertFloatEquals("third entry weight", 5f, third.getWeight());
+        assertFloatEquals("third entry cost", 3.64f, third.getCost());
+    }
+
+    private static void testSmallPriceListFormatted_Conversion() {
+        System.out.println("-- testSmallPriceListFormatted_Conversion --");
+
+        SmallPriceList smallPriceList = new SmallPriceList();
+        List<SmallPriceListEntry> entries = new ArrayList<>();
+        entries.add(new SmallPriceListEntry(0, 1f, 3.29f));
+        entries.add(new SmallPriceListEntry(0, 3f, 3.57f));
+        entries.add(new SmallPriceListEntry(0, 5f, 3.64f));
+        smallPriceList.setEntries(entries);
+
+        SmallPriceListFormatted formatted = WarehouseConvertor.toSmallPriceListFormatted(smallPriceList);
+
+        assertNotNull("smallPriceListFormatted", formatted);
+        List<SmallPriceListRow> rows = formatted.getRows();
+        assertEquals("row count", 3, rows.size());
+
+        SmallPriceListRow first = rows.getFirst();
+        assertFloatEquals("first row weight", 1f, first.getWeight());
+        assertFloatEquals("first row cost", 3.29f, first.getCost());
+
+        SmallPriceListRow second = rows.get(1);
+        assertFloatEquals("second row weight", 3f, second.getWeight());
+        assertFloatEquals("second row cost", 3.57f, second.getCost());
+
+        SmallPriceListRow third = rows.get(2);
+        assertFloatEquals("third row weight", 5f, third.getWeight());
+        assertFloatEquals("third row cost", 3.64f, third.getCost());
     }
 
     // --- assertion helpers ---

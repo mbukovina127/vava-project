@@ -9,8 +9,6 @@ import java.util.List;
 
 /**
  * Bidirectional converter between formatted (CSV) and domain (DB) warehouse models.
- *
- * Note(TODO): SmallPriceList conversion pending - waiting for SmallPriceListDAO to be implemented
  */
 public class WarehouseConvertor {
 
@@ -113,6 +111,32 @@ public class WarehouseConvertor {
                     entry.getRegionCode(),
                     new ArrayList<>(entry.getRanges())
             );
+            formatted.addRow(row);
+        }
+
+        return formatted;
+    }
+
+    public static SmallPriceList toSmallPriceList(SmallPriceListFormatted formatted) {
+        SmallPriceList smallPriceList = new SmallPriceList();
+        List<SmallPriceListEntry> entries = new ArrayList<>();
+
+        for (SmallPriceListRow row : formatted.getRows()) {
+            SmallPriceListEntry entry = new SmallPriceListEntry();
+            entry.setWeight(row.getWeight());
+            entry.setCost(row.getCost());
+            entries.add(entry);
+        }
+
+        smallPriceList.setEntries(entries);
+        return smallPriceList;
+    }
+
+    public static SmallPriceListFormatted toSmallPriceListFormatted(SmallPriceList smallPriceList) {
+        SmallPriceListFormatted formatted = new SmallPriceListFormatted();
+
+        for (SmallPriceListEntry entry : smallPriceList.getEntries()) {
+            SmallPriceListRow row = new SmallPriceListRow(entry.getWeight(), entry.getCost());
             formatted.addRow(row);
         }
 
