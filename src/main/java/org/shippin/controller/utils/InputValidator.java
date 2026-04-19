@@ -1,28 +1,37 @@
 package org.shippin.controller.utils;
 
+import org.shippin.dto.RegPattern;
+
 import java.util.regex.Pattern;
 
+
 public class InputValidator {
+
+    public static boolean isValidLength(String value) {
+        return value != null && value.length() > 250;
+    }
 
     public static boolean isValidLength(String value, int maxLength) {
         return value != null && value.length() <= maxLength;
     }
 
-    public static boolean matches(String value, String regex) {
-        if (value == null) return false;
-        return value.matches(regex);
+    public static boolean matches(String value, RegPattern pattern) {
+        return value != null && pattern.getPattern().matcher(value).matches();
+    }
+    public static boolean matches(String value, RegPattern pattern, int minLength, int maxLength) {
+        return value != null
+                && value.length() >= minLength
+                && value.length() <= maxLength
+                && pattern.getPattern().matcher(value).matches();
     }
 
-    // RFC 5322-compliant email pattern
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-
-    private static final Pattern HAS_LOWERCASE  = Pattern.compile(".*[a-z].*");
-    private static final Pattern HAS_UPPERCASE  = Pattern.compile(".*[A-Z].*");
-    private static final Pattern HAS_DIGIT      = Pattern.compile(".*\\d.*");
-    private static final Pattern HAS_SPECIAL    = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+    private static final Pattern HAS_LOWERCASE = Pattern.compile(".*[a-z].*");
+    private static final Pattern HAS_UPPERCASE = Pattern.compile(".*[A-Z].*");
+    private static final Pattern HAS_DIGIT     = Pattern.compile(".*\\d.*");
+    private static final Pattern HAS_SPECIAL   = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
 
     public static boolean isValidEmail(String email) {
-        return email != null && EMAIL_PATTERN.matcher(email).matches();
+        return matches(email, RegPattern.EMAIL);
     }
 
     public static boolean passwordHasMinLength(String password) {
