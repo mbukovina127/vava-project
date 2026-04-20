@@ -47,8 +47,8 @@ public class WarehouseDAO extends BaseDAO {
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-                INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file)
-                VALUES (?,?,?)
+                INSERT INTO Warehouse(warehouse_id, warehouse_region_name,longitude,latitude,storage_region, price_list_file)
+                VALUES (?,?,?,?,?)
                 ON CONFLICT (warehouse_id)
                 DO UPDATE SET
                     warehouse_id = EXCLUDED.warehouse_id,

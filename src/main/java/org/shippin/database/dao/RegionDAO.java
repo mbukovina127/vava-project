@@ -122,7 +122,7 @@ public class RegionDAO extends BaseDAO {
      * add region to warehouse
      */
     public int insertRegion(String regionName, int warehouseId) throws SQLException {
-        String sql = "INSERT INTO Region(warehouse_ID, region_name)VALUES(?,?);"; //TODO
+        String sql = "INSERT INTO Region(warehouse_ID, region_name)VALUES(?,?);";
 
         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, regionName);

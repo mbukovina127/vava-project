@@ -149,30 +149,15 @@ public class PriceListDAO extends BaseDAO {
      * appends PriceListEntry to warehouse, returns its ID from db
      */
     public int insertPriceListEntry(PriceListEntry item, String sourceWarehouse) throws SQLException {
-        String insertParameter = ""; //TODO
-
-        PreparedStatement paramStmt = connection.prepareStatement(insertParameter, Statement.RETURN_GENERATED_KEYS);
+        String insertParameter = "INSERT INTO Parameter_list(region_ID,weight, volume, cost)VALUES(?,?,?,?)\n" +
+                "RETURNING parameter_list_ID;";
+        PreparedStatement paramStmt = connection.prepareStatement(insertParameter);
         paramStmt.setString(1, item.getZone());
         paramStmt.setFloat(2, item.getWeight());
         paramStmt.setFloat(3, item.getVolume());
         paramStmt.setFloat(4, item.getCost());
 
-        int affected = paramStmt.executeUpdate();
-        if (affected == 0) return -1;
-
-        ResultSet generatedKeys = paramStmt.getGeneratedKeys();
-        if (!generatedKeys.next()) return -1;
-        int newParameterID = generatedKeys.getInt(1);
-
-        String insertParameterList = "";//TODO
-
-        PreparedStatement listStmt = connection.prepareStatement(insertParameterList);
-        listStmt.setInt(1, newParameterID);
-        listStmt.setString(2, item.getZone());
-        listStmt.setString(3, sourceWarehouse);
-        listStmt.executeUpdate();
-
-        return newParameterID;
+        return paramStmt.executeUpdate();
     }
 
     /**
