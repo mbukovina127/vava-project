@@ -36,12 +36,12 @@ public class DaoTest {
 
     @Test
     void insertAndGetUser() throws SQLException {
-        userDAO.insert(new User("Alice","Berkele","alice@test.com", Role.USER));
+        userDAO.insert(new User("Alice","Goober","alice@test.com", Role.USER));
 
         User fetched = userDAO.GetUser(1);
 
         assertNotNull(fetched);
-        assertEquals("Alice", fetched.getName());
+        assertEquals("Alice", fetched.getFirstName());
         assertEquals("alice@test.com", fetched.getEmail());
         assertEquals(Role.USER, fetched.getRole());
     }
