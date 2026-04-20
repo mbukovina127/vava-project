@@ -18,7 +18,12 @@ public class RegionDAO extends BaseDAO {
      * gets all regions for warehouse
      */
     public RegionTable getRegionsForWarehouse(String warehouseName) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT r.region_ID, r.region_name, pc.up_bound, pc.down_bound
+                FROM Region r JOIN Postal_code_list pcl ON pcl.region_ID = r.region_ID
+                JOIN Postal_code pc ON pcl.postal_code_ID = pc.postal_code_ID
+                JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
+                WHERE w.warehouse_region_name = ?;""";
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
         ResultSet rs = stmt.executeQuery();
@@ -57,7 +62,13 @@ public class RegionDAO extends BaseDAO {
      *
      */
     public RegionTableEntry getRegion(String warehouseName, String regionCode) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT r.region_ID, r.region_name, pc.up_bound, pc.down_bound
+                FROM Region r JOIN Postal_code_list pcl ON pcl.region_ID = r.region_ID
+                JOIN Postal_code pc ON pcl.postal_code_ID = pc.postal_code_ID
+                JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
+                WHERE w.warehouse_region_name = ?
+                AND r.region_ID = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
@@ -80,11 +91,18 @@ public class RegionDAO extends BaseDAO {
      * get region by warehouseName& PSC
      */
     public RegionTableEntry getRegionByPsc(String warehouseName, int psc) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT r.region_ID, r.region_name, pc.up_bound, pc.down_bound
+                FROM Region r JOIN Postal_code_list pcl ON pcl.region_ID = r.region_ID
+                JOIN Postal_code pc ON pcl.postal_code_ID = pc.postal_code_ID
+                JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
+                WHERE w.warehouse_region_name = ?
+                AND pc.up_bound <= ? AND pc.down_bound >= ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
         stmt.setInt(2, psc);
+        stmt.setInt(3, psc);
         ResultSet rs = stmt.executeQuery();
 
         RegionTableEntry entry = null;
@@ -103,12 +121,12 @@ public class RegionDAO extends BaseDAO {
     /**
      * add region to warehouse
      */
-    public int insertRegion(String regionName, int warehouseid) throws SQLException {
-        String sql = ""; //TODO
+    public int insertRegion(String regionName, int warehouseId) throws SQLException {
+        String sql = "INSERT INTO Region(warehouse_ID, region_name)VALUES(?,?);"; //TODO
 
         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, regionName);
-        stmt.setInt(2, warehouseid);
+        stmt.setInt(2, warehouseId);
         stmt.executeUpdate();
 
         ResultSet keys = stmt.getGeneratedKeys();
@@ -119,17 +137,22 @@ public class RegionDAO extends BaseDAO {
      * add PSC range to region
      */
     public void insertPSCRange(int regionID, int downBound, int upBound) throws SQLException {
-        String insertPSC = ""; //TODO
+        String insertPSC = """
+                INSERT INTO Postal_code(up_bound, down_bound) VALUES(?,?)
+                ON CONFLICT (up_bound, down_bound) DO UPDATE
+                SET up_bound = EXCLUDED.up_bound
+                RETURNING postal_code_ID;""";
 
-        PreparedStatement pcStmt = connection.prepareStatement(insertPSC, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pcStmt = connection.prepareStatement(insertPSC);
         pcStmt.setInt(1, downBound);
         pcStmt.setInt(2, upBound);
-        pcStmt.executeUpdate();
 
-        ResultSet keys = pcStmt.getGeneratedKeys();
-        int postalCodeID = keys.getInt(1);
+        ResultSet rs = pcStmt.executeQuery();
+        rs.next();
 
-        String insertPostalCodeList = ""; //TODO
+        int postalCodeID = rs.getInt("postal_code_ID");
+
+        String insertPostalCodeList = "INSERT INTO Postal_code_list(region_ID, postal_code_ID)VALUES(?,?);";
 
         PreparedStatement listStmt = connection.prepareStatement(insertPostalCodeList);
         listStmt.setInt(1, regionID);

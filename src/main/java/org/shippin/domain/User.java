@@ -10,12 +10,14 @@ import org.shippin.domain.enums.Role;
 public class User {
 
     private int id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private Role role;
 
-    public User(String name, String email, Role role) {
-        this.name = name;
+    public User(Integer id, String firstName, String email, Role role) {
+        this.id = id;
+        this.firstName = firstName;
         this.email = email;
         this.role = role;
     }

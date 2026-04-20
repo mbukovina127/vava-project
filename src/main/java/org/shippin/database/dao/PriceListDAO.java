@@ -21,11 +21,16 @@ public class PriceListDAO extends BaseDAO {
      */
     public PriceList getPriceList(String sourceWarehouse, String regionName) throws SQLException {
         List<PriceListEntry> itemList = new ArrayList<>();
-        String sql = ""; //TODO
+        String sql = """
+                SELECT pl.parameter_list_ID,pl.weight, pl.volume, pl.cost
+                FROM Warehouse w
+                JOIN Region r ON w.warehouse_ID = r.warehouse_ID
+                JOIN Parameter_list pl ON pl.region_ID = r.region_ID
+                WHERE r.region_name = ? AND w.warehouse_region_name = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, sourceWarehouse);
-        stmt.setString(2, regionName);
+        stmt.setString(1, regionName);
+        stmt.setString(2, sourceWarehouse);
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
@@ -49,7 +54,12 @@ public class PriceListDAO extends BaseDAO {
      */
     public PriceList getFullPriceList(String sourceWarehouse) throws SQLException {
         List<PriceListEntry> itemList = new ArrayList<>();
-        String sql = ""; //TODO
+        String sql = """
+                SELECT r.region_name, pl.parameter_list_ID,pl.weight, pl.volume, pl.cost
+                FROM Warehouse w
+                JOIN Region r ON w.warehouse_ID = r.warehouse_ID
+                JOIN Parameter_list pl ON pl.region_ID = r.region_ID
+                WHERE w.warehouse_region_name = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, sourceWarehouse);
@@ -78,7 +88,12 @@ public class PriceListDAO extends BaseDAO {
      * get PriceListEntry for specific warehouse&region&weight
      */
     public PriceListEntry getPriceListEntryByWeight(String sourceWarehouse, String regionName, float weight) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT pl.parameter_list_ID,pl.weight, pl.volume, pl.cost
+                FROM Warehouse w
+                JOIN Region r ON w.warehouse_ID = r.warehouse_ID
+                JOIN Parameter_list pl ON pl.region_ID = r.region_ID
+                WHERE r.region_name = ? AND w.warehouse_region_name = ? AND pl.weight = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, sourceWarehouse);
@@ -102,7 +117,12 @@ public class PriceListDAO extends BaseDAO {
      * get PriceListEntry for specific warehouse&region&volume
      */
     public PriceListEntry getPriceListEntryByVolume(String sourceWarehouse, String regionName, float volume) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT pl.parameter_list_ID,pl.weight, pl.volume, pl.cost
+                FROM Warehouse w
+                JOIN Region r ON w.warehouse_ID = r.warehouse_ID
+                JOIN Parameter_list pl ON pl.region_ID = r.region_ID
+                WHERE r.region_name = ? AND w.warehouse_region_name = ? AND pl.volume = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, sourceWarehouse);
@@ -132,9 +152,10 @@ public class PriceListDAO extends BaseDAO {
         String insertParameter = ""; //TODO
 
         PreparedStatement paramStmt = connection.prepareStatement(insertParameter, Statement.RETURN_GENERATED_KEYS);
-        paramStmt.setFloat(1, item.getWeight());
-        paramStmt.setFloat(2, item.getVolume());
-        paramStmt.setFloat(3, item.getCost());
+        paramStmt.setString(1, item.getZone());
+        paramStmt.setFloat(2, item.getWeight());
+        paramStmt.setFloat(3, item.getVolume());
+        paramStmt.setFloat(4, item.getCost());
 
         int affected = paramStmt.executeUpdate();
         if (affected == 0) return -1;

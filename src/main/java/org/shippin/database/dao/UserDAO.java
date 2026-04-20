@@ -16,19 +16,20 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO users(name,email,role) VALUES (?,?,?)";
+        String sql = "INSERT INTO users(first_name,last_name,email,role) VALUES (?,?,?,?)";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
-        stmt.setString(1, user.getName());
-        stmt.setString(2, user.getEmail());
-        stmt.setInt(3, user.getRole().ordinal());
+        stmt.setString(1, user.getFirstName());
+        stmt.setString(2, user.getLastName());
+        stmt.setString(3, user.getEmail());
+        stmt.setInt(4, user.getRole().ordinal());
 
         stmt.executeUpdate();
     }
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT * FROM balicky.users WHERE id=?";
+        String sql = "SELECT * FROM users WHERE user_ID=?";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
