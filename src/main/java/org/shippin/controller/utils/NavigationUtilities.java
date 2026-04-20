@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-import org.shippin.dto.ShippinScreen;
+import org.shippin.dto.Screens;
 
 import java.io.IOException;
 
@@ -17,8 +17,12 @@ public class NavigationUtilities {
         primaryStage = stage;
     }
 
-    public static void navigateTo(ShippinScreen screen) {
-        String path = resolveScreen(screen);
+    /**
+     * Navigate to a specific screen using Screens enum
+     * @param screen
+     */
+    public static void navigateTo(Screens screen) {
+        String path = Screens.resolveScreen(screen);
         try {
             FXMLLoader loader = new FXMLLoader(NavigationUtilities.class.getResource(path));
             Parent root = loader.load();
@@ -28,13 +32,5 @@ public class NavigationUtilities {
             log.error("Failed to load screen: {}", screen, e);
             throw new RuntimeException("Failed to load screen: " + screen, e);
         }
-    }
-
-    private static String resolveScreen(ShippinScreen screen) {
-        return switch (screen) {
-            case LOGIN -> "/views/Login.fxml";
-            case REGISTER -> "/views/Register.fxml";
-            case HOME -> "/views/Cost_estimation.fxml";
-        };
     }
 }
