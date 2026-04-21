@@ -35,7 +35,7 @@ public class MenuController implements Initializable {
     @FXML private Hyperlink navLink3;
     @FXML private Hyperlink navLink4;
     @FXML private Hyperlink navLink5;
-    @FXML private Label     currentDateLabel;
+    @FXML private Label     UserNameLabel;
     @FXML private Button    profileButton;
 
     // ── Left sidebar ─────────────────────────────────────────────────────────
@@ -82,6 +82,9 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        //TODO dat meno usera zo session (get string)
+        //UserNameLabel.setText(username);
+
         List<Button> buttons = new ArrayList<>();
 
         for (int i = 0; i < NAV_ITEMS.size(); i++) {

@@ -40,7 +40,7 @@
 
             <HBox alignment="CENTER_RIGHT" spacing="14">
                 <Label
-                        fx:id="currentDateLabel"
+                        fx:id="UserNameLabel"
                         text=""
                         styleClass="nav-date"/>
                 <Button

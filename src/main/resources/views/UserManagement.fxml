@@ -59,34 +59,84 @@
             <VBox.margin><Insets top="28" right="28" bottom="20" left="28"/></VBox.margin>
         </Label>
 
-        <GridPane styleClass="dialog-form" hgap="12" vgap="14">
+        <GridPane styleClass="dialog-form" hgap="12" vgap="4">
             <padding><Insets right="28" bottom="0" left="28"/></padding>
 
+            <!-- row 0: Name / Surname labels -->
             <Label text="Name"    GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
             <Label text="Surname" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
 
-            <TextField fx:id="nameField"    promptText="Value"
+            <!-- row 1: Name / Surname fields -->
+            <TextField fx:id="nameField"    promptText="name"
                        GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="dialog-field"/>
-            <TextField fx:id="surnameField" promptText="Value"
+            <TextField fx:id="surnameField" promptText="surname"
                        GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="dialog-field"/>
 
-            <Label text="Email" GridPane.columnIndex="0" GridPane.rowIndex="2"
-                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
-            <TextField fx:id="emailField" promptText="Value"
-                       GridPane.columnIndex="0" GridPane.rowIndex="3"
-                       GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+            <!-- row 2: error label (name + surname) -->
+            <Label
+                    fx:id="statusLabelName"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="360"
+                    GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
 
-            <Label text="Password" GridPane.columnIndex="0" GridPane.rowIndex="4"
-                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
-            <PasswordField fx:id="passwordField" promptText="Value"
-                           GridPane.columnIndex="0" GridPane.rowIndex="5"
-                           GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+            <!-- row 3: Email label -->
+            <Label text="Email"
+                   GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"
+                   styleClass="dialog-field-label"/>
 
-            <Label text="Repeat Password" GridPane.columnIndex="0" GridPane.rowIndex="6"
-                   GridPane.columnSpan="2" styleClass="dialog-field-label"/>
-            <PasswordField fx:id="repeatPasswordField" promptText="Value"
-                           GridPane.columnIndex="0" GridPane.rowIndex="7"
-                           GridPane.columnSpan="2" styleClass="dialog-field" maxWidth="Infinity"/>
+            <!-- row 4: Email field -->
+            <TextField fx:id="emailField" promptText="email"
+                       GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"
+                       styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <!-- row 5: error label (email) -->
+            <Label
+                    fx:id="statusLabelEmail"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="360"
+                    GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+
+            <!-- row 6: Password label -->
+            <Label text="Password"
+                   GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"
+                   styleClass="dialog-field-label"/>
+
+            <!-- row 7: Password field -->
+            <PasswordField fx:id="passwordField" promptText="password"
+                           GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"
+                           styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <!-- row 8: error label (password) -->
+            <Label
+                    fx:id="statusLabelPass"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="360"
+                    GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"/>
+
+            <!-- row 9: Repeat Password label -->
+            <Label text="Repeat Password"
+                   GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2"
+                   styleClass="dialog-field-label"/>
+
+            <!-- row 10: Repeat Password field -->
+            <PasswordField fx:id="repeatPasswordField" promptText="password"
+                           GridPane.columnIndex="0" GridPane.rowIndex="10" GridPane.columnSpan="2"
+                           styleClass="dialog-field" maxWidth="Infinity"/>
+
+            <!-- row 11: error label (repeated password) -->
+            <Label
+                    fx:id="statusLabelPassConfirm"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="360"
+                    GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="2"/>
 
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>

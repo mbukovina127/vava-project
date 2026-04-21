@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
@@ -35,11 +36,11 @@ public class RegisterController {
         String confirmPassword = confirmPasswordField.getText();
 
         // SYNTACTICAL VERIFICATION OF INPUT
-        String firstNameError = InputValidator.validateFirstName(firstName);
-        String lastNameError = InputValidator.validateLastName(lastName);
-        String emailError = InputValidator.validateEmail(email);
-        String passwordError = InputValidator.validatePassword(password);
-        String confirmPasswordError = InputValidator.comparePasswords(password,confirmPassword);
+        String firstNameError = ErrorHandler.validateFirstName(firstName);
+        String lastNameError = ErrorHandler.validateLastName(lastName);
+        String emailError = ErrorHandler.validateEmail(email);
+        String passwordError = ErrorHandler.validatePassword(password);
+        String confirmPasswordError = ErrorHandler.comparePasswords(password,confirmPassword);
 
         if
         (
@@ -70,10 +71,12 @@ public class RegisterController {
 
     }
 
-    public void onGoToLogin(ActionEvent actionEvent) {
+    public void onGoToLogin(ActionEvent actionEvent)
+    {
         NavigationUtilities.navigateTo(Screens.LOGIN);
     }
 
+    //TODO implement maybe
     public void onShowTerms(ActionEvent actionEvent) {
         log.debug("Showing terms");
     }

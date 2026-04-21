@@ -8,45 +8,59 @@
 
 <!--TODO: Responsible Error - mozete zbalit na cesty :)-->
 <VBox
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml"
-    fx:controller="org.shippin.controller.CostEstimationController"
-    styleClass="ce-root"
-    stylesheets="@../css/cost_estimation.css"
-    prefWidth="1340"
-    spacing="0">
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="org.shippin.controller.CostEstimationController"
+        styleClass="ce-root"
+        stylesheets="@../css/cost_estimation.css"
+        prefWidth="1340"
+        spacing="0">
 
-    <!-- ══════════════════════════════════════
-         TITLE ROW  —  "Shipment cost estimation"  +  Date
-         ══════════════════════════════════════ -->
+    <fx:define>
+        <ToggleGroup fx:id="typeGroup"/>
+    </fx:define>
+
+    <!-- TITLE ROW  —  "Shipment cost estimation"  +  Date -->
     <HBox styleClass="ce-title-row" alignment="CENTER_LEFT">
         <Label
-            fx:id="sectionTitleLabel"
-            text="Shipment cost estimation"
-            styleClass="ce-title"/>
+                fx:id="sectionTitleLabel"
+                text="Shipment cost estimation"
+                styleClass="ce-title"/>
         <Region HBox.hgrow="ALWAYS"/>
         <HBox alignment="CENTER_RIGHT" spacing="8">
             <Label text="Date:" styleClass="ce-date-label"/>
             <TextField
-                fx:id="dateField"
-                promptText="DD.MM.YYYY"
-                prefWidth="130"
-                styleClass="input-field ce-date-field"/>
+                    fx:id="dateField"
+                    promptText="DD.MM.YYYY"
+                    prefWidth="130"
+                    styleClass="input-field ce-date-field"/>
+            <!-- error label (date) -->
+            <Label
+                    fx:id="statusLabelDate"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="200"/>
         </HBox>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         TYPE TOGGLES  —  Small Package / Shipment
-         ══════════════════════════════════════ -->
+    <!-- TYPE TOGGLES  —  Small Package / Shipment -->
     <HBox styleClass="ce-toggle-row" spacing="24" alignment="CENTER_LEFT">
-        <CheckBox fx:id="chkSmallPackage" text="Small Package" styleClass="ce-toggle"/>
-        <CheckBox fx:id="chkShipment"     text="Shipment"      styleClass="ce-toggle" selected="true"/>
+        <RadioButton fx:id="rbSmallPackage"
+                     text="Small Package"
+                     toggleGroup="$typeGroup"
+                     styleClass="ce-toggle"/>
+
+        <RadioButton fx:id="rbShipment"
+                     text="Shipment"
+                     toggleGroup="$typeGroup"
+                     selected="true"
+                     styleClass="ce-toggle"/>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         POSTAL CODES ROW
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
+
+    <!-- POSTAL CODES ROW -->
+    <HBox styleClass="ce-field-row" alignment="TOP_LEFT" spacing="0">
 
         <!-- Label -->
         <Label text="Postal codes:" styleClass="ce-row-label" prefWidth="140"/>
@@ -54,83 +68,98 @@
         <!-- From -->
         <Label text="From:" styleClass="ce-sub-label" prefWidth="55"/>
         <ComboBox
-            fx:id="fromCombo"
-            value="Sklad BA"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="ce-combo"/>
+                fx:id="fromCombo"
+                value=""
+                prefWidth="180"
+                prefHeight="36"
+                styleClass="ce-combo"/>
 
         <Region HBox.hgrow="ALWAYS"/>
 
         <!-- To -->
         <Label text="To:" styleClass="ce-sub-label" prefWidth="35"/>
-        <HBox styleClass="ce-to-box" alignment="CENTER_LEFT" spacing="0">
-            <TextField
-                fx:id="destinationField"
-                prefWidth="200"
-                prefHeight="36"
-                styleClass="ce-to-field"/>
-            <Button fx:id="toScanBtn" text="⊕" styleClass="ce-icon-btn"/>
-        </HBox>
+        <VBox spacing="2">
+            <HBox styleClass="ce-to-box" alignment="CENTER_LEFT" spacing="0">
+                <TextField
+                        fx:id="destinationField"
+                        prefWidth="200"
+                        prefHeight="36"
+                        styleClass="ce-to-field"/>
+                <Button fx:id="toScanBtn" text="⊕" styleClass="ce-icon-btn"/>
+            </HBox>
+            <!-- error label (destination) -->
+            <Label
+                    fx:id="statusLabelDestination"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="236"/>
+        </VBox>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         SIZE / WEIGHT / VOLUME ROW
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
+    <!-- SIZE / WEIGHT / VOLUME ROW -->
+    <HBox styleClass="ce-field-row" alignment="TOP_LEFT" spacing="0">
         <Label text="Size:" styleClass="ce-row-label" prefWidth="140"/>
-        <Label text="Weight:" styleClass="ce-sub-label" prefWidth="55"/>
-        <TextField
-            fx:id="weightField"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="input-field"/>
+
+        <VBox spacing="2">
+            <TextField
+                    fx:id="weightField"
+                    prefWidth="180"
+                    prefHeight="36"
+                    styleClass="input-field"/>
+            <!-- error label (weight) -->
+            <Label
+                    fx:id="statusLabelWeight"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="180"/>
+        </VBox>
+
         <Region HBox.hgrow="ALWAYS"/>
         <Label text="Volume:" styleClass="ce-sub-label" prefWidth="70"/>
-        <TextField
-            fx:id="volumeField"
-            prefWidth="200"
-            prefHeight="36"
-            styleClass="input-field"/>
+
+        <VBox spacing="2">
+            <TextField
+                    fx:id="volumeField"
+                    prefWidth="200"
+                    prefHeight="36"
+                    styleClass="input-field"/>
+            <!-- error label (volume) -->
+            <Label
+                    fx:id="statusLabelVolume"
+                    styleClass="status-label"
+                    text=""
+                    wrapText="true"
+                    maxWidth="200"/>
+        </VBox>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         COEFFICIENTS / FUEL SURCHARGE / TOLL ROW
-         ══════════════════════════════════════ -->
+    <!-- COEFFICIENTS / FUEL SURCHARGE / TOLL ROW -->
     <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
         <Label text="Coefficients:" styleClass="ce-row-label" prefWidth="140"/>
         <Label text="Fuel surcharge:" styleClass="ce-sub-label" prefWidth="110"/>
         <TextField
-            fx:id="fuelSurchargeField"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="input-field"/>
+                fx:id="fuelSurchargeField"
+                prefWidth="180"
+                prefHeight="36"
+                styleClass="input-field"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label text="Toll:" styleClass="ce-sub-label" prefWidth="70"/>
         <TextField
-            fx:id="tollField"
-            prefWidth="200"
-            prefHeight="36"
-            styleClass="input-field"/>
+                fx:id="tollField"
+                prefWidth="200"
+                prefHeight="36"
+                styleClass="input-field"/>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         DIVIDER
-         ══════════════════════════════════════ -->
-<!--    <Separator styleClass="ce-separator">-->
-<!--        <VBox.margin><Insets top="8" bottom="4"/></VBox.margin>-->
-<!--    </Separator>-->
 
-    <!-- ══════════════════════════════════════
-         ADDITIONAL FEES TOGGLE
-         ══════════════════════════════════════ -->
+    <!-- ADDITIONAL FEES TOGGLE -->
     <HBox styleClass="ce-fees-header-row" alignment="CENTER_LEFT">
         <CheckBox fx:id="chkAdditionalFees" text="Additional fees:" styleClass="ce-toggle" selected="true"/>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         ADDITIONAL FEES  —  two columns
-         ══════════════════════════════════════ -->
+    <!-- ADDITIONAL FEES  —  two columns -->
     <HBox styleClass="ce-fees-body" spacing="60" alignment="TOP_LEFT">
 
         <!-- Left: Obstarávané služby -->
@@ -157,44 +186,39 @@
 
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         STATUS  +  RESULT BOX
-         ══════════════════════════════════════ -->
+    <!-- STATUS  +  RESULT BOX -->
     <Label
-        fx:id="statusLabel"
-        text=""
-        styleClass="status-label">
+            fx:id="statusLabel"
+            text=""
+            styleClass="status-label">
         <VBox.margin><Insets top="6"/></VBox.margin>
     </Label>
 
     <HBox
-        fx:id="resultBox"
-        spacing="14"
-        alignment="CENTER_LEFT"
-        visible="false"
-        styleClass="ce-result-box">
+            fx:id="resultBox"
+            spacing="14"
+            alignment="CENTER_LEFT"
+            visible="false"
+            styleClass="ce-result-box">
         <Label text="Estimated Cost:" styleClass="ce-result-label"/>
         <Label fx:id="estimatedCostLabel" text="0.00 €" styleClass="ce-result-value"/>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         BOTTOM ROW  —  dots  +  Reset / Compute
-         ══════════════════════════════════════ -->
+    <!--  BOTTOM ROW  —  dots  +  Reset / Compute -->
     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-bottom-row">
         <Label text="• • •" styleClass="ce-dots"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Button
-            fx:id="resetButton"
-            text="Reset"
-            onAction="#onReset"
-            styleClass="ce-btn-reset"/>
+                fx:id="resetButton"
+                text="Reset"
+                onAction="#onReset"
+                styleClass="ce-btn-reset"/>
         <Button
-            fx:id="computeButton"
-            text="Compute estimate"
-            onAction="#onComputeCost"
-            styleClass="ce-btn-compute">
+                fx:id="computeButton"
+                text="Compute estimate"
+                onAction="#onComputeCost"
+                styleClass="ce-btn-compute">
             <HBox.margin><Insets left="16"/></HBox.margin>
         </Button>
     </HBox>
-
 </VBox>

@@ -82,7 +82,7 @@
         <!-- Spacer -->
         <Region prefHeight="12"/>
 
-<!--        TODO: urobit očko ;)-->
+<!--        TODO: urobit očko ;) + neda sa kopirovat heslo-->
         <!-- Password -->
         <Label styleClass="field-label" text="Password"/>
         <PasswordField

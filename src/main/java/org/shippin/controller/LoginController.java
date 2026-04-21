@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
@@ -29,8 +30,8 @@ public class LoginController {
         String password = passwordField.getText();
 
         // SYNTACTICAL VERIFICATION OF INPUT
-        String emailError = InputValidator.validateEmail(email);
-        String passwordError = InputValidator.validatePassword(password);
+        String emailError = ErrorHandler.validateEmail(email);
+        String passwordError = ErrorHandler.validatePassword(password);
 
         if (!emailError.isEmpty() || !passwordError.isEmpty())
         {
@@ -43,7 +44,11 @@ public class LoginController {
         NavigationUtilities.navigateTo(Screens.HOME);
     }
 
-    @FXML private void onForgotPassword() {}
+    //TODO implement maybe
+    @FXML private void onForgotPassword()
+    {
+
+    }
 
     @FXML private void onGoToRegister()
     {

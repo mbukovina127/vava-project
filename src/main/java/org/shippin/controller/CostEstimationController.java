@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import org.shippin.controller.utils.CostEstimationInput;
+import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
 import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
@@ -26,8 +27,9 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private TextField dateField;
 
     // ── Type toggles ─────────────────────────────────────────────────────────
-    @FXML private CheckBox chkSmallPackage;
-    @FXML private CheckBox chkShipment;
+    @FXML private ToggleGroup typeGroup;
+    @FXML private RadioButton rbSmallPackage;
+    @FXML private RadioButton rbShipment;
 
     // ── Postal codes ─────────────────────────────────────────────────────────
     @FXML private ComboBox<String> fromCombo;
@@ -61,6 +63,12 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private HBox   resultBox;
     @FXML private Label  estimatedCostLabel;
 
+    // -- ERRORS
+    @FXML private Label  statusLabelDestination;
+    @FXML private Label  statusLabelWeight;
+    @FXML private Label  statusLabelVolume;
+    @FXML private Label  statusLabelDate;
+
     // ── Buttons ──────────────────────────────────────────────────────────────
     @FXML private Button resetButton;
     @FXML private Button computeButton;
@@ -70,24 +78,17 @@ public class CostEstimationController extends BaseController<Void> implements In
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Populate From combo
+    public void initialize(URL location, ResourceBundle resources)
+    {
+        //TODO: nacitat mena skladov z db (strings)
         fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
-        fromCombo.setValue("Sklad BA");
+        fromCombo.setValue(fromCombo.getItems().getFirst());
+        //TODO: nacitat poskytovane doplnkove sluzby z db (strings)
         initializeOptions();
-
-
-        // Additional fees body visibility bound to header checkbox
-//        chkAdditionalFees.selectedProperty().addListener((obs, oldVal, selected) -> {
-//            // TODO: show/hide fees section if needed
-//        });
     }
 
     public void initializeOptions()
     {
-        ExtraOption.SMALL_PACKAGE.bind(chkSmallPackage);
-        ExtraOption.SHIPMENT.bind(chkShipment);
-
         ExtraOption.ADDITIONAL_FEES.bind(chkAdditionalFees);
         ExtraOption.ADR.bind(chkADR);
         ExtraOption.DOBIERKA.bind(chkDobierka);
@@ -142,10 +143,73 @@ public class CostEstimationController extends BaseController<Void> implements In
     // ── Action handlers ──────────────────────────────────────────────────────
 
     @FXML
-    private void onReset() {}
+    private void onReset()
+    {
+        dateField.clear();
+        fromCombo.getSelectionModel().selectFirst();
+        destinationField.clear();
+        weightField.clear();
+        volumeField.clear();
+        fuelSurchargeField.clear();
+        tollField.clear();
+
+        rbShipment.setSelected(true);
+
+        chkAdditionalFees.setSelected(true);
+        chkADR.setSelected(false);
+        chkDobierka.setSelected(false);
+        chkPripoistenie.setSelected(false);
+        chkVratenieEUP.setSelected(false);
+        chkPremium.setSelected(false);
+        chkFIX.setSelected(false);
+        chkPremium10.setSelected(false);
+        chkFIX10.setSelected(false);
+        chkPremium13.setSelected(false);
+        chkFIX13.setSelected(false);
+    }
     @FXML
     private void onComputeCost() throws IOException
     {
+        // zistime typ sluzby
+        String shipment = typeGroup.getSelectedToggle() != null
+                ? ((RadioButton) typeGroup.getSelectedToggle()).getText()
+                : "";
+
+        //TODO:asi calendar view a errors
+        String date = dateField.getText().trim();
+        //TODO:pridat mapu alebo aky vstup?
+        String destination = destinationField.getText().trim();
+
+        String weightText = weightField.getText().trim();
+        String volumeText = volumeField.getText().trim();
+        //TODO: co s tymto?
+        String fuelSurchargeText = fuelSurchargeField.getText().trim();
+        String tollText = tollField.getText().trim();
+
+        String toggleError = ErrorHandler.validateShipmentType(shipment);
+       // String dateError = ErrorHandler.validateRequired(date, "Date");
+        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
+        String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
+        String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
+
+        String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
+        String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
+
+
+        if
+        (
+                !destinationError.isEmpty()
+                || !weightError.isEmpty()
+                || !volumeError.isEmpty()
+        )
+        {
+            statusLabelDestination.setText(destinationError);
+            statusLabelVolume.setText(volumeError);
+            statusLabelWeight.setText(weightError);
+            return;
+        }
+
+
         CostEstimationInput input = new CostEstimationInput(
                 getDate(),
                 getFrom(),

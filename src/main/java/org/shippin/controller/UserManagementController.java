@@ -6,13 +6,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.shippin.controller.utils.ErrorHandler;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class UserManagementController extends BaseController<Void> implements Initializable {
+
+    public Label statusLabelPassConfirm;
+    public Label statusLabelPass;
+    public Label statusLabelEmail;
+    public Label statusLabelName;
 
     // ── Roles ─────────────────────────────────────────────────────────────────
     public enum Role { USER, POWER, ADMIN }
@@ -163,34 +167,52 @@ public class UserManagementController extends BaseController<Void> implements In
         String password = passwordField.getText();
         String repeat   = repeatPasswordField.getText();
 
-        if (name.isEmpty() || surname.isEmpty()) {
-            showError("Please enter first and last name.");
-            return;
-        }
-        if (email.isEmpty() || !email.contains("@")) {
-            showError("Please enter a valid e-mail address.");
-            return;
-        }
-        if (password.length() < 6) {
-            showError("Password must be at least 6 characters.");
-            return;
-        }
-        if (!password.equals(repeat)) {
-            showError("Passwords do not match.");
-            return;
-        }
+        // SYNTACTICAL VERIFICATION OF INPUT
+        String firstNameError = ErrorHandler.validateFirstName(name);
+        String lastNameError = ErrorHandler.validateLastName(surname);
+        String emailError = ErrorHandler.validateEmail(email);
+        String passwordError = ErrorHandler.validatePassword(password);
+        String confirmPasswordError = ErrorHandler.comparePasswords(password,repeat);
 
+        if
+        (
+                !emailError.isEmpty()
+                        || !passwordError.isEmpty()
+                        || !firstNameError.isEmpty()
+                        || !lastNameError.isEmpty()
+                        || !confirmPasswordError.isEmpty()
+        ) {
+            Set<String> uniqueErrors = new LinkedHashSet<>();
+
+            if (!firstNameError.isEmpty()) uniqueErrors.add(firstNameError);
+            if (!lastNameError.isEmpty()) uniqueErrors.add(lastNameError);
+
+            statusLabelName.setText(String.join("\n", uniqueErrors));
+            statusLabelName.getStyleClass().removeAll("dialog-status-ok");
+            statusLabelName.getStyleClass().add("dialog-status-error");
+
+            statusLabelEmail.setText(emailError);
+            statusLabelEmail.getStyleClass().removeAll("dialog-status-ok");
+            statusLabelEmail.getStyleClass().add("dialog-status-error");
+            statusLabelPass.setText(passwordError);
+            statusLabelPass.getStyleClass().removeAll("dialog-status-ok");
+            statusLabelPass.getStyleClass().add("dialog-status-error");
+            statusLabelPassConfirm.setText(confirmPasswordError);
+            statusLabelPassConfirm.getStyleClass().removeAll("dialog-status-ok");
+            statusLabelPassConfirm.getStyleClass().add("dialog-status-error");
+
+            return;
+        }
         // TODO: persist to DB / service here
         users.add(new UserEntry(name + " " + surname, Role.USER));
         populateList();
         hideDialog();
     }
 
-    private void showError(String message) {
-        statusLabel.setText(message);
-        statusLabel.getStyleClass().removeAll("dialog-status-ok");
-        statusLabel.getStyleClass().add("dialog-status-error");
-    }
+//    private void showError(String message) {
+//        statusLabel.setText(message);
+
+//    }
 
     // ── Row actions ───────────────────────────────────────────────────────────
 
