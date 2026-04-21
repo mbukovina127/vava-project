@@ -94,7 +94,7 @@ public class WarehouseDAO extends BaseDAO {
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
         stmt.setString(2, w.getName()); //SK PSC+region aka name
-        stmt.setString(4, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
+        stmt.setString(3, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name // parameter index from 4 to 3
 
         stmt.executeUpdate();
     }
