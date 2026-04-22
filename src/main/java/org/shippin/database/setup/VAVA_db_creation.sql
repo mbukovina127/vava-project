@@ -10,15 +10,16 @@ DROP TABLE IF EXISTS
 	Shipment,
 	Users,
 	Service,
-	Service_list
+	Service_list,
+    Session
 CASCADE;
 
 CREATE TABLE Warehouse (
 	warehouse_ID SERIAL PRIMARY KEY,
 	storage_region INT NOT NULL,
 	warehouse_region_name TEXT NOT NULL,
-    latitude  DOUBLE PRECISION NOT NULL,
-    longitude DOUBLE PRECISION NOT NULL,
+    latitude  DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
 	price_list_file TEXT NOT NULL
 );
 
@@ -70,7 +71,7 @@ CREATE TABLE Shipment (
     dest_region INT NOT NULL,
     fuel_payment NUMERIC(10,2) NOT NULL DEFAULT 0,
     total_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
-    sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status TEXT NOT NULL DEFAULT 'NOT_READY' CHECK (status in ('NOT_READY', 'READY', 'CANCELED', 'BEING_DELIVERED', 'DELIVERED', 'FAILED')),
     sp_ID INT REFERENCES SP_price_list(sp_price_list_ID) ON DELETE SET NULL
 );
@@ -93,4 +94,12 @@ CREATE TABLE Service_list (
     list_ID SERIAL PRIMARY KEY,
     service_ID INT NOT NULL REFERENCES Service(service_ID) ON DELETE CASCADE,
     shipment_ID INT NOT NULL REFERENCES Shipment(shipment_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE Session (
+    session_ID SERIAL PRIMARY KEY,
+    user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    is_active BOOLEAN NOT NULL
 );
