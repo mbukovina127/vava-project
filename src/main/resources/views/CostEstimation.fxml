@@ -16,10 +16,6 @@
         prefWidth="1340"
         spacing="0">
 
-    <fx:define>
-        <ToggleGroup fx:id="typeGroup"/>
-    </fx:define>
-
     <!-- TITLE ROW  —  "Shipment cost estimation"  +  Date -->
     <HBox styleClass="ce-title-row" alignment="CENTER_LEFT">
         <Label
@@ -48,12 +44,10 @@
     <HBox styleClass="ce-toggle-row" spacing="24" alignment="CENTER_LEFT">
         <RadioButton fx:id="rbSmallPackage"
                      text="Small Package"
-                     toggleGroup="$typeGroup"
                      styleClass="ce-toggle"/>
 
         <RadioButton fx:id="rbShipment"
                      text="Shipment"
-                     toggleGroup="$typeGroup"
                      selected="true"
                      styleClass="ce-toggle"/>
     </HBox>
@@ -69,7 +63,6 @@
         <Label text="From:" styleClass="ce-sub-label" prefWidth="55"/>
         <ComboBox
                 fx:id="fromCombo"
-                value=""
                 prefWidth="180"
                 prefHeight="36"
                 styleClass="ce-combo"/>

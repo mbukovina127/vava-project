@@ -27,7 +27,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private TextField dateField;
 
     // ── Type toggles ─────────────────────────────────────────────────────────
-    @FXML private ToggleGroup typeGroup;
+    private final ToggleGroup typeGroup = new ToggleGroup();
     @FXML private RadioButton rbSmallPackage;
     @FXML private RadioButton rbShipment;
 
@@ -80,6 +80,8 @@ public class CostEstimationController extends BaseController<Void> implements In
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        rbSmallPackage.setToggleGroup(typeGroup);
+        rbShipment.setToggleGroup(typeGroup);
         //TODO: nacitat mena skladov z db (strings)
         fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
         fromCombo.setValue(fromCombo.getItems().getFirst());
