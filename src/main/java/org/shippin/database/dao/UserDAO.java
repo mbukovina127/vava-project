@@ -16,19 +16,20 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO users(name,email,role) VALUES (?,?,?)";
+        String sql = "";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
-        stmt.setString(1, user.getName());
-        stmt.setString(2, user.getEmail());
-        stmt.setInt(3, user.getRole().ordinal());
-
+        stmt.setString(1, user.getFirstName());
+        stmt.setString(2, user.getLastName());
+        stmt.setString(3, user.getEmail());
+        stmt.setString(4, user.getPassword());
+        stmt.setInt(5, user.getRole().ordinal());
         stmt.executeUpdate();
     }
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT * FROM balicky.users WHERE id=?";
+        String sql = "";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -37,8 +38,8 @@ public class UserDAO extends BaseDAO {
 
         if (rs.next()) {
             return new User(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getString("firstName"),
+                    rs.getString("lastName"),
                     rs.getString("email"),
                     Role.values()[(rs.getInt("role"))]
             );
