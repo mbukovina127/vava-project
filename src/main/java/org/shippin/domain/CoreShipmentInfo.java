@@ -12,13 +12,14 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class CoreShipmentInfo{
-    private int id;
-    //private String name;
-    private Date deliveryDate; // TODO by malo mat iny nazov
-    //    private String sourcePostalCode;
-    private String destinationPostalCode;
+    private int shipment_id;
+    private int user_ID;
+    // private String name;
+    private Date created_at;
+    // private String sourcePostalCode;
+    private String dest_region;
     private Coordinates startCoordinate;
-    private float fuelCost;
+    private float fuel_payment;
     private float totalCost;
     private State state;
 }
