@@ -35,7 +35,7 @@ public class PriceListDAO extends BaseDAO {
 
         while (rs.next()) {
             PriceListEntry item = new PriceListEntry(
-                    rs.getInt("id"),
+                    rs.getInt("parameter_list_ID"),
                     rs.getFloat("weight"),
                     rs.getFloat("volume"),
                     rs.getFloat("cost"),
@@ -69,7 +69,7 @@ public class PriceListDAO extends BaseDAO {
             String regionName = rs.getString("region_name");
 
             PriceListEntry item = new PriceListEntry(
-                    rs.getInt("id"),
+                    rs.getInt("parameter_list_ID"),
                     rs.getFloat("weight"),
                     rs.getFloat("volume"),
                     rs.getFloat("cost"),
@@ -103,7 +103,7 @@ public class PriceListDAO extends BaseDAO {
 
         if (rs.next()) {
             return new PriceListEntry(
-                    rs.getInt("id"),
+                    rs.getInt("parameter_list_ID"),
                     rs.getFloat("weight"),
                     rs.getFloat("volume"),
                     rs.getFloat("cost"),
@@ -132,7 +132,7 @@ public class PriceListDAO extends BaseDAO {
 
         if (rs.next()) {
             return new PriceListEntry(
-                    rs.getInt("id"),
+                    rs.getInt("parameter_list_ID"),
                     rs.getFloat("weight"),
                     rs.getFloat("volume"),
                     rs.getFloat("cost"),

@@ -13,7 +13,9 @@ public class WarehouseDAO extends BaseDAO {
     }
 
     public Warehouse getById(int id) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file
+                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -45,7 +47,7 @@ public class WarehouseDAO extends BaseDAO {
 
 
     public List<BriefWarehouse> getAllBriefWarehouses() throws SQLException {
-        String sql = ""; //TODO
+        String sql = "SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file FROM Warehouse w;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -65,7 +67,9 @@ public class WarehouseDAO extends BaseDAO {
     }
 
     public BriefWarehouse getlBriefWarehouse(int briefWarehouseID) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file
+                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, briefWarehouseID);
@@ -89,7 +93,14 @@ public class WarehouseDAO extends BaseDAO {
      * inserts warehouse core info
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                INSERT INTO Warehouse(warehouse_id, warehouse_region_name,storage_region, price_list_file)
+                VALUES (?,?,?)
+                ON CONFLICT(warehouse_id)
+                DO UPDATE SET
+                    warehouse_id = EXCLUDED.warehouse_id,
+                    warehouse_region_name = EXCLUDED.warehouse_region_name,
+                    price_list_file = EXCLUDED.price_list_file;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());

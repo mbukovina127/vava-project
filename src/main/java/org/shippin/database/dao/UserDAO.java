@@ -16,7 +16,7 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "";
+        String sql = "INSERT INTO users(first_name,last_name,email,password,role) VALUES (?,?,?,?,?)";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, user.getFirstName());
@@ -29,7 +29,7 @@ public class UserDAO extends BaseDAO {
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "";
+        String sql = "SELECT user_ID, first_name, last_name, email, role  FROM users WHERE user_ID=?";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
