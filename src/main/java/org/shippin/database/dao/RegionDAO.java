@@ -109,7 +109,7 @@ public class RegionDAO extends BaseDAO {
 
         while (rs.next()) {
             if (entry == null) {
-                entry = new RegionTableEntry(rs.getInt("Region_ID"), new ArrayList<>(), rs.getString("region_name"));
+                entry = new RegionTableEntry(rs.getInt("region_ID"), new ArrayList<>(), rs.getString("region_name"));
             }
             entry.addRange(new Range(rs.getInt("down_bound"), rs.getInt("up_bound")));
         }

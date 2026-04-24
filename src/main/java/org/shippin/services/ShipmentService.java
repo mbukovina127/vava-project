@@ -51,8 +51,8 @@ public class ShipmentService {
         shipment.setServices(new ArrayList<>(selected));
         shipment.setWarehouse(new BriefWarehouse(
                 warehouse.getId(), warehouse.getName(), warehouse.getRegionName()));
-        shipment.setDeliveryDate(deliveryDate);
-        shipment.setDestinationPostalCode(destPostalCode);
+        shipment.setCreated_at(deliveryDate);
+        shipment.setDest_region(destPostalCode);
         shipment.setState(State.NOT_READY);
 
         shipment.estimateCost(volume, weight, fuelSurchargeCoefficient, toll, baseCost);
