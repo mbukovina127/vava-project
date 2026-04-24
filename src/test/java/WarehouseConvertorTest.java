@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Test;
 import org.shippin.domain.*;
 import org.shippin.domain.formatted.*;
 import org.shippin.util.Range;
@@ -6,342 +7,297 @@ import org.shippin.util.WarehouseConvertor;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 
-/**
- * Tests for WarehouseConvertor (bidirectional conversion between formatted CSV and domain DB models)
- */
+import static org.junit.jupiter.api.Assertions.*;
+
 public class WarehouseConvertorTest {
 
-    private static int passed = 0;
-    private static int failed = 0;
-
-    public static void main(String[] args) {
-
-        System.out.println("=== WarehouseConvertor Tests ===\n");
-
-        testToWarehouse_BasicFields();
-        testToWarehouse_PriceListConversion();
-        testToWarehouse_RegionTableConversion();
-        testToWarehouseFormatted_BasicFields();
-        testToWarehouseFormatted_PriceListGrouping();
-        testToWarehouseFormatted_RegionTableConversion();
-        testToWarehouse_NullPriceListAndRegionTable();
-        testRoundTrip_FormattedToWarehouseAndBack();
-        testSmallPriceList_Conversion();
-        testSmallPriceListFormatted_Conversion();
-
-        System.out.println("\n=== Results: " + passed + " passed, " + failed + " failed ===");
-    }
-
-    private static void testToWarehouse_BasicFields() {
-        System.out.println("-- testToWarehouse_BasicFields --");
-
+    @Test
+    void toWarehouseShouldConvertBasicFields() {
         WarehouseFormatted formatted = new WarehouseFormatted("ZBS-BA", "SK 83104 Bratislava");
 
         Warehouse warehouse = WarehouseConvertor.toWarehouse(formatted);
 
-        assertEquals("name", "SK 83104 Bratislava", warehouse.getName());
-        assertEquals("regionName", "ZBS-BA", warehouse.getRegionName());
+        assertEquals("SK 83104 Bratislava", warehouse.getName());
+        assertEquals("ZBS-BA", warehouse.getRegionName());
     }
 
-    private static void testToWarehouse_PriceListConversion() {
-        System.out.println("-- testToWarehouse_PriceListConversion --");
-
+    @Test
+    void toWarehouseShouldConvertPriceList() {
         WarehouseFormatted formatted = new WarehouseFormatted("ZBS-BA", "SK 83104 Bratislava");
 
-        PriceListFormatted plFormatted = new PriceListFormatted();
+        PriceListFormatted priceListFormatted = new PriceListFormatted();
+
         LinkedHashMap<String, Float> regions = new LinkedHashMap<>();
         regions.put("BA1", 15.66f);
         regions.put("BA2", 16.80f);
         regions.put("KE", 18.52f);
-        plFormatted.addRow(new PriceListRow(50f, 0.2f, regions));
 
-        formatted.setPriceList(plFormatted);
+        priceListFormatted.addRow(new PriceListRow(50f, 0.2f, regions));
+        formatted.setPriceList(priceListFormatted);
 
         Warehouse warehouse = WarehouseConvertor.toWarehouse(formatted);
 
         PriceList priceList = warehouse.getPriceList();
-        assertNotNull("priceList", priceList);
 
-        List<PriceListEntry> entries = priceList.getEntries();
-        assertEquals("priceList entry count", 3, entries.size());
+        assertNotNull(priceList);
+        assertEquals(3, priceList.getEntries().size());
 
-        PriceListEntry first = entries.getFirst();
-        assertEquals("first entry zone", "BA1", first.getZone());
-        assertFloatEquals("first entry weight", 50f, first.getWeight());
-        assertFloatEquals("first entry volume", 0.2f, first.getVolume());
-        assertFloatEquals("first entry cost", 15.66f, first.getCost());
+        PriceListEntry first = priceList.getEntries().getFirst();
 
-        PriceListEntry last = entries.get(2);
-        assertEquals("last entry zone", "KE", last.getZone());
-        assertFloatEquals("last entry cost", 18.52f, last.getCost());
+        assertEquals("BA1", first.getZone());
+        assertEquals(50f, first.getWeight(), 0.001f);
+        assertEquals(0.2f, first.getVolume(), 0.001f);
+        assertEquals(15.66f, first.getCost(), 0.001f);
+
+        PriceListEntry last = priceList.getEntries().get(2);
+
+        assertEquals("KE", last.getZone());
+        assertEquals(18.52f, last.getCost(), 0.001f);
     }
 
-    private static void testToWarehouse_RegionTableConversion() {
-        System.out.println("-- testToWarehouse_RegionTableConversion --");
-
+    @Test
+    void toWarehouseShouldConvertRegionTable() {
         WarehouseFormatted formatted = new WarehouseFormatted("ZBS-BA", "SK 83104 Bratislava");
 
-        RegionTableFormatted rtFormatted = new RegionTableFormatted();
+        RegionTableFormatted regionTableFormatted = new RegionTableFormatted();
+
         RegionTableRow row1 = new RegionTableRow("BA1");
         row1.addRange(new Range(81000, 85999));
-        rtFormatted.addRow(row1);
+        regionTableFormatted.addRow(row1);
 
         RegionTableRow row2 = new RegionTableRow("BA2");
         row2.addRange(new Range(90001, 91099));
         row2.addRange(new Range(91700, 92099));
-        rtFormatted.addRow(row2);
+        regionTableFormatted.addRow(row2);
 
-        formatted.setRegionTable(rtFormatted);
+        formatted.setRegionTable(regionTableFormatted);
 
         Warehouse warehouse = WarehouseConvertor.toWarehouse(formatted);
 
         RegionTable regionTable = warehouse.getRegionTable();
-        assertNotNull("regionTable", regionTable);
 
-        List<RegionTableEntry> entries = regionTable.getEntries();
-        assertEquals("regionTable entry count", 2, entries.size());
+        assertNotNull(regionTable);
+        assertEquals(2, regionTable.getEntries().size());
 
-        RegionTableEntry firstEntry = entries.getFirst();
-        assertEquals("first entry regionCode", "BA1", firstEntry.getRegionCode());
-        assertEquals("first entry range count", 1, firstEntry.getRanges().size());
-        assertEquals("first entry range min", 81000, firstEntry.getRanges().getFirst().getMin());
-        assertEquals("first entry range max", 85999, firstEntry.getRanges().getFirst().getMax());
+        RegionTableEntry firstEntry = regionTable.getEntries().getFirst();
 
-        RegionTableEntry secondEntry = entries.get(1);
-        assertEquals("second entry regionCode", "BA2", secondEntry.getRegionCode());
-        assertEquals("second entry range count", 2, secondEntry.getRanges().size());
+        assertEquals("BA1", firstEntry.getRegionCode());
+        assertEquals(1, firstEntry.getRanges().size());
+        assertEquals(81000, firstEntry.getRanges().getFirst().getMin());
+        assertEquals(85999, firstEntry.getRanges().getFirst().getMax());
+
+        RegionTableEntry secondEntry = regionTable.getEntries().get(1);
+
+        assertEquals("BA2", secondEntry.getRegionCode());
+        assertEquals(2, secondEntry.getRanges().size());
     }
 
-    private static void testToWarehouseFormatted_BasicFields() {
-        System.out.println("-- testToWarehouseFormatted_BasicFields --");
-
+    @Test
+    void toWarehouseFormattedShouldConvertBasicFields() {
         Warehouse warehouse = new Warehouse();
         warehouse.setName("SK 83104 Bratislava");
         warehouse.setRegionName("ZBS-BA");
 
         WarehouseFormatted formatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-        assertEquals("name", "SK 83104 Bratislava", formatted.getName());
-        assertEquals("title", "ZBS-BA", formatted.getTitle());
+        assertEquals("SK 83104 Bratislava", formatted.getName());
+        assertEquals("ZBS-BA", formatted.getTitle());
     }
 
-    private static void testToWarehouseFormatted_PriceListGrouping() {
-        System.out.println("-- testToWarehouseFormatted_PriceListGrouping --");
-
+    @Test
+    void toWarehouseFormattedShouldGroupPriceListEntries() {
         Warehouse warehouse = new Warehouse();
         warehouse.setName("SK 83104 Bratislava");
         warehouse.setRegionName("ZBS-BA");
 
         PriceList priceList = new PriceList();
+
         List<PriceListEntry> entries = new ArrayList<>();
         entries.add(new PriceListEntry(0, 50f, 0.2f, 15.66f, "BA1"));
         entries.add(new PriceListEntry(0, 50f, 0.2f, 16.80f, "BA2"));
         entries.add(new PriceListEntry(0, 100f, 0.4f, 18.46f, "BA1"));
+
         priceList.setEntries(entries);
         warehouse.setPriceList(priceList);
 
         WarehouseFormatted formatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-        PriceListFormatted plFormatted = formatted.getPriceList();
-        assertNotNull("priceListFormatted", plFormatted);
+        PriceListFormatted priceListFormatted = formatted.getPriceList();
 
-        List<PriceListRow> rows = plFormatted.getRows();
-        assertEquals("grouped row count", 2, rows.size());
+        assertNotNull(priceListFormatted);
+        assertEquals(2, priceListFormatted.getRows().size());
 
-        PriceListRow firstRow = rows.getFirst();
-        assertFloatEquals("first row weight", 50f, firstRow.getWeight());
-        assertFloatEquals("first row volume", 0.2f, firstRow.getVolume());
-        assertEquals("first row region count", 2, firstRow.getRegions().size());
-        assertFloatEquals("first row BA1 price", 15.66f, firstRow.getRegions().get("BA1"));
-        assertFloatEquals("first row BA2 price", 16.80f, firstRow.getRegions().get("BA2"));
+        PriceListRow firstRow = priceListFormatted.getRows().getFirst();
 
-        PriceListRow secondRow = rows.get(1);
-        assertFloatEquals("second row weight", 100f, secondRow.getWeight());
-        assertEquals("second row region count", 1, secondRow.getRegions().size());
+        assertEquals(50f, firstRow.getWeight(), 0.001f);
+        assertEquals(0.2f, firstRow.getVolume(), 0.001f);
+        assertEquals(2, firstRow.getRegions().size());
+        assertEquals(15.66f, firstRow.getRegions().get("BA1"), 0.001f);
+        assertEquals(16.80f, firstRow.getRegions().get("BA2"), 0.001f);
+
+        PriceListRow secondRow = priceListFormatted.getRows().get(1);
+
+        assertEquals(100f, secondRow.getWeight(), 0.001f);
+        assertEquals(1, secondRow.getRegions().size());
+        assertEquals(18.46f, secondRow.getRegions().get("BA1"), 0.001f);
     }
 
-    private static void testToWarehouseFormatted_RegionTableConversion() {
-        System.out.println("-- testToWarehouseFormatted_RegionTableConversion --");
-
+    @Test
+    void toWarehouseFormattedShouldConvertRegionTable() {
         Warehouse warehouse = new Warehouse();
         warehouse.setName("SK 83104 Bratislava");
         warehouse.setRegionName("ZBS-BA");
 
         RegionTable regionTable = new RegionTable();
+
         List<RegionTableEntry> entries = new ArrayList<>();
         ArrayList<Range> ranges = new ArrayList<>();
         ranges.add(new Range(81000, 85999));
+
         entries.add(new RegionTableEntry(1, ranges, "BA1"));
+
         regionTable.setEntries(entries);
         warehouse.setRegionTable(regionTable);
 
         WarehouseFormatted formatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-        RegionTableFormatted rtFormatted = formatted.getRegionTable();
-        assertNotNull("regionTableFormatted", rtFormatted);
+        RegionTableFormatted regionTableFormatted = formatted.getRegionTable();
 
-        List<RegionTableRow> rows = rtFormatted.getRows();
-        assertEquals("row count", 1, rows.size());
-        assertEquals("regionCode", "BA1", rows.getFirst().getRegionCode());
-        assertEquals("range count", 1, rows.getFirst().getRanges().size());
-        assertEquals("range min", 81000, rows.getFirst().getRanges().getFirst().getMin());
-        assertEquals("range max", 85999, rows.getFirst().getRanges().getFirst().getMax());
+        assertNotNull(regionTableFormatted);
+        assertEquals(1, regionTableFormatted.getRows().size());
+
+        RegionTableRow firstRow = regionTableFormatted.getRows().getFirst();
+
+        assertEquals("BA1", firstRow.getRegionCode());
+        assertEquals(1, firstRow.getRanges().size());
+        assertEquals(81000, firstRow.getRanges().getFirst().getMin());
+        assertEquals(85999, firstRow.getRanges().getFirst().getMax());
     }
 
-    private static void testToWarehouse_NullPriceListAndRegionTable() {
-        System.out.println("-- testToWarehouse_NullPriceListAndRegionTable --");
-
+    @Test
+    void toWarehouseShouldAllowNullPriceListAndRegionTable() {
         WarehouseFormatted formatted = new WarehouseFormatted("ZBS-BA", "SK 83104 Bratislava");
 
         Warehouse warehouse = WarehouseConvertor.toWarehouse(formatted);
 
-        assertNull("priceList should be null", warehouse.getPriceList());
-        assertNull("regionTable should be null", warehouse.getRegionTable());
+        assertNull(warehouse.getPriceList());
+        assertNull(warehouse.getRegionTable());
     }
 
-    private static void testRoundTrip_FormattedToWarehouseAndBack() {
-        System.out.println("-- testRoundTrip_FormattedToWarehouseAndBack --");
-
+    @Test
+    void formattedWarehouseShouldSurviveRoundTripConversion() {
         WarehouseFormatted original = new WarehouseFormatted("ZBS-BA", "SK 83104 Bratislava");
 
-        PriceListFormatted plFormatted = new PriceListFormatted();
+        PriceListFormatted priceListFormatted = new PriceListFormatted();
+
         LinkedHashMap<String, Float> regions1 = new LinkedHashMap<>();
         regions1.put("BA1", 15.66f);
         regions1.put("BA2", 16.80f);
-        plFormatted.addRow(new PriceListRow(50f, 0.2f, regions1));
+        priceListFormatted.addRow(new PriceListRow(50f, 0.2f, regions1));
 
         LinkedHashMap<String, Float> regions2 = new LinkedHashMap<>();
         regions2.put("BA1", 18.46f);
         regions2.put("BA2", 20.14f);
-        plFormatted.addRow(new PriceListRow(100f, 0.4f, regions2));
-        original.setPriceList(plFormatted);
+        priceListFormatted.addRow(new PriceListRow(100f, 0.4f, regions2));
 
-        RegionTableFormatted rtFormatted = new RegionTableFormatted();
-        RegionTableRow rtRow = new RegionTableRow("BA1");
-        rtRow.addRange(new Range(81000, 85999));
-        rtFormatted.addRow(rtRow);
-        original.setRegionTable(rtFormatted);
+        original.setPriceList(priceListFormatted);
 
-        // Formatted -> Warehouse -> Formatted
+        RegionTableFormatted regionTableFormatted = new RegionTableFormatted();
+
+        RegionTableRow regionRow = new RegionTableRow("BA1");
+        regionRow.addRange(new Range(81000, 85999));
+
+        regionTableFormatted.addRow(regionRow);
+        original.setRegionTable(regionTableFormatted);
+
         Warehouse warehouse = WarehouseConvertor.toWarehouse(original);
         WarehouseFormatted roundTripped = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-        assertEquals("roundtrip name", original.getName(), roundTripped.getName());
-        assertEquals("roundtrip title", original.getTitle(), roundTripped.getTitle());
+        assertEquals(original.getName(), roundTripped.getName());
+        assertEquals(original.getTitle(), roundTripped.getTitle());
 
-        assertEquals("roundtrip priceList row count",
+        assertNotNull(roundTripped.getPriceList());
+        assertEquals(
                 original.getPriceList().getRows().size(),
-                roundTripped.getPriceList().getRows().size());
+                roundTripped.getPriceList().getRows().size()
+        );
 
-        PriceListRow originalRow = original.getPriceList().getRows().getFirst();
-        PriceListRow roundTrippedRow = roundTripped.getPriceList().getRows().getFirst();
-        assertFloatEquals("roundtrip first row weight", originalRow.getWeight(), roundTrippedRow.getWeight());
-        assertFloatEquals("roundtrip first row BA1 price",
-                originalRow.getRegions().get("BA1"),
-                roundTrippedRow.getRegions().get("BA1"));
+        PriceListRow originalFirstRow = original.getPriceList().getRows().getFirst();
+        PriceListRow roundTrippedFirstRow = roundTripped.getPriceList().getRows().getFirst();
 
-        assertEquals("roundtrip regionTable row count",
+        assertEquals(originalFirstRow.getWeight(), roundTrippedFirstRow.getWeight(), 0.001f);
+        assertEquals(
+                originalFirstRow.getRegions().get("BA1"),
+                roundTrippedFirstRow.getRegions().get("BA1"),
+                0.001f
+        );
+
+        assertNotNull(roundTripped.getRegionTable());
+        assertEquals(
                 original.getRegionTable().getRows().size(),
-                roundTripped.getRegionTable().getRows().size());
+                roundTripped.getRegionTable().getRows().size()
+        );
     }
 
-    private static void testSmallPriceList_Conversion() {
-        System.out.println("-- testSmallPriceList_Conversion --");
-
+    @Test
+    void smallPriceListShouldConvertToDomainModel() {
         SmallPriceListFormatted formatted = new SmallPriceListFormatted();
+
         formatted.addRow(new SmallPriceListRow(1f, 3.29f));
         formatted.addRow(new SmallPriceListRow(3f, 3.57f));
         formatted.addRow(new SmallPriceListRow(5f, 3.64f));
 
         SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(formatted);
 
-        assertNotNull("smallPriceList", smallPriceList);
-        List<SmallPriceListEntry> entries = smallPriceList.getEntries();
-        assertEquals("smallPriceList entry count", 3, entries.size());
+        assertNotNull(smallPriceList);
+        assertEquals(3, smallPriceList.getEntries().size());
 
-        SmallPriceListEntry first = entries.getFirst();
-        assertFloatEquals("first entry weight", 1f, first.getWeight());
-        assertFloatEquals("first entry cost", 3.29f, first.getCost());
+        SmallPriceListEntry first = smallPriceList.getEntries().getFirst();
 
-        SmallPriceListEntry second = entries.get(1);
-        assertFloatEquals("second entry weight", 3f, second.getWeight());
-        assertFloatEquals("second entry cost", 3.57f, second.getCost());
+        assertEquals(1f, first.getWeight(), 0.001f);
+        assertEquals(3.29f, first.getCost(), 0.001f);
 
-        SmallPriceListEntry third = entries.get(2);
-        assertFloatEquals("third entry weight", 5f, third.getWeight());
-        assertFloatEquals("third entry cost", 3.64f, third.getCost());
+        SmallPriceListEntry second = smallPriceList.getEntries().get(1);
+
+        assertEquals(3f, second.getWeight(), 0.001f);
+        assertEquals(3.57f, second.getCost(), 0.001f);
+
+        SmallPriceListEntry third = smallPriceList.getEntries().get(2);
+
+        assertEquals(5f, third.getWeight(), 0.001f);
+        assertEquals(3.64f, third.getCost(), 0.001f);
     }
 
-    private static void testSmallPriceListFormatted_Conversion() {
-        System.out.println("-- testSmallPriceListFormatted_Conversion --");
-
+    @Test
+    void smallPriceListShouldConvertToFormattedModel() {
         SmallPriceList smallPriceList = new SmallPriceList();
+
         List<SmallPriceListEntry> entries = new ArrayList<>();
         entries.add(new SmallPriceListEntry(0, 1f, 3.29f));
         entries.add(new SmallPriceListEntry(0, 3f, 3.57f));
         entries.add(new SmallPriceListEntry(0, 5f, 3.64f));
+
         smallPriceList.setEntries(entries);
 
         SmallPriceListFormatted formatted = WarehouseConvertor.toSmallPriceListFormatted(smallPriceList);
 
-        assertNotNull("smallPriceListFormatted", formatted);
-        List<SmallPriceListRow> rows = formatted.getRows();
-        assertEquals("row count", 3, rows.size());
+        assertNotNull(formatted);
+        assertEquals(3, formatted.getRows().size());
 
-        SmallPriceListRow first = rows.getFirst();
-        assertFloatEquals("first row weight", 1f, first.getWeight());
-        assertFloatEquals("first row cost", 3.29f, first.getCost());
+        SmallPriceListRow first = formatted.getRows().getFirst();
 
-        SmallPriceListRow second = rows.get(1);
-        assertFloatEquals("second row weight", 3f, second.getWeight());
-        assertFloatEquals("second row cost", 3.57f, second.getCost());
+        assertEquals(1f, first.getWeight(), 0.001f);
+        assertEquals(3.29f, first.getCost(), 0.001f);
 
-        SmallPriceListRow third = rows.get(2);
-        assertFloatEquals("third row weight", 5f, third.getWeight());
-        assertFloatEquals("third row cost", 3.64f, third.getCost());
-    }
+        SmallPriceListRow second = formatted.getRows().get(1);
 
-    // --- assertion helpers ---
+        assertEquals(3f, second.getWeight(), 0.001f);
+        assertEquals(3.57f, second.getCost(), 0.001f);
 
-    private static void assertEquals(String label, Object expected, Object actual) {
-        if (Objects.equals(expected, actual)) {
-            System.out.println("  PASS: " + label);
-            passed++;
-        } else {
-            System.out.println("  FAIL: " + label + " — expected: " + expected + ", got: " + actual);
-            failed++;
-        }
-    }
+        SmallPriceListRow third = formatted.getRows().get(2);
 
-    private static void assertFloatEquals(String label, float expected, float actual) {
-        if (Math.abs(expected - actual) < 0.001f) {
-            System.out.println("  PASS: " + label);
-            passed++;
-        } else {
-            System.out.println("  FAIL: " + label + " — expected: " + expected + ", got: " + actual);
-            failed++;
-        }
-    }
-
-    private static void assertNotNull(String label, Object obj) {
-        if (obj != null) {
-            System.out.println("  PASS: " + label);
-            passed++;
-        } else {
-            System.out.println("  FAIL: " + label + " — expected not null");
-            failed++;
-        }
-    }
-
-    private static void assertNull(String label, Object obj) {
-        if (obj == null) {
-            System.out.println("  PASS: " + label);
-            passed++;
-        } else {
-            System.out.println("  FAIL: " + label + " — expected null, got: " + obj);
-            failed++;
-        }
+        assertEquals(5f, third.getWeight(), 0.001f);
+        assertEquals(3.64f, third.getCost(), 0.001f);
     }
 }

@@ -1,152 +1,226 @@
-import org.shippin.domain.formatted.*;
-import org.shippin.util.Range;
+import org.junit.jupiter.api.Test;
+import org.shippin.domain.formatted.PriceListFormatted;
+import org.shippin.domain.formatted.PriceListRow;
+import org.shippin.domain.formatted.RegionTableFormatted;
+import org.shippin.domain.formatted.RegionTableRow;
+import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.SmallPriceListRow;
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
 import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
-import org.shippin.domain.Row;
+import org.shippin.util.Range;
+
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserTest {
 
-    public static void main(String[] args) {
+    private static final Random RANDOM = new Random(25);
 
+    @Test
+    void priceListParserShouldParseRandomCsv() {
+        String priceCsv = generatePriceCsv(10);
 
-        // PriceListCsvParser test
+        PriceListCsvParser parser = new PriceListCsvParser();
+        PriceListFormatted table = (PriceListFormatted) parser.parseFromCsv(priceCsv);
 
-        String priceCsv  = """
-Hmotnosť do (v kg);Objem do (v m³);Zóny;;;;;
-;;BA1;BA2;BA3;ZA;ZV;KE
-50;0,2;15,66;16,80;17,35;17,57;17,57;18,52
-100;0,4;16,64;18,46;19,10;20,25;20,26;22,07
-150;0,6;18,20;20,14;21,80;22,34;22,36;24,80
-200;0,8;19,77;21,80;23,67;24,48;24,51;27,65
-250;1,0;21,32;23,49;26,00;26,99;27,03;30,87
-300;1,2;22,86;25,16;28,10;29,46;29,51;34,12
-350;1,4;23,85;26,83;30,21;31,83;31,89;37,41
-400;1,6;24,87;27,88;32,30;33,83;33,87;40,17
-450;1,8;26,41;29,54;34,37;35,84;35,90;42,81
-500;2,0;27,40;31,21;35,89;37,91;37,95;46,32
-600;2,4;30,51;35,19;39,50;43,74;43,80;56,02
-700;2,8;34,18;39,77;46,76;51,59;51,69;65,88
-800;3,2;37,32;43,12;52,24;56,86;56,99;73,23
-900;3,6;39,30;46,44;56,12;61,61;61,77;80,08
-1000;4,0;41,28;49,16;60,79;66,56;66,71;86,78
-1250;5,0;47,67;55,93;72,13;78,64;78,82;103,24
-1500;6,0;54,84;63,55;82,62;89,94;90,15;119,15
-1750;7,0;59,79;68,73;91,61;100,20;100,47;134,05
-2000;8,0;66,22;73,90;101,36;110,64;110,93;149,31
-2250;9,0;70,43;78,27;110,35;120,56;120,92;163,99
-2500;10,0;75,37;84,25;117,76;130,29;130,68;178,56
-3500;14,0;110,82;126,73;169,62;187,01;187,52;252,07
-5000;20,0;135,67;151,64;211,97;234,52;235,24;321,42
-""";
+        assertNotNull(table);
+        assertEquals(10, table.getRows().size());
 
+        PriceListRow firstRow = table.getRows().getFirst();
 
-        PriceListCsvParser priceParser  = new PriceListCsvParser();
-        PriceListFormatted priceListTable = (PriceListFormatted) priceParser.parseFromCsv(priceCsv);
+        assertTrue(firstRow.getWeight() > 0);
+        assertTrue(firstRow.getVolume() > 0);
+        assertEquals(6, firstRow.getRegions().size());
 
-        System.out.println("=== PRICE LIST PARSER ===");
-        System.out.println("Loaded " + priceListTable.getRows().size() + " rows");
+        assertTrue(firstRow.getRegions().containsKey("BA1"));
+        assertTrue(firstRow.getRegions().containsKey("BA2"));
+        assertTrue(firstRow.getRegions().containsKey("BA3"));
+        assertTrue(firstRow.getRegions().containsKey("ZA"));
+        assertTrue(firstRow.getRegions().containsKey("ZV"));
+        assertTrue(firstRow.getRegions().containsKey("KE"));
+    }
 
-        PriceListRow firstPriceRow = (PriceListRow) priceListTable.getRows().getFirst();
-        System.out.println("First row: " + firstPriceRow.getWeight() + " kg, " + firstPriceRow.getVolume() + " m");
-        System.out.println("BA1 price: " + firstPriceRow.getRegions().get("BA1"));
+    @Test
+    void priceListParserShouldExportParsedCsv() {
+        String priceCsv = generatePriceCsv(5);
 
+        PriceListCsvParser parser = new PriceListCsvParser();
+        PriceListFormatted table = (PriceListFormatted) parser.parseFromCsv(priceCsv);
 
-        String exportedPrice = priceParser.exportToCsv(priceListTable);
-        System.out.println("\n=== ExportedPrice CSV ===");
-        String[] priceLines = exportedPrice.split("\n");
-        for (String line : priceLines) {
-            System.out.println(line);
+        String exportedCsv = parser.exportToCsv(table);
+
+        assertNotNull(exportedCsv);
+        assertFalse(exportedCsv.isBlank());
+        assertTrue(exportedCsv.contains("Hmotnosť do (v kg)"));
+        assertTrue(exportedCsv.contains("BA1"));
+        assertTrue(exportedCsv.contains("KE"));
+    }
+
+    @Test
+    void regionTableParserShouldParseRandomCsv() {
+        String regionCsv = generateRegionCsv();
+
+        RegionTableCsvParser parser = new RegionTableCsvParser();
+        RegionTableFormatted table = (RegionTableFormatted) parser.parseFromCsv(regionCsv);
+
+        assertNotNull(table);
+        assertEquals(4, table.getRows().size());
+
+        for (RegionTableRow row : table.getRows()) {
+            assertNotNull(row.getRegionCode());
+            assertFalse(row.getRegionCode().isBlank());
+            assertFalse(row.getRanges().isEmpty());
+
+            for (Range range : row.getRanges()) {
+                assertTrue(range.getMin() <= range.getMax());
+            }
         }
-        System.out.println("total " + priceLines.length + " lines");
+    }
 
-
-
-        // RegionTableCsvParser test
+    @Test
+    void regionTableParserShouldFindPostalCodeInsideGeneratedRange() {
+        int min = 82100;
+        int max = 82199;
 
         String regionCsv = """
-Rozdelenie PSČ:;;;;;;
-BA1;;81000-85999;;;;
-BA2;;90001-91099;91700-92099;92242-93399;94000-95499;
-BA3;;01831-01857;01901-01999;91100-91699;92100-92241;95500-95999
-;;97100-97399;;;;
-ZA;;01000-01826;01861-01864;02000-03999;;
-ZV;;93400-93999;96000-96999;97400-99399;;
-;;04901-04901;04913-04918;04961-04964;;
-;;05001-05001;;;;
-KE;;04000-04900;04902-04912;04919-04960;;
-;;04965-05000;05002-06599;06600-09599;;
-""";
-
-        RegionTableCsvParser regionParser  = new RegionTableCsvParser();
-        RegionTableFormatted regionTable = (RegionTableFormatted) regionParser.parseFromCsv(regionCsv);
-
-        System.out.println("\n=== REGION TABLE PARSER ===");
-        System.out.println("Loaded " + regionTable.getRows().size() + " regions");
-
-        RegionTableRow firstRegionRow = (RegionTableRow) regionTable.getRows().getFirst();
-        System.out.println("First row region code: " + firstRegionRow.getRegionCode());
-        System.out.println("First row Min Range: " + firstRegionRow.getRanges().getFirst().getMin() + ", and Max Range:" + firstRegionRow.getRanges().getFirst().getMax());
-
-        //EXAMPLE: Postal code check/lookup
-
-        int testPsc = 82105;
-        System.out.println("\nTesting postal code " + testPsc + ":");
-        boolean found = false;
-        for (Row row : regionTable.getRows()) {
-            RegionTableRow r = (RegionTableRow) row;
-            for (Range rg : r.getRanges()) {
-                if (rg.contains(testPsc)) {
-                    System.out.println("belongs to region " + r.getRegionCode() +
-                            " (range " + rg.getMin() + "-" + rg.getMax() + ")");
-                    found = true;
-                    break;
-                }
-            }
-            if (found) break;
-        }
-        if (!found) {
-            System.out.println("→ not found in any region");
-        }
-
-        String exportedRegion = regionParser.exportToCsv(regionTable);
-        System.out.println("\nExported region table:");
-        String[] regionLines = exportedRegion.split("\n");
-        for (String line : regionLines) {
-            System.out.println(line);
-        }
-        System.out.println("total " + regionLines.length + " lines");
-
-
-        // SmallPriceListCsvParser test
-
-        String smallPriceCsv = """
-                Hmotnosť;Cena
-                do 1 kg;3,29
-                do 3 kg;3,57
-                do 5 kg;3,64
-                do 10 kg;4,12
-                do 15 kg;4,91
-                do 20 kg;5,85
-                do 25 kg;6,82
-                do 30 kg;7,59
+                Rozdelenie PSČ:;;;;;;
+                BA1;;82100-82199;;;;
+                BA2;;90001-91099;;;;
                 """;
 
-        SmallPriceListCsvParser smallParser = new SmallPriceListCsvParser();
-        SmallPriceListFormatted smallTable = (SmallPriceListFormatted) smallParser.parseFromCsv(smallPriceCsv);
+        RegionTableCsvParser parser = new RegionTableCsvParser();
+        RegionTableFormatted table = (RegionTableFormatted) parser.parseFromCsv(regionCsv);
 
-        System.out.println("\n=== SMALL PRICE LIST PARSER ===");
-        System.out.println("Loaded " + smallTable.getRows().size() + " rows");
+        boolean found = false;
 
-        SmallPriceListRow firstSmallPriceRow = (SmallPriceListRow) smallTable.getRows().get(0);
-        System.out.println("First entry: up to " + firstSmallPriceRow.getWeight() + " kg " + firstSmallPriceRow.getCost() + " €");
-
-        String exportedSmall = smallParser.exportToCsv(smallTable);
-        System.out.println("\nExported small price list:");
-        String[] SmallLines = exportedSmall.split("\n");
-        for (String line : SmallLines) {
-            System.out.println(line);
+        for (RegionTableRow row : table.getRows()) {
+            for (Range range : row.getRanges()) {
+                if (range.contains(82105)) {
+                    found = true;
+                }
+            }
         }
-        System.out.println("total " + SmallLines.length + " lines");
+
+        assertTrue(found);
+    }
+
+    @Test
+    void smallPriceListParserShouldParseRandomCsv() {
+        String smallPriceCsv = generateSmallPriceCsv(8);
+
+        SmallPriceListCsvParser parser = new SmallPriceListCsvParser();
+        SmallPriceListFormatted table = (SmallPriceListFormatted) parser.parseFromCsv(smallPriceCsv);
+
+        assertNotNull(table);
+        assertEquals(8, table.getRows().size());
+
+        SmallPriceListRow firstRow = table.getRows().getFirst();
+
+        assertTrue(firstRow.getWeight() > 0);
+        assertTrue(firstRow.getCost() > 0);
+    }
+
+    @Test
+    void smallPriceListParserShouldExportParsedCsv() {
+        String smallPriceCsv = generateSmallPriceCsv(5);
+
+        SmallPriceListCsvParser parser = new SmallPriceListCsvParser();
+        SmallPriceListFormatted table = (SmallPriceListFormatted) parser.parseFromCsv(smallPriceCsv);
+
+        String exportedCsv = parser.exportToCsv(table);
+
+        assertNotNull(exportedCsv);
+        assertFalse(exportedCsv.isBlank());
+        assertTrue(exportedCsv.contains("Hmotnosť"));
+        assertTrue(exportedCsv.contains("Cena"));
+    }
+
+    private static String generatePriceCsv(int rows) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Hmotnosť do (v kg);Objem do (v m³);Zóny;;;;;\n");
+        sb.append(";;BA1;BA2;BA3;ZA;ZV;KE\n");
+
+        int weight = 50;
+        double volume = 0.2;
+
+        for (int i = 0; i < rows; i++) {
+            sb.append(weight).append(";");
+            sb.append(format(volume)).append(";");
+
+            for (int j = 0; j < 6; j++) {
+                double price = 10 + RANDOM.nextDouble() * 100;
+                sb.append(format(price));
+
+                if (j < 5) {
+                    sb.append(";");
+                }
+            }
+
+            sb.append("\n");
+
+            weight += 50;
+            volume += 0.2;
+        }
+
+        return sb.toString();
+    }
+
+    private static String generateRegionCsv() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Rozdelenie PSČ:;;;;;;\n");
+
+        String[] regions = {"BA1", "BA2", "ZA", "KE"};
+        int start = 10000;
+
+        for (String region : regions) {
+            sb.append(region).append(";;");
+
+            for (int i = 0; i < 3; i++) {
+                int min = start + RANDOM.nextInt(200);
+                int max = min + RANDOM.nextInt(300) + 1;
+
+                sb.append(min).append("-").append(max);
+
+                if (i < 2) {
+                    sb.append(";");
+                }
+
+                start += 1000;
+            }
+
+            sb.append(";\n");
+        }
+
+        return sb.toString();
+    }
+
+    private static String generateSmallPriceCsv(int rows) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Hmotnosť;Cena\n");
+
+        int weight = 1;
+
+        for (int i = 0; i < rows; i++) {
+            double price = 2 + RANDOM.nextDouble() * 10;
+
+            sb.append("do ");
+            sb.append(weight);
+            sb.append(" kg;");
+            sb.append(format(price));
+            sb.append("\n");
+
+            weight += RANDOM.nextInt(5) + 1;
+        }
+
+        return sb.toString();
+    }
+
+    private static String format(double value) {
+        return String.format(java.util.Locale.US, "%.2f", value).replace(".", ",");
     }
 }

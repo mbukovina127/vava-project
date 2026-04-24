@@ -1,196 +1,233 @@
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.shippin.controller.utils.InputValidator;
+
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InputValidatorTest {
 
-    // --- isValidLength ---
+    private static final Random RANDOM = new Random(25);
 
-    @Property
-    void lengthAboveMaxFails(@ForAll @StringLength(min = 251, max = 1000) String s) {
-        assertFalse(InputValidator.isValidLength(s, 250));
+    // isValidLength
+
+    @RepeatedTest(20)
+    void lengthAboveMaxFails() {
+        String value = randomString(randomInt(251, 1000));
+
+        assertFalse(InputValidator.isValidLength(value, 250));
     }
 
-    @Property
-    void lengthAtOrBelowMaxPasses(@ForAll @StringLength(min = 0, max = 250) String s) {
-        assertTrue(InputValidator.isValidLength(s, 250));
+    @RepeatedTest(20)
+    void lengthAtOrBelowMaxPasses() {
+        String value = randomString(randomInt(0, 250));
+
+        assertTrue(InputValidator.isValidLength(value, 250));
     }
 
-    @Example
+    @Test
     void nullFailsLengthCheck() {
         assertFalse(InputValidator.isValidLength(null, 250));
     }
 
-    // --- isNotBlank ---
+    // isNotBlank
 
-    @Example
-    void nullIsBlank() {
+    @Test
+    void nullAndBlankValuesAreBlank() {
         assertFalse(InputValidator.isNotBlank(null));
         assertFalse(InputValidator.isNotBlank(""));
         assertFalse(InputValidator.isNotBlank("   "));
         assertFalse(InputValidator.isNotBlank("\t\n"));
     }
 
-    @Property
-    void alphaStringIsNotBlank(@ForAll @AlphaChars @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.isNotBlank(s));
+    @RepeatedTest(20)
+    void alphaStringIsNotBlank() {
+        String value = randomAlphaString(randomInt(1, 100));
+
+        assertTrue(InputValidator.isNotBlank(value));
     }
 
-    // --- passwordHasMinLength ---
+    // passwordHasMinLength
 
-    @Property
-    void shortPasswordFailsMinLength(@ForAll @StringLength(min = 1, max = 7) String s) {
-        assertFalse(InputValidator.passwordHasMinLength(s));
+    @RepeatedTest(20)
+    void shortPasswordFailsMinLength() {
+        String password = randomString(randomInt(1, 7));
+
+        assertFalse(InputValidator.passwordHasMinLength(password));
     }
 
-    @Property
-    void longEnoughPasswordPassesMinLength(@ForAll @StringLength(min = 8, max = 100) String s) {
-        assertTrue(InputValidator.passwordHasMinLength(s));
+    @RepeatedTest(20)
+    void longEnoughPasswordPassesMinLength() {
+        String password = randomString(randomInt(8, 100));
+
+        assertTrue(InputValidator.passwordHasMinLength(password));
     }
 
-    @Example
+    @Test
     void nullFailsMinLength() {
         assertFalse(InputValidator.passwordHasMinLength(null));
     }
 
-    // --- passwordHasLowercase ---
+    // passwordHasLowercase
 
-    @Property
-    void uppercaseOnlyFailsLowercaseCheck(@ForAll @CharRange(from = 'A', to = 'Z') @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasLowercase(s));
+    @RepeatedTest(20)
+    void uppercaseOnlyFailsLowercaseCheck() {
+        String password = randomUppercaseString(randomInt(1, 100));
+
+        assertFalse(InputValidator.passwordHasLowercase(password));
     }
 
-    @Property
-    void stringWithOnlyLowercasePasses(@ForAll @CharRange(from = 'a', to = 'z') @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasLowercase(s));
+    @RepeatedTest(20)
+    void stringWithOnlyLowercasePassesLowercaseCheck() {
+        String password = randomLowercaseString(randomInt(1, 100));
+
+        assertTrue(InputValidator.passwordHasLowercase(password));
     }
 
-    @Example
+    @Test
     void nullFailsLowercaseCheck() {
         assertFalse(InputValidator.passwordHasLowercase(null));
     }
 
-    // --- passwordHasUppercase ---
+    // passwordHasUppercase
 
-    @Property
-    void lowercaseOnlyFailsUppercaseCheck(@ForAll @CharRange(from = 'a', to = 'z') @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasUppercase(s));
+    @RepeatedTest(20)
+    void lowercaseOnlyFailsUppercaseCheck() {
+        String password = randomLowercaseString(randomInt(1, 100));
+
+        assertFalse(InputValidator.passwordHasUppercase(password));
     }
 
-    @Property
-    void stringWithOnlyUppercasePasses(@ForAll @CharRange(from = 'A', to = 'Z') @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasUppercase(s));
+    @RepeatedTest(20)
+    void stringWithOnlyUppercasePassesUppercaseCheck() {
+        String password = randomUppercaseString(randomInt(1, 100));
+
+        assertTrue(InputValidator.passwordHasUppercase(password));
     }
 
-    @Example
+    @Test
     void nullFailsUppercaseCheck() {
         assertFalse(InputValidator.passwordHasUppercase(null));
     }
 
-    // --- passwordHasDigit ---
+    // passwordHasDigit
 
-    @Property
-    void alphaOnlyFailsDigitCheck(@ForAll @AlphaChars @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasDigit(s));
+    @RepeatedTest(20)
+    void alphaOnlyFailsDigitCheck() {
+        String password = randomAlphaString(randomInt(1, 100));
+
+        assertFalse(InputValidator.passwordHasDigit(password));
     }
 
-    @Property
-    void digitsOnlyPassesDigitCheck(@ForAll @NumericChars @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasDigit(s));
+    @RepeatedTest(20)
+    void digitsOnlyPassesDigitCheck() {
+        String password = randomDigitString(randomInt(1, 100));
+
+        assertTrue(InputValidator.passwordHasDigit(password));
     }
 
-    @Example
+    @Test
     void nullFailsDigitCheck() {
         assertFalse(InputValidator.passwordHasDigit(null));
     }
 
-    // --- passwordHasSpecial ---
+    // passwordHasSpecial
 
-    @Property
-    void alphaOnlyFailsSpecialCheck(@ForAll @AlphaChars @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasSpecial(s));
+    @RepeatedTest(20)
+    void alphaOnlyFailsSpecialCheck() {
+        String password = randomAlphaString(randomInt(1, 100));
+
+        assertFalse(InputValidator.passwordHasSpecial(password));
     }
 
-    @Example
+    @Test
     void knownSpecialCharactersPass() {
-        for (char c : "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?".toCharArray()) {
-            assertTrue(InputValidator.passwordHasSpecial("abc" + c), "Expected special char to pass: " + c);
+        char[] specialCharacters = "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?".toCharArray();
+
+        for (char character : specialCharacters) {
+            assertTrue(
+                    InputValidator.passwordHasSpecial("abc" + character),
+                    "Expected special char to pass: " + character
+            );
         }
     }
 
-    @Example
+    @Test
     void nullFailsSpecialCheck() {
         assertFalse(InputValidator.passwordHasSpecial(null));
     }
 
-    // --- isValidPassword (combined) ---
+    // isValidPassword
 
-    @Example
+    @Test
     void validPasswordPasses() {
         assertTrue(InputValidator.isValidPassword("Password1!"));
         assertTrue(InputValidator.isValidPassword("Str0ng@Pass"));
     }
 
-    @Example
+    @Test
     void passwordMissingUppercaseFails() {
         assertFalse(InputValidator.isValidPassword("password1!"));
     }
 
-    @Example
+    @Test
     void passwordMissingLowercaseFails() {
         assertFalse(InputValidator.isValidPassword("PASSWORD1!"));
     }
 
-    @Example
+    @Test
     void passwordMissingDigitFails() {
         assertFalse(InputValidator.isValidPassword("Password!!"));
     }
 
-    @Example
+    @Test
     void passwordMissingSpecialFails() {
         assertFalse(InputValidator.isValidPassword("Password1"));
     }
 
-    @Example
+    @Test
     void passwordTooShortFails() {
         assertFalse(InputValidator.isValidPassword("Pa1!"));
     }
 
-    @Example
+    @Test
     void nullPasswordFails() {
         assertFalse(InputValidator.isValidPassword(null));
     }
 
-    // --- passwordsMatch ---
+    // passwordsMatch
 
-    @Property
-    void sameStringAlwaysMatches(@ForAll String s) {
-        assertTrue(InputValidator.passwordsMatch(s, s));
+    @RepeatedTest(20)
+    void sameStringAlwaysMatches() {
+        String password = randomString(randomInt(0, 100));
+
+        assertTrue(InputValidator.passwordsMatch(password, password));
     }
 
-    @Property
-    void differentStringsDoNotMatch(@ForAll String a, @ForAll String b) {
-        Assume.that(!a.equals(b));
-        assertFalse(InputValidator.passwordsMatch(a, b));
+    @RepeatedTest(20)
+    void differentStringsDoNotMatch() {
+        String firstPassword = "A" + randomString(randomInt(1, 100));
+        String secondPassword = "B" + randomString(randomInt(1, 100));
+
+        assertFalse(InputValidator.passwordsMatch(firstPassword, secondPassword));
     }
 
-    @Example
+    @Test
     void nullPasswordDoesNotMatch() {
         assertFalse(InputValidator.passwordsMatch(null, "password"));
     }
 
-    // --- isValidEmail ---
+    // isValidEmail
 
-    @Example
+    @Test
     void validEmailsPass() {
         assertTrue(InputValidator.isValidEmail("user@example.com"));
         assertTrue(InputValidator.isValidEmail("user.name+tag@sub.domain.org"));
         assertTrue(InputValidator.isValidEmail("x@y.co"));
     }
 
-    @Example
+    @Test
     void invalidEmailsFail() {
         assertFalse(InputValidator.isValidEmail("userexample.com"));
         assertFalse(InputValidator.isValidEmail("user@"));
@@ -198,13 +235,57 @@ public class InputValidatorTest {
         assertFalse(InputValidator.isValidEmail("user@domain"));
     }
 
-    @Example
+    @Test
     void nullEmailFails() {
         assertFalse(InputValidator.isValidEmail(null));
     }
 
-    @Property
-    void pureAlphaStringFailsEmailCheck(@ForAll @AlphaChars @StringLength(min = 1, max = 50) String s) {
-        assertFalse(InputValidator.isValidEmail(s));
+    @RepeatedTest(20)
+    void pureAlphaStringFailsEmailCheck() {
+        String value = randomAlphaString(randomInt(1, 50));
+
+        assertFalse(InputValidator.isValidEmail(value));
+    }
+
+    // helper methods
+
+    private static int randomInt(int min, int max) {
+        return RANDOM.nextInt(max - min + 1) + min;
+    }
+
+    private static String randomString(int length) {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return randomFromCharacters(length, characters);
+    }
+
+    private static String randomAlphaString(int length) {
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return randomFromCharacters(length, characters);
+    }
+
+    private static String randomLowercaseString(int length) {
+        String characters = "abcdefghijklmnopqrstuvwxyz";
+        return randomFromCharacters(length, characters);
+    }
+
+    private static String randomUppercaseString(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return randomFromCharacters(length, characters);
+    }
+
+    private static String randomDigitString(int length) {
+        String characters = "0123456789";
+        return randomFromCharacters(length, characters);
+    }
+
+    private static String randomFromCharacters(int length, String characters) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = RANDOM.nextInt(characters.length());
+            result.append(characters.charAt(index));
+        }
+
+        return result.toString();
     }
 }
