@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+    DailyCostsSummaries.fxml
+    Stylesheets load order:
+      1. shipinn.css   — shared base tokens
+      2. daily-costs-page.css — screen-specific rules
+-->
+<BorderPane
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="org.shippin.controller.DailyCostsSummariesController"
+    styleClass="dcs-root"
+    stylesheets="@../css/shipinn.css, @../css/daily-costs-page.css">
+
+    <center>
+        <HBox styleClass="dcs-content" spacing="48" alignment="TOP_LEFT">
+
+            <!-- ══════════════ LEFT — Calendar ══════════════ -->
+            <VBox styleClass="dcs-left" spacing="0">
+
+                <!-- Screen title -->
+                <Label styleClass="dcs-title" text="Daily costs summaries:"/>
+
+                <!-- Calendar card -->
+                <VBox styleClass="dcs-calendar-card" spacing="0">
+
+                    <!-- Month / Year nav row -->
+                    <HBox styleClass="dcs-cal-nav" alignment="CENTER" spacing="8">
+                        <Button
+                            fx:id="prevMonthBtn"
+                            styleClass="dcs-nav-btn"
+                            text="‹"
+                            onAction="#onPrevMonth"
+                            focusTraversable="false"/>
+
+                        <ComboBox
+                            fx:id="monthCombo"
+                            styleClass="dcs-nav-combo"
+                            onAction="#onMonthChanged"/>
+
+                        <ComboBox
+                            fx:id="yearCombo"
+                            styleClass="dcs-nav-combo"
+                            onAction="#onYearChanged"/>
+
+                        <Button
+                            fx:id="nextMonthBtn"
+                            styleClass="dcs-nav-btn"
+                            text="›"
+                            onAction="#onNextMonth"
+                            focusTraversable="false"/>
+                    </HBox>
+
+                    <!-- Day-of-week header -->
+                    <GridPane fx:id="dayHeaderGrid" styleClass="dcs-day-header-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.32"/>
+                        </columnConstraints>
+                        <Label styleClass="dcs-dow" text="Su" GridPane.columnIndex="0" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="Mo" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="Tu" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="We" GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="Th" GridPane.columnIndex="4" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="Fr" GridPane.columnIndex="5" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="Sa" GridPane.columnIndex="6" GridPane.halignment="CENTER"/>
+                    </GridPane>
+
+                    <!-- Day cells — populated by controller -->
+                    <GridPane fx:id="dayGrid" styleClass="dcs-day-grid" vgap="2" hgap="0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.28"/>
+                            <ColumnConstraints percentWidth="14.32"/>
+                        </columnConstraints>
+                        <!-- Rows are built dynamically in the controller -->
+                    </GridPane>
+
+                </VBox>
+            </VBox>
+
+            <!-- ══════════════ RIGHT — Recent summaries ══════════════ -->
+            <VBox styleClass="dcs-right" spacing="10">
+
+                <Label styleClass="dcs-recent-title" text="Open most recent summaries:"/>
+
+                <!-- Summary rows — populated by controller -->
+                <VBox fx:id="summaryList" styleClass="dcs-summary-list" spacing="8"/>
+
+            </VBox>
+
+        </HBox>
+    </center>
+
+</BorderPane>

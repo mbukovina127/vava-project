@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<!-- ============================================================
+     DailyCostsSummaryDetail.fxml
+     Screen: "1.4.2026 – Daily costs summary" detail view
+     Shows shipment rows for a selected date, with total.
+
+     Stylesheets: @shipinn.css, @daily-costs-detail.css
+     Controller:  DailyCostsSummaryDetailController
+     ============================================================ -->
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shippin.controller.DailyCostsSummaryDetailController"
+      styleClass="dcd-root"
+      stylesheets="@../css/shipinn.css, @../css/daily-costs-detail.css">
+
+    <!-- ── Top bar: title + Add button ─────────────────────── -->
+    <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT">
+        <Label fx:id="lblTitle" styleClass="dcd-title" text="1.4.2026 – Daily costs summary" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnAddShipment"
+                styleClass="dcd-btn-add"
+                text="+ Add new shipment"
+                onAction="#handleAddShipment" />
+    </HBox>
+
+    <!-- ── Shipment list ────────────────────────────────────── -->
+    <VBox fx:id="shipmentList" styleClass="dcd-list" VBox.vgrow="ALWAYS">
+        <!-- Rows are injected programmatically by the controller -->
+        <!-- Prototype row (for reference / Scene Builder preview): -->
+
+        <HBox styleClass="dcd-row">
+            <Label text="8:23"       styleClass="dcd-row-time" />
+            <Label text="Shipment for  Saint Gobain 1"
+                   styleClass="dcd-row-desc" HBox.hgrow="ALWAYS" />
+            <Label text="58,40€"     styleClass="dcd-row-amount" />
+            <Button text="✎"         styleClass="dcd-icon-btn" />
+            <Button text="🗑"         styleClass="dcd-icon-btn dcd-icon-btn-delete" />
+        </HBox>
+
+
+    </VBox>
+
+    <!-- ── Divider ───────────────────────────────────────────── -->
+    <Separator styleClass="dcd-separator" />
+
+    <!-- ── Total row ─────────────────────────────────────────── -->
+    <HBox styleClass="dcd-total-row" alignment="CENTER_RIGHT">
+        <Label fx:id="lblTotal" styleClass="dcd-total-box" text="288€" />
+    </HBox>
+
+</VBox>

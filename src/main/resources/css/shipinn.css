@@ -1,7 +1,16 @@
 /* ============================================
    shipinn.css — Shared base styles
-   Used by: Login.fxml, Register.fxml
+   Used by: Login.fxml, Register.fxml,
+            DailyCostsSummaries.fxml, Menu.fxml,
+            and all future screens.
    ============================================ */
+
+/* ---------- White content screen root ---------- */
+/* Used by inner screens (menu content area, not auth) */
+.screen-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+}
 
 /* ---------- Root / Background ---------- */
 .root-pane {

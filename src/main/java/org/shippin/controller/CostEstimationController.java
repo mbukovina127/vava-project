@@ -27,7 +27,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private TextField dateField;
 
     // ── Type toggles ─────────────────────────────────────────────────────────
-    @FXML private ToggleGroup typeGroup;
+    private final ToggleGroup typeGroup = new ToggleGroup();
     @FXML private RadioButton rbSmallPackage;
     @FXML private RadioButton rbShipment;
 
@@ -50,6 +50,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private CheckBox chkPripoistenie;
     @FXML private CheckBox chkVratenieEUP;
 
+
     // ── Additional fees — Produkty pre ZBS ───────────────────────────────────
     @FXML private CheckBox chkPremium;
     @FXML private CheckBox chkFIX;
@@ -57,6 +58,8 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private CheckBox chkFIX10;
     @FXML private CheckBox chkPremium13;
     @FXML private CheckBox chkFIX13;
+
+
 
     // ── Result / status ──────────────────────────────────────────────────────
     @FXML private Label  statusLabel;
@@ -73,13 +76,19 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private Button resetButton;
     @FXML private Button computeButton;
 
-
+    // ── Type toggles ─────────────────────────────────────────────────────────
+    private final ToggleGroup deliveryTypeGroup = new ToggleGroup();
+    @FXML private RadioButton rbExpress;
+    @FXML private RadioButton rbClassic;
+    @FXML private RadioButton rbEconomy;
 
     // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        rbSmallPackage.setToggleGroup(typeGroup);
+        rbShipment.setToggleGroup(typeGroup);
         //TODO: nacitat mena skladov z db (strings)
         fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
         fromCombo.setValue(fromCombo.getItems().getFirst());
