@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -16,6 +17,9 @@ import org.shippin.database.DBConnector;
 import org.shippin.database.dao.RegionDAO;
 import org.shippin.domain.RegionTable;
 import org.shippin.domain.RegionTableEntry;
+import org.shippin.domain.Warehouse;
+import org.shippin.util.Range;
+
 
 public class RegionDaoTest {
 
@@ -103,6 +107,39 @@ public class RegionDaoTest {
 
         assertDoesNotThrow(() ->
             regionDAO.insertPSCRange(regionId, 10000, 19999)
+        );
+    }
+
+    @Test
+    @DisplayName("getRegionByPsc returns region for existing PSC")
+    void getRegionByPscReturnsExistingRegion() throws SQLException {
+        int warehouseId = insertWarehouse("Region PSC Test");
+        int regionId = regionDAO.insertRegion("PSC1", warehouseId);
+
+        regionDAO.insertPSCRange(regionId, 10000, 19999);
+
+        RegionTableEntry entry = regionDAO.getRegionByPsc("Region PSC Test", 15000);
+
+        assertNotNull(entry);
+    }
+
+    @Test
+    @DisplayName("insertFullRegion executes or exposes bug")
+    void insertFullRegionExecutes() throws SQLException {
+        int warehouseId = insertWarehouse("Full Region Warehouse");
+
+        Warehouse warehouse = new Warehouse();
+        warehouse.setId(warehouseId);
+        warehouse.setName("Full Region Warehouse");
+        warehouse.setRegionName("full_region_test.xlsx");
+
+        ArrayList<Range> ranges = new ArrayList<>();
+        ranges.add(new Range(20000, 29999));
+
+        RegionTableEntry entry = new RegionTableEntry(0, ranges, "FULL1");
+
+        assertDoesNotThrow(() ->
+                regionDAO.insertFullRegion(entry, warehouse)
         );
     }
 }

@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -141,6 +142,22 @@ public class PriceListDaoTest {
 
         assertDoesNotThrow(() ->
                 priceListDAO.insertPriceListEntry(item, "PL Test NR")
+        );
+    }
+
+    @Test
+    @DisplayName("insertPriceList executes or exposes bug")
+    void insertPriceListExecutes() throws SQLException {
+        insertWarehouse("PL Full Insert Test");
+
+        PriceList priceList = new PriceList();
+        priceList.setEntries(List.of(
+                new PriceListEntry(0, 5, 1, 10, "FULL_PL_1"),
+                new PriceListEntry(0, 10, 2, 20, "FULL_PL_2")
+        ));
+
+        assertDoesNotThrow(() ->
+                priceListDAO.insertPriceList(priceList, "PL Full Insert Test")
         );
     }
 }

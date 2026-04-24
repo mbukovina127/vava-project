@@ -1,3 +1,5 @@
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -14,8 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.ShipmentDAO;
+import org.shippin.domain.AdditionalService;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.State;
+
 
 public class ShipmentDaoTest {
 
@@ -87,5 +91,110 @@ public class ShipmentDaoTest {
         assertDoesNotThrow(() ->
                 shipmentDAO.insertShipment(sh, 1, 1)
         );
+    }
+
+    private int insertServiceDirectly(String name) throws SQLException {
+        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+            INSERT INTO Service(service_name, default_cost, cost_modificator)
+            VALUES (?, 5, 1)
+            RETURNING service_ID
+        """);
+
+        stmt.setString(1, name);
+
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+
+        return rs.getInt("service_ID");
+    }
+
+    private int insertUserDirectly(String email) throws SQLException {
+        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+            INSERT INTO Users(first_name, last_name, password, email, role)
+            VALUES ('Shipment', 'Tester', 'pass', ?, 0)
+            RETURNING user_ID
+        """);
+
+        stmt.setString(1, email);
+
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+
+        return rs.getInt("user_ID");
+    }
+
+    private int insertWarehouseDirectly(String name) throws SQLException {
+        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+            INSERT INTO Warehouse(storage_region, warehouse_region_name, price_list_file)
+            VALUES (100, ?, 'shipment_test.xlsx')
+            RETURNING warehouse_ID
+        """);
+
+        stmt.setString(1, name);
+
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+
+        return rs.getInt("warehouse_ID");
+    }
+
+    private int insertShipmentDirectly(int userId, int warehouseId) throws SQLException {
+        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+            INSERT INTO Shipment(user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, status)
+            VALUES (?, ?, 1, 5, 100, 'NOT_READY')
+            RETURNING shipment_ID
+        """);
+
+        stmt.setInt(1, userId);
+        stmt.setInt(2, warehouseId);
+
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+
+        return rs.getInt("shipment_ID");
+    }
+
+    @Test
+    @DisplayName("getSAllServices returns non-null list")
+    void getAllServicesReturnsList() throws SQLException {
+        insertServiceDirectly("Insurance Test Service");
+
+        ArrayList<AdditionalService> services = shipmentDAO.getSAllServices();
+
+        assertNotNull(services);
+    }
+
+    @Test
+    @DisplayName("getShipmentServices returns services for shipment")
+    void getShipmentServicesReturnsServices() throws SQLException {
+        int userId = insertUserDirectly("shipment.service@test.com");
+        int warehouseId = insertWarehouseDirectly("Shipment Service Warehouse");
+        int shipmentId = insertShipmentDirectly(userId, warehouseId);
+        int serviceId = insertServiceDirectly("Fragile Test Service");
+
+        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+            INSERT INTO Service_list(service_ID, shipment_ID)
+            VALUES (?, ?)
+        """);
+
+        stmt.setInt(1, serviceId);
+        stmt.setInt(2, shipmentId);
+        stmt.executeUpdate();
+
+        ArrayList<AdditionalService> services = shipmentDAO.getShipmentServices(shipmentId);
+
+        assertNotNull(services);
+    }
+
+    @Test
+    @DisplayName("getShipmentById returns shipment for existing id")
+    void getShipmentByIdReturnsExistingShipment() throws SQLException {
+        int userId = insertUserDirectly("shipment.byid@test.com");
+        int warehouseId = insertWarehouseDirectly("Shipment By Id Warehouse");
+        int shipmentId = insertShipmentDirectly(userId, warehouseId);
+
+        Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
+
+        assertNotNull(shipment);
     }
 }

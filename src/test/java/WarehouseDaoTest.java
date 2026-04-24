@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -130,5 +131,20 @@ public class WarehouseDaoTest {
         assertEquals(99901, rs.getInt("warehouse_ID"));
         assertEquals("Warehouse Upsert Test", rs.getString("warehouse_region_name"));
         assertEquals("upsert_prices.xlsx", rs.getString("price_list_file"));
+    }
+
+    @Test
+    @DisplayName("insertFullWarehouse executes or exposes bug")
+    void insertFullWarehouseExecutes() {
+        Warehouse warehouse = new Warehouse();
+        warehouse.setId(99902);
+        warehouse.setName("Full Warehouse Test");
+        warehouse.setRegionName("full_test.xlsx");
+        warehouse.setRegionTable(null);
+        warehouse.setPriceList(null);
+
+        assertDoesNotThrow(() ->
+                warehouseDAO.insertFullWarehouse(warehouse)
+        );
     }
 }
