@@ -1,16 +1,20 @@
 package org.shippin.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PriceList implements EntityTable<PriceListEntry> {
 
+    private List<PriceListEntry> entries = new ArrayList<>();
+
     @Override
     public List<PriceListEntry> getEntries() {
-        return List.of();
+        return entries;
     }
 
     @Override
     public boolean setEntries(List<PriceListEntry> entries) {
-        return false;
+        this.entries = entries;
+        return true;
     }
 }
