@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+    WarehouseManagement.fxml
+    Stylesheets load order:
+      1. shipinn.css              — shared base tokens
+      2. warehouse-page.css       — screen-specific rules
+-->
+<BorderPane
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="org.shippin.controller.WarehouseManagementController"
+    styleClass="wm-root"
+    stylesheets="@../css/shipinn.css, @../css/warehouse-page.css">
+
+    <center>
+        <VBox styleClass="wm-content" spacing="0">
+
+            <!-- ══════════ TOP BAR: title + add button ══════════ -->
+            <HBox styleClass="wm-topbar" alignment="CENTER_LEFT">
+                <Label styleClass="wm-title" text="Warehouse management"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button
+                    fx:id="addWarehouseBtn"
+                    styleClass="wm-btn-add"
+                    text="+ Add new warehouse"
+                    onAction="#onAddWarehouse"/>
+            </HBox>
+
+            <!-- ══════════ COLUMN HEADERS ══════════ -->
+            <HBox styleClass="wm-col-header-row" alignment="CENTER_LEFT">
+                <!-- name column spacer -->
+                <Region styleClass="wm-col-name-spacer" HBox.hgrow="ALWAYS"/>
+                <Label styleClass="wm-col-header" text="Edit"          prefWidth="60" alignment="CENTER"/>
+                <Label styleClass="wm-col-header" text="Replace"       prefWidth="72" alignment="CENTER"/>
+                <Label styleClass="wm-col-header" text="Export to csv" prefWidth="96" alignment="CENTER"/>
+                <Label styleClass="wm-col-header" text="Delete"        prefWidth="60" alignment="CENTER"/>
+            </HBox>
+
+            <!-- ══════════ WAREHOUSE ROWS — built by controller ══════════ -->
+            <VBox fx:id="warehouseList" styleClass="wm-list" spacing="0"/>
+
+            <!-- ══════════ BOTTOM BUTTONS ══════════ -->
+            <HBox styleClass="wm-bottom-bar" spacing="16" alignment="CENTER_RIGHT">
+                <!-- spacer pushes buttons to the right, aligning them under the action columns -->
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button
+                    fx:id="viewPriceListBtn"
+                    styleClass="wm-btn-secondary"
+                    text="View small package price list"
+                    onAction="#onViewPriceList"
+                    prefWidth="288"/>
+                <Button
+                    fx:id="changePriceListBtn"
+                    styleClass="wm-btn-secondary"
+                    text="Change small package price list"
+                    onAction="#onChangePriceList"
+                    prefWidth="288"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

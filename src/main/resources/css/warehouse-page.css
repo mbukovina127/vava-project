@@ -1,0 +1,190 @@
+/* ============================================
+   warehouse-page.css — Warehouse Management
+   Load AFTER shipinn.css:
+     stylesheets="@shipinn.css, @warehouse-page.css"
+
+   Only rules unique to this screen live here.
+   Shared tokens (colors, fonts, .btn, etc.)
+   stay in shipinn.css.
+   ============================================ */
+
+/* ── Root ───────────────────────────────────── */
+.wm-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 28 36 28 36;
+}
+
+/* ── Main content VBox ──────────────────────── */
+.wm-content {
+    -fx-pref-width: Infinity;
+    -fx-max-width: Infinity;
+}
+
+/* ══════════════════════════════════════════════
+   TOP BAR
+   ══════════════════════════════════════════════ */
+
+.wm-topbar {
+    -fx-padding: 0 0 20 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.wm-title {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* "+ Add new warehouse" — outlined dark button */
+.wm-btn-add {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1E1E1E;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #1E1E1E;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-padding: 8 16 8 16;
+}
+
+.wm-btn-add:hover {
+    -fx-background-color: #F5EDE0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
+}
+
+.wm-btn-add:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ══════════════════════════════════════════════
+   COLUMN HEADERS
+   ══════════════════════════════════════════════ */
+
+.wm-col-header-row {
+    -fx-padding: 0 0 4 0;
+    -fx-border-color: transparent transparent #E0E0E0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.wm-col-header {
+    -fx-font-family: 'System';
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #888888;
+    -fx-alignment: CENTER;
+}
+
+/* ══════════════════════════════════════════════
+   WAREHOUSE LIST
+   ══════════════════════════════════════════════ */
+
+.wm-list {
+    -fx-padding: 0;
+}
+
+/* Single warehouse row */
+.wm-row {
+    -fx-padding: 10 0 10 0;
+    -fx-border-color: transparent transparent #EEEEEE transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-height: 48;
+}
+
+.wm-row:hover {
+    -fx-background-color: #FAFAF8;
+}
+
+/* Warehouse code label */
+.wm-row-name {
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ── Icon action buttons (Edit / Replace / Export / Delete) ── */
+.wm-icon-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 16px;
+    -fx-text-fill: #2C2C2C;
+    -fx-cursor: hand;
+    -fx-pref-width: 60;
+    -fx-pref-height: 34;
+    -fx-alignment: CENTER;
+    -fx-padding: 0;
+}
+
+.wm-icon-btn:hover {
+    -fx-text-fill: #5D3F25;
+    -fx-background-color: #F0E4D7;
+    -fx-background-radius: 6;
+}
+
+.wm-icon-btn:pressed {
+    -fx-scale-x: 0.93;
+    -fx-scale-y: 0.93;
+}
+
+/* Replace button — slightly wider to match "Replace" header */
+.wm-icon-btn-replace {
+    -fx-pref-width: 72;
+}
+
+/* Export to csv button — wider to match header */
+.wm-icon-btn-export {
+    -fx-pref-width: 96;
+}
+
+/* Delete button — red tint on hover */
+.wm-icon-btn-delete {
+    -fx-pref-width: 60;
+}
+
+.wm-icon-btn-delete:hover {
+    -fx-text-fill: #cc0000;
+    -fx-background-color: #fdecea;
+    -fx-background-radius: 6;
+}
+
+/* ══════════════════════════════════════════════
+   BOTTOM BUTTONS
+   ══════════════════════════════════════════════ */
+
+.wm-bottom-bar {
+    -fx-padding: 24 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+/* Outlined secondary button — matches screenshot style */
+.wm-btn-secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1E1E1E;
+    -fx-font-family: 'System';
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-border-color: #AAAAAA;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-pref-height: 42;
+    -fx-alignment: CENTER;
+}
+
+.wm-btn-secondary:hover {
+    -fx-background-color: #F5EDE0;
+    -fx-border-color: #888888;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+.wm-btn-secondary:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}

@@ -1,0 +1,179 @@
+/* ============================================================
+   daily-costs-detail.css — Daily Costs Summary Detail screen
+   Load AFTER shipinn.css:
+     stylesheets="@shipinn.css, @daily-costs-detail.css"
+
+   Only rules unique to this screen live here.
+   Shared tokens (colors, fonts, .btn, etc.) stay in shipinn.css.
+   ============================================================ */
+
+/* ── Root ───────────────────────────────────────────────────── */
+.dcd-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+    -fx-spacing: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOP BAR
+   ══════════════════════════════════════════════════════════════ */
+
+.dcd-topbar {
+    -fx-padding: 0 0 24 0;
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 12;
+}
+
+/* Screen title  e.g. "1.4.2026 – Daily costs summary" */
+.dcd-title {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* "+ Add new shipment" outlined button */
+.dcd-btn-add {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1E1E1E;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-padding: 9 18 9 18;
+    -fx-pref-height: 38;
+}
+
+.dcd-btn-add:hover {
+    -fx-background-color: #F5EDE0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
+}
+
+.dcd-btn-add:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SHIPMENT LIST
+   ══════════════════════════════════════════════════════════════ */
+
+.dcd-list {
+    -fx-spacing: 8;
+    -fx-padding: 0 0 8 0;
+}
+
+/* ── Single shipment row card ───────────────────────────────── */
+.dcd-row {
+    -fx-background-color: #F7F7F7;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 13 14 13 16;
+    -fx-spacing: 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-height: 48;
+}
+
+.dcd-row:hover {
+    -fx-background-color: #F0E4D7;
+    -fx-border-color: #C4A899;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);
+}
+
+/* Time stamp — monospaced-width, slightly muted */
+.dcd-row-time {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-pref-width: 42;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Description — grows to fill available space */
+.dcd-row-desc {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+}
+
+/* Cost amount — right-aligned */
+.dcd-row-amount {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-pref-width: 72;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* ── Icon action buttons ────────────────────────────────────── */
+.dcd-icon-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 15px;
+    -fx-text-fill: #6B5B52;
+    -fx-cursor: hand;
+    -fx-pref-width: 32;
+    -fx-pref-height: 32;
+    -fx-alignment: CENTER;
+    -fx-padding: 0;
+}
+
+.dcd-icon-btn:hover {
+    -fx-text-fill: #1E1E1E;
+    -fx-background-color: #E8DDD8;
+    -fx-background-radius: 6;
+}
+
+.dcd-icon-btn:pressed {
+    -fx-scale-x: 0.90;
+    -fx-scale-y: 0.90;
+}
+
+/* Delete icon — red tint on hover */
+.dcd-icon-btn-delete:hover {
+    -fx-text-fill: #cc0000;
+    -fx-background-color: #fdecea;
+    -fx-background-radius: 6;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SEPARATOR
+   ══════════════════════════════════════════════════════════════ */
+
+.dcd-separator {
+    -fx-background-color: #D8D8D8;
+    -fx-padding: 8 0 0 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOTAL ROW
+   ══════════════════════════════════════════════════════════════ */
+
+.dcd-total-row {
+    -fx-padding: 16 0 0 0;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Total amount box — bordered label */
+.dcd-total-box {
+    -fx-font-family: 'System';
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-padding: 8 20 8 20;
+    -fx-pref-height: 40;
+    -fx-alignment: CENTER;
+}
