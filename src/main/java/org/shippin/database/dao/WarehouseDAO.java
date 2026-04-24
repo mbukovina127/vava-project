@@ -24,9 +24,9 @@ public class WarehouseDAO extends BaseDAO {
         if (!rs.next()) return null;
 
         Warehouse warehouse = new Warehouse();
-        warehouse.setId(rs.getInt("id"));
-        warehouse.setName(rs.getString("name"));
-        warehouse.setRegionName(rs.getString("region_name"));
+        warehouse.setId(rs.getInt("warehouse_ID"));
+        warehouse.setName(rs.getString("warehouse_region_name"));
+        warehouse.setRegionName(rs.getString("price_list_file"));
 
 
         RegionDAO regionDAO = new RegionDAO(connection);
@@ -56,9 +56,9 @@ public class WarehouseDAO extends BaseDAO {
 
         while (rs.next()) {
             BriefWarehouse bw = new BriefWarehouse(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("region_name")
+                    rs.getInt("warehouse_ID"),
+                    rs.getString("warehouse_region_name"),
+                    rs.getString("price_list_file")
             );
             list.add(bw);
         }
@@ -79,9 +79,9 @@ public class WarehouseDAO extends BaseDAO {
 
         if (rs.next()) {
             BriefWarehouse bw = new BriefWarehouse(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("region_name")
+                    rs.getInt("warehouse_ID"),
+                    rs.getString("warehouse_region_name"),
+                    rs.getString("price_list_file")
             );
             return bw;
         }
