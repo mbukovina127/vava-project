@@ -33,6 +33,4 @@ public class NavigationUtilities {
             throw new RuntimeException("Failed to load screen: " + screen, e);
         }
     }
-
-
 }

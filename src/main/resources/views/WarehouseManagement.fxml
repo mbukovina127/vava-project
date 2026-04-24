@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.shippin.controller.WarehouseManagementController"
+           prefWidth="1050.0"
+           prefHeight="620.0"
+           stylesheets="@warehouse-management.css">
+
+    <children>
+
+        <BorderPane style="-fx-background-color: #f4f4f4;"
+                    prefWidth="1050.0"
+                    prefHeight="620.0">
+
+            <center>
+                <VBox spacing="26.0" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets top="38.0" right="48.0" bottom="34.0" left="48.0"/>
+                    </padding>
+
+                    <children>
+                        <HBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="Warehouse management">
+                                    <font>
+                                        <Font size="28.0"/>
+                                    </font>
+                                    <style>
+                                        -fx-font-weight: 800;
+                                        -fx-text-fill: #111111;
+                                    </style>
+                                </Label>
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Button fx:id="addWarehouseButton"
+                                        text="Add new warehouse"
+                                        graphicTextGap="10.0"
+                                        prefWidth="212.0"
+                                        prefHeight="46.0"
+                                        mnemonicParsing="false"
+                                        styleClass="main-action-button"
+                                        onAction="#handleAddWarehouse">
+                                    <graphic>
+                                        <ImageView fx:id="addWarehouseIcon" fitWidth="18.0" fitHeight="18.0" pickOnBounds="true" preserveRatio="true"/>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+
+                        <VBox spacing="0.0" style="-fx-background-color: transparent;">
+                            <children>
+                                <GridPane hgap="0.0" vgap="0.0" style="-fx-border-color: transparent transparent #2b2b2b transparent; -fx-border-width: 0 0 2 0;">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                                        <ColumnConstraints prefWidth="95.0" halignment="CENTER"/>
+                                        <ColumnConstraints prefWidth="115.0" halignment="CENTER"/>
+                                        <ColumnConstraints prefWidth="145.0" halignment="CENTER"/>
+                                        <ColumnConstraints prefWidth="90.0" halignment="CENTER"/>
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="" GridPane.columnIndex="0"/>
+                                        <Label text="Edit" GridPane.columnIndex="1" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="Replace" GridPane.columnIndex="2" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="Export to csv" GridPane.columnIndex="3" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="Delete" GridPane.columnIndex="4" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                    </children>
+                                    <padding>
+                                        <Insets top="0.0" right="6.0" bottom="10.0" left="6.0"/>
+                                    </padding>
+                                </GridPane>
+
+                                <VBox fx:id="warehouseRowsContainer" spacing="0.0"/>
+                            </children>
+                        </VBox>
+
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="34.0" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Button text="View small package price list"
+                                        prefWidth="355.0"
+                                        prefHeight="42.0"
+                                        styleClass="main-action-button"/>
+
+                                <Button text="Change small package price list"
+                                        graphicTextGap="10.0"
+                                        mnemonicParsing="false"
+                                        prefWidth="335.0"
+                                        prefHeight="42.0"
+                                        styleClass="main-action-button">
+                                    <graphic>
+                                        <ImageView fx:id="changePriceListIcon" fitWidth="18.0" fitHeight="18.0" preserveRatio="true"/>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </center>
+        </BorderPane>
+
+        <!-- MODAL OVERLAY -->
+        <StackPane fx:id="modalOverlay"
+                   visible="false"
+                   managed="false"
+                   pickOnBounds="true"
+                   styleClass="modal-overlay">
+
+            <VBox fx:id="modalContentHolder"
+                  managed="false"
+                  visible="false"
+                  maxWidth="620.0"
+                  alignment="CENTER"/>
+        </StackPane>
+
+    </children>
+</StackPane>
