@@ -11,7 +11,7 @@
            fx:controller="org.shippin.controller.WarehouseManagementController"
            prefWidth="1050.0"
            prefHeight="620.0"
-           stylesheets="@warehouse-management.css">
+           stylesheets="@../css/warehouse-management.css">
 
     <children>
 
@@ -108,20 +108,5 @@
                 </VBox>
             </center>
         </BorderPane>
-
-        <!-- MODAL OVERLAY -->
-        <StackPane fx:id="modalOverlay"
-                   visible="false"
-                   managed="false"
-                   pickOnBounds="true"
-                   styleClass="modal-overlay">
-
-            <VBox fx:id="modalContentHolder"
-                  managed="false"
-                  visible="false"
-                  maxWidth="620.0"
-                  alignment="CENTER"/>
-        </StackPane>
-
     </children>
 </StackPane>

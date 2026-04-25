@@ -10,9 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.dto.Screens;
 
@@ -37,6 +39,8 @@ public class MenuController implements Initializable {
     @FXML private Hyperlink navLink5;
     @FXML private Label     UserNameLabel;
     @FXML private Button    profileButton;
+    @FXML private StackPane modalOverlay;
+    @FXML private VBox modalContentHolder;
 
     // ── Left sidebar ─────────────────────────────────────────────────────────
     @FXML private VBox   leftSidebar;
@@ -52,6 +56,23 @@ public class MenuController implements Initializable {
 
     // CONTENT
     @FXML private StackPane contentArea;
+    
+    public void showOverlay(javafx.scene.Node content) {
+    	if (content instanceof Region region) {
+            region.setMaxHeight(Region.USE_PREF_SIZE);
+            region.setMaxWidth(Region.USE_PREF_SIZE);
+        }
+        StackPane.setAlignment(content, Pos.CENTER);
+    	modalOverlay.getChildren().setAll(content);
+    	modalOverlay.setManaged(true);
+        modalOverlay.setVisible(true);
+    }
+
+    public void hideOverlay() {
+        modalOverlay.setVisible(false);
+        modalOverlay.setManaged(false);
+        modalOverlay.getChildren().clear();
+    }
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
@@ -65,6 +86,10 @@ public class MenuController implements Initializable {
             Node node = loader.load();
 
             Object ctrl = loader.getController();
+            
+            if (ctrl instanceof WarehouseManagementController wmController) {
+                wmController.setMenuController(this);  // Pass MenuController to WarehouseManagementController
+            }
 
             if (ctrl instanceof BaseController<?> bc) {
                 bc.setMenuController(this);

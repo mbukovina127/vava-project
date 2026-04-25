@@ -148,6 +148,116 @@
     -fx-background-color: transparent;
 }
 
+/* POPUP */
+.popup-root {
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 18;
+    -fx-border-color: transparent;
+    -fx-border-radius: 18;
+}
+
+.popup-title {
+    -fx-font-size: 18;
+    -fx-font-weight: 800;
+    -fx-text-fill: #111111;
+}
+
+.popup-label {
+    -fx-font-size: 14;
+    -fx-text-fill: #222222;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.popup-value-label {
+    -fx-font-size: 14;
+    -fx-text-fill: #222222;
+    -fx-font-weight: 500;
+}
+
+.popup-file-label {
+    -fx-background-color: #d9d9d9;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 14;
+    -fx-text-fill: #222222;
+}
+
+.popup-text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #222222;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+    -fx-font-size: 14;
+    -fx-text-fill: #111111;
+    -fx-prompt-text-fill: #9a9a9a;
+}
+
+.popup-text-field:focused {
+    -fx-border-color: #111111;
+    -fx-background-insets: 0;
+}
+
+.popup-button {
+    -fx-cursor: hand;
+    -fx-font-size: 14;
+    -fx-font-weight: 700;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+}
+
+.popup-primary-button {
+    -fx-background-color: #7c7c7c;
+    -fx-text-fill: white;
+    -fx-border-color: #2b2b2b;
+}
+
+.popup-primary-button:hover {
+    -fx-background-color: #6f6f6f;
+}
+
+.popup-primary-button:pressed {
+    -fx-background-color: #606060;
+    -fx-translate-y: 1;
+}
+
+.popup-secondary-button {
+    -fx-background-color: #f4f4f4;
+    -fx-text-fill: #111111;
+    -fx-border-color: #2b2b2b;
+}
+
+.popup-secondary-button:hover {
+    -fx-background-color: #e8e8e8;
+}
+
+.popup-secondary-button:pressed {
+    -fx-background-color: #dcdcdc;
+    -fx-translate-y: 1;
+}
+
+.popup-danger-button {
+    -fx-background-color: #f2a7a7;
+    -fx-text-fill: #111111;
+    -fx-border-color: #7a2d2d;
+}
+
+.popup-danger-button:hover {
+    -fx-background-color: #eb9898;
+}
+
+.popup-danger-button:pressed {
+    -fx-background-color: #e18686;
+    -fx-translate-y: 1;
+}
+
+.modal-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-alignment: center;
+	-fx-z-index: 1000;
+}
+
 .content-scroll > .viewport {
     -fx-background-color: transparent;
 }

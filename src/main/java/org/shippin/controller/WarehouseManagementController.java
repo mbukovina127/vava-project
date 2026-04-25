@@ -29,8 +29,6 @@ public class WarehouseManagementController implements Initializable {
     @FXML private ImageView changePriceListIcon;
     @FXML private VBox warehouseRowsContainer;
     @FXML private Button addWarehouseButton;
-    @FXML private StackPane modalOverlay;
-    @FXML private VBox modalContentHolder;
 
     private Image editIcon;
     private Image replaceIcon;
@@ -64,6 +62,12 @@ public class WarehouseManagementController implements Initializable {
                 new BriefWarehouse(2, "ZBS - BB", "Banska Bystrica"),
                 new BriefWarehouse(3, "ZBS - RK", "Ruzomberok")
         );
+    }
+    
+    private MenuController menuController;
+
+    public void setMenuController(MenuController menuController) {
+        this.menuController = menuController;
     }
 
     private void renderWarehouses(List<CoreWarehouseInfo> warehouses) {
@@ -150,21 +154,17 @@ public class WarehouseManagementController implements Initializable {
     }
     
     private void showModal(VBox popupContent) {
-        modalContentHolder.getChildren().setAll(popupContent);
-        modalContentHolder.setManaged(true);
-        modalContentHolder.setVisible(true);
 
-        modalOverlay.setManaged(true);
-        modalOverlay.setVisible(true);
+        if (menuController != null) {
+            menuController.showOverlay(popupContent);
+        }
     }
 
     private void hideModal() {
-        modalContentHolder.getChildren().clear();
-        modalContentHolder.setVisible(false);
-        modalContentHolder.setManaged(false);
 
-        modalOverlay.setVisible(false);
-        modalOverlay.setManaged(false);
+        if (menuController != null) {
+            menuController.hideOverlay();
+        }
     }
 
     @FXML
