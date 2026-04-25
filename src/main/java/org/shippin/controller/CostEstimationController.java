@@ -22,36 +22,41 @@ import static org.shippin.dto.Screens.COST_BREAKDOWN;
 
 public class CostEstimationController extends BaseController<Void> implements Initializable {
 
-    // ── Title / Date ─────────────────────────────────────────────────────────
+    // Title + Date
     @FXML private Label     sectionTitleLabel;
     @FXML private TextField dateField;
 
-    // ── Type toggles ─────────────────────────────────────────────────────────
-    private final ToggleGroup typeGroup = new ToggleGroup();
+    // Type toggles (small or shipment)
+    @FXML private ToggleGroup shipmentTypeGroup;
     @FXML private RadioButton rbSmallPackage;
     @FXML private RadioButton rbShipment;
 
-    // ── Postal codes ─────────────────────────────────────────────────────────
+    // Postal codes
     @FXML private ComboBox<String> fromCombo;
     @FXML private TextField destinationField;
 
-    // ── Size row ─────────────────────────────────────────────────────────────
+    // Size row
     @FXML private TextField weightField;
     @FXML private TextField volumeField;
 
-    // ── Coefficients row ─────────────────────────────────────────────────────
+    // Coefficients row
     @FXML private TextField fuelSurchargeField;
     @FXML private TextField tollField;
 
-    // ── Additional fees — Obstarávané služby ─────────────────────────────────
+    // Additional fees
     @FXML private CheckBox chkAdditionalFees;
     @FXML private CheckBox chkADR;
     @FXML private CheckBox chkDobierka;
     @FXML private CheckBox chkPripoistenie;
     @FXML private CheckBox chkVratenieEUP;
 
+    // Type toggles (Time of delivery)
+    @FXML private ToggleGroup deliveryTypeGroup;
+    @FXML private RadioButton rbExpress;
+    @FXML private RadioButton rbClassic;
+    @FXML private RadioButton rbEconomy;
 
-    // ── Additional fees — Produkty pre ZBS ───────────────────────────────────
+    // Additional fees — Produkty pre ZBS
     @FXML private CheckBox chkPremium;
     @FXML private CheckBox chkFIX;
     @FXML private CheckBox chkPremium10;
@@ -59,36 +64,23 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private CheckBox chkPremium13;
     @FXML private CheckBox chkFIX13;
 
-
-
-    // ── Result / status ──────────────────────────────────────────────────────
-    @FXML private Label  statusLabel;
-    @FXML private HBox   resultBox;
-    @FXML private Label  estimatedCostLabel;
-
-    // -- ERRORS
+    // ERRORS (labels)
     @FXML private Label  statusLabelDestination;
     @FXML private Label  statusLabelWeight;
     @FXML private Label  statusLabelVolume;
     @FXML private Label  statusLabelDate;
+    @FXML private Label statusLabelFuel;
+    @FXML private Label statusLabelToll;
 
-    // ── Buttons ──────────────────────────────────────────────────────────────
+    // Buttons
     @FXML private Button resetButton;
     @FXML private Button computeButton;
-
-    // ── Type toggles ─────────────────────────────────────────────────────────
-    private final ToggleGroup deliveryTypeGroup = new ToggleGroup();
-    @FXML private RadioButton rbExpress;
-    @FXML private RadioButton rbClassic;
-    @FXML private RadioButton rbEconomy;
-
-    // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        rbSmallPackage.setToggleGroup(typeGroup);
-        rbShipment.setToggleGroup(typeGroup);
+        rbShipment.setSelected(true);
+        rbClassic.setSelected(true);
         //TODO: nacitat mena skladov z db (strings)
         fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
         fromCombo.setValue(fromCombo.getItems().getFirst());
@@ -149,7 +141,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         return parseDouble(tollField.getText());
     }
 
-    // ── Action handlers ──────────────────────────────────────────────────────
+    // Action handlers
 
     @FXML
     private void onReset()
@@ -163,6 +155,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         tollField.clear();
 
         rbShipment.setSelected(true);
+        rbClassic.setSelected(true);
 
         chkAdditionalFees.setSelected(true);
         chkADR.setSelected(false);
@@ -176,13 +169,21 @@ public class CostEstimationController extends BaseController<Void> implements In
         chkPremium13.setSelected(false);
         chkFIX13.setSelected(false);
     }
+
+    private String getSelectedText(ToggleGroup group)
+    {
+        return group.getSelectedToggle() != null
+                ? ((RadioButton) group.getSelectedToggle()).getText()
+                : "";
+    }
+
     @FXML
     private void onComputeCost() throws IOException
     {
         // zistime typ sluzby
-        String shipment = typeGroup.getSelectedToggle() != null
-                ? ((RadioButton) typeGroup.getSelectedToggle()).getText()
-                : "";
+        String shipment = getSelectedText(shipmentTypeGroup);
+        // zistime rychlost dorucenia
+        String deliveryTime = getSelectedText(deliveryTypeGroup);
 
         //TODO:asi calendar view a errors
         String date = dateField.getText().trim();
@@ -191,7 +192,6 @@ public class CostEstimationController extends BaseController<Void> implements In
 
         String weightText = weightField.getText().trim();
         String volumeText = volumeField.getText().trim();
-        //TODO: co s tymto?
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
@@ -204,17 +204,20 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
         String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
 
-
         if
         (
                 !destinationError.isEmpty()
                 || !weightError.isEmpty()
                 || !volumeError.isEmpty()
+                || !fuelSurchargeError.isEmpty()
+                || !tollError.isEmpty()
         )
         {
             statusLabelDestination.setText(destinationError);
             statusLabelVolume.setText(volumeError);
             statusLabelWeight.setText(weightError);
+            statusLabelToll.setText(tollError);
+            statusLabelFuel.setText(fuelSurchargeError);
             return;
         }
 
