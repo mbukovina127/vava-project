@@ -41,13 +41,27 @@
                 maxWidth="360"/>
 
 
-<!--        TODO: urobit očko ;)-->
         <!-- Password -->
         <Label styleClass="field-label" text="Password"/>
-        <PasswordField
-                fx:id="passwordField"
-                styleClass="input-field"
-                promptText="password"/>
+        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <PasswordField
+                    fx:id="passwordField"
+                    styleClass="password-input"
+                    promptText="password"
+                    HBox.hgrow="ALWAYS"/>
+            <TextField
+                    fx:id="passwordVisible"
+                    styleClass="password-input"
+                    promptText="password"
+                    managed="false"
+                    visible="false"
+                    HBox.hgrow="ALWAYS"/>
+            <Button
+                    fx:id="eyeButton"
+                    styleClass="eye-btn"
+                    text="👁"
+                    onAction="#onTogglePassword"/>
+        </HBox>
 
         <!-- error label (password) -->
         <Label

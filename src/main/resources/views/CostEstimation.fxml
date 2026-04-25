@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="1340" spacing="0" styleClass="ce-root" stylesheets="@../css/cost_estimation.css"
+<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/cost_estimation.css"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shippin.controller.CostEstimationController">
 
@@ -31,7 +31,7 @@
         <HBox alignment="CENTER_RIGHT" spacing="8">
             <Label styleClass="ce-date-label" text="Date:" />
             <TextField fx:id="dateField" prefWidth="130" promptText="DD.MM.YYYY" styleClass="input-field ce-date-field" />
-            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" text="" wrapText="true" />
+            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />
         </HBox>
     </HBox>
 
@@ -43,58 +43,105 @@
                      toggleGroup="$shipmentTypeGroup" />
     </HBox>
 
-    <!-- FIELDS ROW -->
-    <HBox prefHeight="100.0" prefWidth="978.0" spacing="60.0">
-        <children>
-            <VBox alignment="CENTER_RIGHT" spacing="16.0">
-                <children>
-                    <Label prefWidth="140" styleClass="ce-row-label" text="Postal codes:" />
-                    <Label prefWidth="140" styleClass="ce-row-label" text="Size:" />
-                    <Label prefWidth="140" styleClass="ce-row-label" text="Coefficients:" />
-                </children>
-            </VBox>
-            <HBox>
-                <children>
-                    <VBox alignment="CENTER_RIGHT" spacing="16.0">
-                        <children>
-                            <Label styleClass="ce-sub-label" text="From:" />
-                            <Label styleClass="ce-sub-label" text="Weight:" />
-                            <Label styleClass="ce-sub-label" text="Fuel surcharge:" />
-                        </children>
-                    </VBox>
-                    <VBox alignment="CENTER_RIGHT" spacing="10.0">
-                        <children>
-                            <ComboBox fx:id="fromCombo" prefHeight="36" prefWidth="180" styleClass="ce-combo" />
-                            <TextField fx:id="weightField" prefHeight="36" prefWidth="180" styleClass="input-field" />
-                            <TextField fx:id="fuelSurchargeField" prefHeight="36" prefWidth="180" styleClass="input-field" />
-                        </children>
-                    </VBox>
-                </children>
-            </HBox>
-            <Region prefHeight="100.0" prefWidth="96.0" />
-            <HBox>
-                <children>
-                    <VBox alignment="CENTER_RIGHT" spacing="16.0">
-                        <children>
-                            <Label styleClass="ce-sub-label" text="To:" />
-                            <Label styleClass="ce-sub-label" text="Volume:" />
-                            <Label styleClass="ce-sub-label" text="Toll:" />
-                        </children>
-                    </VBox>
-                    <VBox spacing="10.0">
-                        <children>
-                            <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box">
-                                <TextField fx:id="destinationField" prefHeight="36" prefWidth="200" styleClass="ce-to-field" />
-                                <Button fx:id="toScanBtn" styleClass="ce-icon-btn" text="⊕" />
-                            </HBox>
-                            <TextField fx:id="volumeField" prefHeight="36" prefWidth="200" styleClass="input-field" />
-                            <TextField fx:id="tollField" prefHeight="36" prefWidth="200" styleClass="input-field" />
-                        </children>
-                    </VBox>
-                </children>
-            </HBox>
-        </children>
-    </HBox>
+    <!-- FIELDS ROW — restructured as a single GridPane for proper alignment -->
+    <GridPane hgap="16" vgap="4" styleClass="ce-fields-grid">
+        <padding><Insets top="8" bottom="8" /></padding>
+        <columnConstraints>
+            <!-- Row label (Postal codes / Size / Coefficients) -->
+            <ColumnConstraints minWidth="120" prefWidth="140" halignment="LEFT" />
+            <!-- Sub-label From/Weight/Fuel — widened so text isn't cramped -->
+            <ColumnConstraints minWidth="120" prefWidth="150" halignment="RIGHT" />
+            <!-- From field -->
+            <ColumnConstraints minWidth="180" prefWidth="200" />
+            <!-- Status label From -->
+            <ColumnConstraints minWidth="0" prefWidth="160" />
+            <!-- Spacer -->
+            <ColumnConstraints minWidth="40" prefWidth="60" />
+            <!-- Sub-label To/Volume/Toll — widened to match left side -->
+            <ColumnConstraints minWidth="80" prefWidth="100" halignment="RIGHT" />
+            <!-- To field + button -->
+            <ColumnConstraints minWidth="180" prefWidth="220" />
+            <!-- Status label To -->
+            <ColumnConstraints minWidth="0" prefWidth="160" />
+        </columnConstraints>
+        <rowConstraints>
+            <!-- Row 0: Postal codes -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 1: Status label for destination — sits flush under To field -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <!-- Row 2: Size -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 3: Status labels for weight / volume -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <!-- Row 4: Coefficients -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 5: Status labels for fuel / toll -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+        </rowConstraints>
+
+        <!-- ── Row 0: Postal codes ── -->
+        <Label styleClass="ce-row-label" text="Postal codes:"
+               GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+        <Label styleClass="ce-sub-label" text="From:"
+               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <ComboBox fx:id="fromCombo" prefHeight="36" prefWidth="200" styleClass="ce-combo"
+                  GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+        <Label styleClass="ce-sub-label" text="To:"
+               GridPane.columnIndex="5" GridPane.rowIndex="0" />
+        <!-- To field + scan button in an HBox so button stays flush -->
+        <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
+              GridPane.columnIndex="6" GridPane.rowIndex="0">
+            <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
+            <Button fx:id="toScanBtn" styleClass="ce-icon-btn" text="⊕" />
+        </HBox>
+
+        <!-- ── Row 1: status label for destination ── -->
+        <Label fx:id="statusLabelDestination" maxWidth="220" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="1" />
+
+        <!-- ── Row 2: Size ── -->
+        <Label styleClass="ce-row-label" text="Size:"
+               GridPane.columnIndex="0" GridPane.rowIndex="2" />
+
+        <Label styleClass="ce-sub-label" text="Weight:"
+               GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="weightField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="2" GridPane.rowIndex="2" />
+
+        <Label styleClass="ce-sub-label" text="Volume:"
+               GridPane.columnIndex="5" GridPane.rowIndex="2" />
+        <TextField fx:id="volumeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="6" GridPane.rowIndex="2" />
+
+        <!-- ── Row 3: status labels for weight / volume ── -->
+        <Label fx:id="statusLabelWeight" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="3" />
+        <Label fx:id="statusLabelVolume" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="3" />
+
+        <!-- ── Row 4: Coefficients ── -->
+        <Label styleClass="ce-row-label" text="Coefficients:"
+               GridPane.columnIndex="0" GridPane.rowIndex="4" />
+
+        <Label styleClass="ce-sub-label" text="Fuel surcharge:"
+               GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="fuelSurchargeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="2" GridPane.rowIndex="4" />
+
+        <Label styleClass="ce-sub-label" text="Toll:"
+               GridPane.columnIndex="5" GridPane.rowIndex="4" />
+        <TextField fx:id="tollField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="6" GridPane.rowIndex="4" />
+
+        <!-- ── Row 5: status labels for fuel / toll ── -->
+        <Label fx:id="statusLabelFuel" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="5" />
+        <Label fx:id="statusLabelToll" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="5" />
+
+    </GridPane>
 
     <!-- ADDITIONAL FEES TOGGLE -->
     <HBox alignment="CENTER_LEFT" styleClass="ce-fees-header-row">
@@ -138,7 +185,7 @@
             </GridPane>
         </VBox>
 
-        <!-- Right: Typ Doručenia — ToggleGroup zaručí výber len jednej možnosti -->
+        <!-- Right: Typ Doručenia -->
         <HBox spacing="24">
             <VBox spacing="10">
                 <Label styleClass="ce-fees-group-label" text="Typ Doručenia" />
@@ -160,15 +207,6 @@
             </VBox>
         </HBox>
 
-    </HBox>
-
-    <!-- STATUS + RESULT BOX -->
-    <Label fx:id="statusLabel" styleClass="status-label" text="">
-        <VBox.margin><Insets top="6" /></VBox.margin>
-    </Label>
-    <HBox fx:id="resultBox" alignment="CENTER_LEFT" spacing="14" styleClass="ce-result-box" visible="false">
-        <Label styleClass="ce-result-label" text="Estimated Cost:" />
-        <Label fx:id="estimatedCostLabel" styleClass="ce-result-value" text="0.00 €" />
     </HBox>
 
     <!-- BOTTOM ROW -->

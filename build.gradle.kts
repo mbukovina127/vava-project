@@ -48,6 +48,9 @@ dependencies {
 
     //jqwik
     implementation("net.jqwik:jqwik:1.9.3")
+
+    //pdf
+    implementation("org.apache.pdfbox:pdfbox:3.0.2")
 }
 
 tasks.test {

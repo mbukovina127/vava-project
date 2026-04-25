@@ -18,7 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Load the initial screen manually so we can create the Scene with a root
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/WarehouseManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Login.fxml"));
         Parent root = loader.load();
 
         primaryStage.setTitle("Shippin");
