@@ -28,11 +28,9 @@
                     <children>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Label text="Warehouse management">
-                                    <font>
-                                        <Font size="28.0"/>
-                                    </font>
+                                <Label text="Warehouse management">                       
                                     <style>
+                                    	-fx-font-size: 28px;
                                         -fx-font-weight: 800;
                                         -fx-text-fill: #111111;
                                     </style>
