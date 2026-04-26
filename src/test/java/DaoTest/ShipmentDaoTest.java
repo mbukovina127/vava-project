@@ -1,3 +1,5 @@
+package DaoTest;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,7 +83,7 @@ public class ShipmentDaoTest {
     void insertShipmentExecutes() {
         Shipment sh = new Shipment();
 
-        sh.setDest_region("BA1");
+        sh.setDest_region(11111);
         sh.setFuel_payment(5f);
         sh.setTotalCost(100f);
         sh.setCreated_at(new Timestamp(System.currentTimeMillis()));

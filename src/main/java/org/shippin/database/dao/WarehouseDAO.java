@@ -93,9 +93,9 @@ public class WarehouseDAO extends BaseDAO {
      * inserts warehouse core info
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
-        //FIXME price_list_file
+        //FIXME price_list_file / what is there to be fixed?
         String sql = """
-                INSERT INTO Warehouse(warehouse_id, warehouse_region_name,storage_region, price_list_file)
+                INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file)
                 VALUES (?,?,?)
                 ON CONFLICT(warehouse_id)
                 DO UPDATE SET
@@ -106,7 +106,7 @@ public class WarehouseDAO extends BaseDAO {
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
         stmt.setString(2, w.getName()); //SK PSC+region aka name
-        stmt.setString(3, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name // parameter index from 4 to 3
+        stmt.setString(3, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
 
         stmt.executeUpdate();
     }

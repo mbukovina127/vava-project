@@ -1,3 +1,5 @@
+package DaoTest;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,8 +41,9 @@ public class WarehouseDaoTest {
 
     @AfterEach
     void rollback() throws SQLException {
-        dbc.getConnection().rollback();
-        dbc.getConnection().setAutoCommit(true);
+        if (!dbc.getConnection().getAutoCommit()) {
+            dbc.getConnection().rollback();
+        }
     }
 
     private int insertWarehouseDirectly(String name, int storageRegion, String priceListFile) throws SQLException {
@@ -137,14 +140,17 @@ public class WarehouseDaoTest {
     @DisplayName("insertFullWarehouse executes or exposes bug")
     void insertFullWarehouseExecutes() {
         Warehouse warehouse = new Warehouse();
-        warehouse.setId(99902);
         warehouse.setName("Full Warehouse Test");
         warehouse.setRegionName("full_test.xlsx");
         warehouse.setRegionTable(null);
         warehouse.setPriceList(null);
 
-        assertDoesNotThrow(() ->
-                warehouseDAO.insertFullWarehouse(warehouse)
-        );
+        assertDoesNotThrow(() -> {
+            try {
+                warehouseDAO.insertFullWarehouse(warehouse);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);  // wrap checked → unchecked
+            }
+        });
     }
 }

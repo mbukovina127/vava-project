@@ -71,8 +71,8 @@ WHERE s.created_at >= CURRENT_TIMESTAMP - (3 * INTERVAL '1 day'); --3 = test inp
 
 --getBriefAllByDate(Date)
 SELECT * FROM Shipment s
-WHERE s.created_at >= DATE '2026-03-24' --test input
-AND s.created_at < DATE '2026-03-25';
+WHERE s.created_at >= '2026-03-24' --test input
+AND s.created_at < '2026-03-25';
 
 --getBriefAllByStatus(Status)
 SELECT * FROM Shipment s

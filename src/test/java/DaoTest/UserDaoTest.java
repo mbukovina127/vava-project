@@ -1,3 +1,5 @@
+package DaoTest;
+
 import org.junit.jupiter.api.*;
 import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
