@@ -20,6 +20,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ExtraOption;
+import org.shippin.controller.utils.ShipmentData;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.shippin.dto.Screens.COST_ESTIMATION;
+import static org.shippin.dto.Screens.SHIPMENT_DETAIL;
 
 public class CostBreakdownController extends BaseController<CostEstimationInput> implements Initializable {
 
@@ -40,12 +42,16 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
     @FXML private Button    printPdfButton;
     @FXML private Button    saveButton;
 
+    private CostEstimationInput sessionData;
+
 //    // Modal overlay
 //    @FXML private StackPane modalOverlay;
 //    @FXML private VBox      modalContentHolder;
 
     // Current grid row index
     private int gridRow = 0;
+
+
 
     // PDF mirror
     private enum PdfRowType { DATA, SEPARATOR, TOTAL_SEPARATOR, TOTAL }
@@ -69,6 +75,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         breakdownGrid.getChildren().clear();
         pdfRows.clear();
         gridRow = 0;
+        this.sessionData = data;
 
         //TODO: add results form calculations in rightText=, user data are in CostEstimationInput (from prev screen)
 
@@ -232,7 +239,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 
     // Save estimation popup
 
-    private void showSaveEstimationPopup()
+    private void showSaveEstimationPopup(CostEstimationInput data)
     {
         VBox popup = createPopupRoot();
         popup.setMaxWidth(440);
@@ -273,7 +280,13 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         {
             String estimationTitle = titleField.getText().trim();
             // TODO: persist estimationTitle + current breakdown data from CostEstimationInput to DB / daily summary
+
             hideModal();
+            try {
+                loadScreen(SHIPMENT_DETAIL, new ShipmentData(data,estimationTitle,2003));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         Region spacer = new Region();
@@ -331,7 +344,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
     @FXML
     private void onSave()
     {
-        showSaveEstimationPopup();
+        showSaveEstimationPopup(this.sessionData);
     }
 
     // PDF export

@@ -1,0 +1,259 @@
+/* ============================================================
+   shipment-detail.css — Shipment Detail screen
+   Load AFTER shipinn.css:
+     stylesheets="@shipinn.css, @shipment-detail.css"
+
+   Only rules unique to this screen live here.
+   Shared tokens (colors, fonts, .btn, etc.) stay in shipinn.css.
+   ============================================================ */
+
+/* ── Root ───────────────────────────────────────────────────── */
+.sd-root {
+    -fx-background-color: #FFFFFF;
+}
+
+/* ── Scrollable content wrapper ─────────────────────────────── */
+.sd-content {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TITLE
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-title {
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INFO ROW  (Total cost line)
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-info-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-min-height: 42;
+}
+
+/* "Total cost:" / "State:" labels */
+.sd-info-key {
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-pref-width: 100;
+}
+
+/* Route string */
+.sd-info-value {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+}
+
+/* Distance — muted */
+.sd-info-muted {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B5B52;
+}
+
+/* Cost amount — bold, prominent */
+.sd-info-cost {
+    -fx-font-family: 'System';
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ── "Cost breakdown" outlined button ───────────────────────── */
+.sd-btn-breakdown {
+    -fx-background-color: #4A4A4A;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-padding: 9 18 9 18;
+    -fx-pref-height: 38;
+}
+
+.sd-btn-breakdown:hover {
+    -fx-background-color: #3a3a3a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
+}
+
+.sd-btn-breakdown:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SEPARATOR
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-separator {
+    -fx-background-color: #E8E8E8;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STATE ROW
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-state-row {
+    -fx-alignment: CENTER_LEFT;
+    -fx-min-height: 42;
+}
+
+/* ── Status badge ────────────────────────────────────────────── */
+.sd-badge {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 22 7 22;
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-border-width: 1;
+    -fx-pref-height: 36;
+    -fx-alignment: CENTER;
+}
+
+/* COMPLETED — light green */
+.sd-badge-completed {
+    -fx-background-color: #C8F0C8;
+    -fx-border-color: #7EC87E;
+    -fx-text-fill: #1A5C1A;
+}
+
+/* BEING DELIVERED — soft amber */
+.sd-badge-delivering {
+    -fx-background-color: #FFF0C0;
+    -fx-border-color: #D4A800;
+    -fx-text-fill: #6B4A00;
+}
+
+/* READY — light blue */
+.sd-badge-ready {
+    -fx-background-color: #D0E8FF;
+    -fx-border-color: #5A9ED6;
+    -fx-text-fill: #1A4A7A;
+}
+
+/* NOT READY — muted rose */
+.sd-badge-not-ready {
+    -fx-background-color: #FFE0E0;
+    -fx-border-color: #D07070;
+    -fx-text-fill: #7A1A1A;
+}
+
+/* fallback */
+.sd-badge-default {
+    -fx-background-color: #F0F0F0;
+    -fx-border-color: #BBBBBB;
+    -fx-text-fill: #444444;
+}
+
+/* ── "Change status" / "Daily summary" action button ─────────── */
+.sd-btn-action {
+    -fx-background-color: #4A4A4A;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #2C2C2C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-cursor: hand;
+    -fx-padding: 9 22 9 22;
+    -fx-pref-height: 38;
+}
+
+.sd-btn-action:hover {
+    -fx-background-color: #3a3a3a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
+}
+
+.sd-btn-action:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HISTORY SECTION
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-section-header {
+    -fx-font-family: 'System';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* ── History grid cells ──────────────────────────────────────── */
+.sd-history-grid {
+    -fx-padding: 0;
+    -fx-hgap: 0;
+    -fx-vgap: 6;
+}
+
+/* Time column — monospaced feel, right-padded */
+.sd-history-time {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C2C2C;
+    -fx-padding: 4 16 4 0;
+    -fx-pref-width: 80;
+}
+
+/* Generic cell (driver, location) */
+.sd-history-cell {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+    -fx-padding: 4 16 4 0;
+}
+
+/* Status cell */
+.sd-history-status {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-padding: 4 0 4 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAP CONTAINER
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-map-container {
+    -fx-border-color: #D8D8D8;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #F0F0F0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);
+    -fx-padding: 0;
+}
+
+.sd-map {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BOTTOM BAR
+   ══════════════════════════════════════════════════════════════ */
+
+.sd-bottom-bar {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 0 0 0 0;
+}
