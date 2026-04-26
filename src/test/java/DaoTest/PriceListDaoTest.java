@@ -1,3 +1,5 @@
+package DaoTest;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -135,7 +137,8 @@ public class PriceListDaoTest {
     @Test
     @DisplayName("insertPriceListEntry executes without exception")
     void insertPriceListEntryExecutes() throws SQLException {
-        insertWarehouse("PL Test NR");
+        int warehouseId = insertWarehouse("PL Test NR");
+        insertRegion(warehouseId, "NR1");
 
         PriceListEntry item =
                 new PriceListEntry(0, 25, 5, 50, "NR1");
@@ -148,9 +151,11 @@ public class PriceListDaoTest {
     @Test
     @DisplayName("insertPriceList executes or exposes bug")
     void insertPriceListExecutes() throws SQLException {
-        insertWarehouse("PL Full Insert Test");
+        int warehouseId = insertWarehouse("PL Full Insert Test");
+        insertRegion(warehouseId, "FULL_PL_1");
+        insertRegion(warehouseId, "FULL_PL_2");
 
-        PriceList priceList = new PriceList();
+                PriceList priceList = new PriceList();
         priceList.setEntries(List.of(
                 new PriceListEntry(0, 5, 1, 10, "FULL_PL_1"),
                 new PriceListEntry(0, 10, 2, 20, "FULL_PL_2")
