@@ -94,6 +94,53 @@ public class ShipmentDAO extends BaseDAO {
         return serviceList;
     }
 
+    public List<ShipmentHistory> getShipmentHistoryByShipmentID(int shipmentID) throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, shipmentID);
+
+        ResultSet rs = stmt.executeQuery();
+
+        List<ShipmentHistory> historyList = new ArrayList<>();
+
+        while (rs.next()) {
+            ShipmentHistory history = new ShipmentHistory();
+            history.setHistory_id(rs.getInt("history_ID"));
+            history.setTimestamp(rs.getTimestamp("timestamp"));
+            history.setState(State.valueOf(rs.getString("state")));
+            history.setShipment_id(rs.getInt("shipment_ID"));
+
+            historyList.add(history);
+        }
+
+        return historyList;
+    }
+
+    /*
+     * adds event into shipments history addShipmentHistory(new history(timestamp,state,shipmentID))
+     */
+    public int addShipmentHistory(ShipmentHistory history) throws SQLException {
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        stmt.setTimestamp(1, history.getTimestamp());
+        stmt.setString(2, history.getState().name());
+        stmt.setInt(3, history.getShipment_id());
+
+        stmt.executeUpdate();
+
+        ResultSet generatedKeys = stmt.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            int id = generatedKeys.getInt(1);
+            history.setHistory_id(id);
+            return id;
+        }
+
+        return -1;
+    }
+
     public List<Shipment> getShipmentByWarehouseID(int warehouseID) throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
@@ -155,10 +202,59 @@ public class ShipmentDAO extends BaseDAO {
         return shipments;
     }
 
+    public List<Shipment> getAllShipmentsByDate(Timestamp from, Timestamp to) throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setTimestamp(1, from);
+        stmt.setTimestamp(2, to);
+
+        ResultSet rs = stmt.executeQuery();
+
+        List<Shipment> shipments = new ArrayList<>();
+
+        while (rs.next()) {
+            shipments.add(mapShipment(rs));
+        }
+
+        return shipments;
+    }
+
+
+    public boolean updateShipmentByID(Shipment sh) throws SQLException {
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+
+        stmt.setString(1, sh.getState().name());
+        stmt.setFloat(2, sh.getFuel_payment());
+        stmt.setFloat(3, sh.getTotalCost());
+        stmt.setString(4, sh.getDest_region());
+        stmt.setTimestamp(5, (Timestamp) sh.getCreated_at());
+        stmt.setInt(6, sh.getUser_ID());
+        stmt.setInt(7, sh.getShipment_id());
+
+        int affectedRows = stmt.executeUpdate();
+
+        //update related service list
+        if (affectedRows > 0) {
+            //delete old services
+            String deleteSql = ""; //TODO delete all services where shipment id
+            PreparedStatement deleteStmt = connection.prepareStatement(deleteSql);
+            deleteStmt.setInt(1, sh.getShipment_id());
+            deleteStmt.executeUpdate();
+
+            insertShipmentServices(sh.getShipment_id(), sh.getServices());
+        }
+
+        return affectedRows > 0;
+    }
+
 
 
 
     public int insertShipment(Shipment sh, int warehouseID, int userID) throws SQLException {
+        //FIXME dest_region string(class) vs int(DB)
         String sql = """
                 INSERT INTO Shipment (user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status)
                     VALUES (?,?,?,?,?,?,?)

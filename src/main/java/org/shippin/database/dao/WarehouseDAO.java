@@ -93,6 +93,7 @@ public class WarehouseDAO extends BaseDAO {
      * inserts warehouse core info
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
+        //FIXME price_list_file
         String sql = """
                 INSERT INTO Warehouse(warehouse_id, warehouse_region_name,storage_region, price_list_file)
                 VALUES (?,?,?)

@@ -149,15 +149,48 @@ public class PriceListDAO extends BaseDAO {
      * appends PriceListEntry to warehouse, returns its ID from db
      */
     public int insertPriceListEntry(PriceListEntry item, String sourceWarehouse) throws SQLException {
-        String insertParameter = "INSERT INTO Parameter_list(region_ID,weight, volume, cost)VALUES(?,?,?,?)\n" +
-                "RETURNING parameter_list_ID;";
-        PreparedStatement paramStmt = connection.prepareStatement(insertParameter);
-        paramStmt.setString(1, item.getZone());
-        paramStmt.setFloat(2, item.getWeight());
-        paramStmt.setFloat(3, item.getVolume());
-        paramStmt.setFloat(4, item.getCost());
 
-        return paramStmt.executeUpdate();
+        //get region_ID where region_name=BA1 BA2 AND warehouseID=warehouseID
+        String regionSql = """
+        SELECT r.region_ID
+        FROM Region r
+        JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
+        WHERE w.warehouse_region_name = ?
+          AND r.region_name = ?
+    """;
+
+        PreparedStatement regionStmt = connection.prepareStatement(regionSql);
+        regionStmt.setString(1, sourceWarehouse);
+        regionStmt.setString(2, item.getZone());
+
+        ResultSet rs = regionStmt.executeQuery();
+
+        if (!rs.next()) {
+            throw new SQLException("region not found warehouse=" + sourceWarehouse + " zone=" + item.getZone());
+        }
+
+        int regionId = rs.getInt("region_ID");
+
+        //insert into Parameter_list
+        String insertSql = """
+        INSERT INTO Parameter_list(region_ID, weight, volume, cost)
+        VALUES (?, ?, ?, ?)
+        RETURNING parameter_list_ID
+    """;
+
+        PreparedStatement insertStmt = connection.prepareStatement(insertSql);
+        insertStmt.setInt(1, regionId);
+        insertStmt.setFloat(2, item.getWeight());
+        insertStmt.setFloat(3, item.getVolume());
+        insertStmt.setFloat(4, item.getCost());
+
+        ResultSet insertRs = insertStmt.executeQuery();
+
+        if (insertRs.next()) {
+            return insertRs.getInt("parameter_list_ID");
+        }
+
+        throw new SQLException("Insert failed for Parameter_list");
     }
 
     /**

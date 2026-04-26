@@ -15,6 +15,7 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private String accessToken;
 
     public User( String firstName,String lastName, String email, Role role) {
         this.firstName = firstName;
