@@ -15,7 +15,7 @@
 
     <children>
 
-        <BorderPane style="-fx-background-color: #f4f4f4;"
+        <BorderPane style="-fx-background-color: #ffffff;"
                     prefWidth="1050.0"
                     prefHeight="620.0">
 

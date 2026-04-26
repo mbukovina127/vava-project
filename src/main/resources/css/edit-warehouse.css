@@ -1,0 +1,167 @@
+.page {
+    -fx-background-color: white;
+    -fx-padding: 24px;
+    -fx-spacing: 18px;
+}
+
+.page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.top-row {
+    -fx-padding: 6px 0 22px 0;
+}
+
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #222;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #111;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+    -fx-font-size: 13px;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #8f8f8f;
+    -fx-border-width: 1px 0 0 1px;
+    -fx-table-cell-border-color: #8f8f8f;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: white;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: white;
+    -fx-border-color: #8f8f8f;
+    -fx-border-width: 0 1px 1px 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: black;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-cell-size: 22px;
+}
+
+.table-row-cell:odd,
+.table-row-cell:even {
+    -fx-background-color: white;
+}
+
+.table-cell {
+    -fx-alignment: center;
+    -fx-font-size: 13px;
+    -fx-text-fill: black;
+    -fx-border-color: #8f8f8f;
+    -fx-border-width: 0 1px 1px 0;
+    -fx-padding: 2px 6px;
+}
+
+.price-table {
+    -fx-pref-width: 100%;
+}
+
+.button-row {
+    -fx-padding: 14px 0 0 0;
+}
+
+.button {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9px 28px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.content-scroll {
+    -fx-background-color: white;
+    -fx-background: white;
+    -fx-border-color: transparent;
+}
+
+.content-scroll > .viewport {
+    -fx-background-color: white;
+}
+
+.tables-column {
+    -fx-background-color: white;
+    -fx-padding: 0 0 20px 0;
+}
+
+/* Hide TableView internal scrollbars */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+}
+
+/* Prevent weird empty scrollbar corner */
+.table-view .corner {
+    -fx-background-color: white;
+}
+
+/* Remove empty corner */
+.table-view .corner {
+    -fx-background-color: white;
+}
+.cancel-button {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: black;
+    -fx-border-width: 1.5px;
+    -fx-min-width: 150px;
+}
+
+.save-button {
+    -fx-background-color: #666666;
+    -fx-text-fill: white;
+    -fx-border-color: black;
+    -fx-border-width: 1.5px;
+    -fx-min-width: 140px;
+}
+
+.region-grid {
+    -fx-border-color: #8f8f8f;
+    -fx-border-width: 1px 0 0 1px;
+}
+
+.region-grid .label {
+    -fx-border-color: #8f8f8f;
+    -fx-border-width: 0 1px 1px 0;
+    -fx-padding: 3px 12px;
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-font-size: 13px;
+}
+
+.header-cell {
+    -fx-font-weight: bold;
+}
+
+.region-cell {
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+}
+
+.range-cell {
+    -fx-min-width: 145px;
+}

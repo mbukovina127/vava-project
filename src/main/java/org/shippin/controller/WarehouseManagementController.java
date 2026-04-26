@@ -18,12 +18,14 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
+import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WarehouseManagementController implements Initializable {
+public class WarehouseManagementController extends BaseController<Void> implements Initializable {
 
     @FXML private ImageView addWarehouseIcon;
     @FXML private ImageView changePriceListIcon;
@@ -56,18 +58,13 @@ public class WarehouseManagementController implements Initializable {
         renderWarehouses(warehouses);
     }
 
+    // Dummy data
     private List<CoreWarehouseInfo> createWarehouses() {
         return List.of(
                 new BriefWarehouse(1, "ZBS - BA", "Bratislava"),
                 new BriefWarehouse(2, "ZBS - BB", "Banska Bystrica"),
                 new BriefWarehouse(3, "ZBS - RK", "Ruzomberok")
         );
-    }
-    
-    private MenuController menuController;
-
-    public void setMenuController(MenuController menuController) {
-        this.menuController = menuController;
     }
 
     private void renderWarehouses(List<CoreWarehouseInfo> warehouses) {
@@ -110,6 +107,14 @@ public class WarehouseManagementController implements Initializable {
         GridPane.setMargin(nameLabel, new Insets(0.0, 0.0, 0.0, 8.0));
 
         Button editButton = createTableIconButton(editIcon, 22.0, 22.0, 32.0, 32.0);
+        editButton.setOnAction(event -> {
+			try {
+				this.handleOpenWarehouse();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
         GridPane.setColumnIndex(editButton, 1);
 
         Button replaceButton = createTableIconButton(replaceIcon, 26.0, 26.0, 32.0, 32.0);
@@ -151,20 +156,6 @@ public class WarehouseManagementController implements Initializable {
         button.setAlignment(Pos.CENTER);
 
         return button;
-    }
-    
-    private void showModal(VBox popupContent) {
-
-        if (menuController != null) {
-            menuController.showOverlay(popupContent);
-        }
-    }
-
-    private void hideModal() {
-
-        if (menuController != null) {
-            menuController.hideOverlay();
-        }
     }
 
     @FXML
@@ -401,5 +392,10 @@ public class WarehouseManagementController implements Initializable {
             throw new IllegalStateException("Missing icon resource: " + path);
         }
         return new Image(resource.toExternalForm());
+    }
+    
+    private void handleOpenWarehouse() throws IOException {
+    	System.out.println("EDIT WAREHOUSE CLICKED");
+    	loadScreen(EDIT_WAREHOUSE);
     }
 }

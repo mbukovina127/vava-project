@@ -1,7 +1,7 @@
 package org.shippin.dto;
 
 public enum Screens {
-    LOGIN, REGISTER, HOME, COST_ESTIMATION,COST_BREAKDOWN, USER_MANAGEMENT, DAILY_COST,DAILY_COST_SUM, WAREHOUSE_MANAGEMENT;
+    LOGIN, REGISTER, HOME, COST_ESTIMATION,COST_BREAKDOWN, USER_MANAGEMENT, DAILY_COST,DAILY_COST_SUM, WAREHOUSE_MANAGEMENT, EDIT_WAREHOUSE;
 
     /**
      * @param screen
@@ -18,6 +18,7 @@ public enum Screens {
             case DAILY_COST -> "/views/DailyCostsSummaries.fxml";
             case DAILY_COST_SUM -> "/views/DailyCostsSummaryDetail.fxml";
             case WAREHOUSE_MANAGEMENT -> "/views/WarehouseManagement.fxml";
+            case EDIT_WAREHOUSE -> "/views/EditWarehouse.fxml";
         };
     }
 }

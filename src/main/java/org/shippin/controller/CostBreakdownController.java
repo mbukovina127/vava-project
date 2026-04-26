@@ -200,23 +200,23 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 
     // ── Modal helpers (same pattern as WarehouseManagementController) ─────────
 
-    private void showModal(VBox popupContent) {
-        modalContentHolder.getChildren().setAll(popupContent);
-        modalContentHolder.setManaged(true);
-        modalContentHolder.setVisible(true);
-
-        modalOverlay.setManaged(true);
-        modalOverlay.setVisible(true);
-    }
-
-    private void hideModal() {
-        modalContentHolder.getChildren().clear();
-        modalContentHolder.setVisible(false);
-        modalContentHolder.setManaged(false);
-
-        modalOverlay.setVisible(false);
-        modalOverlay.setManaged(false);
-    }
+//    private void showModal(VBox popupContent) {
+//        modalContentHolder.getChildren().setAll(popupContent);
+//        modalContentHolder.setManaged(true);
+//        modalContentHolder.setVisible(true);
+//
+//        modalOverlay.setManaged(true);
+//        modalOverlay.setVisible(true);
+//    }
+//
+//    private void hideModal() {
+//        modalContentHolder.getChildren().clear();
+//        modalContentHolder.setVisible(false);
+//        modalContentHolder.setManaged(false);
+//
+//        modalOverlay.setVisible(false);
+//        modalOverlay.setManaged(false);
+//    }
 
     // ── Save estimation popup ─────────────────────────────────────────────────
 

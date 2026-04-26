@@ -86,10 +86,6 @@ public class MenuController implements Initializable {
             Node node = loader.load();
 
             Object ctrl = loader.getController();
-            
-            if (ctrl instanceof WarehouseManagementController wmController) {
-                wmController.setMenuController(this);  // Pass MenuController to WarehouseManagementController
-            }
 
             if (ctrl instanceof BaseController<?> bc) {
                 bc.setMenuController(this);

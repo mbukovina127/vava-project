@@ -1,5 +1,8 @@
 package org.shippin.controller;
 import org.shippin.dto.Screens;
+
+import javafx.scene.layout.VBox;
+
 import java.io.IOException;
 
 public abstract class BaseController<T> implements Navigatable {
@@ -55,5 +58,19 @@ public abstract class BaseController<T> implements Navigatable {
             throw new IllegalStateException("MenuController not set");
         }
         menuController.loadScreen(screen, data);
+    }
+    
+    protected void showModal(VBox popupContent) {
+
+        if (menuController != null) {
+            menuController.showOverlay(popupContent);
+        }
+    }
+
+    protected void hideModal() {
+
+        if (menuController != null) {
+            menuController.hideOverlay();
+        }
     }
 }

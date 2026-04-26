@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shippin.controller.EditWarehouseController"
+      stylesheets="@../css/edit-warehouse.css"
+      styleClass="page">
+
+    <Text text="Edit warehouse" styleClass="page-title"/>
+
+    <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Title of document:"/>
+            <TextField text="ZBS - BA" prefWidth="220"/>
+        </HBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Pickup place:"/>
+            <TextField text="Sklad BA" prefWidth="280"/>
+        </HBox>
+    </HBox>
+	
+	<ScrollPane fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            VBox.vgrow="ALWAYS"
+            styleClass="content-scroll">
+
+	    <VBox spacing="34" styleClass="tables-column">
+	
+		    <TableView fx:id="priceListTable"
+			           styleClass="price-table">
+			
+			    <columns>
+			        <TableColumn text="Hmotnosť&#10;do (v kg)"
+			                     fx:id="weightColumn"/>
+			
+			        <TableColumn text="Objem&#10;do (v m³)"
+			                     fx:id="volumeColumn"/>
+		
+			    </columns>
+			</TableView>
+		
+		    <GridPane fx:id="regionGrid"
+		          prefHeight="210"
+		          maxWidth="880"
+		          styleClass="region-grid"
+		          hgap="0"
+		          vgap="0">
+			    <columnConstraints>
+			        <ColumnConstraints prefWidth="210"/>
+			        <ColumnConstraints prefWidth="210"/>
+			        <ColumnConstraints prefWidth="210"/>
+			        <ColumnConstraints prefWidth="210"/>
+			        <ColumnConstraints prefWidth="210"/>
+			    </columnConstraints>
+			</GridPane>
+		    
+		</VBox>
+	</ScrollPane>
+
+    <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
+        <Button text="Cancel changes" styleClass="cancel-button" onAction="#handleLeave"/>
+        <Button text="Save changes" styleClass="save-button" onAction="#handleLeave"/>
+    </HBox>
+</VBox>
