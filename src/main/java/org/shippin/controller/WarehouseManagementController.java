@@ -19,6 +19,7 @@ import javafx.stage.Window;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
+import static org.shippin.dto.Screens.SMALL_PRICE_LIST_VIEW;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,7 +48,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         deleteIcon = loadImage("/icons/png-dark/delete_black.png");
 
         addWarehouseIcon.setImage(addIcon);
-        changePriceListIcon.setImage(editIcon);
+        changePriceListIcon.setImage(replaceIcon);
 
         URL cssResource = getClass().getResource("/views/warehouse-management.css");
         if (cssResource != null) {
@@ -108,12 +109,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
 
         Button editButton = createTableIconButton(editIcon, 22.0, 22.0, 32.0, 32.0);
         editButton.setOnAction(event -> {
-			try {
 				this.handleOpenWarehouse();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		});
         GridPane.setColumnIndex(editButton, 1);
 
@@ -394,8 +390,23 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         return new Image(resource.toExternalForm());
     }
     
-    private void handleOpenWarehouse() throws IOException {
+    private void handleOpenWarehouse() {
     	System.out.println("EDIT WAREHOUSE CLICKED");
-    	loadScreen(EDIT_WAREHOUSE);
+    	try {
+			loadScreen(EDIT_WAREHOUSE);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    private void handleOpenSmallPriceList() {
+    	try {
+			loadScreen(SMALL_PRICE_LIST_VIEW);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

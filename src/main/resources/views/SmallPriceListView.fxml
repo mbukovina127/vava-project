@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.shippin.controller.SmallPriceListViewController"
+      spacing="0"
+      styleClass="root-container"
+      stylesheets="@../css/small-price-list-view.css">
+
+    <!-- Title -->
+    <Label text="Small package price List" styleClass="page-title">
+	    <VBox.margin>
+	        <Insets bottom="36"/>
+	    </VBox.margin>
+	</Label>
+
+    <!-- Dynamic Data Grid (populated by controller) -->
+    <GridPane fx:id="tableGrid" styleClass="table-grid" 
+          hgap="0" vgap="0"
+          maxWidth="560"
+          VBox.vgrow="ALWAYS">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="120" hgrow="ALWAYS"/>
+            <ColumnConstraints minWidth="80" prefWidth="100" hgrow="ALWAYS"/>
+        </columnConstraints>
+    </GridPane>
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+    
+    <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
+        <Button text="Go back" styleClass="tertiary-button" onAction="#handleLeave"/>
+    </HBox>
+</VBox>

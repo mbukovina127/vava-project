@@ -44,7 +44,7 @@
                                         prefWidth="212.0"
                                         prefHeight="46.0"
                                         mnemonicParsing="false"
-                                        styleClass="main-action-button"
+                                        styleClass="secondary-button"
                                         onAction="#handleAddWarehouse">
                                     <graphic>
                                         <ImageView fx:id="addWarehouseIcon" fitWidth="18.0" fitHeight="18.0" pickOnBounds="true" preserveRatio="true"/>
@@ -88,14 +88,15 @@
                                 <Button text="View small package price list"
                                         prefWidth="355.0"
                                         prefHeight="42.0"
-                                        styleClass="main-action-button"/>
+                                        styleClass="secondary-button"
+                                        onAction="#handleOpenSmallPriceList"/>
 
-                                <Button text="Change small package price list"
+                                <Button text="Replace small package price list"
                                         graphicTextGap="10.0"
                                         mnemonicParsing="false"
                                         prefWidth="335.0"
                                         prefHeight="42.0"
-                                        styleClass="main-action-button">
+                                        styleClass="secondary-button">
                                     <graphic>
                                         <ImageView fx:id="changePriceListIcon" fitWidth="18.0" fitHeight="18.0" preserveRatio="true"/>
                                     </graphic>

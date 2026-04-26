@@ -16,7 +16,11 @@
 
     <VBox styleClass="content-scroll">
 
-        <Text text="Edit warehouse" styleClass="page-title"/>
+        <Label text="Edit warehouse" styleClass="page-title">
+		    <VBox.margin>
+		        <Insets bottom="24"/>
+		    </VBox.margin>
+		</Label>
 
         <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
             <HBox spacing="10" alignment="CENTER_LEFT">
@@ -80,8 +84,8 @@
         </VBox>
 
         <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
-            <Button text="Cancel changes" styleClass="cancel-button" onAction="#handleLeave"/>
-            <Button text="Save changes" styleClass="save-button" onAction="#handleLeave"/>
+            <Button text="Cancel changes" styleClass="tertiary-button" onAction="#handleLeave"/>
+            <Button text="Save changes" styleClass="primary-button" onAction="#handleLeave"/>
         </HBox>
 
     </VBox>

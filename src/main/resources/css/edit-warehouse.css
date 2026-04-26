@@ -1,21 +1,27 @@
 .page {
     -fx-background-color: white;
-    -fx-padding: 24px;
-    -fx-spacing: 18px;
-}
-
-.page-title {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-}
-
-.top-row {
-    -fx-padding: 6px 0 22px 0;
 }
 
 .label {
     -fx-font-size: 13px;
     -fx-text-fill: #222;
+}
+
+.content-scroll {
+    -fx-background-color: white;
+    -fx-background: white;
+    -fx-border-color: transparent;
+    -fx-padding: 24px;        /* moved here */
+    -fx-spacing: 18px;        /* moved here too */
+}
+
+.page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.top-row {
+    -fx-padding: 6px 0 22px 0;
 }
 
 .text-field {
@@ -81,21 +87,6 @@
     -fx-padding: 14px 0 0 0;
 }
 
-.button {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-padding: 9px 28px;
-    -fx-background-radius: 6px;
-    -fx-border-radius: 6px;
-    -fx-cursor: hand;
-}
-
-.content-scroll {
-    -fx-background-color: white;
-    -fx-background: white;
-    -fx-border-color: transparent;
-}
-
 .content-scroll > .viewport {
     -fx-background-color: white;
 }
@@ -122,21 +113,6 @@
 /* Remove empty corner */
 .table-view .corner {
     -fx-background-color: white;
-}
-.cancel-button {
-    -fx-background-color: white;
-    -fx-text-fill: black;
-    -fx-border-color: black;
-    -fx-border-width: 1.5px;
-    -fx-min-width: 150px;
-}
-
-.save-button {
-    -fx-background-color: #666666;
-    -fx-text-fill: white;
-    -fx-border-color: black;
-    -fx-border-width: 1.5px;
-    -fx-min-width: 140px;
 }
 
 .region-grid {

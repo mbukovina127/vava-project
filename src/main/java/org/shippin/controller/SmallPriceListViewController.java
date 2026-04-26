@@ -1,0 +1,124 @@
+package org.shippin.controller;
+
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import org.shippin.domain.Table;
+import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.SmallPriceListRow;
+import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+public class SmallPriceListViewController extends BaseController<Void> implements Initializable {
+
+    @FXML
+    private GridPane tableGrid;
+
+    // Inject any Table<SmallPriceListRow> here — swap out for a backend-provided instance as needed
+    private Table<SmallPriceListRow> table;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        table = buildStaticTable();
+        populateGrid(table);
+    }
+
+    /**
+     * Inject a table from the backend instead of using the static one.
+     * Call this before the scene is shown, or trigger a refresh afterward.
+     */
+    public void setTable(Table<SmallPriceListRow> table) {
+        this.table = table;
+        populateGrid(table);
+    }
+
+    // -------------------------------------------------------------------------
+    // Static table data — replace with backend call when ready
+    // -------------------------------------------------------------------------
+    private SmallPriceListFormatted buildStaticTable() {
+        SmallPriceListFormatted priceList = new SmallPriceListFormatted();
+        priceList.addRow(new SmallPriceListRow(1f,  3.66f));
+        priceList.addRow(new SmallPriceListRow(3f,  3.98f));
+        priceList.addRow(new SmallPriceListRow(5f,  4.06f));
+        priceList.addRow(new SmallPriceListRow(10f, 4.59f));
+        priceList.addRow(new SmallPriceListRow(15f, 5.47f));
+        priceList.addRow(new SmallPriceListRow(20f, 6.52f));
+        priceList.addRow(new SmallPriceListRow(25f, 7.58f));
+        priceList.addRow(new SmallPriceListRow(30f, 8.45f));
+        return priceList;
+    }
+
+    // -------------------------------------------------------------------------
+    // Grid population — works with any Table<SmallPriceListRow>
+    // -------------------------------------------------------------------------
+    private void addCell(GridPane grid, String text, int col, int row, boolean isHeader) {
+        Label label = new Label(text);
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setMaxHeight(Double.MAX_VALUE);
+        label.setAlignment(Pos.CENTER);
+        label.setWrapText(true);
+
+        label.getStyleClass().add(isHeader ? "header-cell" : "data-cell");
+        if (col == 0) label.getStyleClass().add("cell-first-col");
+        if (row == 0) label.getStyleClass().add("cell-first-row");
+
+        GridPane.setHalignment(label, HPos.CENTER);
+        GridPane.setFillWidth(label, true);
+        GridPane.setFillHeight(label, true);
+        grid.add(label, col, row);
+    }
+    
+    private void addRowConstraint(GridPane grid, double height) {
+        RowConstraints rc = new RowConstraints();
+        rc.setMinHeight(height);
+        rc.setPrefHeight(height);
+        grid.getRowConstraints().add(rc);
+    }
+    
+    private void populateGrid(Table<SmallPriceListRow> table) {
+        tableGrid.getChildren().clear();
+        tableGrid.getRowConstraints().clear();
+
+        addCell(tableGrid, "Hmotnosť do (v kg)", 0, 0, true);
+        addCell(tableGrid, "Cena",                1, 0, true);
+        addRowConstraint(tableGrid, 52);
+
+        List<SmallPriceListRow> rows = table.getRows();
+        for (int i = 0; i < rows.size(); i++) {
+            SmallPriceListRow row = rows.get(i);
+            int gridRow = i + 1;
+            addCell(tableGrid, formatWeight(row.getWeight()), 0, gridRow, false);
+            addCell(tableGrid, formatPrice(row.getCost()),    1, gridRow, false);
+            addRowConstraint(tableGrid, 40);
+        }
+    }
+
+    private String formatWeight(float weight) {
+        if (weight == Math.floor(weight)) {
+            return String.valueOf((int) weight);
+        }
+        return String.format("%.1f", weight);
+    }
+
+    private String formatPrice(float cost) {
+        return String.format("%.2f €", cost).replace('.', ',');
+    }
+    
+    @FXML
+    private void handleLeave() {
+    	try {
+			loadScreen(WAREHOUSE_MANAGEMENT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+}
