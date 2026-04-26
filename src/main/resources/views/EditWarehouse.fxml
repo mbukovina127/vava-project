@@ -5,31 +5,30 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.shippin.controller.EditWarehouseController"
-      stylesheets="@../css/edit-warehouse.css"
-      styleClass="page">
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.shippin.controller.EditWarehouseController"
+            stylesheets="@../css/edit-warehouse.css"
+            styleClass="page"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED">
 
-    <Text text="Edit warehouse" styleClass="page-title"/>
+    <VBox styleClass="content-scroll">
 
-    <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Title of document:"/>
-            <TextField text="ZBS - BA" prefWidth="220"/>
+        <Text text="Edit warehouse" styleClass="page-title"/>
+
+        <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Title of document:"/>
+                <TextField text="ZBS - BA" prefWidth="220"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Pickup place:"/>
+                <TextField text="Sklad BA" prefWidth="280"/>
+            </HBox>
         </HBox>
-        <Region HBox.hgrow="ALWAYS"/>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Pickup place:"/>
-            <TextField text="Sklad BA" prefWidth="280"/>
-        </HBox>
-    </HBox>
-
-    <ScrollPane fitToWidth="true"
-                hbarPolicy="NEVER"
-                vbarPolicy="AS_NEEDED"
-                VBox.vgrow="ALWAYS"
-                styleClass="content-scroll">
 
         <VBox spacing="34" styleClass="tables-column">
 
@@ -79,11 +78,11 @@
             </GridPane>
 
         </VBox>
-    </ScrollPane>
 
-    <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
-        <Button text="Cancel changes" styleClass="cancel-button" onAction="#handleLeave"/>
-        <Button text="Save changes" styleClass="save-button" onAction="#handleLeave"/>
-    </HBox>
+        <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
+            <Button text="Cancel changes" styleClass="cancel-button" onAction="#handleLeave"/>
+            <Button text="Save changes" styleClass="save-button" onAction="#handleLeave"/>
+        </HBox>
 
-</VBox>
+    </VBox>
+</ScrollPane>
