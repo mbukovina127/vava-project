@@ -28,12 +28,6 @@ import java.util.stream.Collectors;
 public class EditWarehouseController extends BaseController<Void> {
 
     @FXML
-    private TableView<PriceListRow> priceListTable;
-    
-    @FXML private TableColumn<PriceListRow, String> weightColumn;
-    @FXML private TableColumn<PriceListRow, String> volumeColumn;
-
-    @FXML
     private GridPane regionGrid;
 
     private PriceListFormatted priceList;
@@ -98,31 +92,42 @@ public class EditWarehouseController extends BaseController<Void> {
         setupRegionGrid();
     }
 
+    @FXML
+    private GridPane priceListGrid;
+
     private void setupPriceListTable() {
-        weightColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(String.format("%.0f", data.getValue().getWeight()))
+        // Remove only dynamically added children, keep the static FXML labels
+        priceListGrid.getChildren().removeIf(
+            node -> GridPane.getColumnIndex(node) != null && GridPane.getColumnIndex(node) > 1
+                    || GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0
         );
 
-        volumeColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(String.format("%.1f", data.getValue().getVolume()).replace(".", ","))
-        );
+        List<String> regionNames = priceList.getRows().isEmpty()
+                ? List.of()
+                : new ArrayList<>(priceList.getRows().get(0).getRegions().keySet());
 
-        if (!priceList.getRows().isEmpty()) {
-            for (String regionName : priceList.getRows().get(0).getRegions().keySet()) {
-                TableColumn<PriceListRow, String> regionCol = new TableColumn<>(regionName);
-
-                regionCol.setCellValueFactory(data -> {
-                    Float price = data.getValue().getRegions().get(regionName);
-                    String text = price == null ? "" : String.format("%.2f €", price).replace(".", ",");
-                    return new SimpleStringProperty(text);
-                });
-
-                priceListTable.getColumns().add(regionCol);
-            }
+        // Only dynamic header cells (region names)
+        for (int i = 0; i < regionNames.size(); i++) {
+            addCell(priceListGrid, regionNames.get(i), i + 2, 0, 1, 1, "header-cell");
         }
 
-        priceListTable.setItems(FXCollections.observableArrayList(priceList.getRows()));
-        priceListTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        // Data rows
+        List<PriceListRow> rows = priceList.getRows();
+        for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
+            PriceListRow row = rows.get(rowIdx);
+            int gridRow = rowIdx + 1;
+
+            addCell(priceListGrid, String.format("%.0f", row.getWeight()),
+                    0, gridRow, 1, 1, "range-cell");
+            addCell(priceListGrid, String.format("%.1f", row.getVolume()).replace(".", ","),
+                    1, gridRow, 1, 1, "range-cell");
+
+            for (int i = 0; i < regionNames.size(); i++) {
+                Float price = row.getRegions().get(regionNames.get(i));
+                String text = price == null ? "" : String.format("%.2f €", price).replace(".", ",");
+                addCell(priceListGrid, text, i + 2, gridRow, 1, 1, "range-cell");
+            }
+        }
     }
     
     public void loadData() {
