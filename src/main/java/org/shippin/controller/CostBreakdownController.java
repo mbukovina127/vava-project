@@ -40,67 +40,67 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
     @FXML private Button    printPdfButton;
     @FXML private Button    saveButton;
 
-    // Modal overlay injected from FXML
-    @FXML private StackPane modalOverlay;
-    @FXML private VBox      modalContentHolder;
+//    // Modal overlay
+//    @FXML private StackPane modalOverlay;
+//    @FXML private VBox      modalContentHolder;
 
     // Current grid row index
     private int gridRow = 0;
 
-    // ── PDF mirror ────────────────────────────────────────────────────────────
-
+    // PDF mirror
     private enum PdfRowType { DATA, SEPARATOR, TOTAL_SEPARATOR, TOTAL }
-
     private record PdfRow(PdfRowType type, String left, String right, boolean bold) {}
-
     private final List<PdfRow> pdfRows = new ArrayList<>();
 
-    // ── Initializable ─────────────────────────────────────────────────────────
-
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
         // Nothing to initialise statically – all content is driven by onData()
     }
 
+    // set generic value (input from prev screen)
     @Override
-    protected Class<CostEstimationInput> getDataType() {
-        return CostEstimationInput.class;
-    }
+    protected Class<CostEstimationInput> getDataType() {return CostEstimationInput.class;}
 
-    // ── Data rendering ────────────────────────────────────────────────────────
-
+    //Data rendering
     @Override
-    protected void onData(CostEstimationInput data) {
+    protected void onData(CostEstimationInput data)
+    {
         breakdownGrid.getChildren().clear();
         pdfRows.clear();
         gridRow = 0;
 
-        // ── Row 1: Postal codes ───────────────────────────────────────────────
+        //TODO: add results form calculations in rightText=, user data are in CostEstimationInput (from prev screen)
+
+        // Row 1: Postal codes
         String postalValue = data.from() + " \u2013 " + data.destination();
         addRow("Postal codes:", postalValue, "", true, false);
 
-        // ── Row 2: Size ───────────────────────────────────────────────────────
+        // Row 2: Size
         String sizeValue = data.weight() + " kg";
-        if (data.volume() > 0) {
+        if (data.volume() > 0)
+        {
             sizeValue += "  /  " + data.volume() + " m\u00B3";
         }
         addRow("Size:", sizeValue, "", true, false);
 
         addSeparator();
 
-        // ── Row 3: Fuel surcharge ─────────────────────────────────────────────
+        // Row 3: Fuel surcharge
         String fuelPct = (int)(data.fuelSurcharge() * 100) + "%";
         addRow("Fuel surcharge:", fuelPct, "", true, false);
 
-        // ── Row 4: Toll ───────────────────────────────────────────────────────
+        // Row 4: Toll
         addRow("Toll:", String.valueOf((int) data.toll()), "", false, false);
 
         addSeparator();
 
-        // ── Rows: Selected extra options ──────────────────────────────────────
+        // Rows: Selected extra options
         List<ExtraOption> options = data.options();
-        if (options != null && !options.isEmpty()) {
-            for (ExtraOption option : options) {
+        if (options != null && !options.isEmpty())
+        {
+            for (ExtraOption option : options)
+            {
                 if (option == ExtraOption.SMALL_PACKAGE || option == ExtraOption.SHIPMENT) continue;
                 if (option == ExtraOption.ADDITIONAL_FEES) continue;
                 addRow(formatOptionName(option), "", "", true, false);
@@ -111,11 +111,16 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         addTotalRow();
     }
 
-    // ── Grid + mirror helpers ─────────────────────────────────────────────────
-
-    private void addRow(String leftText, String middleText, String rightText,
-                        boolean bold, boolean italic) {
-
+    // Grid + mirror helpers
+    private void addRow
+    (
+            String leftText,
+            String middleText,
+            String rightText,
+            boolean bold,
+            boolean italic
+    )
+    {
         Label left = new Label(leftText);
         left.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(left, Priority.ALWAYS);
@@ -133,7 +138,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 
         breakdownGrid.getChildren().addAll(left, right);
 
-        if (middleText != null && !middleText.isEmpty()) {
+        if (middleText != null && !middleText.isEmpty())
+        {
             left.setText(leftText + "  " + middleText);
         }
 
@@ -144,7 +150,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         gridRow++;
     }
 
-    private void addSeparator() {
+    private void addSeparator()
+    {
         Separator sep = new Separator();
         sep.getStyleClass().add("cb-separator");
         GridPane.setColumnIndex(sep, 0);
@@ -156,7 +163,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         gridRow++;
     }
 
-    private void addTotalSeparator() {
+    private void addTotalSeparator()
+    {
         Separator sep = new Separator();
         sep.getStyleClass().addAll("cb-separator", "cb-separator-total");
         GridPane.setColumnIndex(sep, 0);
@@ -168,7 +176,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         gridRow++;
     }
 
-    private void addTotalRow() {
+    private void addTotalRow()
+    {
         Label total = new Label("\u2013 \u20AC");   // "– €" — TODO: replace with computed total
         total.getStyleClass().addAll("cb-value", "cb-total");
         GridPane.setHalignment(total, HPos.RIGHT);
@@ -180,7 +189,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         gridRow++;
     }
 
-    private String formatOptionName(ExtraOption option) {
+    private String formatOptionName(ExtraOption option)
+    {
         return switch (option) {
             case SMALL_PACKAGE   -> "Small package";
             case SHIPMENT        -> "Shipment";
@@ -198,9 +208,10 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         };
     }
 
-    // ── Modal helpers (same pattern as WarehouseManagementController) ─────────
-
-//    private void showModal(VBox popupContent) {
+//    // Modal helpers
+//
+//    private void showModal(VBox popupContent)
+//    {
 //        modalContentHolder.getChildren().setAll(popupContent);
 //        modalContentHolder.setManaged(true);
 //        modalContentHolder.setVisible(true);
@@ -209,7 +220,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 //        modalOverlay.setVisible(true);
 //    }
 //
-//    private void hideModal() {
+//    private void hideModal()
+//    {
 //        modalContentHolder.getChildren().clear();
 //        modalContentHolder.setVisible(false);
 //        modalContentHolder.setManaged(false);
@@ -218,9 +230,10 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 //        modalOverlay.setManaged(false);
 //    }
 
-    // ── Save estimation popup ─────────────────────────────────────────────────
+    // Save estimation popup
 
-    private void showSaveEstimationPopup() {
+    private void showSaveEstimationPopup()
+    {
         VBox popup = createPopupRoot();
         popup.setMaxWidth(440);
         popup.setPrefWidth(440);
@@ -256,9 +269,10 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         Button confirmButton = new Button("Save estimation");
         confirmButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         confirmButton.setPrefSize(170, 42);
-        confirmButton.setOnAction(e -> {
+        confirmButton.setOnAction(e ->
+        {
             String estimationTitle = titleField.getText().trim();
-            // TODO: persist estimationTitle + current breakdown data to DB / daily summary
+            // TODO: persist estimationTitle + current breakdown data from CostEstimationInput to DB / daily summary
             hideModal();
         });
 
@@ -272,9 +286,10 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         showModal(popup);
     }
 
-    // ── Popup builder helpers (mirrors WarehouseManagementController) ─────────
+    // Popup builder helpers
 
-    private VBox createPopupRoot() {
+    private VBox createPopupRoot()
+    {
         VBox root = new VBox(24);
         root.setPadding(new Insets(28, 30, 24, 30));
         root.setAlignment(Pos.TOP_LEFT);
@@ -282,19 +297,22 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         return root;
     }
 
-    private Label createPopupTitle(String text) {
+    private Label createPopupTitle(String text)
+    {
         Label label = new Label(text);
         label.getStyleClass().add("popup-title");
         return label;
     }
 
-    private Label createFormLabel(String text) {
+    private Label createFormLabel(String text)
+    {
         Label label = new Label(text);
         label.getStyleClass().add("popup-label");
         return label;
     }
 
-    private TextField createPopupTextField(String prompt) {
+    private TextField createPopupTextField(String prompt)
+    {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
         textField.getStyleClass().add("popup-text-field");
@@ -302,19 +320,21 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         return textField;
     }
 
-    // ── Button handlers ───────────────────────────────────────────────────────
+    // Button handlers
 
     @FXML
-    private void onDelete() throws IOException {
+    private void onDelete() throws IOException
+    {
         loadScreen(COST_ESTIMATION, null);
     }
 
     @FXML
-    private void onSave() {
+    private void onSave()
+    {
         showSaveEstimationPopup();
     }
 
-    // ── PDF export ────────────────────────────────────────────────────────────
+    // PDF export
 
     /**
      * Exports the current breakdown to a user-chosen PDF file.
@@ -325,7 +345,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
      * PDFBox is Apache 2.0 licensed (no AGPL).
      */
     @FXML
-    private void onPrintPdf() {
+    private void onPrintPdf()
+    {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save Cost Breakdown as PDF");
         chooser.setInitialFileName(
@@ -338,7 +359,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         File file = chooser.showSaveDialog(printPdfButton.getScene().getWindow());
         if (file == null) return;   // user cancelled
 
-        Thread worker = new Thread(() -> {
+        Thread worker = new Thread(() ->
+        {
             try {
                 writePdf(file);
             } catch (Exception e) {
@@ -368,7 +390,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
      */
     private void openFile(File file) throws Exception {
         String os = System.getProperty("os.name", "").toLowerCase();
-        if (os.contains("linux")) {
+        if (os.contains("linux"))
+        {
             new ProcessBuilder("xdg-open", file.getAbsolutePath())
                     .inheritIO()
                     .start();
@@ -387,7 +410,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
      *   Col 0    left x = 50       label text, left-aligned
      *   Col 1    right x = 545     value text, right-aligned
      */
-    private void writePdf(File file) throws Exception {
+    private void writePdf(File file) throws Exception
+    {
 
         PDType1Font fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
         PDType1Font fontBold    = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
@@ -406,7 +430,8 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         final float ROW_STEP  = 22f;   // vertical advance per data row
         final float SEP_STEP  = 12f;   // vertical advance after a separator
 
-        try (PDDocument doc = new PDDocument()) {
+        try (PDDocument doc = new PDDocument())
+        {
 
             PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
@@ -415,7 +440,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
 
                 float y = PAGE_H - MARGIN;
 
-                // ── Title ──────────────────────────────────────────────────
+                // Title
                 cs.beginText();
                 cs.setFont(fontBold, TITLE_SZ);
                 cs.newLineAtOffset(COL0_X, y);
@@ -423,7 +448,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
                 cs.endText();
                 y -= (TITLE_SZ + 8);
 
-                // ── Generated date ─────────────────────────────────────────
+                // Generated date
                 String dateLine = "Generated: "
                         + LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
                 cs.beginText();
@@ -435,7 +460,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
                 cs.setNonStrokingColor(0f, 0f, 0f);
                 y -= (META_SZ + 18);
 
-                // ── Table rows ─────────────────────────────────────────────
+                // Table rows
                 for (PdfRow row : pdfRows) {
                     switch (row.type()) {
 

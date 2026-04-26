@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
     private record NavItem(Screens screen, String name, String icon_light, String icon_dark) {}
 
-    // ── Top nav bar ──────────────────────────────────────────────────────────
+    //Top nav bar
     @FXML private HBox      topNavBar;
     @FXML private ImageView brandLogoImageView;
     @FXML private Label     appNameLabel;
@@ -42,7 +42,7 @@ public class MenuController implements Initializable {
     @FXML private StackPane modalOverlay;
     @FXML private VBox modalContentHolder;
 
-    // ── Left sidebar ─────────────────────────────────────────────────────────
+    //Left sidebar
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),

@@ -84,7 +84,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         //TODO: nacitat mena skladov z db (strings)
         fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
         fromCombo.setValue(fromCombo.getItems().getFirst());
-        //TODO: nacitat poskytovane doplnkove sluzby z db (strings)
+        //TODO: nacitat poskytovane doplnkove sluzby z db (strings) a asi zotriedit do skupin
         initializeOptions();
     }
 
@@ -204,6 +204,8 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
         String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
 
+        // SYNTACTICAL INPUT CHECKING
+
         if
         (
                 !destinationError.isEmpty()
@@ -221,7 +223,7 @@ public class CostEstimationController extends BaseController<Void> implements In
             return;
         }
 
-
+        // send loaded user data to next screen
         CostEstimationInput input = new CostEstimationInput(
                 getDate(),
                 getFrom(),
@@ -230,6 +232,8 @@ public class CostEstimationController extends BaseController<Void> implements In
                 getVolume(),
                 getFuelSurcharge(),
                 getToll(),
+                shipment,
+                deliveryTime,
                 getSelectedOptions()
         );
         loadScreen(COST_BREAKDOWN,input);

@@ -10,6 +10,8 @@ public record CostEstimationInput(
         double volume,
         double fuelSurcharge,
         double toll,
+        String shipment_opt,
+        String delivery_opt,
         List<ExtraOption> options
 ) {}
 

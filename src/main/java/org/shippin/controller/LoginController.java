@@ -76,10 +76,10 @@ public class LoginController {
     }
 
     //TODO implement maybe
-    @FXML private void onForgotPassword()
-    {
-
-    }
+//    @FXML private void onForgotPassword()
+//    {
+//
+//    }
 
     @FXML private void onGoToRegister()
     {
