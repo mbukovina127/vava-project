@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.shippin.util.io.TextFileHandler;
 
 import java.io.File;
@@ -12,11 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileHandlerTest {
 
     private TextFileHandler handler;
-    // WARNING folder structure is not "resources/CsvTestFiles", only name just is "resources.CsvTestFiles"
-    private static final String TEST_DIR = "src/test/resources.CsvTestFiles/";
-    private static final String PRICE_FILE = TEST_DIR + "priceCsv.csv";
-    private static final String REGION_FILE = TEST_DIR + "regionCsv.csv";
-    private static final String SMALL_FILE = TEST_DIR + "smallPriceCsv.csv";
+
+    @TempDir
+    Path tempDir;
 
     @BeforeEach
     void setUp() {
@@ -24,48 +23,111 @@ class FileHandlerTest {
     }
 
     @Test
-    void testReadExistingFiles() throws IOException {
-        // priceCsv.csv
-        File priceFile = new File(PRICE_FILE);
-        assertTrue(priceFile.exists(), "priceCsv.csv should exist");
-        String priceContent = handler.readFrom(priceFile);
-        assertFalse(priceContent.isEmpty(), "priceCsv content should not be empty");
-        assertTrue(priceContent.contains("Hmotnosť do (v kg)"), "should contain price header");
+    void readFromShouldReadExistingPriceCsvFile() throws IOException {
+        File file = tempDir.resolve("priceCsv.csv").toFile();
 
-        // regionCsv.csv
-        File regionFile = new File(REGION_FILE);
-        assertTrue(regionFile.exists());
-        String regionContent = handler.readFrom(regionFile);
-        assertTrue(regionContent.contains("Rozdelenie PSČ"), "should contain region header");
+        String content = """
+                Hmotnosť do (v kg);Objem do (v m³);Zóny;;;;;
+                ;;BA1;BA2;BA3;ZA;ZV;KE
+                50;0,2;15,66;16,80;17,35;17,57;17,57;18,52
+                """;
 
-        // smallPriceCsv.csv
-        File smallFile = new File(SMALL_FILE);
-        assertTrue(smallFile.exists());
-        String smallContent = handler.readFrom(smallFile);
-        assertTrue(smallContent.contains("Hmotnosť;Cena"), "should contain small price header");
+        Files.writeString(file.toPath(), content);
+
+        String readContent = handler.readFrom(file);
+
+        assertFalse(readContent.isEmpty());
+        assertTrue(readContent.contains("Hmotnosť do (v kg)"));
+        assertTrue(readContent.contains("BA1"));
+        assertTrue(readContent.contains("18,52"));
     }
 
     @Test
-    void testWriteAndReadRoundTrip() throws IOException {
-        Path tempFile = Files.createTempFile("test-write-", ".txt");
-        File file = tempFile.toFile();
+    void readFromShouldReadExistingRegionCsvFile() throws IOException {
+        File file = tempDir.resolve("regionCsv.csv").toFile();
 
-        String testContent = "Ahoj toto je testovací obsah\nDruhá veta.\n";
+        String content = """
+                Rozdelenie PSČ:;;;;;;
+                BA1;;81000-85999;;;;
+                BA2;;90001-91099;91700-92099;;;
+                """;
 
-        boolean success = handler.writeTo(file, testContent);
-        assertTrue(success, "write should succeed");
+        Files.writeString(file.toPath(), content);
 
+        String readContent = handler.readFrom(file);
+
+        assertFalse(readContent.isEmpty());
+        assertTrue(readContent.contains("Rozdelenie PSČ"));
+        assertTrue(readContent.contains("BA1"));
+        assertTrue(readContent.contains("81000-85999"));
+    }
+
+    @Test
+    void readFromShouldReadExistingSmallPriceCsvFile() throws IOException {
+        File file = tempDir.resolve("smallPriceCsv.csv").toFile();
+
+        String content = """
+                Hmotnosť;Cena
+                do 1 kg;3,29
+                do 3 kg;3,57
+                """;
+
+        Files.writeString(file.toPath(), content);
+
+        String readContent = handler.readFrom(file);
+
+        assertFalse(readContent.isEmpty());
+        assertTrue(readContent.contains("Hmotnosť;Cena"));
+        assertTrue(readContent.contains("do 1 kg"));
+        assertTrue(readContent.contains("3,29"));
+    }
+
+    @Test
+    void writeToShouldWriteContentToFile() throws IOException {
+        File file = tempDir.resolve("output.txt").toFile();
+
+        String content = "Ahoj toto je testovací obsah\nDruhá veta.\n";
+
+        boolean success = handler.writeTo(file, content);
+
+        assertTrue(success);
+        assertTrue(file.exists());
+
+        String readBack = Files.readString(file.toPath());
+
+        assertEquals(content, readBack);
+    }
+
+    @Test
+    void writeToAndReadFromShouldWorkTogether() {
+        File file = tempDir.resolve("roundtrip.txt").toFile();
+
+        String content = "Testovací obsah\nDruhý riadok\nTretí riadok\n";
+
+        boolean success = handler.writeTo(file, content);
         String readBack = handler.readFrom(file);
-        assertEquals(testContent, readBack, "read content should match written content");
 
-        // cleanup
-        Files.deleteIfExists(tempFile);
+        assertTrue(success);
+        assertEquals(content, readBack);
     }
 
     @Test
-    void testReadNonExistingFile() {
-        File fake = new File("neexistuje-vobec.csv");
-        String content = handler.readFrom(fake);
-        assertEquals("", content, "non-existing file should return empty string");
+    void readFromShouldReturnEmptyStringForNonExistingFile() {
+        File file = tempDir.resolve("non-existing-file.csv").toFile();
+
+        String content = handler.readFrom(file);
+
+        assertEquals("", content);
+    }
+
+    @Test
+    void readFromShouldReturnEmptyStringForEmptyFile() throws IOException {
+        File file = tempDir.resolve("empty.txt").toFile();
+
+        Files.writeString(file.toPath(), "");
+
+        String content = handler.readFrom(file);
+
+        assertEquals("", content);
     }
 }
