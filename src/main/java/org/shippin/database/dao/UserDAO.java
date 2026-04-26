@@ -16,7 +16,7 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO users(first_name,last_name,email,password,role) VALUES (?,?,?,?,?)";
+        String sql = "";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, user.getFirstName());
@@ -29,7 +29,7 @@ public class UserDAO extends BaseDAO {
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT user_ID, first_name, last_name, email, role  FROM users WHERE user_ID=?";
+        String sql = "";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -46,4 +46,39 @@ public class UserDAO extends BaseDAO {
         }
         return null;
     }
+
+/*
+called at login, after login deletes old token, requests new
+ */
+    public String createAccessToken(int userId) throws SQLException {
+        String sql = "";//TODO insert into table with tokens:  delete old token where userID + gen_random_uuid(), expire date, user id + cron to delete old tokens
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, userId);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("token");
+        }
+
+        return null;
+    }
+
+
+    public Integer validateAccessToken(String token) throws SQLException {
+        String sql = ""; //TODO select WHERE token=token
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, token);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("user_id"); // valid token
+        }
+
+        return null; // invalid or expired
+    }
+
 }

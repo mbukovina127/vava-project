@@ -68,7 +68,7 @@ public class RegionDAO extends BaseDAO {
                 JOIN Postal_code pc ON pcl.postal_code_ID = pc.postal_code_ID
                 JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
                 WHERE w.warehouse_region_name = ?
-                AND r.region_ID = ?;""";
+                AND r.region_name = ?;"""; //fixed-regionCode =BA1,BA2
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
@@ -125,8 +125,9 @@ public class RegionDAO extends BaseDAO {
         String sql = "INSERT INTO Region(warehouse_ID, region_name)VALUES(?,?);";
 
         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setString(1, regionName);
-        stmt.setInt(2, warehouseId);
+        stmt.setInt(1, warehouseId);
+        stmt.setString(2, regionName);
+
         stmt.executeUpdate();
 
         ResultSet keys = stmt.getGeneratedKeys();
