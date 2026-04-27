@@ -21,7 +21,7 @@ public class ShipmentDAO extends BaseDAO {
         sh.setFuel_payment(rs.getFloat("fuel_payment"));
         sh.setTotalCost(rs.getFloat("total_cost"));
         sh.setCreated_at(rs.getTimestamp("created_at"));
-        sh.setDest_region(rs.getString("dest_region"));
+        sh.setDest_region(rs.getInt("dest_region"));
         sh.setServices(getShipmentServices(sh.getShipment_id()));
         sh.setUser_ID(rs.getInt("user_ID"));
         return sh;
@@ -51,7 +51,7 @@ public class ShipmentDAO extends BaseDAO {
         String sql = """
                     SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator
                     FROM Service_list sl JOIN Service s ON sl.service_ID = s.service_id
-                    WHERE s.service_id = ?;
+                    WHERE sl.shipment_ID = ?;
                     """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -95,7 +95,10 @@ public class ShipmentDAO extends BaseDAO {
     }
 
     public List<ShipmentHistory> getShipmentHistoryByShipmentID(int shipmentID) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+        SELECT history_ID, timestamp, state, shipment_ID FROM History
+        WHERE shipment_ID = ?;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, shipmentID);
@@ -121,7 +124,7 @@ public class ShipmentDAO extends BaseDAO {
      * adds event into shipments history addShipmentHistory(new history(timestamp,state,shipmentID))
      */
     public int addShipmentHistory(ShipmentHistory history) throws SQLException {
-        String sql = "";//TODO
+        String sql = "INSERT INTO History(timestamp, state, shipment_ID)VALUES(?, ?, ?)";
 
         PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -203,7 +206,12 @@ public class ShipmentDAO extends BaseDAO {
     }
 
     public List<Shipment> getAllShipmentsByDate(Timestamp from, Timestamp to) throws SQLException {
-        String sql = ""; //TODO
+        String sql = """
+                SELECT s.shipment_ID, s.status, s.fuel_payment,
+                s.total_cost, s.created_at, s.dest_region, s.user_ID
+                FROM Shipment s
+                WHERE s.created_at >=  ?
+                AND s.created_at <  ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setTimestamp(1, from);
@@ -222,14 +230,22 @@ public class ShipmentDAO extends BaseDAO {
 
 
     public boolean updateShipmentByID(Shipment sh) throws SQLException {
-        String sql = "";//TODO
+        String sql = """
+                UPDATE Shipment
+                SET status = ?,
+                fuel_payment = ?,
+                total_cost = ?,
+                dest_region = ?,
+                created_at = ?,
+                user_ID = ?
+                WHERE shipment_ID = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, sh.getState().name());
         stmt.setFloat(2, sh.getFuel_payment());
         stmt.setFloat(3, sh.getTotalCost());
-        stmt.setString(4, sh.getDest_region());
+        stmt.setInt(4, sh.getDest_region());
         stmt.setTimestamp(5, (Timestamp) sh.getCreated_at());
         stmt.setInt(6, sh.getUser_ID());
         stmt.setInt(7, sh.getShipment_id());
@@ -239,7 +255,7 @@ public class ShipmentDAO extends BaseDAO {
         //update related service list
         if (affectedRows > 0) {
             //delete old services
-            String deleteSql = ""; //TODO delete all services where shipment id
+            String deleteSql = "DELETE FROM Service_list WHERE shipment_ID = ?;";
             PreparedStatement deleteStmt = connection.prepareStatement(deleteSql);
             deleteStmt.setInt(1, sh.getShipment_id());
             deleteStmt.executeUpdate();
@@ -254,10 +270,9 @@ public class ShipmentDAO extends BaseDAO {
 
 
     public int insertShipment(Shipment sh, int warehouseID, int userID) throws SQLException {
-        //FIXME dest_region string(class) vs int(DB)
         String sql = """
-                INSERT INTO Shipment (user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status)
-                    VALUES (?,?,?,?,?,?,?)
+                INSERT INTO Shipment (user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status, is_sp)
+                    VALUES (?,?,?,?,?,?,?,?)
                     ON CONFLICT (shipment_ID)
                     DO UPDATE SET
                     	user_ID = EXCLUDED.user_ID,
@@ -274,11 +289,12 @@ public class ShipmentDAO extends BaseDAO {
 
         stmt.setInt(1, userID);
         stmt.setInt(2, warehouseID);
-        stmt.setString(3, sh.getDest_region());
+        stmt.setInt(3, sh.getDest_region());
         stmt.setFloat(4, sh.getFuel_payment());
         stmt.setFloat(5, sh.getTotalCost());
         stmt.setTimestamp(6, (Timestamp) sh.getCreated_at());
         stmt.setString(7, sh.getState().name());
+        stmt.setBoolean(8, false);
 
         stmt.executeUpdate();
 

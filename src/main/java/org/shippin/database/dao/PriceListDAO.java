@@ -26,7 +26,8 @@ public class PriceListDAO extends BaseDAO {
                 FROM Warehouse w
                 JOIN Region r ON w.warehouse_ID = r.warehouse_ID
                 JOIN Parameter_list pl ON pl.region_ID = r.region_ID
-                WHERE r.region_name = ? AND w.warehouse_region_name = ?;""";
+                WHERE r.region_name = ?
+                AND w.warehouse_region_name = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, regionName);
@@ -96,8 +97,8 @@ public class PriceListDAO extends BaseDAO {
                 WHERE r.region_name = ? AND w.warehouse_region_name = ? AND pl.weight = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, sourceWarehouse);
-        stmt.setString(2, regionName);
+        stmt.setString(1, regionName);
+        stmt.setString(2, sourceWarehouse);
         stmt.setFloat(3, weight);
         ResultSet rs = stmt.executeQuery();
 
@@ -125,8 +126,8 @@ public class PriceListDAO extends BaseDAO {
                 WHERE r.region_name = ? AND w.warehouse_region_name = ? AND pl.volume = ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, sourceWarehouse);
-        stmt.setString(2, regionName);
+        stmt.setString(1, regionName);
+        stmt.setString(2, sourceWarehouse);
         stmt.setFloat(3, volume);
         ResultSet rs = stmt.executeQuery();
 

@@ -20,7 +20,7 @@ public class ShipmentService {
         this.connection = connection;
     }
 
-    public Shipment createShipment(String name, Date deliveryDate, String destPostalCode,
+    public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
                                    float fuelSurchargeCoefficient, float toll, int weight, int volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
@@ -35,7 +35,7 @@ public class ShipmentService {
         float baseCost;
         if (weight > 30) {
             String regionCode = findRegionForPostalCode(
-                    warehouse.getRegionTable(), Integer.parseInt(destPostalCode));
+                    warehouse.getRegionTable(), destPostalCode);
 
             float costByWeight = findCostInPriceList(
                     warehouse.getPriceList(), regionCode, weight, true);

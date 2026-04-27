@@ -17,7 +17,7 @@ public abstract class CoreShipmentInfo{
     // private String name;
     private Date created_at;
     // private String sourcePostalCode;
-    private String dest_region;
+    private int dest_region;
     private Coordinates startCoordinate;
     private float fuel_payment;
     private float totalCost;

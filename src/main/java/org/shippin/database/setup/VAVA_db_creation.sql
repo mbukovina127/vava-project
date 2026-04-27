@@ -1,5 +1,4 @@
-DROP TABLE IF EXISTS 
-    Parameter,
+DROP TABLE IF EXISTS
 	Region,
 	Parameter_list,
 	Postal_code,
@@ -16,7 +15,7 @@ CASCADE;
 
 CREATE TABLE Warehouse (
 	warehouse_ID SERIAL PRIMARY KEY,
-	storage_region INT NOT NULL,
+	storage_region TEXT,
 	warehouse_region_name TEXT NOT NULL,
     latitude  DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
@@ -40,7 +39,9 @@ CREATE TABLE Parameter_list (
 CREATE TABLE Postal_code (
     postal_code_ID SERIAL PRIMARY KEY,
     up_bound INT NOT NULL,
-    down_bound INT NOT NULL
+    down_bound INT NOT NULL,
+    UNIQUE(up_bound, down_bound),
+    CHECK (up_bound >= down_bound)
 );
 
 CREATE TABLE Postal_code_list (
@@ -68,7 +69,7 @@ CREATE TABLE Shipment (
     shipment_ID SERIAL PRIMARY KEY,
     user_ID INT NOT NULL REFERENCES Users(user_ID) ON DELETE CASCADE,
     warehouse_ID INT NOT NULL REFERENCES Warehouse(warehouse_ID) ON DELETE CASCADE,
-    dest_region INT NOT NULL,
+    dest_region TEXT NOT NULL,
     fuel_payment NUMERIC(10,2) NOT NULL DEFAULT 0,
     total_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -99,6 +100,7 @@ CREATE TABLE Service_list (
 CREATE TABLE Session (
     session_ID SERIAL PRIMARY KEY,
     user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,
+    token TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     is_active BOOLEAN NOT NULL

@@ -97,7 +97,7 @@ public class RegionDAO extends BaseDAO {
                 JOIN Postal_code pc ON pcl.postal_code_ID = pc.postal_code_ID
                 JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
                 WHERE w.warehouse_region_name = ?
-                AND pc.up_bound <= ? AND pc.down_bound >= ?;""";
+                AND pc.up_bound >= ? AND pc.down_bound <= ?;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, warehouseName);
@@ -139,7 +139,7 @@ public class RegionDAO extends BaseDAO {
      */
     public void insertPSCRange(int regionID, int downBound, int upBound) throws SQLException {
         String insertPSC = """
-                INSERT INTO Postal_code(up_bound, down_bound) VALUES(?,?)
+                INSERT INTO Postal_code(down_bound, up_bound) VALUES(?,?)
                 ON CONFLICT (up_bound, down_bound) DO UPDATE
                 SET up_bound = EXCLUDED.up_bound
                 RETURNING postal_code_ID;""";
