@@ -134,6 +134,32 @@ public class RegionDAO extends BaseDAO {
         return keys.next() ? keys.getInt(1) : -1;
     }
 
+    /*
+    deletes specific region along with its priceList
+     */
+    public boolean deleteRegion(int warehouseId, String regionName) throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, warehouseId);
+        stmt.setString(2, regionName);
+
+        return stmt.executeUpdate() > 0;
+    }
+
+    /*
+    removes all regions of warehouse along with pricelist(s) cascade
+     */
+    public boolean deleteAllRegions(int warehouseId) throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, warehouseId);
+
+        return stmt.executeUpdate() > 0;
+    }
     /**
      * add PSC range to region
      */

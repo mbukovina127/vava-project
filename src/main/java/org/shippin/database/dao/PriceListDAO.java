@@ -5,6 +5,8 @@ package org.shippin.database.dao;
 
 import org.shippin.domain.PriceList;
 import org.shippin.domain.PriceListEntry;
+import org.shippin.domain.SmallPriceList;
+import org.shippin.domain.SmallPriceListEntry;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -83,6 +85,31 @@ public class PriceListDAO extends BaseDAO {
         PriceList pl = new PriceList();
         pl.setEntries(itemList);
         return pl;
+    }
+
+    public boolean deletePriceListByWarehouseID(int warehouseID) throws SQLException {
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, warehouseID);
+
+        int affectedRows = stmt.executeUpdate();
+
+        return affectedRows > 0;
+    }
+
+    //delete pricelist only for specific region of warehouse
+    public boolean deletePriceListByWarehouseAndRegionID(int warehouseID, int regionID) throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, warehouseID);
+        stmt.setInt(2, regionID);
+
+        int affectedRows = stmt.executeUpdate();
+
+        return affectedRows > 0;
     }
 
     /**
@@ -207,6 +234,54 @@ public class PriceListDAO extends BaseDAO {
 
 
 
+    /*
+    SP functions
+     */
+
+    public int insertSmallPriceListEntry(SmallPriceListEntry entry) throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setFloat(1, entry.getWeight());
+        stmt.setFloat(2, entry.getCost());
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            entry.setId(id);
+            return id;
+        }
+
+        throw new SQLException("insert failed");
+    }
+
+    public void insertSmallPriceList(SmallPriceList list) throws SQLException {
+        for (SmallPriceListEntry entry : list.getEntries()) {
+            insertSmallPriceListEntry(entry);
+        }
+    }
+
+
+    public boolean deleteSmallPriceListEntry(int id) throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, id);
+
+        return stmt.executeUpdate() > 0;
+    }
+
+    public boolean deleteSmallPriceList() throws SQLException {
+
+        String sql = "";//TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+
+        return stmt.executeUpdate() >= 0;
+    }
 
 
 

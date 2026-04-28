@@ -47,6 +47,18 @@ public class UserDAO extends BaseDAO {
         return null;
     }
 
+    public boolean deleteUser(int userID) throws SQLException {
+
+        String sql = "";//TODO - avoid cascade (shipment.UserID)
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, userID);
+
+        int affectedRows = stmt.executeUpdate();
+
+        return affectedRows > 0;
+    }
+
 /*
 called at login, after login deletes old token, requests new
  */
@@ -75,10 +87,19 @@ called at login, after login deletes old token, requests new
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            return rs.getInt("user_id"); // valid token
+            return rs.getInt("user_id"); //valid token
         }
 
-        return null; // invalid or expired
+        return null; //invalid or expired
+    }
+
+
+    public void deleteAccessToken(String token) throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, token);
+        stmt.executeUpdate();
     }
 
 }
