@@ -17,18 +17,18 @@ public class DBConnector {
     public void connect() throws SQLException {
 
         String url = "jdbc:postgresql://"
-                + cfg.getDb_domain()
+                + cfg.getDbDomain()
                 + ":"
-                + cfg.getDb_port()
+                + cfg.getDbPort()
                 + "/"
-                + cfg.getDb();
+                + cfg.getDbName();
 
         connection = DriverManager.getConnection(
                 url,
-                cfg.getDb_user(),
-                cfg.getDb_user_password()
+                cfg.getDbUser(),
+                cfg.getDbUserPassword()
         );
-        //set working schema
+
         connection.createStatement().execute("SET search_path TO balicky");
     }
 

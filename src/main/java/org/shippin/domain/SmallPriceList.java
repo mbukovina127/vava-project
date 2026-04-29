@@ -1,15 +1,20 @@
 package org.shippin.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SmallPriceList implements EntityTable<SmallPriceListEntry>{
+
+    private List<SmallPriceListEntry> entries = new ArrayList<>();
+
     @Override
     public List<SmallPriceListEntry> getEntries() {
-        return List.of();
+        return entries;
     }
 
     @Override
     public boolean setEntries(List<SmallPriceListEntry> entries) {
-        return false;
+        this.entries = entries;
+        return true;
     }
 }

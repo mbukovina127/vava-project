@@ -16,19 +16,20 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO users(name,email,role) VALUES (?,?,?)";
+        String sql = "INSERT INTO Users(first_name, last_name, email, password, role)VALUES (?,?,?,?,?);";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
-        stmt.setString(1, user.getName());
-        stmt.setString(2, user.getEmail());
-        stmt.setInt(3, user.getRole().ordinal());
-
+        stmt.setString(1, user.getFirstName());
+        stmt.setString(2, user.getLastName());
+        stmt.setString(3, user.getEmail());
+        stmt.setString(4, user.getPassword());
+        stmt.setInt(5, user.getRole().ordinal());
         stmt.executeUpdate();
     }
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT * FROM balicky.users WHERE id=?";
+        String sql = "SELECT first_name, last_name, email, role FROM Users WHERE user_ID = ?;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -37,12 +38,68 @@ public class UserDAO extends BaseDAO {
 
         if (rs.next()) {
             return new User(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
                     rs.getString("email"),
                     Role.values()[(rs.getInt("role"))]
             );
         }
         return null;
     }
+
+    public boolean deleteUser(int userID) throws SQLException {
+
+        String sql = "";//TODO - avoid cascade (shipment.UserID)
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, userID);
+
+        int affectedRows = stmt.executeUpdate();
+
+        return affectedRows > 0;
+    }
+
+/*
+called at login, after login deletes old token, requests new
+ */
+    public String createAccessToken(int userId) throws SQLException {
+        String sql = "";//TODO insert into table with tokens:  delete old token where userID + gen_random_uuid(), expire date, user id + cron to delete old tokens
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, userId);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("token");
+        }
+
+        return null;
+    }
+
+
+    public Integer validateAccessToken(String token) throws SQLException {
+        String sql = ""; //TODO select WHERE token=token
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, token);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("user_id"); //valid token
+        }
+
+        return null; //invalid or expired
+    }
+
+
+    public void deleteAccessToken(String token) throws SQLException {
+        String sql = ""; //TODO
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, token);
+        stmt.executeUpdate();
+    }
+
 }

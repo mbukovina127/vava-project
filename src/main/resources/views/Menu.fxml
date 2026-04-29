@@ -13,9 +13,9 @@
            prefWidth="1440" prefHeight="820"
            minWidth="1440" minHeight="820"
            maxWidth="1440" maxHeight="820">
-           
+
 	<BorderPane styleClass="menu-root">
-	        
+
 	    <top>
 	        <HBox
 	                fx:id="topNavBar"
@@ -23,7 +23,7 @@
 	                prefWidth="1440"
 	                alignment="CENTER_LEFT"
 	                styleClass="nav-bar">
-	
+
 	            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
 	                <ImageView
 	                        fx:id="brandLogoImageView"
@@ -35,7 +35,7 @@
 	                        text="Shipinn"
 	                        styleClass="nav-app-name"/>
 	            </HBox>
-	
+
 	            <HBox alignment="CENTER_RIGHT" spacing="14">
 	                <Label
 	                        fx:id="UserNameLabel"
@@ -48,7 +48,7 @@
 	            </HBox>
 	        </HBox>
 	    </top>
-	
+
 	    <left>
 	        <VBox
 	                fx:id="leftSidebar"
@@ -57,12 +57,12 @@
 	                spacing="0"
 	                alignment="TOP_CENTER"
 	                styleClass="sidebar">
-	
+
 	            <!--This is where the menu is loaded-->
-	
+
 	        </VBox>
 	    </left>
-	
+
 	    <center>
 	        <ScrollPane fitToWidth="true"
 	                    fitToHeight="true"
@@ -80,7 +80,7 @@
 	            </content>
 	        </ScrollPane>
 	    </center>
-	    
+
 	</BorderPane>
 
     <!-- Overlay is now a sibling of BorderPane, so it stacks on top -->
@@ -89,7 +89,7 @@
                managed="false"
                pickOnBounds="true"
                styleClass="modal-overlay"/>
-               
+
     <VBox fx:id="modalContentHolder"
               managed="false"
               visible="false"
