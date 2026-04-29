@@ -3,7 +3,9 @@ package org.shippin.controller.utils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.controller.MenuController;
 import org.shippin.dto.Screens;
 
 import java.io.IOException;
@@ -11,16 +13,14 @@ import java.io.IOException;
 @Log4j2
 public class NavigationUtilities {
 
+    @Setter
     private static Stage primaryStage;
-
-    public static void setPrimaryStage(Stage stage) {
-        primaryStage = stage;
-    }
 
     /**
      * Navigate to a specific screen using Screens enum
      * @param screen
      */
+    // Pre full-screen prechody (Login → Menu)
     public static void navigateTo(Screens screen) {
         String path = Screens.resolveScreen(screen);
         try {

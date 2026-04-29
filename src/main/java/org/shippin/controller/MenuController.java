@@ -10,9 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.dto.Screens;
 
@@ -20,14 +22,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 @Log4j2
 public class MenuController implements Initializable {
     private record NavItem(Screens screen, String name, String icon_light, String icon_dark) {}
 
-    // ── Top nav bar ──────────────────────────────────────────────────────────
+    //Top nav bar
     @FXML private HBox      topNavBar;
     @FXML private ImageView brandLogoImageView;
     @FXML private Label     appNameLabel;
@@ -36,37 +37,77 @@ public class MenuController implements Initializable {
     @FXML private Hyperlink navLink3;
     @FXML private Hyperlink navLink4;
     @FXML private Hyperlink navLink5;
-    @FXML private Label     currentDateLabel;
+    @FXML private Label     UserNameLabel;
     @FXML private Button    profileButton;
+    @FXML private StackPane modalOverlay;
+    @FXML private VBox modalContentHolder;
 
-    // ── Left sidebar ─────────────────────────────────────────────────────────
+    //Left sidebar
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
-            new NavItem(Screens.LOGIN, "LOGIN", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
+            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
+            new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
+            new NavItem(Screens.DAILY_COST_SUM, "Daily Costs Summary", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"), //FIXME testing menu item
+            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"), //FIXME testing menu item
             new NavItem(null, "Home", "", "")
     );
 
 
     // CONTENT
     @FXML private StackPane contentArea;
+    
+    public void showOverlay(javafx.scene.Node content) {
+    	if (content instanceof Region region) {
+            region.setMaxHeight(Region.USE_PREF_SIZE);
+            region.setMaxWidth(Region.USE_PREF_SIZE);
+        }
+        StackPane.setAlignment(content, Pos.CENTER);
+    	modalOverlay.getChildren().setAll(content);
+    	modalOverlay.setManaged(true);
+        modalOverlay.setVisible(true);
+    }
 
+    public void hideOverlay() {
+        modalOverlay.setVisible(false);
+        modalOverlay.setManaged(false);
+        modalOverlay.getChildren().clear();
+    }
 
-    // ── Action handlers ──────────────────────────────────────────────────────
-    private void loadPage(Screens screen) {
-        // TODO place for privilage verification
+    // package-private — len BaseController to vidí
+    void loadScreen(Screens screen, Object data) {
         try {
-            var resource = getClass().getResource(Screens.resolveScreen(screen));
-            Node node = FXMLLoader.load(resource);
+            URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
+            if (fxmlUrl == null) {
+                throw new IllegalStateException("FXML not found: " + Screens.resolveScreen(screen));
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Node node = loader.load();
+
+            Object ctrl = loader.getController();
+
+            if (ctrl instanceof BaseController<?> bc) {
+                bc.setMenuController(this);
+            }
+
+            if (ctrl instanceof Navigatable nav) {
+                nav.onNavigatedTo(data);
+            }
+
             contentArea.getChildren().setAll(node);
-            log.debug("Loaded screen: {}, into the main container", screen);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             log.error("Failed to load screen: {}", screen, e);
+            throw new RuntimeException("Failed to load screen: " + screen, e);
         }
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
+        //TODO dat meno usera zo session (get string)
+        //UserNameLabel.setText(username);
 
         List<Button> buttons = new ArrayList<>();
 
@@ -114,13 +155,13 @@ public class MenuController implements Initializable {
                     var s = getClass().getResourceAsStream(item.icon_light());
                     if (s != null) finalIcon.setImage(new Image(s));
                 }
-                loadPage(item.screen());
+                loadScreen(item.screen(),null);
             });
 
             leftSidebar.getChildren().add(btn);
         }
 
-        loadPage(NAV_ITEMS.get(0).screen());
+        loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
 
     @FXML private void onProfileClicked() {}

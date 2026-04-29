@@ -7,22 +7,52 @@ import java.util.regex.Pattern;
 
 public class InputValidator {
 
+
+    // BASIC
+
     public static boolean isValidLength(String value) {
         return value != null && value.length() > 250;
+    }
+
+    public static boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
     }
 
     public static boolean isValidLength(String value, int maxLength) {
         return value != null && value.length() <= maxLength;
     }
-
-    public static boolean matches(String value, RegPattern pattern) {
-        return value != null && pattern.getPattern().matcher(value).matches();
+    public static boolean isValidMinLength(String password, int minLength) {
+        return password != null && password.length() >= minLength;
     }
-    public static boolean matches(String value, RegPattern pattern, int minLength, int maxLength) {
-        return value != null
-                && value.length() >= minLength
-                && value.length() <= maxLength
-                && pattern.getPattern().matcher(value).matches();
+    public static boolean stringMatch(String str1, String str2) {
+        return str1 != null && str1.equals(str2);
+    }
+
+
+//    public static boolean matches(String value, RegPattern pattern, int minLength, int maxLength) {
+//        return value != null
+//                && value.length() >= minLength
+//                && value.length() <= maxLength
+//                && pattern.getPattern().matcher(value).matches();
+//    }
+
+
+    // REGEX
+
+    public static boolean hasLowercase(String password) {
+        return password != null && HAS_LOWERCASE.matcher(password).matches();
+    }
+
+    public static boolean hasUppercase(String password) {
+        return password != null && HAS_UPPERCASE.matcher(password).matches();
+    }
+
+    public static boolean hasDigit(String password) {
+        return password != null && HAS_DIGIT.matcher(password).matches();
+    }
+
+    public static boolean hasSpecial(String password) {
+        return password != null && HAS_SPECIAL.matcher(password).matches();
     }
 
     private static final Pattern HAS_LOWERCASE = Pattern.compile(".*[a-z].*");
@@ -30,43 +60,24 @@ public class InputValidator {
     private static final Pattern HAS_DIGIT     = Pattern.compile(".*\\d.*");
     private static final Pattern HAS_SPECIAL   = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
 
+    public static boolean matches(String value, RegPattern pattern) {
+        return value != null && pattern.getPattern().matcher(value).matches();
+    }
+
     public static boolean isValidEmail(String email) {
         return matches(email, RegPattern.EMAIL);
     }
 
-    public static boolean passwordHasMinLength(String password) {
-        return password != null && password.length() >= 8;
-    }
-
-    public static boolean passwordHasLowercase(String password) {
-        return password != null && HAS_LOWERCASE.matcher(password).matches();
-    }
-
-    public static boolean passwordHasUppercase(String password) {
-        return password != null && HAS_UPPERCASE.matcher(password).matches();
-    }
-
-    public static boolean passwordHasDigit(String password) {
-        return password != null && HAS_DIGIT.matcher(password).matches();
-    }
-
-    public static boolean passwordHasSpecial(String password) {
-        return password != null && HAS_SPECIAL.matcher(password).matches();
-    }
-
     public static boolean isValidPassword(String password) {
-        return passwordHasMinLength(password)
-            && passwordHasLowercase(password)
-            && passwordHasUppercase(password)
-            && passwordHasDigit(password)
-            && passwordHasSpecial(password);
+        return
+            isValidMinLength(password,8)
+            && hasDigit(password)
+            && hasSpecial(password)
+            && hasUppercase(password)
+            && hasLowercase(password);
     }
 
-    public static boolean passwordsMatch(String password, String confirmation) {
-        return password != null && password.equals(confirmation);
-    }
 
-    public static boolean isNotBlank(String value) {
-        return value != null && !value.isBlank();
-    }
+
+
 }

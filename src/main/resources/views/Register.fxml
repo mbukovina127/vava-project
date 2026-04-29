@@ -38,7 +38,7 @@
                 <TextField
                         fx:id="firstNameField"
                         styleClass="input-field"
-                        promptText="Value"/>
+                        promptText="first name"/>
             </VBox>
 
             <!-- Surname -->
@@ -47,9 +47,19 @@
                 <TextField
                         fx:id="lastNameField"
                         styleClass="input-field"
-                        promptText="Value"/>
+                        promptText="last name"/>
+
             </VBox>
+
         </GridPane>
+
+        <!-- error label (ame) -->
+        <Label
+                fx:id="statusLabelName"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
@@ -59,33 +69,77 @@
         <TextField
                 fx:id="emailField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="email"/>
+
+        <!-- error label (email) -->
+        <Label
+                fx:id="statusLabelEmail"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
 
-<!--        TODO: urobit očko ;)-->
         <!-- Password -->
         <Label styleClass="field-label" text="Password"/>
-        <PasswordField
-                fx:id="passwordField"
-                styleClass="input-field"
-                promptText="Value"/>
+        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <PasswordField
+                    fx:id="passwordField"
+                    styleClass="password-input"
+                    promptText="password"
+                    HBox.hgrow="ALWAYS"/>
+            <TextField
+                    fx:id="passwordVisible"
+                    styleClass="password-input"
+                    promptText="password"
+                    managed="false"
+                    visible="false"
+                    HBox.hgrow="ALWAYS"/>
+            <Button
+                    fx:id="eyeButton"
+                    styleClass="eye-btn"
+                    text="👁"
+                    onAction="#onTogglePassword"/>
+        </HBox>
+
+        <!-- error label (password) -->
+        <Label
+                fx:id="statusLabelPass"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
         <!-- Spacer -->
         <Region prefHeight="12"/>
 
-<!--        TODO: urobit očko ;)-->
         <!-- Repeat Password -->
         <Label styleClass="field-label" text="Repeat Password"/>
-        <PasswordField
-                fx:id="confirmPasswordField"
-                styleClass="input-field"
-                promptText="Value"/>
+        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <PasswordField
+                    fx:id="passwordFieldRep"
+                    styleClass="password-input"
+                    promptText="password"
+                    HBox.hgrow="ALWAYS"/>
+            <TextField
+                    fx:id="passwordVisibleRep"
+                    styleClass="password-input"
+                    promptText="password"
+                    managed="false"
+                    visible="false"
+                    HBox.hgrow="ALWAYS"/>
+            <Button
+                    fx:id="eyeButtonRep"
+                    styleClass="eye-btn"
+                    text="👁"
+                    onAction="#onTogglePasswordRep"/>
+        </HBox>
 
-        <!-- Status / error label -->
+        <!-- error label (email) -->
         <Label
-                fx:id="statusLabel"
+                fx:id="statusLabelPassConfirm"
                 styleClass="status-label"
                 text=""
                 wrapText="true"

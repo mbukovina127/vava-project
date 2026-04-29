@@ -1,197 +1,221 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
+<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/cost_estimation.css"
+      xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shippin.controller.CostEstimationController">
 
-<VBox
-    xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml"
-    fx:controller="org.shippin.controller.CostEstimationController"
-    styleClass="ce-root"
-    stylesheets="@../css/cost_estimation.css"
-    prefWidth="1340"
-    spacing="0">
+    <!-- ToggleGroups defined here, referenced via $ below -->
+    <fx:define>
+        <ToggleGroup fx:id="shipmentTypeGroup"/>
+        <ToggleGroup fx:id="deliveryTypeGroup"/>
+    </fx:define>
 
-    <!-- ══════════════════════════════════════
-         TITLE ROW  —  "Shipment cost estimation"  +  Date
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-title-row" alignment="CENTER_LEFT">
-        <Label
-            fx:id="sectionTitleLabel"
-            text="Shipment cost estimation"
-            styleClass="ce-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
+    <!-- TITLE ROW -->
+    <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
+        <Label fx:id="sectionTitleLabel" styleClass="ce-title" text="Shipment cost estimation" />
+        <Region HBox.hgrow="ALWAYS" />
         <HBox alignment="CENTER_RIGHT" spacing="8">
-            <Label text="Date:" styleClass="ce-date-label"/>
-            <TextField
-                fx:id="dateField"
-                promptText="DD.MM.YYYY"
-                prefWidth="130"
-                styleClass="input-field ce-date-field"/>
+            <Label styleClass="ce-date-label" text="Date:" />
+            <TextField fx:id="dateField" prefWidth="130" promptText="DD.MM.YYYY" styleClass="input-field ce-date-field" />
+            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />
         </HBox>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         TYPE TOGGLES  —  Small Package / Shipment
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-toggle-row" spacing="24" alignment="CENTER_LEFT">
-        <CheckBox fx:id="chkSmallPackage" text="Small Package" styleClass="ce-toggle"/>
-        <CheckBox fx:id="chkShipment"     text="Shipment"      styleClass="ce-toggle" selected="true"/>
+    <!-- TYPE TOGGLES  —  Small Package / Shipment -->
+    <HBox alignment="CENTER_LEFT" spacing="24" styleClass="ce-toggle-row">
+        <RadioButton fx:id="rbSmallPackage" styleClass="ce-toggle" text="Small Package"
+                     toggleGroup="$shipmentTypeGroup" />
+        <RadioButton fx:id="rbShipment" selected="true" styleClass="ce-toggle" text="Shipment"
+                     toggleGroup="$shipmentTypeGroup" />
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         POSTAL CODES ROW
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
+    <!-- FIELDS ROW — restructured as a single GridPane for proper alignment -->
+    <GridPane hgap="16" vgap="4" styleClass="ce-fields-grid">
+        <padding><Insets top="8" bottom="8" /></padding>
+        <columnConstraints>
+            <!-- Row label (Postal codes / Size / Coefficients) -->
+            <ColumnConstraints minWidth="120" prefWidth="140" halignment="LEFT" />
+            <!-- Sub-label From/Weight/Fuel — widened so text isn't cramped -->
+            <ColumnConstraints minWidth="120" prefWidth="150" halignment="RIGHT" />
+            <!-- From field -->
+            <ColumnConstraints minWidth="180" prefWidth="200" />
+            <!-- Status label From -->
+            <ColumnConstraints minWidth="0" prefWidth="160" />
+            <!-- Spacer -->
+            <ColumnConstraints minWidth="40" prefWidth="60" />
+            <!-- Sub-label To/Volume/Toll — widened to match left side -->
+            <ColumnConstraints minWidth="80" prefWidth="100" halignment="RIGHT" />
+            <!-- To field + button -->
+            <ColumnConstraints minWidth="180" prefWidth="220" />
+            <!-- Status label To -->
+            <ColumnConstraints minWidth="0" prefWidth="160" />
+        </columnConstraints>
+        <rowConstraints>
+            <!-- Row 0: Postal codes -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 1: Status label for destination — sits flush under To field -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <!-- Row 2: Size -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 3: Status labels for weight / volume -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <!-- Row 4: Coefficients -->
+            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
+            <!-- Row 5: Status labels for fuel / toll -->
+            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+        </rowConstraints>
 
-        <!-- Label -->
-        <Label text="Postal codes:" styleClass="ce-row-label" prefWidth="140"/>
+        <!-- ── Row 0: Postal codes ── -->
+        <Label styleClass="ce-row-label" text="Postal codes:"
+               GridPane.columnIndex="0" GridPane.rowIndex="0" />
 
-        <!-- From -->
-        <Label text="From:" styleClass="ce-sub-label" prefWidth="55"/>
-        <ComboBox
-            fx:id="fromCombo"
-            value="Sklad BA"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="ce-combo"/>
+        <Label styleClass="ce-sub-label" text="From:"
+               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <ComboBox fx:id="fromCombo" prefHeight="36" prefWidth="200" styleClass="ce-combo"
+                  GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-        <Region HBox.hgrow="ALWAYS"/>
-
-        <!-- To -->
-        <Label text="To:" styleClass="ce-sub-label" prefWidth="35"/>
-        <HBox styleClass="ce-to-box" alignment="CENTER_LEFT" spacing="0">
-            <TextField
-                fx:id="destinationField"
-                prefWidth="200"
-                prefHeight="36"
-                styleClass="ce-to-field"/>
-            <Button fx:id="toScanBtn" text="⊕" styleClass="ce-icon-btn"/>
+        <Label styleClass="ce-sub-label" text="To:"
+               GridPane.columnIndex="5" GridPane.rowIndex="0" />
+        <!-- To field + scan button in an HBox so button stays flush -->
+        <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
+              GridPane.columnIndex="6" GridPane.rowIndex="0">
+            <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
+            <Button fx:id="toScanBtn" styleClass="ce-icon-btn" text="⊕" />
         </HBox>
+
+        <!-- ── Row 1: status label for destination ── -->
+        <Label fx:id="statusLabelDestination" maxWidth="220" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="1" />
+
+        <!-- ── Row 2: Size ── -->
+        <Label styleClass="ce-row-label" text="Size:"
+               GridPane.columnIndex="0" GridPane.rowIndex="2" />
+
+        <Label styleClass="ce-sub-label" text="Weight:"
+               GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="weightField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="2" GridPane.rowIndex="2" />
+
+        <Label styleClass="ce-sub-label" text="Volume:"
+               GridPane.columnIndex="5" GridPane.rowIndex="2" />
+        <TextField fx:id="volumeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="6" GridPane.rowIndex="2" />
+
+        <!-- ── Row 3: status labels for weight / volume ── -->
+        <Label fx:id="statusLabelWeight" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="3" />
+        <Label fx:id="statusLabelVolume" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="3" />
+
+        <!-- ── Row 4: Coefficients ── -->
+        <Label styleClass="ce-row-label" text="Coefficients:"
+               GridPane.columnIndex="0" GridPane.rowIndex="4" />
+
+        <Label styleClass="ce-sub-label" text="Fuel surcharge:"
+               GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <TextField fx:id="fuelSurchargeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="2" GridPane.rowIndex="4" />
+
+        <Label styleClass="ce-sub-label" text="Toll:"
+               GridPane.columnIndex="5" GridPane.rowIndex="4" />
+        <TextField fx:id="tollField" prefHeight="36" prefWidth="200" styleClass="input-field"
+                   GridPane.columnIndex="6" GridPane.rowIndex="4" />
+
+        <!-- ── Row 5: status labels for fuel / toll ── -->
+        <Label fx:id="statusLabelFuel" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="5" />
+        <Label fx:id="statusLabelToll" maxWidth="200" styleClass="status-label" text="" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="5" />
+
+    </GridPane>
+
+    <!-- ADDITIONAL FEES TOGGLE -->
+    <HBox alignment="CENTER_LEFT" styleClass="ce-fees-header-row">
+        <CheckBox fx:id="chkAdditionalFees" selected="true" styleClass="ce-toggle" text="Additional fees:" />
+        <VBox.margin><Insets /></VBox.margin>
+        <padding><Insets top="10.0" /></padding>
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         SIZE / WEIGHT / VOLUME ROW
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
-        <Label text="Size:" styleClass="ce-row-label" prefWidth="140"/>
-        <Label text="Weight:" styleClass="ce-sub-label" prefWidth="55"/>
-        <TextField
-            fx:id="weightField"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="input-field"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Volume:" styleClass="ce-sub-label" prefWidth="70"/>
-        <TextField
-            fx:id="volumeField"
-            prefWidth="200"
-            prefHeight="36"
-            styleClass="input-field"/>
-    </HBox>
-
-    <!-- ══════════════════════════════════════
-         COEFFICIENTS / FUEL SURCHARGE / TOLL ROW
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-field-row" alignment="CENTER_LEFT" spacing="0">
-        <Label text="Coefficients:" styleClass="ce-row-label" prefWidth="140"/>
-        <Label text="Fuel surcharge:" styleClass="ce-sub-label" prefWidth="110"/>
-        <TextField
-            fx:id="fuelSurchargeField"
-            prefWidth="180"
-            prefHeight="36"
-            styleClass="input-field"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Toll:" styleClass="ce-sub-label" prefWidth="70"/>
-        <TextField
-            fx:id="tollField"
-            prefWidth="200"
-            prefHeight="36"
-            styleClass="input-field"/>
-    </HBox>
-
-    <!-- ══════════════════════════════════════
-         DIVIDER
-         ══════════════════════════════════════ -->
-<!--    <Separator styleClass="ce-separator">-->
-<!--        <VBox.margin><Insets top="8" bottom="4"/></VBox.margin>-->
-<!--    </Separator>-->
-
-    <!-- ══════════════════════════════════════
-         ADDITIONAL FEES TOGGLE
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-fees-header-row" alignment="CENTER_LEFT">
-        <CheckBox fx:id="chkAdditionalFees" text="Additional fees:" styleClass="ce-toggle" selected="true"/>
-    </HBox>
-
-    <!-- ══════════════════════════════════════
-         ADDITIONAL FEES  —  two columns
-         ══════════════════════════════════════ -->
-    <HBox styleClass="ce-fees-body" spacing="60" alignment="TOP_LEFT">
+    <!-- ADDITIONAL FEES  —  columns -->
+    <HBox alignment="TOP_LEFT" spacing="60" styleClass="ce-fees-body">
+        <padding><Insets top="20.0" /></padding>
 
         <!-- Left: Obstarávané služby -->
         <VBox spacing="10">
-            <Label text="Obstarávané služby:" styleClass="ce-fees-group-label"/>
-            <CheckBox fx:id="chkADR"         text="ADR tovar"    styleClass="ce-check"/>
-            <CheckBox fx:id="chkDobierka"    text="Dobierka"     styleClass="ce-check"/>
-            <CheckBox fx:id="chkPripoistenie" text="Pripoistenie" styleClass="ce-check"/>
-            <CheckBox fx:id="chkVratenieEUP" text="Vrátenie EUP" styleClass="ce-check"/>
+            <Label styleClass="ce-fees-group-label" text="Obstarávané služby:" />
+            <CheckBox fx:id="chkADR"         styleClass="ce-check" text="ADR tovar" />
+            <CheckBox fx:id="chkDobierka"    styleClass="ce-check" text="Dobierka" />
+            <CheckBox fx:id="chkPripoistenie" styleClass="ce-check" text="Pripoistenie" />
+            <CheckBox fx:id="chkVratenieEUP" styleClass="ce-check" text="Vrátenie EUP" />
         </VBox>
 
-        <!-- Right: Produkty pre ZBS  (2-column sub-grid) -->
+        <!-- Middle: Produkty pre ZBS -->
         <VBox spacing="10">
-            <Label text="Produkty pre ZBS:" styleClass="ce-fees-group-label"/>
+            <Label styleClass="ce-fees-group-label" text="Produkty pre ZBS:" />
             <GridPane hgap="40" vgap="10">
-                <CheckBox fx:id="chkPremium"   text="Premium"    styleClass="ce-check" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <CheckBox fx:id="chkFIX"       text="FIX"        styleClass="ce-check" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <CheckBox fx:id="chkPremium10" text="Premium 10" styleClass="ce-check" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <CheckBox fx:id="chkFIX10"     text="FIX 10"     styleClass="ce-check" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <CheckBox fx:id="chkPremium13" text="Premium 13" styleClass="ce-check" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <CheckBox fx:id="chkFIX13"     text="FIX 13"     styleClass="ce-check" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <columnConstraints>
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+                    <RowConstraints />
+                </rowConstraints>
+                <CheckBox fx:id="chkPremium"   styleClass="ce-check" text="Premium"    GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <CheckBox fx:id="chkFIX"       styleClass="ce-check" text="FIX"        GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <CheckBox fx:id="chkPremium10" styleClass="ce-check" text="Premium 10" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <CheckBox fx:id="chkFIX10"     styleClass="ce-check" text="FIX 10"     GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <CheckBox fx:id="chkPremium13" styleClass="ce-check" text="Premium 13" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <CheckBox fx:id="chkFIX13"     styleClass="ce-check" text="FIX 13"     GridPane.columnIndex="1" GridPane.rowIndex="2" />
             </GridPane>
         </VBox>
 
+        <!-- Right: Typ Doručenia -->
+        <HBox spacing="24">
+            <VBox spacing="10">
+                <Label styleClass="ce-fees-group-label" text="Typ Doručenia" />
+                <RadioButton fx:id="rbExpress" text="Express" mnemonicParsing="false"
+                             toggleGroup="$deliveryTypeGroup" selected="true"
+                             styleClass="ce-toggle" />
+                <RadioButton fx:id="rbClassic" text="Classic" mnemonicParsing="false"
+                             toggleGroup="$deliveryTypeGroup"
+                             styleClass="ce-toggle" />
+                <RadioButton fx:id="rbEconomy" text="Economy" mnemonicParsing="false"
+                             toggleGroup="$deliveryTypeGroup"
+                             styleClass="ce-toggle" />
+            </VBox>
+            <VBox spacing="10">
+                <Label styleClass="ce-sub-label" text="Odhadovaný čas" />
+                <Label styleClass="ce-sub-label" text="1-3 dni" />
+                <Label styleClass="ce-sub-label" text="3-7 dní" />
+                <Label styleClass="ce-sub-label" text="7+ dní" />
+            </VBox>
+        </HBox>
+
     </HBox>
 
-    <!-- ══════════════════════════════════════
-         STATUS  +  RESULT BOX
-         ══════════════════════════════════════ -->
-    <Label
-        fx:id="statusLabel"
-        text=""
-        styleClass="status-label">
-        <VBox.margin><Insets top="6"/></VBox.margin>
-    </Label>
-
-    <HBox
-        fx:id="resultBox"
-        spacing="14"
-        alignment="CENTER_LEFT"
-        visible="false"
-        styleClass="ce-result-box">
-        <Label text="Estimated Cost:" styleClass="ce-result-label"/>
-        <Label fx:id="estimatedCostLabel" text="0.00 €" styleClass="ce-result-value"/>
-    </HBox>
-
-    <!-- ══════════════════════════════════════
-         BOTTOM ROW  —  dots  +  Reset / Compute
-         ══════════════════════════════════════ -->
+    <!-- BOTTOM ROW -->
     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-bottom-row">
-        <Label text="• • •" styleClass="ce-dots"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button
-            fx:id="resetButton"
-            text="Reset"
-            onAction="#onReset"
-            styleClass="ce-btn-reset"/>
-        <Button
-            fx:id="computeButton"
-            text="Compute estimate"
-            onAction="#onComputeCost"
-            styleClass="ce-btn-compute">
-            <HBox.margin><Insets left="16"/></HBox.margin>
+        <Label styleClass="ce-dots" text="• • •" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="resetButton" onAction="#onReset" styleClass="ce-btn-reset" text="Reset" />
+        <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="Compute estimate">
+            <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
     </HBox>
 

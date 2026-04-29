@@ -1,0 +1,224 @@
+/* ============================================
+   daily-costs-page.css — Daily Costs Summaries
+   Load AFTER shipinn.css:
+     stylesheets="@shipinn.css, @daily-costs-page.css"
+
+   Only rules that are unique to this screen
+   live here. Shared tokens (colors, fonts,
+   .input-field, .btn, etc.) stay in shipinn.css.
+   ============================================ */
+
+/* ── Root ───────────────────────────────────── */
+.dcs-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+}
+
+/* ── Two-column content wrapper ─────────────── */
+.dcs-content {
+    -fx-padding: 0;
+}
+
+/* ══════════════════════════════════════════════
+   LEFT COLUMN
+   ══════════════════════════════════════════════ */
+
+/* ── Screen title ───────────────────────────── */
+.dcs-title {
+    /* reuses .logo-name font family from shipinn.css */
+    -fx-font-family: 'Georgia';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-padding: 0 0 18 0;
+}
+
+/* ── Calendar card container ────────────────── */
+.dcs-calendar-card {
+    -fx-background-color: #F7F7F7;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16 14 18 14;
+    -fx-pref-width: 295;
+    -fx-max-width: 295;
+}
+
+/* ── Month / year nav row ───────────────────── */
+.dcs-cal-nav {
+    -fx-padding: 0 0 10 0;
+    -fx-alignment: CENTER;
+}
+
+.dcs-nav-btn {
+    /* reuses shared button shape but lighter look */
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-cursor: hand;
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-pref-height: 28;
+    -fx-padding: 0;
+    -fx-alignment: CENTER;
+}
+
+.dcs-nav-btn:hover {
+    -fx-text-fill: #5D3F25;
+}
+
+.dcs-nav-combo {
+    /* reuses shipinn.css .input-field tokens for consistency */
+    -fx-pref-height: 30;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8C0AE;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-cursor: hand;
+}
+
+.dcs-nav-combo:focused {
+    -fx-border-color: #9A7A6E;
+}
+
+/* ── Day-of-week header ─────────────────────── */
+.dcs-day-header-grid {
+    -fx-padding: 0 0 4 0;
+}
+
+.dcs-dow {
+    -fx-font-family: 'System';
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #888888;
+    -fx-alignment: CENTER;
+    -fx-pref-width: 36;
+    -fx-pref-height: 28;
+}
+
+/* ── Day cell grid ──────────────────────────── */
+.dcs-day-grid {
+    -fx-padding: 0;
+}
+
+/* Normal day button */
+.dcs-day-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-cursor: hand;
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+}
+
+.dcs-day-btn:hover {
+    -fx-background-color: #F0E4D7;
+}
+
+/* Selected / today day — dark filled circle */
+.dcs-day-btn-selected {
+    -fx-background-color: #1E1E1E;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-cursor: hand;
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+    -fx-alignment: CENTER;
+    -fx-font-size: 13px;
+}
+
+.dcs-day-btn-selected:hover {
+    -fx-background-color: #3a3a3a;
+}
+
+/* Trailing/leading days from adjacent months */
+.dcs-day-btn-muted {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #C8C8C8;
+    -fx-cursor: default;
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+}
+
+/* ══════════════════════════════════════════════
+   RIGHT COLUMN
+   ══════════════════════════════════════════════ */
+
+.dcs-right {
+    -fx-pref-width: 340;
+    -fx-max-width: 340;
+    -fx-padding: 44 0 0 0;   /* aligns with first calendar row */
+}
+
+/* ── Section header ─────────────────────────── */
+.dcs-recent-title {
+    -fx-font-family: 'System';
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+    -fx-padding: 0 0 4 0;
+}
+
+/* ── Summary list container ─────────────────── */
+.dcs-summary-list {
+    -fx-padding: 0;
+}
+
+/* ── Individual summary row card ────────────── */
+.dcs-summary-row {
+    -fx-background-color: #F7F7F7;
+    -fx-border-color: #D8D8D8;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12 16 12 16;
+    -fx-cursor: hand;
+    -fx-pref-height: 46;
+}
+
+.dcs-summary-row:hover {
+    -fx-background-color: #F0E4D7;
+    -fx-border-color: #C4A899;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.dcs-summary-row:pressed {
+    -fx-scale-x: 0.99;
+    -fx-scale-y: 0.99;
+}
+
+/* Date label inside row */
+.dcs-row-date {
+    -fx-font-family: 'System';
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+/* Amount label inside row */
+.dcs-row-amount {
+    -fx-font-family: 'System';
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}

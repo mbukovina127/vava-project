@@ -30,22 +30,42 @@
         <TextField
                 fx:id="emailTextField"
                 styleClass="input-field"
-                promptText="Value"/>
+                promptText="email"/>
 
-        <!-- Spacer -->
-        <Region prefHeight="12"/>
+        <!-- error label (email) -->
+        <Label
+                fx:id="statusLabelEmail"
+                styleClass="status-label"
+                text=""
+                wrapText="true"
+                maxWidth="360"/>
 
-<!--        TODO: urobit očko ;)-->
+
         <!-- Password -->
         <Label styleClass="field-label" text="Password"/>
-        <PasswordField
-                fx:id="passwordField"
-                styleClass="input-field"
-                promptText="Value"/>
+        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+            <PasswordField
+                    fx:id="passwordField"
+                    styleClass="password-input"
+                    promptText="password"
+                    HBox.hgrow="ALWAYS"/>
+            <TextField
+                    fx:id="passwordVisible"
+                    styleClass="password-input"
+                    promptText="password"
+                    managed="false"
+                    visible="false"
+                    HBox.hgrow="ALWAYS"/>
+            <Button
+                    fx:id="eyeButton"
+                    styleClass="eye-btn"
+                    text="👁"
+                    onAction="#onTogglePassword"/>
+        </HBox>
 
-        <!-- Status / error label -->
+        <!-- error label (password) -->
         <Label
-                fx:id="statusLabel"
+                fx:id="statusLabelPass"
                 styleClass="status-label"
                 text=""
                 wrapText="true"
