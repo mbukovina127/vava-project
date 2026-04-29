@@ -149,4 +149,95 @@ public class WarehouseDAO extends BaseDAO {
     }
 
 
+    public boolean deleteFullWarehouse(int warehouseID) throws SQLException {
+        boolean autoCommit = connection.getAutoCommit();
+        connection.setAutoCommit(false);
+
+        String sql = "";//TODO delete core info + cascade regions and pl
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, warehouseID);
+
+
+            int removed = stmt.executeUpdate();
+            connection.commit();
+            return removed > 0;
+        } catch (SQLException ex) {
+            connection.rollback();
+            throw ex;
+        } finally {
+            connection.setAutoCommit(autoCommit);
+        }
+    }
+
+
+    public boolean updateFullWarehouse(Warehouse w) throws SQLException {
+
+        try {
+            connection.setAutoCommit(false);
+
+            //update core info
+            boolean updated = updateWarehouse(w);
+
+            if (!updated) {
+                connection.rollback();
+                return false;
+            }
+
+            //reinsert regions + pl
+            RegionDAO regionDAO = new RegionDAO(connection);
+            PriceListDAO priceListDAO = new PriceListDAO(connection);
+
+            //remove old regions+pl cascade
+            regionDAO.deleteAllRegions(w.getId());
+
+            //reinsert regions
+            if (w.getRegionTable() != null) {
+                for (var entry : w.getRegionTable().getEntries()) {
+                    regionDAO.insertFullRegion(entry, w);
+                }
+            }
+
+            //reinsert pricelist
+            if (w.getPriceList() != null) {
+                priceListDAO.deletePriceListByWarehouseID(w.getId());
+
+                for (var item : w.getPriceList().getEntries()) {
+                    priceListDAO.insertPriceListEntry(item, w.getName());
+                }
+            }
+
+            connection.commit();
+            return true;
+
+        } catch (Exception e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+    private boolean updateWarehouse(Warehouse w) throws SQLException {
+
+        String sql = """
+        UPDATE Warehouse
+        SET warehouse_region_name = ?,
+            price_list_file = ?
+        WHERE warehouse_ID = ?;
+    """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+
+        stmt.setString(1, w.getName());          // warehouse_region_name
+        stmt.setString(2, w.getRegionName());    // price_list_file (your file/ref field)
+        stmt.setInt(3, w.getId());
+
+        int affectedRows = stmt.executeUpdate();
+
+        return affectedRows > 0;
+    }
+
+
+
 }

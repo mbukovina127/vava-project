@@ -27,6 +27,22 @@ public class ShipmentDAO extends BaseDAO {
         return sh;
     }
 
+    private BriefShippment mapBriefShippment(ResultSet rs) throws SQLException {
+        BriefShippment sh = new BriefShippment();
+
+        sh.setShipment_id(rs.getInt("shipment_ID"));
+        sh.setState(State.valueOf(rs.getString("status")));
+        sh.setFuel_payment(rs.getFloat("fuel_payment"));
+        sh.setTotalCost(rs.getFloat("total_cost"));
+        sh.setCreated_at(rs.getTimestamp("created_at"));
+        sh.setDest_region(rs.getInt("dest_region"));
+        sh.setUser_ID(rs.getInt("user_ID"));
+
+        // sh.setStartCoordinate(new Coordinates(rs.getFloat("x"), rs.getFloat("y")));
+
+        return sh;
+    }
+
 
     public Shipment getShipmentById(int shipmentID) throws SQLException {
         String sql = """
@@ -41,6 +57,25 @@ public class ShipmentDAO extends BaseDAO {
 
         if (rs.next()) {
             return mapShipment(rs);
+        }
+
+        return null;
+    }
+
+    public BriefShippment getBriefShippmentById(int shipmentID) throws SQLException {
+        String sql = """
+                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                           s.created_at, s.dest_region, s.user_ID
+                    FROM Shipment s WHERE s.shipment_ID = ?;
+            """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, shipmentID);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            return mapBriefShippment(rs);
         }
 
         return null;
@@ -165,6 +200,27 @@ public class ShipmentDAO extends BaseDAO {
         return shipments;
     }
 
+    public List<BriefShippment> getBriefShippmentsByWarehouseID(int warehouseID) throws SQLException {
+        String sql = """
+                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                           s.created_at, s.dest_region, s.user_ID
+                    FROM Shipment s WHERE s.warehouse_ID = ?;
+                    """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, warehouseID);
+
+        ResultSet rs = stmt.executeQuery();
+
+        List<BriefShippment> list = new ArrayList<>();
+
+        while (rs.next()) {
+            list.add(mapBriefShippment(rs));
+        }
+
+        return list;
+    }
+
     public List<Shipment> getShipmentByUserID(int userID) throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
@@ -186,6 +242,27 @@ public class ShipmentDAO extends BaseDAO {
         return shipments;
     }
 
+    public List<BriefShippment> getBriefShippmentsByUserID(int userID) throws SQLException {
+        String sql = """
+                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                           s.created_at, s.dest_region, s.user_ID
+                    FROM Shipment s WHERE s.user_ID = ?;
+            """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, userID);
+
+        ResultSet rs = stmt.executeQuery();
+
+        List<BriefShippment> list = new ArrayList<>();
+
+        while (rs.next()) {
+            list.add(mapBriefShippment(rs));
+        }
+
+        return list;
+    }
+
     public List<Shipment> getAllShipments() throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
@@ -203,6 +280,25 @@ public class ShipmentDAO extends BaseDAO {
         }
 
         return shipments;
+    }
+
+    public List<BriefShippment> getAllBriefShippments() throws SQLException {
+        String sql = """
+                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    s.created_at, s.dest_region, s.user_ID
+                    FROM Shipment s;
+            """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        List<BriefShippment> list = new ArrayList<>();
+
+        while (rs.next()) {
+            list.add(mapBriefShippment(rs));
+        }
+
+        return list;
     }
 
     public List<Shipment> getAllShipmentsByDate(Timestamp from, Timestamp to) throws SQLException {
@@ -228,6 +324,28 @@ public class ShipmentDAO extends BaseDAO {
         return shipments;
     }
 
+    public List<BriefShippment> getBriefShippmentsByDate(Timestamp from, Timestamp to) throws SQLException {
+        String sql = """
+                SELECT s.shipment_ID, s.status, s.fuel_payment,
+                s.total_cost, s.created_at, s.dest_region, s.user_ID
+                FROM Shipment s
+                WHERE s.created_at >=  ?
+                AND s.created_at <  ?;""";
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setTimestamp(1, from);
+        stmt.setTimestamp(2, to);
+
+        ResultSet rs = stmt.executeQuery();
+
+        List<BriefShippment> list = new ArrayList<>();
+
+        while (rs.next()) {
+            list.add(mapBriefShippment(rs));
+        }
+
+        return list;
+    }
 
     public boolean updateShipmentByID(Shipment sh) throws SQLException {
         String sql = """
@@ -309,6 +427,13 @@ public class ShipmentDAO extends BaseDAO {
             return shipmentId;
         }
         return -1;
+    }
+
+    public boolean deleteShipment(int shipmentID) throws SQLException {
+        String sql = "";//TODO
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, shipmentID);
+        return stmt.executeUpdate() > 0;
     }
 
     private void insertShipmentServices(int shipmentId, List<AdditionalService> services) throws SQLException {
