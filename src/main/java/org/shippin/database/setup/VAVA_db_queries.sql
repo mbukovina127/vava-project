@@ -19,7 +19,7 @@ WHERE sl.shipment_ID = 1; --(Temporary ID)
 --ShipmentDAO
 
 -- upsert(Shipment)
-INSERT INTO Shipment (shipment_ID, user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, sent_at, status, sp_ID)
+INSERT INTO Shipment (shipment_ID, user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status, is_sp)
 VALUES (DEFAULT, 1, 1, 1, 1, 1, DEFAULT, DEFAULT, NULL)
 ON CONFLICT (shipment_ID)
 DO UPDATE SET
@@ -28,9 +28,9 @@ DO UPDATE SET
 	dest_region = EXCLUDED.dest_region,
 	fuel_payment = EXCLUDED.fuel_payment,
 	total_cost = EXCLUDED.total_cost,
-	sent_at = EXCLUDED.sent_at,
+	created_at = EXCLUDED.created_at,
 	status = EXCLUDED.status,
-	sp_ID = EXCLUDED.sp_ID;
+	is_sp = EXCLUDED.is_sp;
 
 -- will be repeated till all the services are added
 
@@ -42,7 +42,7 @@ DO UPDATE SET
 	shipment_ID = EXCLUDED.shipment_ID;
 
 --upsertSmall(Shipment)
-INSERT INTO Shipment(shipment_ID, user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, sent_at, status, sp_ID)
+INSERT INTO Shipment(shipment_ID, user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status, is_sp)
 VALUES (6, 2 ,1 ,1 ,1 ,1, DEFAULT,'Failed',4 ) -- test input
 ON CONFLICT (shipment_ID)
 DO UPDATE SET
@@ -51,9 +51,9 @@ DO UPDATE SET
 	dest_region = EXCLUDED.dest_region,
 	fuel_payment = EXCLUDED.fuel_payment,
 	total_cost = EXCLUDED.total_cost,
-	sent_at = EXCLUDED.sent_at,
+	created_at = EXCLUDED.created_at,
 	status = EXCLUDED.status,
-	sp_ID = EXCLUDED.sp_ID;
+	is_sp = EXCLUDED.is_sp;
 
 --getByID(ID)
 SELECT * FROM Shipment s
@@ -67,12 +67,12 @@ DELETE FROM Shipment WHERE shipment_ID = 1; --test input // treba cascade?
 
 --getBriefAllRecent(number of days)
 SELECT * FROM Shipment s
-WHERE s.sent_at >= CURRENT_TIMESTAMP - (3 * INTERVAL '1 day'); --3 = test input
+WHERE s.created_at >= CURRENT_TIMESTAMP - (3 * INTERVAL '1 day'); --3 = test input
 
 --getBriefAllByDate(Date)
 SELECT * FROM Shipment s
-WHERE s.sent_at >= DATE '2026-03-24' --test input
-AND s.sent_at < DATE '2026-03-25';
+WHERE s.created_at >= '2026-03-24' --test input
+AND s.created_at < '2026-03-25';
 
 --getBriefAllByStatus(Status)
 SELECT * FROM Shipment s
