@@ -42,87 +42,87 @@ public class InputValidatorTest {
 
     @Property
     void shortPasswordFailsMinLength(@ForAll @StringLength(min = 1, max = 7) String s) {
-        assertFalse(InputValidator.passwordHasMinLength(s));
+        assertFalse(InputValidator.isValidMinLength(s, 8));
     }
 
     @Property
     void longEnoughPasswordPassesMinLength(@ForAll @StringLength(min = 8, max = 100) String s) {
-        assertTrue(InputValidator.passwordHasMinLength(s));
+        assertTrue(InputValidator.isValidMinLength(s, 8));
     }
 
     @Example
     void nullFailsMinLength() {
-        assertFalse(InputValidator.passwordHasMinLength(null));
+        assertFalse(InputValidator.isValidMinLength(null, 8));
     }
 
     // --- passwordHasLowercase ---
 
     @Property
     void uppercaseOnlyFailsLowercaseCheck(@ForAll @CharRange(from = 'A', to = 'Z') @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasLowercase(s));
+        assertFalse(InputValidator.hasLowercase(s));
     }
 
     @Property
     void stringWithOnlyLowercasePasses(@ForAll @CharRange(from = 'a', to = 'z') @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasLowercase(s));
+        assertTrue(InputValidator.hasLowercase(s));
     }
 
     @Example
     void nullFailsLowercaseCheck() {
-        assertFalse(InputValidator.passwordHasLowercase(null));
+        assertFalse(InputValidator.hasLowercase(null));
     }
 
     // --- passwordHasUppercase ---
 
     @Property
     void lowercaseOnlyFailsUppercaseCheck(@ForAll @CharRange(from = 'a', to = 'z') @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasUppercase(s));
+        assertFalse(InputValidator.hasUppercase(s));
     }
 
     @Property
     void stringWithOnlyUppercasePasses(@ForAll @CharRange(from = 'A', to = 'Z') @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasUppercase(s));
+        assertTrue(InputValidator.hasUppercase(s));
     }
 
     @Example
     void nullFailsUppercaseCheck() {
-        assertFalse(InputValidator.passwordHasUppercase(null));
+        assertFalse(InputValidator.hasUppercase(null));
     }
 
     // --- passwordHasDigit ---
 
     @Property
     void alphaOnlyFailsDigitCheck(@ForAll @AlphaChars @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasDigit(s));
+        assertFalse(InputValidator.hasDigit(s));
     }
 
     @Property
     void digitsOnlyPassesDigitCheck(@ForAll @NumericChars @StringLength(min = 1) String s) {
-        assertTrue(InputValidator.passwordHasDigit(s));
+        assertTrue(InputValidator.hasDigit(s));
     }
 
     @Example
     void nullFailsDigitCheck() {
-        assertFalse(InputValidator.passwordHasDigit(null));
+        assertFalse(InputValidator.hasDigit(null));
     }
 
     // --- passwordHasSpecial ---
 
     @Property
     void alphaOnlyFailsSpecialCheck(@ForAll @AlphaChars @StringLength(min = 1) String s) {
-        assertFalse(InputValidator.passwordHasSpecial(s));
+        assertFalse(InputValidator.hasSpecial(s));
     }
 
     @Example
     void knownSpecialCharactersPass() {
         for (char c : "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?".toCharArray()) {
-            assertTrue(InputValidator.passwordHasSpecial("abc" + c), "Expected special char to pass: " + c);
+            assertTrue(InputValidator.hasSpecial("abc" + c), "Expected special char to pass: " + c);
         }
     }
 
     @Example
     void nullFailsSpecialCheck() {
-        assertFalse(InputValidator.passwordHasSpecial(null));
+        assertFalse(InputValidator.hasSpecial(null));
     }
 
     // --- isValidPassword (combined) ---
@@ -167,18 +167,18 @@ public class InputValidatorTest {
 
     @Property
     void sameStringAlwaysMatches(@ForAll String s) {
-        assertTrue(InputValidator.passwordsMatch(s, s));
+        assertTrue(InputValidator.stringMatch(s, s));
     }
 
     @Property
     void differentStringsDoNotMatch(@ForAll String a, @ForAll String b) {
         Assume.that(!a.equals(b));
-        assertFalse(InputValidator.passwordsMatch(a, b));
+        assertFalse(InputValidator.stringMatch(a, b));
     }
 
     @Example
     void nullPasswordDoesNotMatch() {
-        assertFalse(InputValidator.passwordsMatch(null, "password"));
+        assertFalse(InputValidator.stringMatch(null, "password"));
     }
 
     // --- isValidEmail ---

@@ -2,6 +2,7 @@ package org.shippin.database.dao;
 
 import org.shippin.domain.*;
 import org.shippin.domain.enums.State;
+import org.shippin.domain.BriefShippment;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ShipmentDAO extends BaseDAO {
         return sh;
     }
 
-    private BriefShippment mapBriefShippment(ResultSet rs) throws SQLException {
+    private BriefShippment mapBriefShipment(ResultSet rs) throws SQLException {
         BriefShippment sh = new BriefShippment();
 
         sh.setShipment_id(rs.getInt("shipment_ID"));
@@ -75,7 +76,7 @@ public class ShipmentDAO extends BaseDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            return mapBriefShippment(rs);
+            return mapBriefShipment(rs);
         }
 
         return null;
@@ -215,7 +216,7 @@ public class ShipmentDAO extends BaseDAO {
         List<BriefShippment> list = new ArrayList<>();
 
         while (rs.next()) {
-            list.add(mapBriefShippment(rs));
+            list.add(mapBriefShipment(rs));
         }
 
         return list;
@@ -257,7 +258,7 @@ public class ShipmentDAO extends BaseDAO {
         List<BriefShippment> list = new ArrayList<>();
 
         while (rs.next()) {
-            list.add(mapBriefShippment(rs));
+            list.add(mapBriefShipment(rs));
         }
 
         return list;
@@ -295,7 +296,7 @@ public class ShipmentDAO extends BaseDAO {
         List<BriefShippment> list = new ArrayList<>();
 
         while (rs.next()) {
-            list.add(mapBriefShippment(rs));
+            list.add(mapBriefShipment(rs));
         }
 
         return list;
@@ -341,7 +342,7 @@ public class ShipmentDAO extends BaseDAO {
         List<BriefShippment> list = new ArrayList<>();
 
         while (rs.next()) {
-            list.add(mapBriefShippment(rs));
+            list.add(mapBriefShipment(rs));
         }
 
         return list;
