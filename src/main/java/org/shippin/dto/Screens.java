@@ -1,12 +1,35 @@
 package org.shippin.dto;
 
-public enum Screens {
-    LOGIN, REGISTER, HOME, COST_ESTIMATION,COST_BREAKDOWN, USER_MANAGEMENT, DAILY_COST,DAILY_COST_SUM, WAREHOUSE_MANAGEMENT, EDIT_WAREHOUSE, SHIPMENT_DETAIL, SMALL_PRICE_LIST_VIEW;
+import org.shippin.domain.enums.Role;
 
-    /**
-     * @param screen
-     * @return String path to FXML file
-     */
+public enum Screens {
+    LOGIN(null),
+    REGISTER(null),
+    HOME(Role.USER),
+    COST_ESTIMATION(Role.USER),
+    COST_BREAKDOWN(Role.USER),
+    SHIPMENT_DETAIL(Role.USER),
+    SMALL_PRICE_LIST_VIEW(Role.USER),
+    DAILY_COST(Role.POWER_USER),
+    DAILY_COST_SUM(Role.POWER_USER),
+    WAREHOUSE_MANAGEMENT(Role.POWER_USER),
+    EDIT_WAREHOUSE(Role.POWER_USER),
+    USER_MANAGEMENT(Role.ADMIN);
+
+    private final Role requiredRole;
+
+    Screens(Role requiredRole) {
+        this.requiredRole = requiredRole;
+    }
+
+    public Role getRequiredRole() {
+        return requiredRole;
+    }
+
+    public boolean isAccessibleBy(Role role) {
+        return requiredRole == null || (role != null && role.ordinal() >= requiredRole.ordinal());
+    }
+
     public static String resolveScreen(Screens screen) {
         return switch (screen) {
             case LOGIN -> "/views/Login.fxml";

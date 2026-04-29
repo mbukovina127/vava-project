@@ -16,7 +16,10 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.controller.utils.AuthUtils;
+import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.session.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -76,6 +79,10 @@ public class MenuController implements Initializable {
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
+        if (!screen.isAccessibleBy(Session.getRole())) {
+            log.warn("Access denied to screen: {} (current role: {})", screen, Session.getRole());
+            return;
+        }
         try {
             URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
             if (fxmlUrl == null) {
@@ -134,6 +141,12 @@ public class MenuController implements Initializable {
 
             final ImageView finalIcon = icon;
             VBox.setMargin(btn, new Insets(10, 5, 0, 5));
+
+            if (item.screen() != null) {
+                Role required = item.screen().getRequiredRole();
+                if (required != null) AuthUtils.guard(btn, required);
+            }
+
             buttons.add(btn);
 
             btn.setOnAction(e -> {

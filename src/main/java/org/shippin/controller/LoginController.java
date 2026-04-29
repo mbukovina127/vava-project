@@ -12,7 +12,10 @@ import javafx.stage.Stage;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.domain.User;
+import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.session.Session;
 
 import java.util.List;
 
@@ -71,7 +74,8 @@ public class LoginController {
             return;
         }
 
-        // TODO verification function to DB (email,password)
+        // TODO replace stub with real DB lookup (email, password)
+        Session.login(new User("User", "Test User", email, Role.USER));
         NavigationUtilities.navigateTo(Screens.HOME);
     }
 
