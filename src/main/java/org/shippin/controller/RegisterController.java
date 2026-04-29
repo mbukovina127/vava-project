@@ -12,6 +12,7 @@ import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
 
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 @Log4j2
@@ -30,8 +31,14 @@ public class RegisterController {
     public TextField passwordVisibleRep;
     public Button eyeButton;
     public Button eyeButtonRep;
+    public Button langButton;
 
     private boolean passwordShown    = false;
+
+    @FXML
+    public void initialize() {
+        langButton.setText(NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+    }
     private boolean passwordShownRep = false;
 
 
@@ -123,5 +130,15 @@ public class RegisterController {
     public void onGoToLogin(ActionEvent actionEvent)
     {
         NavigationUtilities.navigateTo(Screens.LOGIN);
+    }
+
+    @FXML
+    public void onToggleLanguage()
+    {
+        Locale next = NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk")
+                ? Locale.ENGLISH
+                : new Locale("sk");
+        NavigationUtilities.setLocale(next);
+        NavigationUtilities.navigateTo(Screens.REGISTER);
     }
 }

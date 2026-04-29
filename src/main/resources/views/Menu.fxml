@@ -42,6 +42,11 @@
 	                        text=""
 	                        styleClass="nav-date"/>
 	                <Button
+	                        fx:id="langButton"
+	                        text="SK"
+	                        onAction="#onToggleLanguage"
+	                        styleClass="profile-btn"/>
+	                <Button
 	                        fx:id="profileButton"
 	                        onAction="#onProfileClicked"
 	                        styleClass="profile-btn"/>

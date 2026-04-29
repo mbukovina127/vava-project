@@ -14,6 +14,15 @@
         styleClass="root-pane"
         stylesheets="@../css/shipinn.css, @../css/register-page.css">
 
+    <HBox alignment="TOP_RIGHT" StackPane.alignment="TOP_RIGHT">
+        <padding><Insets top="12" right="16"/></padding>
+        <Button
+                fx:id="langButton"
+                text="SK"
+                onAction="#onToggleLanguage"
+                styleClass="profile-btn"/>
+    </HBox>
+
     <VBox
             styleClass="card"
             maxWidth="380"

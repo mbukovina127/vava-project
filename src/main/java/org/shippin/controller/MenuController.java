@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Log4j2
@@ -40,6 +41,7 @@ public class MenuController implements Initializable {
     @FXML private Hyperlink navLink5;
     @FXML private Label     UserNameLabel;
     @FXML private Button    profileButton;
+    @FXML private Button    langButton;
     @FXML private StackPane modalOverlay;
     @FXML private VBox modalContentHolder;
 
@@ -57,6 +59,7 @@ public class MenuController implements Initializable {
 
     // CONTENT
     @FXML private StackPane contentArea;
+    private Screens currentScreen;
     
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
@@ -77,6 +80,7 @@ public class MenuController implements Initializable {
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
+        currentScreen = screen;
         try {
             URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
             if (fxmlUrl == null) {
@@ -167,6 +171,18 @@ public class MenuController implements Initializable {
     }
 
     @FXML private void onProfileClicked() {}
+
+    @FXML
+    private void onToggleLanguage() {
+        Locale next = NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk")
+                ? Locale.ENGLISH
+                : new Locale("sk");
+        NavigationUtilities.setLocale(next);
+        langButton.setText(next.getLanguage().equals("sk") ? "EN" : "SK");
+        if (currentScreen != null) {
+            loadScreen(currentScreen, null);
+        }
+    }
 
     private void setActive(Button activeBtn) {
         // remove active from all
