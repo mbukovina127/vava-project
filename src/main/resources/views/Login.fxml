@@ -22,15 +22,15 @@
 
         <!-- Logo -->
         <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
-            <Label styleClass="logo-name" text="Shipinn"/>
+            <Label styleClass="logo-name" text="%login.logo"/>
         </HBox>
 
         <!-- Email -->
-        <Label styleClass="field-label" text="Email"/>
+        <Label styleClass="field-label" text="%login.email"/>
         <TextField
                 fx:id="emailTextField"
                 styleClass="input-field"
-                promptText="email"/>
+                promptText="%login.email.prompt"/>
 
         <!-- error label (email) -->
         <Label
@@ -42,17 +42,17 @@
 
 
         <!-- Password -->
-        <Label styleClass="field-label" text="Password"/>
+        <Label styleClass="field-label" text="%login.password"/>
         <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordField"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%login.password.prompt"
                     HBox.hgrow="ALWAYS"/>
             <TextField
                     fx:id="passwordVisible"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%login.password.prompt"
                     managed="false"
                     visible="false"
                     HBox.hgrow="ALWAYS"/>
@@ -75,17 +75,17 @@
         <Button
                 fx:id="loginButton"
                 styleClass="btn"
-                text="Log in"
+                text="%login.button"
                 maxWidth="Infinity"
                 onAction="#onLogin"/>
 
         <!-- Register link -->
         <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
-            <Label styleClass="muted-text" text="Don't have an account?"/>
+            <Label styleClass="muted-text" text="%login.no_account"/>
             <Hyperlink
                     fx:id="registerLink"
                     styleClass="register-link"
-                    text="Register here"
+                    text="%login.register_link"
                     onAction="#onGoToRegister"/>
         </HBox>
 

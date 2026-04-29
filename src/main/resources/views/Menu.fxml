@@ -32,7 +32,7 @@
 	                        preserveRatio="true"/>
 	                <Label
 	                        fx:id="appNameLabel"
-	                        text="Shipinn"
+	                        text="%menu.logo"
 	                        styleClass="nav-app-name"/>
 	            </HBox>
 

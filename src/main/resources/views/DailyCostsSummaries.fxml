@@ -24,7 +24,7 @@
             <VBox styleClass="dcs-left" spacing="0">
 
                 <!-- Screen title -->
-                <Label styleClass="dcs-title" text="Daily costs summaries:"/>
+                <Label styleClass="dcs-title" text="%daily_summaries.title"/>
 
                 <!-- Calendar card -->
                 <VBox styleClass="dcs-calendar-card" spacing="0">
@@ -67,13 +67,13 @@
                             <ColumnConstraints percentWidth="14.28"/>
                             <ColumnConstraints percentWidth="14.32"/>
                         </columnConstraints>
-                        <Label styleClass="dcs-dow" text="Su" GridPane.columnIndex="0" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="Mo" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="Tu" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="We" GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="Th" GridPane.columnIndex="4" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="Fr" GridPane.columnIndex="5" GridPane.halignment="CENTER"/>
-                        <Label styleClass="dcs-dow" text="Sa" GridPane.columnIndex="6" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.su" GridPane.columnIndex="0" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.mo" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.tu" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.we" GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.th" GridPane.columnIndex="4" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.fr" GridPane.columnIndex="5" GridPane.halignment="CENTER"/>
+                        <Label styleClass="dcs-dow" text="%daily_summaries.sa" GridPane.columnIndex="6" GridPane.halignment="CENTER"/>
                     </GridPane>
 
                     <!-- Day cells — populated by controller -->
@@ -96,7 +96,7 @@
             <!-- ══════════════ RIGHT — Recent summaries ══════════════ -->
             <VBox styleClass="dcs-right" spacing="10">
 
-                <Label styleClass="dcs-recent-title" text="Open most recent summaries:"/>
+                <Label styleClass="dcs-recent-title" text="%daily_summaries.open_recent"/>
 
                 <!-- Summary rows — populated by controller -->
                 <VBox fx:id="summaryList" styleClass="dcs-summary-list" spacing="8"/>

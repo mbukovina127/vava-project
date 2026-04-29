@@ -25,7 +25,7 @@
 
         <!-- TITLE ROW -->
         <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
-            <Label text="Shipment costs breakdown" styleClass="ce-title" />
+            <Label text="%cost_breakdown.title" styleClass="ce-title" />
         </HBox>
 
         <!-- Main breakdown grid, populated dynamically from CostEstimationInput -->
@@ -46,7 +46,7 @@
 
             <Button
                     fx:id="deleteButton"
-                    text="Delete"
+                    text="%cost_breakdown.delete"
                     onAction="#onDelete"
                     styleClass="cb-btn-delete" />
 
@@ -54,7 +54,7 @@
 
             <Button
                     fx:id="printPdfButton"
-                    text="Print PDF"
+                    text="%cost_breakdown.print_pdf"
                     onAction="#onPrintPdf"
                     styleClass="ce-btn-reset"
                     prefWidth="160"
@@ -62,7 +62,7 @@
 
             <Button
                     fx:id="saveButton"
-                    text="Save estimation"
+                    text="%cost_breakdown.save"
                     onAction="#onSave"
                     styleClass="ce-btn-compute"
                     prefWidth="200"

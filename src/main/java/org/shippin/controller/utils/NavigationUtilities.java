@@ -5,10 +5,11 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.shippin.controller.MenuController;
 import org.shippin.dto.Screens;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 @Log4j2
 public class NavigationUtilities {
@@ -16,15 +17,22 @@ public class NavigationUtilities {
     @Setter
     private static Stage primaryStage;
 
-    /**
-     * Navigate to a specific screen using Screens enum
-     * @param screen
-     */
+    private static ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.ENGLISH);
+
+    public static ResourceBundle getBundle() {
+        return bundle;
+    }
+
+    public static void setLocale(Locale locale) {
+        bundle = ResourceBundle.getBundle("i18n/messages", locale);
+    }
+
     // Pre full-screen prechody (Login → Menu)
     public static void navigateTo(Screens screen) {
         String path = Screens.resolveScreen(screen);
         try {
             FXMLLoader loader = new FXMLLoader(NavigationUtilities.class.getResource(path));
+            loader.setResources(bundle);
             Parent root = loader.load();
             primaryStage.getScene().setRoot(root);
             log.debug("Navigated to screen: {}", screen);

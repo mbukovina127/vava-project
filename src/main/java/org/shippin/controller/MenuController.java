@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
 
 import java.io.IOException;
@@ -83,6 +84,7 @@ public class MenuController implements Initializable {
             }
 
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            loader.setResources(NavigationUtilities.getBundle());
             Node node = loader.load();
 
             Object ctrl = loader.getController();
