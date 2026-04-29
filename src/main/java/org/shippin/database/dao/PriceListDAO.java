@@ -88,7 +88,12 @@ public class PriceListDAO extends BaseDAO {
     }
 
     public boolean deletePriceListByWarehouseID(int warehouseID) throws SQLException {
-        String sql = "";//TODO
+        String sql = """
+                DELETE FROM Parameter_list pl USING Region r
+                WHERE pl.region_ID = r.region_ID
+                AND r.warehouse_ID = ?;
+        """;
+
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, warehouseID);
@@ -101,7 +106,11 @@ public class PriceListDAO extends BaseDAO {
     //delete pricelist only for specific region of warehouse
     public boolean deletePriceListByWarehouseAndRegionID(int warehouseID, int regionID) throws SQLException {
 
-        String sql = "";//TODO
+        String sql = """
+                DELETE FROM Parameter_list pl USING Region r
+                WHERE pl.region_ID = r.region_ID
+                AND r.warehouse_ID = ? AND r.region_ID = ?;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, warehouseID);
@@ -240,7 +249,10 @@ public class PriceListDAO extends BaseDAO {
 
     public int insertSmallPriceListEntry(SmallPriceListEntry entry) throws SQLException {
 
-        String sql = "";//TODO
+        String sql = """
+        INSERT INTO Sp_price_list(weight_sp, cost_sp)
+        VALUES (?,?);
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setFloat(1, entry.getWeight());
@@ -249,7 +261,7 @@ public class PriceListDAO extends BaseDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            int id = rs.getInt("id");
+            int id = rs.getInt("sp_price_list_ID");
             entry.setId(id);
             return id;
         }
@@ -266,7 +278,9 @@ public class PriceListDAO extends BaseDAO {
 
     public boolean deleteSmallPriceListEntry(int id) throws SQLException {
 
-        String sql = "";//TODO
+        String sql = """
+        DELETE FROM Sp_price_list WHERE sp_price_list_ID = ?;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -276,7 +290,7 @@ public class PriceListDAO extends BaseDAO {
 
     public boolean deleteSmallPriceList() throws SQLException {
 
-        String sql = "";//TODO
+        String sql = "TRUNCATE TABLE Sp_price_list;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 

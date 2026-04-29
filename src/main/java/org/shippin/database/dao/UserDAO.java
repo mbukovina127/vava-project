@@ -49,7 +49,9 @@ public class UserDAO extends BaseDAO {
 
     public boolean deleteUser(int userID) throws SQLException {
 
-        String sql = "";//TODO - avoid cascade (shipment.UserID)
+        String sql = """
+        DELETE FROM Users WHERE user_ID = ?;
+        """;//Will set null when deleted from shipment
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, userID);
@@ -58,6 +60,11 @@ public class UserDAO extends BaseDAO {
 
         return affectedRows > 0;
     }
+
+/*
+Won't be needed since no token will be used ↓
+ */
+
 
 /*
 called at login, after login deletes old token, requests new
