@@ -10,6 +10,9 @@ import org.shippin.controller.utils.ExtraOption;
 import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.dto.Screens;
 
+import org.shippin.controller.MapPickerController;
+import org.shippin.app.FromCoordsDataGetter;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -237,6 +240,14 @@ public class CostEstimationController extends BaseController<Void> implements In
                 getSelectedOptions()
         );
         loadScreen(COST_BREAKDOWN,input);
+    }
+
+    @FXML
+    public void onTestMap() {
+        FromCoordsDataGetter.setCallback(postalCode -> {
+            destinationField.setText(postalCode);
+        });
+        MapPickerController.open();
     }
 
 }

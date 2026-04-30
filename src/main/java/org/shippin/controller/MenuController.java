@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.shippin.controller.ShipmentDetailController;
+import org.shippin.controller.utils.ShipmentData;
+import org.shippin.controller.utils.CostEstimationInput;
+
 @Log4j2
 public class MenuController implements Initializable {
     private record NavItem(Screens screen, String name, String icon_light, String icon_dark) {}
@@ -173,6 +177,60 @@ public class MenuController implements Initializable {
 
             leftSidebar.getChildren().add(btn);
         }
+
+
+        //..TOTO ZMAZAT OD TADE
+        Button testBtn = new Button();
+        testBtn.getStyleClass().add("sidebar-btn");
+
+        var testStream = getClass().getResourceAsStream("/icons/png-dark/plus_black.png");
+        if (testStream != null) {
+            ImageView testIcon = new ImageView(new Image(testStream));
+            testIcon.setFitWidth(40);
+            testIcon.setFitHeight(40);
+            testIcon.setPreserveRatio(true);
+            testBtn.setGraphic(testIcon);
+        }
+
+        VBox.setMargin(testBtn, new Insets(10, 5, 0, 5));
+
+        testBtn.setOnAction(e -> {
+            System.out.println("TEST BUTTON CLICKED!");
+            try {
+                URL fxmlUrl = getClass().getResource("/views/ShipmentDetail.fxml");
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                Node node = loader.load();
+
+                Object ctrl = loader.getController();
+                if (ctrl instanceof BaseController<?> bc) {
+                    bc.setMenuController(this);
+                }
+
+                if (ctrl instanceof ShipmentDetailController sdc) {
+                    CostEstimationInput est = new CostEstimationInput(
+                            "2026-04-30",           // date
+                            "Bratislava",           // from
+                            "09301",                // destination ← PSČ KOŠICE!
+                            54.46,                  // weight
+                            210,                    // volume
+                            5.0,                    // fuelSurcharge
+                            2.0,                    // toll
+                            "TEST",                 // shipment_opt
+                            "TEST",                 // delivery_opt
+                            List.of()               // options
+                    );
+                    ShipmentData dummyData = new ShipmentData(est, "Test", 321);
+                    sdc.onData(dummyData);
+                }
+
+                contentArea.getChildren().setAll(node);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        leftSidebar.getChildren().add(testBtn);
+        //PO TADE
 
         loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
