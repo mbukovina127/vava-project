@@ -44,6 +44,7 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
     private double fromLon = 18.044;
     private double toLat   = 48.974;
     private double toLon   = 19.302;
+    private int toLocationPostalCode = 0; //postal code of the destination
 
     // Placeholder history — replace with real data from backend
     private List<HistoryEntry> history = List.of(
@@ -66,7 +67,20 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
         populateHeader();
         populateStatusRow();
         populateHistoryGrid();
+
         loadMapImage();
+
+        if (estimation != null && estimation.destination() != null && !estimation.destination().isEmpty())
+        {
+            try {
+                toLocationPostalCode = Integer.parseInt(estimation.destination().replaceAll("[^0-9]", ""));
+                if (toLocationPostalCode > 0) {
+                    getCoordinatesFromPostalCode(toLocationPostalCode);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid PSČ: " + estimation.destination());
+            }
+        }
     }
 
     @Override
@@ -129,36 +143,108 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
 
     // ── Map ───────────────────────────────────────────────────────
 
-    private void loadMapImage() {
-        double centerLat = (fromLat + toLat) / 2.0;
-        double centerLon = (fromLon + toLon) / 2.0;
+        private void loadMapImage() {
+            double centerLat = (fromLat + toLat) / 2.0;
+            double centerLon = (fromLon + toLon) / 2.0;
 
-        String url = String.format(
-                "https://staticmap.openstreetmap.de/staticmap.php" +
-                        "?center=%.4f,%.4f&zoom=8&size=700x200" +
-                        "&markers=%.4f,%.4f,red-pushpin|%.4f,%.4f,blue-pushpin",
-                centerLat, centerLon,
-                fromLat, fromLon,
-                toLat, toLon
-        );
+            double distance = calculateDistance(fromLat, fromLon, toLat, toLon);
+            int zoom = calculateZoom(distance);
 
-        try {
-            Image mapImage = new Image(url, true);
-            mapImage.errorProperty().addListener((obs, old, isError) -> {
-                if (isError) showMapFallback();
-            });
-            mapImageView.setImage(mapImage);
-            mapImageView.setVisible(true);
-            mapFallbackLabel.setVisible(false);
-        } catch (Exception ex) {
-            showMapFallback();
-        }
+            String apiKey = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+            String url = String.format(
+                    "https://maps.googleapis.com/maps/api/staticmap?" +
+                            "center=%.4f,%.4f&zoom=%d&size=900x200" +
+                            "&markers=color:white|%.4f,%.4f" +
+                            "&markers=color:red|%.4f,%.4f" +
+                            "&path=color:0xff0000|weight:2|%.4f,%.4f|%.4f,%.4f" +
+                            "&key=%s",
+                    centerLat, centerLon, zoom,
+                    fromLat, fromLon,
+                    toLat, toLon,
+                    fromLat, fromLon, toLat, toLon,
+                    apiKey
+            );
+
+            try {
+                Image mapImage = new Image(url, true);
+                mapImage.errorProperty().addListener((obs, old, isError) -> {
+                    if (isError) showMapFallback();
+                });
+                mapImageView.setImage(mapImage);
+                mapImageView.setVisible(true);
+                mapFallbackLabel.setVisible(false);
+            } catch (Exception ex) {
+                showMapFallback();
+            }
+    }
+
+    //calculateDistance a calculateZoom aby mapa bola viac zoomnuta ak je kratka vzdialenost, a oddialena ak je daleka, aby sa to zmestilo
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    private int calculateZoom(double distance) {
+        if (distance < 20) return 11;
+        if (distance < 50) return 10;
+        if (distance < 100) return 9;
+        if (distance < 200) return 8;
+        return 7;
     }
 
     private void showMapFallback() {
         mapImageView.setVisible(false);
         mapFallbackLabel.setVisible(true);
         mapFallbackLabel.setText("Map unavailable — check network connection");
+    }
+
+
+    private void getCoordinatesFromPostalCode(int postalCode) {
+        new Thread(() -> {
+            try {
+                String psc = String.format("%05d", postalCode);
+                String apiKey = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
+                        + java.net.URLEncoder.encode(psc + " Slovakia", "UTF-8")
+                        + "&key=" + apiKey;
+
+                java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                        .uri(java.net.URI.create(url))
+                        .GET()
+                        .build();
+
+                java.net.http.HttpResponse<String> response = client.send(request,
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
+
+                System.out.println("Geocoding response: " + response.body());
+
+                com.google.gson.JsonObject json = com.google.gson.JsonParser
+                        .parseString(response.body()).getAsJsonObject();
+
+                if (json.has("results") && json.getAsJsonArray("results").size() > 0) {
+                    com.google.gson.JsonObject location = json.getAsJsonArray("results")
+                            .get(0).getAsJsonObject()
+                            .getAsJsonObject("geometry")
+                            .getAsJsonObject("location");
+                    toLat = location.get("lat").getAsDouble();
+                    toLon = location.get("lng").getAsDouble();
+                    System.out.println("Got coords: " + toLat + ", " + toLon);
+                }
+
+                javafx.application.Platform.runLater(this::loadMapImage);
+            } catch (Exception e) {
+                System.err.println("Geocoding error: ");
+                e.printStackTrace();
+                javafx.application.Platform.runLater(this::loadMapImage);
+            }
+        }).start();
     }
 
     // ── Change status popup ───────────────────────────────────────
