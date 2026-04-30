@@ -93,7 +93,6 @@ public class WarehouseDAO extends BaseDAO {
      * inserts warehouse core info
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
-        //FIXME price_list_file / what is there to be fixed?
         String sql = """
                 INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file)
                 VALUES (?,?,?)
@@ -153,7 +152,7 @@ public class WarehouseDAO extends BaseDAO {
         boolean autoCommit = connection.getAutoCommit();
         connection.setAutoCommit(false);
 
-        String sql = "";//TODO delete core info + cascade regions and pl
+        String sql = "DELETE FROM Warehouse where warehouse_ID = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, warehouseID);

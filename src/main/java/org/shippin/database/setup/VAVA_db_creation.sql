@@ -9,8 +9,7 @@ DROP TABLE IF EXISTS
 	Shipment,
 	Users,
 	Service,
-	Service_list,
-    Session
+	Service_list
 CASCADE;
 
 CREATE TABLE Warehouse (
@@ -67,7 +66,7 @@ CREATE TABLE Users (
 
 CREATE TABLE Shipment (
     shipment_ID SERIAL PRIMARY KEY,
-    user_ID INT NOT NULL REFERENCES Users(user_ID) ON DELETE CASCADE,
+    user_ID INT NOT NULL REFERENCES Users(user_ID) ON DELETE SET NULL,
     warehouse_ID INT NOT NULL REFERENCES Warehouse(warehouse_ID) ON DELETE CASCADE,
     dest_region TEXT NOT NULL,
     fuel_payment NUMERIC(10,2) NOT NULL DEFAULT 0,
@@ -97,11 +96,11 @@ CREATE TABLE Service_list (
     shipment_ID INT NOT NULL REFERENCES Shipment(shipment_ID) ON DELETE CASCADE
 );
 
-CREATE TABLE Session (
-    session_ID SERIAL PRIMARY KEY,
-    user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,
-    token TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    is_active BOOLEAN NOT NULL
-);
+-- CREATE TABLE Session (
+--     session_ID SERIAL PRIMARY KEY,
+--     user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,
+--     token TEXT NOT NULL,
+--     created_at TIMESTAMP NOT NULL,
+--     expires_at TIMESTAMP NOT NULL,
+--     is_active BOOLEAN NOT NULL
+-- );
