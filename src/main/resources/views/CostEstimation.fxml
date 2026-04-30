@@ -94,7 +94,7 @@
         <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
               GridPane.columnIndex="6" GridPane.rowIndex="0">
             <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
-            <Button fx:id="toScanBtn" styleClass="ce-icon-btn" text="⊕" />
+            <Button fx:id="toScanBtn" onAction="#onTestMap" styleClass="ce-icon-btn" text="⊕" />
         </HBox>
 
         <!-- ── Row 1: status label for destination ── -->
@@ -217,6 +217,7 @@
         <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="Compute estimate">
             <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
+
     </HBox>
 
 </VBox>
