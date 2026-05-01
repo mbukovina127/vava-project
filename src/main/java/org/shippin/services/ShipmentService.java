@@ -1,5 +1,6 @@
 package org.shippin.services;
 
+import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.*;
@@ -41,8 +42,9 @@ public class ShipmentService {
                     warehouse.getPriceList(), regionCode, volume, false);
             baseCost = Math.max(costByWeight, costByVolume);
         } else {
-            // TODO: small price list path
-            baseCost = 0;
+            PriceListDAO priceListDAO = new PriceListDAO(connection);
+            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
+            baseCost = findCostInSmallPriceList(smallPriceList, weight);
         }
 
         Shipment shipment = new Shipment();
@@ -67,6 +69,24 @@ public class ShipmentService {
             }
         }
         throw new IllegalArgumentException("No region found for postal code: " + postalCode);
+    }
+
+    private float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
+        float bestCost = -1;
+        float bestThreshold = Float.MAX_VALUE;
+
+        for (SmallPriceListEntry entry : smallPriceList.getEntries()) {
+            if (entry.getWeight() >= weight && entry.getWeight() < bestThreshold) {
+                bestThreshold = entry.getWeight();
+                bestCost = entry.getCost();
+            }
+        }
+
+        if (bestCost < 0) {
+            throw new IllegalArgumentException("No small price list entry found for weight: " + weight);
+        }
+
+        return bestCost;
     }
 
     private float findCostInPriceList(PriceList priceList, String regionCode,
