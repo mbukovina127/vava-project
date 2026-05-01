@@ -9,7 +9,6 @@ import javafx.scene.layout.*;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
-import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 import org.shippin.services.UserService;
@@ -214,8 +213,7 @@ public class UserManagementController extends BaseController<Void> implements In
             }
 
             User newUser = new User(name, surname, email, Role.USER);
-            newUser.setPassword(PasswordUtils.hash(password));
-            UserService.register(newUser);
+            UserService.register(newUser, password);
 
             User saved = UserService.findByEmail(email);
             users.add(new UserEntry(saved.getId(), name + " " + surname, Role.USER));

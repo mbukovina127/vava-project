@@ -7,7 +7,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.services.NavigationService;
-import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.domain.User;
 import org.shippin.dto.Screens;
 import org.shippin.services.UserService;
@@ -72,7 +71,7 @@ public class LoginController {
 //        }
 
         try {
-            User user = UserService.authenticate(email, PasswordUtils.hash(password));
+            User user = UserService.authenticate(email, password);
 
             if (user == null) {
                 statusLabelEmail.setText("Invalid email or password");
@@ -80,7 +79,6 @@ public class LoginController {
                 return;
             }
 
-            UserService.login(user);
             log.info("User logged in: {}", user.getEmail());
             NavigationService.navigateTo(Screens.HOME);
 

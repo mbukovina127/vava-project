@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
-import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
@@ -135,8 +134,7 @@ public class RegisterController {
             }
 
             User newUser = new User(firstName, lastName, email, Role.USER);
-            newUser.setPassword(PasswordUtils.hash(password));
-            UserService.register(newUser);
+            UserService.register(newUser, password);
 
             UserService.login(UserService.findByEmail(email));
             NavigationService.navigateTo(Screens.HOME);
