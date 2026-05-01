@@ -14,6 +14,15 @@
         styleClass="root-pane"
         stylesheets="@../css/shipinn.css, @../css/register-page.css">
 
+    <HBox alignment="TOP_RIGHT" StackPane.alignment="TOP_RIGHT">
+        <padding><Insets top="12" right="16"/></padding>
+        <Button
+                fx:id="langButton"
+                text="SK"
+                onAction="#onToggleLanguage"
+                styleClass="profile-btn"/>
+    </HBox>
+
     <VBox
             styleClass="card"
             maxWidth="380"
@@ -22,7 +31,7 @@
 
         <!-- Logo -->
         <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
-            <Label styleClass="logo-name" text="Shipinn"/>
+            <Label styleClass="logo-name" text="%register.logo"/>
         </HBox>
 
         <!-- Name + Surname row -->
@@ -34,20 +43,20 @@
 
             <!-- Name -->
             <VBox GridPane.columnIndex="0" spacing="4">
-                <Label styleClass="field-label" text="Name"/>
+                <Label styleClass="field-label" text="%register.name"/>
                 <TextField
                         fx:id="firstNameField"
                         styleClass="input-field"
-                        promptText="first name"/>
+                        promptText="%register.name.prompt"/>
             </VBox>
 
             <!-- Surname -->
             <VBox GridPane.columnIndex="1" spacing="4">
-                <Label styleClass="field-label" text="Surname"/>
+                <Label styleClass="field-label" text="%register.surname"/>
                 <TextField
                         fx:id="lastNameField"
                         styleClass="input-field"
-                        promptText="last name"/>
+                        promptText="%register.surname.prompt"/>
 
             </VBox>
 
@@ -65,11 +74,11 @@
         <Region prefHeight="12"/>
 
         <!-- Email -->
-        <Label styleClass="field-label" text="Email"/>
+        <Label styleClass="field-label" text="%register.email"/>
         <TextField
                 fx:id="emailField"
                 styleClass="input-field"
-                promptText="email"/>
+                promptText="%register.email.prompt"/>
 
         <!-- error label (email) -->
         <Label
@@ -83,17 +92,17 @@
         <Region prefHeight="12"/>
 
         <!-- Password -->
-        <Label styleClass="field-label" text="Password"/>
+        <Label styleClass="field-label" text="%register.password"/>
         <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordField"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%register.password.prompt"
                     HBox.hgrow="ALWAYS"/>
             <TextField
                     fx:id="passwordVisible"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%register.password.prompt"
                     managed="false"
                     visible="false"
                     HBox.hgrow="ALWAYS"/>
@@ -116,17 +125,17 @@
         <Region prefHeight="12"/>
 
         <!-- Repeat Password -->
-        <Label styleClass="field-label" text="Repeat Password"/>
+        <Label styleClass="field-label" text="%register.repeat_password"/>
         <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordFieldRep"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%register.password.prompt"
                     HBox.hgrow="ALWAYS"/>
             <TextField
                     fx:id="passwordVisibleRep"
                     styleClass="password-input"
-                    promptText="password"
+                    promptText="%register.password.prompt"
                     managed="false"
                     visible="false"
                     HBox.hgrow="ALWAYS"/>
@@ -149,17 +158,17 @@
         <Button
                 fx:id="registerButton"
                 styleClass="btn"
-                text="Sign up as user"
+                text="%register.button"
                 maxWidth="Infinity"
                 onAction="#onRegister"/>
 
         <!-- Login link -->
         <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
-            <Label styleClass="muted-text" text="Already have an account?"/>
+            <Label styleClass="muted-text" text="%register.have_account"/>
             <Hyperlink
                     fx:id="loginLink"
                     styleClass="register-link"
-                    text="Log in here"
+                    text="%register.login_link"
                     onAction="#onGoToLogin"/>
         </HBox>
 

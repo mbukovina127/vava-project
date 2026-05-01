@@ -24,14 +24,6 @@
     -fx-spacing: 12;
 }
 
-/* Screen title  e.g. "1.4.2026 – Daily costs summary" */
-.dcd-title {
-    -fx-font-family: 'Georgia';
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1E1E1E;
-}
-
 /* "+ Add new shipment" outlined button */
 .dcd-btn-add {
     -fx-background-color: #FFFFFF;

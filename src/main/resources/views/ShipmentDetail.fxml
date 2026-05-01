@@ -31,13 +31,13 @@
                     <!-- ── Title ───────────────────────────── -->
                     <Label fx:id="titleLabel"
                            text="Shipment details #321"
-                           styleClass="sd-title"/>
+                           styleClass="page-title"/>
 
                     <Region prefHeight="18"/>
 
                     <!-- ── Total cost row ──────────────────── -->
                     <HBox styleClass="sd-info-row" alignment="CENTER_LEFT" spacing="0">
-                        <Label text="Total cost:" styleClass="sd-info-key"/>
+                        <Label text="%shipment_detail.total_cost" styleClass="sd-info-key"/>
                         <Region prefWidth="16"/>
                         <Label fx:id="routeLabel"
                                text="Sklad BA - 14863 (Horná Dolná 28)"
@@ -52,7 +52,7 @@
                                styleClass="sd-info-cost"/>
                         <Region prefWidth="20"/>
                         <Button fx:id="costBreakdownBtn"
-                                text="Cost breakdown"
+                                text="%shipment_detail.cost_breakdown"
                                 styleClass="sd-btn-breakdown"
                                 onAction="#onCostBreakdown"/>
                     </HBox>
@@ -63,12 +63,12 @@
 
                     <!-- ── State row ───────────────────────── -->
                     <HBox styleClass="sd-state-row" alignment="CENTER_LEFT" spacing="14">
-                        <Label text="State:" styleClass="sd-info-key"/>
+                        <Label text="%shipment_detail.state" styleClass="sd-info-key"/>
                         <Label fx:id="statusBadge"
-                               text="COMPLETED"
+                               text="%shipment_detail.status_completed"
                                styleClass="sd-badge, sd-badge-completed"/>
                         <Button fx:id="changeStatusBtn"
-                                text="Change status"
+                                text="%shipment_detail.change_status"
                                 styleClass="sd-btn-action"
                                 onAction="#onChangeStatus"/>
                     </HBox>
@@ -78,7 +78,7 @@
                     <Region prefHeight="18"/>
 
                     <!-- ── History header ──────────────────── -->
-                    <Label text="History of shipment:" styleClass="sd-section-header"/>
+                    <Label text="%shipment_detail.history" styleClass="sd-section-header"/>
                     <Region prefHeight="12"/>
 
                     <!-- ── History grid ────────────────────── -->
@@ -108,7 +108,7 @@
                                    preserveRatio="false"
                                    styleClass="sd-map-image"/>
                         <Label fx:id="mapFallbackLabel"
-                               text="🗺  Map loading…"
+                               text="%shipment_detail.map_loading"
                                styleClass="sd-map-fallback"
                                visible="false"/>
                     </StackPane>
@@ -118,7 +118,7 @@
                     <!-- ── Bottom bar ──────────────────────── -->
                     <HBox styleClass="sd-bottom-bar" alignment="CENTER_RIGHT">
                         <Button fx:id="dailySummaryBtn"
-                                text="Daily summary"
+                                text="%shipment_detail.daily_summary"
                                 styleClass="sd-btn-action"
                                 onAction="#onDailySummary"/>
                     </HBox>

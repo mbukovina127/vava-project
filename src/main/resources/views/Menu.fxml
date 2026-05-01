@@ -32,7 +32,7 @@
 	                        preserveRatio="true"/>
 	                <Label
 	                        fx:id="appNameLabel"
-	                        text="Shipinn"
+	                        text="%menu.logo"
 	                        styleClass="nav-app-name"/>
 	            </HBox>
 
@@ -41,6 +41,11 @@
 	                        fx:id="UserNameLabel"
 	                        text=""
 	                        styleClass="nav-date"/>
+	                <Button
+	                        fx:id="langButton"
+	                        text="SK"
+	                        onAction="#onToggleLanguage"
+	                        styleClass="profile-btn"/>
 	                <Button
 	                        fx:id="profileButton"
 	                        onAction="#onProfileClicked"

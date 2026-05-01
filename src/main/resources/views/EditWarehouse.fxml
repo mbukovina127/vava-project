@@ -8,7 +8,7 @@
 <ScrollPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.shippin.controller.EditWarehouseController"
-            stylesheets="@../css/edit-warehouse.css"
+            stylesheets="@../css/shipinn.css, @../css/edit-warehouse.css"
             styleClass="page"
             fitToWidth="true"
             hbarPolicy="NEVER"
@@ -16,7 +16,7 @@
 
     <VBox styleClass="content-scroll">
 
-        <Label text="Edit warehouse" styleClass="page-title">
+        <Label text="%edit_warehouse.title" styleClass="page-title">
 		    <VBox.margin>
 		        <Insets bottom="24"/>
 		    </VBox.margin>
@@ -24,12 +24,12 @@
 
         <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Title of document:"/>
+                <Label text="%edit_warehouse.document_title"/>
                 <TextField text="ZBS - BA" prefWidth="220"/>
             </HBox>
             <Region HBox.hgrow="ALWAYS"/>
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Pickup place:"/>
+                <Label text="%edit_warehouse.pickup_place"/>
                 <TextField text="Sklad BA" prefWidth="280"/>
             </HBox>
         </HBox>
@@ -53,13 +53,13 @@
                     <RowConstraints minHeight="50" prefHeight="50"/>
                 </rowConstraints>
 
-                <Label text="Hmotnosť&#10;do (v kg)" styleClass="header-cell"
+                <Label text="%edit_warehouse.weight_limit" styleClass="header-cell"
                        maxWidth="Infinity" maxHeight="Infinity" alignment="CENTER"
                        GridPane.columnIndex="0" GridPane.rowIndex="0"
                        GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
                        GridPane.fillWidth="true" GridPane.fillHeight="true"/>
 
-                <Label text="Objem&#10;do (v m³)" styleClass="header-cell"
+                <Label text="%edit_warehouse.volume_limit" styleClass="header-cell"
                        maxWidth="Infinity" maxHeight="Infinity" alignment="CENTER"
                        GridPane.columnIndex="1" GridPane.rowIndex="0"
                        GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
@@ -84,8 +84,8 @@
         </VBox>
 
         <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
-            <Button text="Cancel changes" styleClass="tertiary-button" onAction="#handleLeave"/>
-            <Button text="Save changes" styleClass="primary-button" onAction="#handleLeave"/>
+            <Button text="%edit_warehouse.cancel" styleClass="tertiary-button" onAction="#handleLeave"/>
+            <Button text="%edit_warehouse.save" styleClass="primary-button" onAction="#handleLeave"/>
         </HBox>
 
     </VBox>

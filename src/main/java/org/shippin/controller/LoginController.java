@@ -16,6 +16,7 @@ import org.shippin.dto.Screens;
 import org.shippin.session.Session;
 
 import java.sql.SQLException;
+import java.util.Locale;
 
 @Log4j2
 public class LoginController {
@@ -26,8 +27,14 @@ public class LoginController {
     @FXML private Button eyeButton;
     @FXML private Label statusLabelEmail;
     @FXML private Label statusLabelPass;
+    @FXML private Button langButton;
 
     private boolean passwordShown = false;
+
+    @FXML
+    private void initialize() {
+        langButton.setText(NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+    }
 
     @FXML private void onTogglePassword()
     {
@@ -90,5 +97,14 @@ public class LoginController {
     @FXML private void onGoToRegister()
     {
         NavigationUtilities.navigateTo(Screens.REGISTER);
+    }
+
+    @FXML private void onToggleLanguage()
+    {
+        Locale next = NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk")
+                ? Locale.ENGLISH
+                : new Locale("sk");
+        NavigationUtilities.setLocale(next);
+        NavigationUtilities.navigateTo(Screens.LOGIN);
     }
 }

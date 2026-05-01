@@ -21,11 +21,11 @@
 
     <!-- ── Top bar: title + Add button ─────────────────────── -->
     <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT">
-        <Label fx:id="lblTitle" styleClass="dcd-title" text="1.4.2026 – Daily costs summary" />
+        <Label fx:id="lblTitle" styleClass="page-title" text="1.4.2026 – Daily costs summary" />
         <Region HBox.hgrow="ALWAYS" />
         <Button fx:id="btnAddShipment"
                 styleClass="dcd-btn-add"
-                text="+ Add new shipment"
+                text="%daily_summary_detail.add_shipment"
                 onAction="#handleAddShipment" />
     </HBox>
 

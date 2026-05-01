@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/cost_estimation.css"
+<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shippin.controller.CostEstimationController">
 
@@ -26,20 +26,20 @@
 
     <!-- TITLE ROW -->
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
-        <Label fx:id="sectionTitleLabel" styleClass="ce-title" text="Shipment cost estimation" />
+        <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
         <Region HBox.hgrow="ALWAYS" />
         <HBox alignment="CENTER_RIGHT" spacing="8">
-            <Label styleClass="ce-date-label" text="Date:" />
-            <TextField fx:id="dateField" prefWidth="130" promptText="DD.MM.YYYY" styleClass="input-field ce-date-field" />
+            <Label styleClass="ce-date-label" text="%cost_estimation.date" />
+            <TextField fx:id="dateField" prefWidth="130" promptText="%cost_estimation.date.prompt" styleClass="input-field ce-date-field" />
             <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />
         </HBox>
     </HBox>
 
     <!-- TYPE TOGGLES  —  Small Package / Shipment -->
     <HBox alignment="CENTER_LEFT" spacing="24" styleClass="ce-toggle-row">
-        <RadioButton fx:id="rbSmallPackage" styleClass="ce-toggle" text="Small Package"
+        <RadioButton fx:id="rbSmallPackage" styleClass="ce-toggle" text="%cost_estimation.small_package"
                      toggleGroup="$shipmentTypeGroup" />
-        <RadioButton fx:id="rbShipment" selected="true" styleClass="ce-toggle" text="Shipment"
+        <RadioButton fx:id="rbShipment" selected="true" styleClass="ce-toggle" text="%cost_estimation.shipment"
                      toggleGroup="$shipmentTypeGroup" />
     </HBox>
 
@@ -80,15 +80,15 @@
         </rowConstraints>
 
         <!-- ── Row 0: Postal codes ── -->
-        <Label styleClass="ce-row-label" text="Postal codes:"
+        <Label styleClass="ce-row-label" text="%cost_estimation.postal_codes"
                GridPane.columnIndex="0" GridPane.rowIndex="0" />
 
-        <Label styleClass="ce-sub-label" text="From:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.from"
                GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <ComboBox fx:id="fromCombo" prefHeight="36" prefWidth="200" styleClass="ce-combo"
                   GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-        <Label styleClass="ce-sub-label" text="To:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.to"
                GridPane.columnIndex="5" GridPane.rowIndex="0" />
         <!-- To field + scan button in an HBox so button stays flush -->
         <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
@@ -102,15 +102,15 @@
                GridPane.columnIndex="6" GridPane.rowIndex="1" />
 
         <!-- ── Row 2: Size ── -->
-        <Label styleClass="ce-row-label" text="Size:"
+        <Label styleClass="ce-row-label" text="%cost_estimation.size"
                GridPane.columnIndex="0" GridPane.rowIndex="2" />
 
-        <Label styleClass="ce-sub-label" text="Weight:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.weight"
                GridPane.columnIndex="1" GridPane.rowIndex="2" />
         <TextField fx:id="weightField" prefHeight="36" prefWidth="200" styleClass="input-field"
                    GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
-        <Label styleClass="ce-sub-label" text="Volume:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.volume"
                GridPane.columnIndex="5" GridPane.rowIndex="2" />
         <TextField fx:id="volumeField" prefHeight="36" prefWidth="200" styleClass="input-field"
                    GridPane.columnIndex="6" GridPane.rowIndex="2" />
@@ -122,15 +122,15 @@
                GridPane.columnIndex="6" GridPane.rowIndex="3" />
 
         <!-- ── Row 4: Coefficients ── -->
-        <Label styleClass="ce-row-label" text="Coefficients:"
+        <Label styleClass="ce-row-label" text="%cost_estimation.coefficients"
                GridPane.columnIndex="0" GridPane.rowIndex="4" />
 
-        <Label styleClass="ce-sub-label" text="Fuel surcharge:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.fuel_surcharge"
                GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <TextField fx:id="fuelSurchargeField" prefHeight="36" prefWidth="200" styleClass="input-field"
                    GridPane.columnIndex="2" GridPane.rowIndex="4" />
 
-        <Label styleClass="ce-sub-label" text="Toll:"
+        <Label styleClass="ce-sub-label" text="%cost_estimation.toll"
                GridPane.columnIndex="5" GridPane.rowIndex="4" />
         <TextField fx:id="tollField" prefHeight="36" prefWidth="200" styleClass="input-field"
                    GridPane.columnIndex="6" GridPane.rowIndex="4" />
@@ -145,7 +145,7 @@
 
     <!-- ADDITIONAL FEES TOGGLE -->
     <HBox alignment="CENTER_LEFT" styleClass="ce-fees-header-row">
-        <CheckBox fx:id="chkAdditionalFees" selected="true" styleClass="ce-toggle" text="Additional fees:" />
+        <CheckBox fx:id="chkAdditionalFees" selected="true" styleClass="ce-toggle" text="%cost_estimation.additional_fees" />
         <VBox.margin><Insets /></VBox.margin>
         <padding><Insets top="10.0" /></padding>
     </HBox>
@@ -156,16 +156,16 @@
 
         <!-- Left: Obstarávané služby -->
         <VBox spacing="10">
-            <Label styleClass="ce-fees-group-label" text="Obstarávané služby:" />
-            <CheckBox fx:id="chkADR"         styleClass="ce-check" text="ADR tovar" />
-            <CheckBox fx:id="chkDobierka"    styleClass="ce-check" text="Dobierka" />
-            <CheckBox fx:id="chkPripoistenie" styleClass="ce-check" text="Pripoistenie" />
-            <CheckBox fx:id="chkVratenieEUP" styleClass="ce-check" text="Vrátenie EUP" />
+            <Label styleClass="ce-fees-group-label" text="%cost_estimation.procured_services" />
+            <CheckBox fx:id="chkADR"         styleClass="ce-check" text="%cost_estimation.adr" />
+            <CheckBox fx:id="chkDobierka"    styleClass="ce-check" text="%cost_estimation.cod" />
+            <CheckBox fx:id="chkPripoistenie" styleClass="ce-check" text="%cost_estimation.insurance" />
+            <CheckBox fx:id="chkVratenieEUP" styleClass="ce-check" text="%cost_estimation.eup_return" />
         </VBox>
 
         <!-- Middle: Produkty pre ZBS -->
         <VBox spacing="10">
-            <Label styleClass="ce-fees-group-label" text="Produkty pre ZBS:" />
+            <Label styleClass="ce-fees-group-label" text="%cost_estimation.zbs_products" />
             <GridPane hgap="40" vgap="10">
                 <columnConstraints>
                     <ColumnConstraints />
@@ -188,22 +188,22 @@
         <!-- Right: Typ Doručenia -->
         <HBox spacing="24">
             <VBox spacing="10">
-                <Label styleClass="ce-fees-group-label" text="Typ Doručenia" />
-                <RadioButton fx:id="rbExpress" text="Express" mnemonicParsing="false"
+                <Label styleClass="ce-fees-group-label" text="%cost_estimation.delivery_type" />
+                <RadioButton fx:id="rbExpress" text="%cost_estimation.express" mnemonicParsing="false"
                              toggleGroup="$deliveryTypeGroup" selected="true"
                              styleClass="ce-toggle" />
-                <RadioButton fx:id="rbClassic" text="Classic" mnemonicParsing="false"
+                <RadioButton fx:id="rbClassic" text="%cost_estimation.classic" mnemonicParsing="false"
                              toggleGroup="$deliveryTypeGroup"
                              styleClass="ce-toggle" />
-                <RadioButton fx:id="rbEconomy" text="Economy" mnemonicParsing="false"
+                <RadioButton fx:id="rbEconomy" text="%cost_estimation.economy" mnemonicParsing="false"
                              toggleGroup="$deliveryTypeGroup"
                              styleClass="ce-toggle" />
             </VBox>
             <VBox spacing="10">
-                <Label styleClass="ce-sub-label" text="Odhadovaný čas" />
-                <Label styleClass="ce-sub-label" text="1-3 dni" />
-                <Label styleClass="ce-sub-label" text="3-7 dní" />
-                <Label styleClass="ce-sub-label" text="7+ dní" />
+                <Label styleClass="ce-sub-label" text="%cost_estimation.estimated_time" />
+                <Label styleClass="ce-sub-label" text="%cost_estimation.time_1_3" />
+                <Label styleClass="ce-sub-label" text="%cost_estimation.time_3_7" />
+                <Label styleClass="ce-sub-label" text="%cost_estimation.time_7_plus" />
             </VBox>
         </HBox>
 
@@ -213,8 +213,8 @@
     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-bottom-row">
         <Label styleClass="ce-dots" text="• • •" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="resetButton" onAction="#onReset" styleClass="ce-btn-reset" text="Reset" />
-        <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="Compute estimate">
+        <Button fx:id="resetButton" onAction="#onReset" styleClass="ce-btn-reset" text="%cost_estimation.reset" />
+        <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="%cost_estimation.compute">
             <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
 

@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.*;
 import org.shippin.app.FromCoordsDataGetter;
+import org.shippin.controller.utils.NavigationUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class MapPickerController {
 
     public static void open() {
         Stage dialog = new Stage();
-        dialog.setTitle("Vyber miesto");
+        dialog.setTitle(NavigationUtilities.getBundle().getString("map_picker.title"));
         dialog.setWidth(1000);
         dialog.setHeight(750);
         dialog.initModality(Modality.APPLICATION_MODAL);

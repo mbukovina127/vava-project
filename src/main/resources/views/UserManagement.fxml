@@ -21,11 +21,11 @@
     <VBox styleClass="cb-root" spacing="0">
 
         <HBox alignment="CENTER_LEFT" styleClass="um-header">
-            <Label text="User management" styleClass="page-title cb-title" HBox.hgrow="ALWAYS"/>
+            <Label text="%user_management.title" styleClass="page-title" HBox.hgrow="ALWAYS"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button
                     fx:id="addUserButton"
-                    text="+ Add new user"
+                    text="%user_management.add"
                     onAction="#onAddUser"
                     styleClass="btn"
                     prefHeight="46"/>
@@ -55,7 +55,7 @@
             spacing="0"
             StackPane.alignment="CENTER">
 
-        <Label text="Add new user" styleClass="dialog-title">
+        <Label text="%user_management.dialog_title" styleClass="dialog-title">
             <VBox.margin><Insets top="28" right="28" bottom="20" left="28"/></VBox.margin>
         </Label>
 
@@ -63,13 +63,13 @@
             <padding><Insets right="28" bottom="0" left="28"/></padding>
 
             <!-- row 0: Name / Surname labels -->
-            <Label text="Name"    GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
-            <Label text="Surname" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
+            <Label text="%user_management.name"    GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
+            <Label text="%user_management.surname" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="dialog-field-label"/>
 
             <!-- row 1: Name / Surname fields -->
-            <TextField fx:id="nameField"    promptText="name"
+            <TextField fx:id="nameField"    promptText="%user_management.name.prompt"
                        GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="dialog-field"/>
-            <TextField fx:id="surnameField" promptText="surname"
+            <TextField fx:id="surnameField" promptText="%user_management.surname.prompt"
                        GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="dialog-field"/>
 
             <!-- row 2: error label (name + surname) -->
@@ -82,12 +82,12 @@
                     GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
 
             <!-- row 3: Email label -->
-            <Label text="Email"
+            <Label text="%user_management.email"
                    GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"
                    styleClass="dialog-field-label"/>
 
             <!-- row 4: Email field -->
-            <TextField fx:id="emailField" promptText="email"
+            <TextField fx:id="emailField" promptText="%user_management.email.prompt"
                        GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"
                        styleClass="dialog-field" maxWidth="Infinity"/>
 
@@ -101,12 +101,12 @@
                     GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
 
             <!-- row 6: Password label -->
-            <Label text="Password"
+            <Label text="%user_management.password"
                    GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"
                    styleClass="dialog-field-label"/>
 
             <!-- row 7: Password field -->
-            <PasswordField fx:id="passwordField" promptText="password"
+            <PasswordField fx:id="passwordField" promptText="%user_management.password.prompt"
                            GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"
                            styleClass="dialog-field" maxWidth="Infinity"/>
 
@@ -120,12 +120,12 @@
                     GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"/>
 
             <!-- row 9: Repeat Password label -->
-            <Label text="Repeat Password"
+            <Label text="%user_management.repeat_password"
                    GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="2"
                    styleClass="dialog-field-label"/>
 
             <!-- row 10: Repeat Password field -->
-            <PasswordField fx:id="repeatPasswordField" promptText="password"
+            <PasswordField fx:id="repeatPasswordField" promptText="%user_management.password.prompt"
                            GridPane.columnIndex="0" GridPane.rowIndex="10" GridPane.columnSpan="2"
                            styleClass="dialog-field" maxWidth="Infinity"/>
 
@@ -150,9 +150,9 @@
 
         <HBox alignment="CENTER_LEFT" spacing="12">
             <VBox.margin><Insets top="28" right="28" bottom="28" left="28"/></VBox.margin>
-            <Button text="Cancel"   onAction="#onCancel" styleClass="cb-btn-delete" prefWidth="140" prefHeight="46"/>
+            <Button text="%user_management.cancel"   onAction="#onCancel" styleClass="cb-btn-delete" prefWidth="140" prefHeight="46"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Add user" onAction="#onConfirmAddUser" styleClass="btn" prefWidth="180" prefHeight="46"/>
+            <Button text="%user_management.add_button" onAction="#onConfirmAddUser" styleClass="btn" prefWidth="180" prefHeight="46"/>
         </HBox>
 
     </VBox>

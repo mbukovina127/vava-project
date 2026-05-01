@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
+import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
@@ -212,7 +213,7 @@ public class UserManagementController extends BaseController<Void> implements In
             UserDAO dao = new UserDAO(DBConnector.getInstance().getConnection());
 
             if (dao.findByEmail(email) != null) {
-                statusLabelEmail.setText("Email already in use");
+                statusLabelEmail.setText(NavigationUtilities.getBundle().getString("user_management.email_in_use"));
                 return;
             }
 
@@ -227,7 +228,7 @@ public class UserManagementController extends BaseController<Void> implements In
 
         } catch (SQLException e) {
             log.error("Add user failed", e);
-            statusLabelEmail.setText("Failed to add user, please try again");
+            statusLabelEmail.setText(NavigationUtilities.getBundle().getString("user_management.add_failed"));
         }
     }
 

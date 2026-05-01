@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.shippin.controller.utils.CostEstimationInput;
+import org.shippin.controller.utils.NavigationUtilities;
 import org.shippin.controller.utils.ShipmentData;
 
 import java.io.IOException;
@@ -201,7 +202,50 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
     private void showMapFallback() {
         mapImageView.setVisible(false);
         mapFallbackLabel.setVisible(true);
-        mapFallbackLabel.setText("Map unavailable — check network connection");
+        mapFallbackLabel.setText(NavigationUtilities.getBundle().getString("shipment_detail.map_unavailable"));
+    }
+
+
+    private void getCoordinatesFromPostalCode(int postalCode) {
+        new Thread(() -> {
+            try {
+                String psc = String.format("%05d", postalCode);
+                String apiKey = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
+                        + java.net.URLEncoder.encode(psc + " Slovakia", "UTF-8")
+                        + "&key=" + apiKey;
+
+                java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                        .uri(java.net.URI.create(url))
+                        .GET()
+                        .build();
+
+                java.net.http.HttpResponse<String> response = client.send(request,
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
+
+                System.out.println("Geocoding response: " + response.body());
+
+                com.google.gson.JsonObject json = com.google.gson.JsonParser
+                        .parseString(response.body()).getAsJsonObject();
+
+                if (json.has("results") && json.getAsJsonArray("results").size() > 0) {
+                    com.google.gson.JsonObject location = json.getAsJsonArray("results")
+                            .get(0).getAsJsonObject()
+                            .getAsJsonObject("geometry")
+                            .getAsJsonObject("location");
+                    toLat = location.get("lat").getAsDouble();
+                    toLon = location.get("lng").getAsDouble();
+                    System.out.println("Got coords: " + toLat + ", " + toLon);
+                }
+
+                javafx.application.Platform.runLater(this::loadMapImage);
+            } catch (Exception e) {
+                System.err.println("Geocoding error: ");
+                e.printStackTrace();
+                javafx.application.Platform.runLater(this::loadMapImage);
+            }
+        }).start();
     }
 
 

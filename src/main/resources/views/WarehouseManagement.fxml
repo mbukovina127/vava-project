@@ -11,7 +11,7 @@
            fx:controller="org.shippin.controller.WarehouseManagementController"
            prefWidth="1050.0"
            prefHeight="620.0"
-           stylesheets="@../css/warehouse-management.css">
+           stylesheets="@../css/shipinn.css, @../css/warehouse-management.css">
 
     <children>
 
@@ -28,18 +28,12 @@
                     <children>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Label text="Warehouse management">                       
-                                    <style>
-                                    	-fx-font-size: 28px;
-                                        -fx-font-weight: 800;
-                                        -fx-text-fill: #111111;
-                                    </style>
-                                </Label>
+                                <Label text="%warehouse_management.title" styleClass="page-title"/>
 
                                 <Region HBox.hgrow="ALWAYS"/>
 
                                 <Button fx:id="addWarehouseButton"
-                                        text="Add new warehouse"
+                                        text="%warehouse_management.add"
                                         graphicTextGap="10.0"
                                         prefWidth="212.0"
                                         prefHeight="46.0"
@@ -65,10 +59,10 @@
                                     </columnConstraints>
                                     <children>
                                         <Label text="" GridPane.columnIndex="0"/>
-                                        <Label text="Edit" GridPane.columnIndex="1" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
-                                        <Label text="Replace" GridPane.columnIndex="2" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
-                                        <Label text="Export to csv" GridPane.columnIndex="3" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
-                                        <Label text="Delete" GridPane.columnIndex="4" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="%warehouse_management.col_edit" GridPane.columnIndex="1" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="%warehouse_management.col_replace" GridPane.columnIndex="2" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="%warehouse_management.col_export" GridPane.columnIndex="3" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
+                                        <Label text="%warehouse_management.col_delete" GridPane.columnIndex="4" style="-fx-font-size: 14; -fx-text-fill: #222;"/>
                                     </children>
                                     <padding>
                                         <Insets top="0.0" right="6.0" bottom="10.0" left="6.0"/>
@@ -85,13 +79,13 @@
                             <children>
                                 <Region HBox.hgrow="ALWAYS"/>
 
-                                <Button text="View small package price list"
+                                <Button text="%warehouse_management.view_price_list"
                                         prefWidth="355.0"
                                         prefHeight="42.0"
                                         styleClass="secondary-button"
                                         onAction="#handleOpenSmallPriceList"/>
 
-                                <Button text="Replace small package price list"
+                                <Button text="%warehouse_management.replace_price_list"
                                         graphicTextGap="10.0"
                                         mnemonicParsing="false"
                                         prefWidth="335.0"
