@@ -6,14 +6,17 @@ import javafx.scene.control.*;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
+import org.shippin.database.DBConnector;
+import org.shippin.database.dao.ShipmentDAO;
+import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.domain.BriefWarehouse;
 
 import org.shippin.app.FromCoordsDataGetter;
-
 import org.shippin.controller.MapPickerController;
-import org.shippin.app.FromCoordsDataGetter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,10 +30,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private Label     sectionTitleLabel;
     @FXML private TextField dateField;
 
-    // Type toggles (small or shipment)
-    @FXML private ToggleGroup shipmentTypeGroup;
-    @FXML private RadioButton rbSmallPackage;
-    @FXML private RadioButton rbShipment;
+    private List<BriefWarehouse> warehouseList;
 
     // Postal codes
     @FXML private ComboBox<String> fromCombo;
@@ -80,12 +80,24 @@ public class CostEstimationController extends BaseController<Void> implements In
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        rbShipment.setSelected(true);
         rbClassic.setSelected(true);
-        //TODO: nacitat mena skladov z db (strings)
-        fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
-        fromCombo.setValue(fromCombo.getItems().getFirst());
-        //TODO: nacitat poskytovane doplnkove sluzby z db (strings) a asi zotriedit do skupin
+
+        try {
+            java.sql.Connection conn = DBConnector.getInstance().getConnection();
+
+            WarehouseDAO warehouseDAO = new WarehouseDAO(conn);
+            warehouseList = warehouseDAO.getAllBriefWarehouses();
+            for (BriefWarehouse bw : warehouseList) {
+                fromCombo.getItems().add(bw.getName());
+            }
+            fromCombo.setValue(fromCombo.getItems().getFirst());
+
+            ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
+            ExtraOption.initializeServiceIds(shipmentDAO.getSAllServices());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         initializeOptions();
     }
 
@@ -155,7 +167,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         fuelSurchargeField.clear();
         tollField.clear();
 
-        rbShipment.setSelected(true);
         rbClassic.setSelected(true);
 
         chkAdditionalFees.setSelected(true);
@@ -177,17 +188,12 @@ public class CostEstimationController extends BaseController<Void> implements In
                 ? ((RadioButton) group.getSelectedToggle()).getText()
                 : "";
     }
-
     @FXML
     private void onComputeCost() throws IOException
     {
-        // zistime typ sluzby
-        String shipment = getSelectedText(shipmentTypeGroup);
         // zistime rychlost dorucenia
         String deliveryTime = getSelectedText(deliveryTypeGroup);
 
-        //TODO:asi calendar view a errors
-        String date = dateField.getText().trim();
         //TODO:pridat mapu alebo aky vstup?
         String destination = destinationField.getText().trim();
 
@@ -196,8 +202,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-        String toggleError = ErrorHandler.validateShipmentType(shipment);
-       // String dateError = ErrorHandler.validateRequired(date, "Date");
         String destinationError = ErrorHandler.validateRequired(destination, "Destination");
         String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
         String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
@@ -224,16 +228,21 @@ public class CostEstimationController extends BaseController<Void> implements In
             return;
         }
 
-        // send loaded user data to next screen
+        int warehouseId = warehouseList.stream()
+                .filter(w -> w.getName().equals(getFrom()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Warehouse not found: " + getFrom()))
+                .getId();
+
         CostEstimationInput input = new CostEstimationInput(
                 getDate(),
                 getFrom(),
+                warehouseId,
                 getDestination(),
                 getWeight(),
                 getVolume(),
                 getFuelSurcharge(),
                 getToll(),
-                shipment,
                 deliveryTime,
                 getSelectedOptions()
         );
