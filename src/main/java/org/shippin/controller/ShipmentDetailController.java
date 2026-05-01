@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.shippin.controller.utils.CostEstimationInput;
-import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.ShipmentData;
 
 import java.io.IOException;
@@ -202,7 +202,7 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
     private void showMapFallback() {
         mapImageView.setVisible(false);
         mapFallbackLabel.setVisible(true);
-        mapFallbackLabel.setText(NavigationUtilities.getBundle().getString("shipment_detail.map_unavailable"));
+        mapFallbackLabel.setText(NavigationService.getBundle().getString("shipment_detail.map_unavailable"));
     }
 
 

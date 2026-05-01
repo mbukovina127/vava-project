@@ -3,19 +3,14 @@ package org.shippin.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
-import org.shippin.controller.utils.NavigationUtilities;
-import org.shippin.dto.Screens;
 
-import org.shippin.controller.MapPickerController;
 import org.shippin.app.FromCoordsDataGetter;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;

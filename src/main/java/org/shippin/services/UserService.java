@@ -1,9 +1,9 @@
-package org.shippin.session;
+package org.shippin.services;
 
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 
-public class Session {
+public class UserService {
 
     private static User currentUser;
 

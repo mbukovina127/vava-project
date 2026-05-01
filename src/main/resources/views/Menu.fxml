@@ -1,67 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <!-- Wrap everything in a StackPane -->
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.shippin.controller.MenuController"
-           stylesheets="@../css/menu-page.css"
-           prefWidth="1440" prefHeight="820"
-           minWidth="1440" minHeight="820"
-           maxWidth="1440" maxHeight="820">
+
+<StackPane maxHeight="820" maxWidth="1440" minHeight="820" minWidth="1440" prefHeight="820" prefWidth="1440" stylesheets="@../css/menu-page.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.MenuController">
 
 	<BorderPane styleClass="menu-root">
 
 	    <top>
-	        <HBox
-	                fx:id="topNavBar"
-	                prefHeight="100"
-	                prefWidth="1440"
-	                alignment="CENTER_LEFT"
-	                styleClass="nav-bar">
+	        <HBox fx:id="topNavBar" alignment="CENTER_LEFT" prefHeight="100" prefWidth="1440" styleClass="nav-bar">
 
 	            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
-	                <ImageView
-	                        fx:id="brandLogoImageView"
-	                        fitWidth="55"
-	                        fitHeight="55"
-	                        preserveRatio="true"/>
-	                <Label
-	                        fx:id="appNameLabel"
-	                        text="%menu.logo"
-	                        styleClass="nav-app-name"/>
+	                <ImageView fx:id="brandLogoImageView" fitHeight="55" fitWidth="55" preserveRatio="true" />
+	                <Label fx:id="appNameLabel" styleClass="nav-app-name" text="%menu.logo" />
 	            </HBox>
 
 	            <HBox alignment="CENTER_RIGHT" spacing="14">
-	                <Label
-	                        fx:id="UserNameLabel"
-	                        text=""
-	                        styleClass="nav-date"/>
-	                <Button
-	                        fx:id="langButton"
-	                        text="SK"
-	                        onAction="#onToggleLanguage"
-	                        styleClass="profile-btn"/>
-	                <Button
-	                        fx:id="profileButton"
-	                        onAction="#onProfileClicked"
-	                        styleClass="profile-btn"/>
+	                <Label fx:id="UserNameLabel" styleClass="nav-date" text="" />
+	                <Button fx:id="langButton" onAction="#onToggleLanguage" styleClass="profile-btn" text="SK" />
+	                <Button fx:id="profileButton" onAction="#onProfileClicked" styleClass="profile-btn" />
 	            </HBox>
 	        </HBox>
 	    </top>
 
 	    <left>
-	        <VBox
-	                fx:id="leftSidebar"
-	                prefWidth="100"
-	                prefHeight="720"
-	                spacing="0"
-	                alignment="TOP_CENTER"
-	                styleClass="sidebar">
+	        <VBox fx:id="leftSidebar" alignment="CENTER" prefHeight="720" prefWidth="100" spacing="0" styleClass="sidebar">
 
 	            <!--This is where the menu is loaded-->
 
@@ -69,17 +41,11 @@
 	    </left>
 
 	    <center>
-	        <ScrollPane fitToWidth="true"
-	                    fitToHeight="true"
-	                    pannable="true"
-	                    styleClass="content-scroll">
+	        <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" styleClass="content-scroll">
 	            <content>
-	                <StackPane fx:id="contentArea"
-	                           styleClass="content-area"
-	                           maxWidth="Infinity"
-	                           maxHeight="Infinity">
+	                <StackPane fx:id="contentArea" maxHeight="Infinity" maxWidth="Infinity" styleClass="content-area">
 	                    <padding>
-	                        <Insets top="24" right="24" bottom="24" left="24"/>
+	                        <Insets bottom="24" left="24" right="24" top="24" />
 	                    </padding>
 	                </StackPane>
 	            </content>
@@ -89,16 +55,8 @@
 	</BorderPane>
 
     <!-- Overlay is now a sibling of BorderPane, so it stacks on top -->
-    <StackPane fx:id="modalOverlay"
-               visible="false"
-               managed="false"
-               pickOnBounds="true"
-               styleClass="modal-overlay"/>
+    <StackPane fx:id="modalOverlay" managed="false" pickOnBounds="true" styleClass="modal-overlay" visible="false" />
 
-    <VBox fx:id="modalContentHolder"
-              managed="false"
-              visible="false"
-              maxWidth="620.0"
-              alignment="CENTER"/>
+    <VBox fx:id="modalContentHolder" alignment="CENTER" managed="false" maxWidth="620.0" visible="false" />
 
 </StackPane>

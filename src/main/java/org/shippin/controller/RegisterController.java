@@ -8,14 +8,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
-import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
-import org.shippin.session.Session;
+import org.shippin.services.UserService;
 
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
@@ -44,7 +44,7 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        langButton.setText(NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+        langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
     }
     private boolean passwordShownRep = false;
 
@@ -142,8 +142,8 @@ public class RegisterController {
             newUser.setPassword(PasswordUtils.hash(password));
             userDAO.insert(newUser);
 
-            Session.login(userDAO.findByEmail(email));
-            NavigationUtilities.navigateTo(Screens.HOME);
+            UserService.login(userDAO.findByEmail(email));
+            NavigationService.navigateTo(Screens.HOME);
 
         } catch (SQLException e) {
             log.error("Registration DB error", e);
@@ -153,16 +153,16 @@ public class RegisterController {
 
     public void onGoToLogin(ActionEvent actionEvent)
     {
-        NavigationUtilities.navigateTo(Screens.LOGIN);
+        NavigationService.navigateTo(Screens.LOGIN);
     }
 
     @FXML
     public void onToggleLanguage()
     {
-        Locale next = NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk")
+        Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
                 ? Locale.ENGLISH
                 : new Locale("sk");
-        NavigationUtilities.setLocale(next);
-        NavigationUtilities.navigateTo(Screens.REGISTER);
+        NavigationService.setLocale(next);
+        NavigationService.navigateTo(Screens.REGISTER);
     }
 }

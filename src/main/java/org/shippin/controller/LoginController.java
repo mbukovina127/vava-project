@@ -6,14 +6,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import lombok.extern.log4j.Log4j2;
-import org.shippin.controller.utils.ErrorHandler;
-import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.PasswordUtils;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
 import org.shippin.dto.Screens;
-import org.shippin.session.Session;
+import org.shippin.services.UserService;
 
 import java.sql.SQLException;
 import java.util.Locale;
@@ -33,7 +32,7 @@ public class LoginController {
 
     @FXML
     private void initialize() {
-        langButton.setText(NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+        langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
     }
 
     @FXML private void onTogglePassword()
@@ -84,9 +83,9 @@ public class LoginController {
                 return;
             }
 
-            Session.login(user);
+            UserService.login(user);
             log.info("User logged in: {}", user.getEmail());
-            NavigationUtilities.navigateTo(Screens.HOME);
+            NavigationService.navigateTo(Screens.HOME);
 
         } catch (SQLException e) {
             log.error("Login DB error", e);
@@ -96,15 +95,15 @@ public class LoginController {
 
     @FXML private void onGoToRegister()
     {
-        NavigationUtilities.navigateTo(Screens.REGISTER);
+        NavigationService.navigateTo(Screens.REGISTER);
     }
 
     @FXML private void onToggleLanguage()
     {
-        Locale next = NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk")
+        Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
                 ? Locale.ENGLISH
                 : new Locale("sk");
-        NavigationUtilities.setLocale(next);
-        NavigationUtilities.navigateTo(Screens.LOGIN);
+        NavigationService.setLocale(next);
+        NavigationService.navigateTo(Screens.LOGIN);
     }
 }
