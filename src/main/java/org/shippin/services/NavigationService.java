@@ -1,4 +1,4 @@
-package org.shippin.controller.utils;
+package org.shippin.services;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -6,14 +6,13 @@ import javafx.stage.Stage;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.dto.Screens;
-import org.shippin.session.Session;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Log4j2
-public class NavigationUtilities {
+public class NavigationService {
 
     @Setter
     private static Stage primaryStage;
@@ -30,13 +29,13 @@ public class NavigationUtilities {
 
     // Pre full-screen prechody (Login → Menu)
     public static void navigateTo(Screens screen) {
-        if (!screen.isAccessibleBy(Session.getRole())) {
-            log.warn("Access denied to screen: {} (current role: {})", screen, Session.getRole());
+        if (!screen.isAccessibleBy(UserService.getRole())) {
+            log.warn("Access denied to screen: {} (current role: {})", screen, UserService.getRole());
             return;
         }
         String path = Screens.resolveScreen(screen);
         try {
-            FXMLLoader loader = new FXMLLoader(NavigationUtilities.class.getResource(path));
+            FXMLLoader loader = new FXMLLoader(NavigationService.class.getResource(path));
             loader.setResources(bundle);
             Parent root = loader.load();
             primaryStage.getScene().setRoot(root);

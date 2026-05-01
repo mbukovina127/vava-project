@@ -76,8 +76,4 @@ public class InputValidator {
             && hasUppercase(password)
             && hasLowercase(password);
     }
-
-
-
-
 }

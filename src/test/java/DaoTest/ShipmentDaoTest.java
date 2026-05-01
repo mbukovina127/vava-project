@@ -80,7 +80,10 @@ public class ShipmentDaoTest {
 
     @Test
     @DisplayName("insertShipment executes or exposes bug")
-    void insertShipmentExecutes() {
+    void insertShipmentExecutes() throws SQLException {
+        int userId      = insertUserDirectly("insert.shipment@test.com");
+        int warehouseId = insertWarehouseDirectly("Insert Shipment Warehouse");
+
         Shipment sh = new Shipment();
 
         sh.setDest_region(11111);
@@ -91,7 +94,7 @@ public class ShipmentDaoTest {
         sh.setServices(new ArrayList<>());
 
         assertDoesNotThrow(() ->
-                shipmentDAO.insertShipment(sh, 1, 1)
+                shipmentDAO.insertShipment(sh, userId, warehouseId)
         );
     }
 
