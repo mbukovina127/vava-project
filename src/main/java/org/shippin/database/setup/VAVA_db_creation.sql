@@ -96,6 +96,11 @@ CREATE TABLE Service_list (
     shipment_ID INT NOT NULL REFERENCES Shipment(shipment_ID) ON DELETE CASCADE
 );
 
+-- Seed admin user  (password: Admin1234!  →  SHA-256)
+INSERT INTO Users (first_name, last_name, email, password, role)
+VALUES ('Admin', 'Admin', 'admin@shippin.com',
+        'd07e7c4cce2afb5fdab874b1f6c1f95a06564921bad3486805e5bd27fad62457', 2);
+
 -- CREATE TABLE Session (
 --     session_ID SERIAL PRIMARY KEY,
 --     user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,

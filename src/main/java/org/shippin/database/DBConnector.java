@@ -7,11 +7,21 @@ import java.sql.SQLException;
 
 public class DBConnector {
 
+    private static DBConnector instance;
+
     private Connection connection;
     private final Config cfg;
 
     public DBConnector(Config cfg) {
         this.cfg = cfg;
+    }
+
+    public static DBConnector getInstance() {
+        if (instance == null) {
+            instance = new DBConnector(new Config());
+            try { instance.connect(); } catch (SQLException e) { throw new RuntimeException("DB connection failed", e); }
+        }
+        return instance;
     }
 
     public void connect() throws SQLException {

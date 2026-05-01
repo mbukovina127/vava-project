@@ -9,8 +9,15 @@ import javafx.scene.control.TextField;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.controller.utils.PasswordUtils;
+import org.shippin.database.DBConnector;
+import org.shippin.database.dao.UserDAO;
+import org.shippin.domain.User;
+import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.session.Session;
 
+import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -116,8 +123,25 @@ public class RegisterController {
             return;
         }
 
-        // TODO: check if user already exists in DB
-        NavigationUtilities.navigateTo(Screens.HOME);
+        try {
+            UserDAO userDAO = new UserDAO(DBConnector.getInstance().getConnection());
+
+            if (userDAO.findByEmail(email) != null) {
+                statusLabelEmail.setText("Email already in use");
+                return;
+            }
+
+            User newUser = new User(firstName, lastName, email, Role.USER);
+            newUser.setPassword(PasswordUtils.hash(password));
+            userDAO.insert(newUser);
+
+            Session.login(userDAO.findByEmail(email));
+            NavigationUtilities.navigateTo(Screens.HOME);
+
+        } catch (SQLException e) {
+            log.error("Registration DB error", e);
+            statusLabelEmail.setText("Registration failed, please try again");
+        }
     }
 
     public void onGoToLogin(ActionEvent actionEvent)

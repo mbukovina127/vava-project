@@ -47,6 +47,46 @@ public class UserDAO extends BaseDAO {
         return null;
     }
 
+    /** Returns the user (without password) if email + already-hashed password match, null otherwise. */
+    public User authenticate(String email, String passwordHash) throws SQLException {
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ? AND password = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, email);
+        stmt.setString(2, passwordHash);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return new User(
+                    rs.getInt("user_ID"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    rs.getString("email"),
+                    null,
+                    Role.values()[rs.getInt("role")],
+                    null
+            );
+        }
+        return null;
+    }
+
+    public User findByEmail(String email) throws SQLException {
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return new User(
+                    rs.getInt("user_ID"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    rs.getString("email"),
+                    null,
+                    Role.values()[rs.getInt("role")],
+                    null
+            );
+        }
+        return null;
+    }
+
     public boolean deleteUser(int userID) throws SQLException {
 
         String sql = """
