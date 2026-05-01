@@ -42,7 +42,7 @@ public class ShipmentService {
                     warehouse.getPriceList(), regionCode, volume, false);
             baseCost = Math.max(costByWeight, costByVolume);
         } else {
-            PriceListDAO priceListDAO = new PriceListDAO(connection);
+            PriceListDAO priceListDAO = PriceListDAO.getInstance();
             SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
             baseCost = findCostInSmallPriceList(smallPriceList, weight);
         }

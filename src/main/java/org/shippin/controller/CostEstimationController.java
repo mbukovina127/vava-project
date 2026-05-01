@@ -6,10 +6,11 @@ import javafx.scene.control.*;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
-import org.shippin.database.DBConnector;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Shipment;
+import org.shippin.services.ShipmentService;
 
 import org.shippin.app.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -83,16 +85,14 @@ public class CostEstimationController extends BaseController<Void> implements In
         rbClassic.setSelected(true);
 
         try {
-            java.sql.Connection conn = DBConnector.getInstance().getConnection();
-
-            WarehouseDAO warehouseDAO = new WarehouseDAO(conn);
+            WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
             warehouseList = warehouseDAO.getAllBriefWarehouses();
             for (BriefWarehouse bw : warehouseList) {
                 fromCombo.getItems().add(bw.getName());
             }
             fromCombo.setValue(fromCombo.getItems().getFirst());
 
-            ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
+            ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
             ExtraOption.initializeServiceIds(shipmentDAO.getSAllServices());
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -234,6 +234,41 @@ public class CostEstimationController extends BaseController<Void> implements In
                 .orElseThrow(() -> new IllegalStateException("Warehouse not found: " + getFrom()))
                 .getId();
 
+        List<Integer> serviceIds = getSelectedOptions().stream()
+                .filter(opt -> opt.getServiceId() > 0)
+                .map(ExtraOption::getServiceId)
+                .toList();
+
+        int destPostalCode;
+        try {
+            destPostalCode = Integer.parseInt(destination.replaceAll("\\s", ""));
+        } catch (NumberFormatException e) {
+            statusLabelDestination.setText("Destination must be a valid postal code");
+            return;
+        }
+
+        Shipment computedShipment;
+        try {
+            ShipmentService service = new ShipmentService();
+            computedShipment = service.createShipment(
+                    null,
+                    new Date(),
+                    destPostalCode,
+                    (float) getFuelSurcharge(),
+                    (float) getToll(),
+                    (int) getWeight(),
+                    (int) getVolume(),
+                    warehouseId,
+                    serviceIds
+            );
+        } catch (SQLException e) {
+            new Alert(Alert.AlertType.ERROR, "Could not compute shipping cost: " + e.getMessage()).showAndWait();
+            return;
+        } catch (IllegalArgumentException e) {
+            new Alert(Alert.AlertType.ERROR, "Invalid input: " + e.getMessage()).showAndWait();
+            return;
+        }
+
         CostEstimationInput input = new CostEstimationInput(
                 getDate(),
                 getFrom(),
@@ -244,9 +279,10 @@ public class CostEstimationController extends BaseController<Void> implements In
                 getFuelSurcharge(),
                 getToll(),
                 deliveryTime,
-                getSelectedOptions()
+                getSelectedOptions(),
+                computedShipment
         );
-        loadScreen(COST_BREAKDOWN,input);
+        loadScreen(COST_BREAKDOWN, input);
     }
 
     @FXML

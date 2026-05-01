@@ -1,5 +1,7 @@
 package org.shippin.controller.utils;
 
+import org.shippin.domain.Shipment;
+
 import java.util.List;
 
 public record CostEstimationInput(
@@ -12,6 +14,7 @@ public record CostEstimationInput(
         double fuelSurcharge,
         double toll,
         String delivery_opt,
-        List<ExtraOption> options
+        List<ExtraOption> options,
+        Shipment computedShipment
 ) {}
 

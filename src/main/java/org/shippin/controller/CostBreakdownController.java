@@ -21,22 +21,18 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ExtraOption;
 import org.shippin.controller.utils.ShipmentData;
-import org.shippin.database.DBConnector;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.domain.Shipment;
-import org.shippin.services.ShipmentService;
 import org.shippin.session.Session;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -85,36 +81,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
         pdfRows.clear();
         gridRow = 0;
         this.sessionData = data;
-
-        try {
-            Connection conn = DBConnector.getInstance().getConnection();
-            ShipmentService service = new ShipmentService(conn);
-
-            List<Integer> serviceIds = data.options().stream()
-                    .filter(opt -> opt.getServiceId() > 0)
-                    .map(ExtraOption::getServiceId)
-                    .toList();
-
-            int destPostalCode = Integer.parseInt(data.destination().replaceAll("\\s", ""));
-
-            computedShipment = service.createShipment(
-                    null,
-                    new Date(),
-                    destPostalCode,
-                    (float) data.fuelSurcharge(),
-                    (float) data.toll(),
-                    (int) data.weight(),
-                    (int) data.volume(),
-                    data.warehouseId(),
-                    serviceIds
-            );
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Could not compute shipping cost: " + e.getMessage()).showAndWait();
-            return;
-        } catch (IllegalArgumentException e) {
-            new Alert(Alert.AlertType.ERROR, "Invalid input: " + e.getMessage()).showAndWait();
-            return;
-        }
+        this.computedShipment = data.computedShipment();
 
         // Row 1: Postal codes
         String postalValue = data.from() + " \u2013 " + data.destination();
@@ -321,8 +288,7 @@ public class CostBreakdownController extends BaseController<CostEstimationInput>
             try {
                 int shipmentId = -1;
                 if (computedShipment != null) {
-                    Connection conn = DBConnector.getInstance().getConnection();
-                    ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
+                    ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
                     computedShipment.setUser_ID(Session.getUser().getId());
                     shipmentId = shipmentDAO.insertShipment(
                             computedShipment, data.warehouseId(), Session.getUser().getId());
