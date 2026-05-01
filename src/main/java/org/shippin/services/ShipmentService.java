@@ -7,9 +7,11 @@ import org.shippin.domain.enums.State;
 import org.shippin.util.Range;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.*;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
 
 public class ShipmentService {
 
@@ -92,4 +94,50 @@ public class ShipmentService {
 
         return bestCost;
     }
+
+
+
+    public Map<LocalDate, Double> getDailySummaries(YearMonth ym) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(ym.plusMonths(1).atDay(1).atStartOfDay());
+
+        List<Shipment> shipments = shipmentDAO.getAllShipmentsByDate(from, to);
+
+        Map<LocalDate, Double> result = new HashMap<>();
+
+        for (Shipment s : shipments) {
+            LocalDate date = s.getCreated_at()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().toLocalDate();
+
+            result.put(date,
+                    result.getOrDefault(date, 0.0) + s.getTotalCost());
+        }
+
+        return result;
+    }
+
+    public List<Shipment> getShipmentsForDay(LocalDate date) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(date.atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(date.plusDays(1).atStartOfDay());
+
+        return shipmentDAO.getAllShipmentsByDate(from, to);
+    }
+
+    public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+        return shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
+    }
+
+
+
+
 }

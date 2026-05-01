@@ -8,11 +8,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.shippin.controller.utils.CostEstimationInput;
+import org.shippin.domain.ShipmentHistory;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.ShipmentData;
+import org.shippin.services.ShipmentService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,7 +62,7 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
 
     @Override
     protected Class<ShipmentData> getDataType() { return ShipmentData.class; }
-
+    private ShipmentService shipmentService;
     @Override
     protected void onData(ShipmentData data) {
         this.shipmentData = data;
@@ -85,7 +88,9 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources) {
+        shipmentService = new ShipmentService();
+    }
 
     // ── Header ────────────────────────────────────────────────────
 
@@ -125,12 +130,28 @@ public class ShipmentDetailController extends BaseController<ShipmentData> imple
 
     private void populateHistoryGrid() {
         historyGrid.getChildren().clear();
-        for (int i = 0; i < history.size(); i++) {
-            HistoryEntry e = history.get(i);
-            historyGrid.add(historyCell(e.time(),     "sd-history-time"),   0, i);
-            historyGrid.add(historyCell(e.driver(),   "sd-history-cell"),   1, i);
-            historyGrid.add(historyCell(e.location(), "sd-history-cell"),   2, i);
-            historyGrid.add(historyCell(e.status(),   "sd-history-status"), 3, i);
+
+        try {
+            List<ShipmentHistory> historyList =
+                    shipmentService.getShipmentHistory(shipmentData.getShipmentID());
+
+            for (int i = 0; i < historyList.size(); i++) {
+                ShipmentHistory h = historyList.get(i);
+
+                historyGrid.add(historyCell(
+                        h.getTimestamp().toLocalDateTime().toLocalTime().toString(),
+                        "sd-history-time"), 0, i);
+
+                historyGrid.add(historyCell("-", "sd-history-cell"), 1, i);
+                historyGrid.add(historyCell("-", "sd-history-cell"), 2, i);
+
+                historyGrid.add(historyCell(
+                        h.getState().name(),
+                        "sd-history-status"), 3, i);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

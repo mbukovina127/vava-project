@@ -6,11 +6,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.shippin.domain.Shipment;
+import org.shippin.domain.enums.State;
+import org.shippin.services.ShipmentService;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +27,16 @@ import java.util.ResourceBundle;
  * Controller for DailyCostsSummaryDetail.fxml
  *
  * <p>Displays all shipment entries for a single selected date.
- * Populated by calling {@link #setDate(LocalDate, List)} from the
+
  * parent controller (e.g. DailyCostsSummariesController) right after
  * loading this view.</p>
  *
  * <p>Data model: {@link ShipmentEntry} — a lightweight record holding
  * the time string, description, and cost for one shipment row.</p>
  */
-public class DailyCostsSummaryDetailController implements Initializable {
+public class DailyCostsSummaryDetailController
+        extends BaseController<LocalDate>
+        implements Initializable {
 
     // ── FXML injections ────────────────────────────────────────────────
     @FXML private Label  lblTitle;
@@ -47,29 +55,31 @@ public class DailyCostsSummaryDetailController implements Initializable {
     // ══════════════════════════════════════════════════════════════════
     // Initializable
     // ══════════════════════════════════════════════════════════════════
+    private ShipmentService shipmentService;
+
+    @Override
+    protected Class<LocalDate> getDataType() {
+        return LocalDate.class;
+    }
+
+    @Override
+    protected void onData(LocalDate date) {
+        this.currentDate = date;
+        loadFromService();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Nothing to do here — data is pushed via setDate().
         // If you wire this screen standalone (e.g. in Scene Builder preview)
         // you can call loadSampleData() for convenience.
+        shipmentService = new ShipmentService();
     }
 
     // ══════════════════════════════════════════════════════════════════
     // Public API — called by the parent controller
     // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Sets the date and shipment list, then re-renders the screen.
-     *
-     * @param date    the day whose costs are displayed
-     * @param entries list of {@link ShipmentEntry} for that day
-     */
-    public void setDate(LocalDate date, List<ShipmentEntry> entries) {
-        this.currentDate = date;
-        this.entries     = entries != null ? entries : new ArrayList<>();
-        refresh();
-    }
 
     // ══════════════════════════════════════════════════════════════════
     // FXML handlers
@@ -100,7 +110,7 @@ public class DailyCostsSummaryDetailController implements Initializable {
         }
 
         // Total
-        double total = entries.stream().mapToDouble(ShipmentEntry::cost).sum();
+        double total = entries.stream().mapToDouble(ShipmentEntry::totalCost).sum();
         lblTotal.setText(formatCost(total));
     }
 
@@ -111,35 +121,71 @@ public class DailyCostsSummaryDetailController implements Initializable {
      *   [time]  [description ──── grow]  [amount]  [✎]  [🗑]
      */
     private HBox buildRow(ShipmentEntry entry) {
-        HBox row = new HBox();
+        HBox row = new HBox(16);
         row.getStyleClass().add("dcd-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
-        // Time
+        // ── Left: ID + time ───────────────────────────────────────────
+        VBox leftBox = new VBox(2);
+        Label lblId   = new Label("#" + entry.shipmentId());
+        lblId.getStyleClass().add("dcd-row-id");
         Label lblTime = new Label(entry.time());
         lblTime.getStyleClass().add("dcd-row-time");
+        leftBox.getChildren().addAll(lblId, lblTime);
 
-        // Description (grows)
-        Label lblDesc = new Label(entry.description());
-        lblDesc.getStyleClass().add("dcd-row-desc");
-        HBox.setHgrow(lblDesc, javafx.scene.layout.Priority.ALWAYS);
+        // ── Center: destination + fuel ────────────────────────────────
+        VBox centerBox = new VBox(2);
+        HBox.setHgrow(centerBox, Priority.ALWAYS);
 
-        // Amount
-        Label lblAmount = new Label(formatCost(entry.cost()));
+        Label lblDest = new Label("Dest. region: " + entry.destRegion());
+        lblDest.getStyleClass().add("dcd-row-desc");
+
+        Label lblFuel = new Label("Fuel surcharge: " + formatCost(entry.fuelPayment()));
+        lblFuel.getStyleClass().add("dcd-row-sub");
+
+        centerBox.getChildren().addAll(lblDest, lblFuel);
+
+        // ── Right: state + total ──────────────────────────────────────
+        VBox rightBox = new VBox(2);
+        rightBox.setAlignment(Pos.CENTER_RIGHT);
+
+        Label lblState = new Label(entry.state().toString());
+        lblState.getStyleClass().addAll("dcd-row-state", stateStyleClass(entry.state()));
+
+        Label lblAmount = new Label(formatCost(entry.totalCost()));
         lblAmount.getStyleClass().add("dcd-row-amount");
 
-        // Edit button
+        rightBox.getChildren().addAll(lblState, lblAmount);
+
+        // ── Action buttons ────────────────────────────────────────────
+        VBox btnBox = new VBox(4);
+        btnBox.setAlignment(Pos.CENTER);
+
         Button btnEdit = new Button("✎");
         btnEdit.getStyleClass().add("dcd-icon-btn");
         btnEdit.setOnAction(e -> handleEdit(entry));
 
-        // Delete button
         Button btnDelete = new Button("🗑");
         btnDelete.getStyleClass().addAll("dcd-icon-btn", "dcd-icon-btn-delete");
         btnDelete.setOnAction(e -> handleDelete(entry));
 
-        row.getChildren().addAll(lblTime, lblDesc, lblAmount, btnEdit, btnDelete);
+        btnBox.getChildren().addAll(btnEdit, btnDelete);
+
+        row.getChildren().addAll(leftBox, centerBox, rightBox, btnBox);
         return row;
+    }
+
+    private String stateStyleClass(State state) {
+        return switch (state) {
+            case NOT_READY  -> "dcd-state-not-ready";
+            case READY_FOR_DELIVERY      -> "dcd-state-ready";
+            case BEING_DELIVERED -> "dcd-state-transit";
+            case DELIVERED  -> "dcd-state-delivered";
+            case CANCELED  -> "dcd-state-cancelled";
+            case FAILED  -> "dcd-state-failed";
+            default         -> "";
+        };
+
     }
 
     /** Edit action for a shipment row. */
@@ -167,20 +213,38 @@ public class DailyCostsSummaryDetailController implements Initializable {
         // Replace decimal point with comma (European style)
         return String.format(Locale.ROOT, "%.2f€", cost).replace('.', ',');
     }
+    private static String formatCost(float cost)  { return formatCost((double) cost); }
 
     // ══════════════════════════════════════════════════════════════════
     // Sample data helper (for standalone Scene Builder preview)
     // ══════════════════════════════════════════════════════════════════
 
     /** Loads hard-coded sample data identical to the screenshot. */
-    public void loadSampleData() {
-        List<ShipmentEntry> sample = List.of(
-            new ShipmentEntry(" 8:23", "Shipment for  Saint Gobain 1",           58.40),
-            new ShipmentEntry("10:58", "Shipment some random company from other city", 22.10),
-            new ShipmentEntry("11:44", "Shipment some random company from other city", 122.00),
-            new ShipmentEntry("12:08", "Shipment some random company from other city", 128.70)
-        );
-        setDate(LocalDate.of(2026, 4, 1), sample);
+
+
+    private void loadFromService() {
+        try {
+            List<Shipment> shipments = shipmentService.getShipmentsForDay(currentDate);
+            entries.clear();
+
+            for (Shipment s : shipments) {
+                entries.add(new ShipmentEntry(
+                        s.getShipment_id(),
+                        s.getCreated_at()
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalTime()
+                                .format(DateTimeFormatter.ofPattern("HH:mm")),
+                        s.getDest_region(),
+                        s.getFuel_payment(),
+                        s.getTotalCost(),
+                        s.getState()
+                ));
+            }
+            refresh();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -191,8 +255,14 @@ public class DailyCostsSummaryDetailController implements Initializable {
      * Immutable record representing one shipment row.
      *
      * @param time        display time string, e.g. "8:23"
-     * @param description shipment description
-     * @param cost        cost in euros (double)
      */
-    public record ShipmentEntry(String time, String description, double cost) {}
+    // Replace the ShipmentEntry record
+    public record ShipmentEntry(
+            int shipmentId,
+            String time,
+            int destRegion,
+            float fuelPayment,
+            double totalCost,
+            State state
+    ) {}
 }
