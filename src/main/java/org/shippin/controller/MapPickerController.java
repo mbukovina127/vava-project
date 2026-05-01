@@ -13,6 +13,7 @@ import org.jxmapviewer.viewer.*;
 import org.shippin.app.FromCoordsDataGetter;
 import org.shippin.services.NavigationService;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;

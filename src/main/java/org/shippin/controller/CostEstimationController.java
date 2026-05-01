@@ -9,6 +9,9 @@ import org.shippin.controller.utils.ExtraOption;
 
 import org.shippin.app.FromCoordsDataGetter;
 
+import org.shippin.controller.MapPickerController;
+import org.shippin.app.FromCoordsDataGetter;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
