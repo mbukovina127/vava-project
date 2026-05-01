@@ -11,7 +11,7 @@
            fx:controller="org.shippin.controller.WarehouseManagementController"
            prefWidth="1050.0"
            prefHeight="620.0"
-           stylesheets="@../css/warehouse-management.css">
+           stylesheets="@../css/shipinn.css, @../css/warehouse-management.css">
 
     <children>
 
@@ -28,13 +28,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Label text="%warehouse_management.title">                       
-                                    <style>
-                                    	-fx-font-size: 28px;
-                                        -fx-font-weight: 800;
-                                        -fx-text-fill: #111111;
-                                    </style>
-                                </Label>
+                                <Label text="%warehouse_management.title" styleClass="page-title"/>
 
                                 <Region HBox.hgrow="ALWAYS"/>
 

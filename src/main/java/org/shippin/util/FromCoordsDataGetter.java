@@ -12,132 +12,118 @@ import com.google.gson.JsonObject;
 
 public class FromCoordsDataGetter {
 
-    private static final String API_KEY = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+	private static final String API_KEY = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+	private static Callback callback;
 
-    public static void reverse(double lat, double lng) {
-    	try {
+	public interface Callback {
+		void onPostalCodeReceived(String postalCode);
+	}
 
-    	    String url = "https://maps.googleapis.com/maps/api/geocode/json"
-    	            + "?latlng=" + lat + "," + lng
-    	            + "&key=" + API_KEY;
+	public static void setCallback(Callback cb) {
+		callback = cb;
+	}
 
-    	    HttpClient client = HttpClient.newHttpClient();
-    	    HttpRequest request = HttpRequest.newBuilder()
-    	            .uri(URI.create(url))
-    	            .GET()
-    	            .build();
+	public static void reverse(double lat, double lng) {
+		new Thread(() -> {
+			try {
 
-    	    HttpResponse<String> response =
-    	            client.send(request, HttpResponse.BodyHandlers.ofString());
+				String url = "https://maps.googleapis.com/maps/api/geocode/json"
+						+ "?latlng=" + lat + "," + lng
+						+ "&key=" + API_KEY;
 
-    	    if (response.statusCode() != 200) {
-    	        System.out.println("HTTP error: " + response.statusCode());
-    	        return;
-    	    }
+				HttpClient client = HttpClient.newHttpClient();
+				HttpRequest request = HttpRequest.newBuilder()
+						.uri(URI.create(url))
+						.GET()
+						.build();
 
-    	    Gson gson = new Gson();
-    	    JsonObject root = gson.fromJson(response.body(), JsonObject.class);
+				HttpResponse<String> response =
+						client.send(request, HttpResponse.BodyHandlers.ofString());
 
-    	    JsonArray results = root.getAsJsonArray("results");
-    	    if (results == null || results.size() == 0) {
-    	        System.out.println("No results");
-    	        return;
-    	    }
+				if (response.statusCode() != 200) {
+					System.out.println("HTTP error: " + response.statusCode());
+					return;
+				}
 
-    	    JsonArray compsFinal = null;
-    	    String postal = "N/A";
+				Gson gson = new Gson();
+				JsonObject root = gson.fromJson(response.body(), JsonObject.class);
 
-    	    for (JsonElement resEl : results) {
+				JsonArray results = root.getAsJsonArray("results");
+				if (results == null || results.size() == 0) {
+					System.out.println("No results");
+					return;
+				}
 
-    	        JsonObject res = resEl.getAsJsonObject();
-    	        JsonArray comps = res.getAsJsonArray("address_components");
+				JsonArray compsFinal = null;
+				String postal = "N/A";
 
-    	        if (comps == null) continue;
+				for (JsonElement resEl : results) {
 
-    	        for (JsonElement el : comps) {
-    	            JsonObject comp = el.getAsJsonObject();
-    	            JsonArray types = comp.getAsJsonArray("types");
+					JsonObject res = resEl.getAsJsonObject();
+					JsonArray comps = res.getAsJsonArray("address_components");
 
-    	            for (JsonElement t : types) {
-    	                if (t.getAsString().equals("postal_code")) {
-    	                    postal = comp.get("long_name").getAsString();
-    	                    compsFinal = comps;
-    	                    break;
-    	                }
-    	            }
-    	            if (!postal.equals("N/A")) break;
-    	        }
-    	        if (!postal.equals("N/A")) break;
-    	    }
+					if (comps == null) continue;
 
-    	    if (compsFinal == null) {
-    	        System.out.println("No address components");
-    	        return;
-    	    }
+					for (JsonElement el : comps) {
+						JsonObject comp = el.getAsJsonObject();
+						JsonArray types = comp.getAsJsonArray("types");
 
-    	    String city = "N/A";
-    	    String district = "N/A";
-    	    String region = "N/A";
-    	    String country = "N/A";
-    	    String street = "N/A";
-    	    String streetNumber = "N/A";
+						for (JsonElement t : types) {
+							if (t.getAsString().equals("postal_code")) {
+								postal = comp.get("long_name").getAsString();
+								compsFinal = comps;
+								break;
+							}
+						}
+						if (!postal.equals("N/A")) break;
+					}
+					if (!postal.equals("N/A")) break;
+				}
 
-    	    for (JsonElement el : compsFinal) {
-    	        JsonObject comp = el.getAsJsonObject();
-    	        String longName = comp.get("long_name").getAsString();
-    	        JsonArray types = comp.getAsJsonArray("types");
+				if (compsFinal == null) {
+					System.out.println("No address components");
+					return;
+				}
 
-    	        for (JsonElement t : types) {
-    	            String type = t.getAsString();
+				String city = "N/A";
+				String district = "N/A";
+				String region = "N/A";
+				String country = "N/A";
+				String street = "N/A";
+				String streetNumber = "N/A";
 
-    	            if (type.equals("locality") || type.equals("postal_town") || type.equals("sublocality")) city = longName;
-    	            if (type.equals("administrative_area_level_2")) district = longName;
-    	            if (type.equals("administrative_area_level_1")) region = longName;
-    	            if (type.equals("country")) country = longName;
-    	            if (type.equals("route")) street = longName;
-    	            if (type.equals("street_number")) streetNumber = longName;
-    	        }
-    	    }
+				for (JsonElement el : compsFinal) {
+					JsonObject comp = el.getAsJsonObject();
+					String longName = comp.get("long_name").getAsString();
+					JsonArray types = comp.getAsJsonArray("types");
 
-    	    System.out.println("PSC: " + postal);
-    	    System.out.println("Mesto: " + city);
-    	    System.out.println("Okres: " + district);
-    	    System.out.println("Kraj: " + region);
-    	    System.out.println("Stat: " + country);
-    	    System.out.println("Ulica: " + street);
-    	    System.out.println("Cislo: " + streetNumber);
+					for (JsonElement t : types) {
+						String type = t.getAsString();
 
-    	} catch (Exception e) {
-    	    e.printStackTrace();
-    	}
+						if (type.equals("locality") || type.equals("postal_town") || type.equals("sublocality")) city = longName;
+						if (type.equals("administrative_area_level_2")) district = longName;
+						if (type.equals("administrative_area_level_1")) region = longName;
+						if (type.equals("country")) country = longName;
+						if (type.equals("route")) street = longName;
+						if (type.equals("street_number")) streetNumber = longName;
+					}
+				}
 
-    	}
-    }
+				// System.out.println("PSC: " + postal);
+				// System.out.println("Mesto: " + city);
+				// System.out.println("Okres: " + district);
+				// System.out.println("Kraj: " + region);
+				// System.out.println("Stat: " + country);
+				// System.out.println("Ulica: " + street);
+				// System.out.println("Cislo: " + streetNumber);
 
+				if (callback != null) {
+					callback.onPostalCodeReceived(postal);
+				}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+}

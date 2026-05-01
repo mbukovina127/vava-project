@@ -6,35 +6,41 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
+import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.controller.utils.PasswordUtils;
+import org.shippin.database.DBConnector;
+import org.shippin.database.dao.UserDAO;
+import org.shippin.domain.User;
+import org.shippin.domain.enums.Role;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 
+@Log4j2
 public class UserManagementController extends BaseController<Void> implements Initializable {
 
-    public Label statusLabelPassConfirm;
-    public Label statusLabelPass;
-    public Label statusLabelEmail;
-    public Label statusLabelName;
-
-    // ── Roles ─────────────────────────────────────────────────────────────────
-    public enum Role { USER, POWER, ADMIN }
-    public record UserEntry(String fullName, Role role) {}
+    private record UserEntry(int id, String fullName, Role role) {}
 
     // ── FXML — page ───────────────────────────────────────────────────────────
     @FXML private Button addUserButton;
     @FXML private VBox   userListContainer;
 
     // ── FXML — overlay + dialog card ─────────────────────────────────────────
-    @FXML private Region       dimOverlay;
-    @FXML private VBox         dialogCard;
-    @FXML private TextField    nameField;
-    @FXML private TextField    surnameField;
-    @FXML private TextField    emailField;
+    @FXML private Region        dimOverlay;
+    @FXML private VBox          dialogCard;
+    @FXML private TextField     nameField;
+    @FXML private TextField     surnameField;
+    @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField repeatPasswordField;
-    @FXML private Label        statusLabel;
+    @FXML private Label         statusLabel;
+    @FXML private Label         statusLabelName;
+    @FXML private Label         statusLabelEmail;
+    @FXML private Label         statusLabelPass;
+    @FXML private Label         statusLabelPassConfirm;
 
     // ── State ─────────────────────────────────────────────────────────────────
     private final List<UserEntry> users = new ArrayList<>();
@@ -42,12 +48,14 @@ public class UserManagementController extends BaseController<Void> implements In
     // ── Lifecycle ─────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO: replace with real DB/service call
-        users.addAll(List.of(
-                new UserEntry("Roman Mrkva",       Role.USER),
-                new UserEntry("Adam Kaleráb",      Role.POWER),
-                new UserEntry("Ronnie O'Sullivan",  Role.ADMIN)
-        ));
+        try {
+            UserDAO dao = new UserDAO(DBConnector.getInstance().getConnection());
+            for (User u : dao.getAllUsers()) {
+                users.add(new UserEntry(u.getId(), u.getFirstName() + " " + u.getLastName(), u.getRole()));
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load users", e);
+        }
         populateList();
     }
 
@@ -63,21 +71,19 @@ public class UserManagementController extends BaseController<Void> implements In
     }
 
     private HBox buildUserRow(UserEntry user) {
+        // Left side — user name
         Label nameLabel = new Label(user.fullName());
         nameLabel.getStyleClass().add("um-user-name");
-        HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
+        // Right side — role toggles + delete
         ToggleGroup group = new ToggleGroup();
-        ToggleButton btnUser  = makeRoleButton("user",  Role.USER,  user.role(), group);
-        ToggleButton btnPower = makeRoleButton("power", Role.POWER, user.role(), group);
-        ToggleButton btnAdmin = makeRoleButton("admin", Role.ADMIN, user.role(), group);
+        ToggleButton btnUser  = makeRoleButton("user",  Role.USER,       user.role(), group);
+        ToggleButton btnPower = makeRoleButton("power", Role.POWER_USER, user.role(), group);
+        ToggleButton btnAdmin = makeRoleButton("admin", Role.ADMIN,      user.role(), group);
 
         btnUser .getStyleClass().add("um-role-left");
         btnPower.getStyleClass().add("um-role-mid");
         btnAdmin.getStyleClass().add("um-role-right");
-
-        HBox roleBox = new HBox(btnUser, btnPower, btnAdmin);
-        roleBox.setAlignment(Pos.CENTER);
 
         group.selectedToggleProperty().addListener((obs, oldT, newT) -> {
             if (newT == null) { oldT.setSelected(true); return; }
@@ -92,11 +98,26 @@ public class UserManagementController extends BaseController<Void> implements In
         deleteBtn.getStyleClass().add("um-btn-delete");
         deleteBtn.setOnAction(e -> onDeleteUser(user));
 
-        HBox row = new HBox(nameLabel, roleBox, deleteBtn);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.getStyleClass().add("um-row");
-        HBox.setMargin(deleteBtn, new Insets(0, 0, 0, 12));
-        return row;
+        HBox controls = new HBox(12, btnUser, btnPower, btnAdmin, deleteBtn);
+        controls.setAlignment(Pos.CENTER_RIGHT);
+
+        // Flexible spacer pushes controls to the right
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Inner HBox: name | spacer | controls
+        HBox inner = new HBox(nameLabel, spacer, controls);
+        inner.setAlignment(Pos.CENTER_LEFT);
+        inner.getStyleClass().add("um-row");
+        inner.setPadding(new Insets(10, 16, 10, 16));
+
+        // Outer HBox: gray background, full width
+        HBox outer = new HBox(inner);
+        HBox.setHgrow(inner, Priority.ALWAYS);
+        outer.getStyleClass().add("um-row-outer");
+        outer.setMaxWidth(Double.MAX_VALUE);
+
+        return outer;
     }
 
     private ToggleButton makeRoleButton(String text, Role role, Role currentRole, ToggleGroup group) {
@@ -113,16 +134,15 @@ public class UserManagementController extends BaseController<Void> implements In
         btn.getStyleClass().removeAll("um-active-user", "um-active-power", "um-active-admin");
         if ((Role) btn.getUserData() == activeRole) {
             btn.getStyleClass().add(switch (activeRole) {
-                case USER  -> "um-active-user";
-                case POWER -> "um-active-power";
-                case ADMIN -> "um-active-admin";
+                case USER       -> "um-active-user";
+                case POWER_USER -> "um-active-power";
+                case ADMIN      -> "um-active-admin";
             });
         }
     }
 
     // ── Dialog open / close ───────────────────────────────────────────────────
 
-    /** Called by the "Add new user" button — shows the overlay + dialog card. */
     @FXML
     private void onAddUser() {
         clearDialogFields();
@@ -130,16 +150,11 @@ public class UserManagementController extends BaseController<Void> implements In
         dialogCard.setVisible(true);
     }
 
-    /** Cancel button or clicking the dim overlay closes the dialog. */
     @FXML
-    private void onCancel() {
-        hideDialog();
-    }
+    private void onCancel() { hideDialog(); }
 
     @FXML
-    private void onOverlayClicked() {
-        hideDialog();
-    }
+    private void onOverlayClicked() { hideDialog(); }
 
     private void hideDialog() {
         dimOverlay.setVisible(false);
@@ -153,8 +168,14 @@ public class UserManagementController extends BaseController<Void> implements In
         emailField.clear();
         passwordField.clear();
         repeatPasswordField.clear();
-        statusLabel.setText("");
-        statusLabel.getStyleClass().removeAll("dialog-status-error", "dialog-status-ok");
+        if (statusLabel != null) {
+            statusLabel.setText("");
+            statusLabel.getStyleClass().removeAll("dialog-status-error", "dialog-status-ok");
+        }
+        statusLabelName.setText("");
+        statusLabelEmail.setText("");
+        statusLabelPass.setText("");
+        statusLabelPassConfirm.setText("");
     }
 
     // ── Dialog confirm ────────────────────────────────────────────────────────
@@ -167,63 +188,69 @@ public class UserManagementController extends BaseController<Void> implements In
         String password = passwordField.getText();
         String repeat   = repeatPasswordField.getText();
 
-        // SYNTACTICAL VERIFICATION OF INPUT
-        String firstNameError = ErrorHandler.validateFirstName(name);
-        String lastNameError = ErrorHandler.validateLastName(surname);
-        String emailError = ErrorHandler.validateEmail(email);
-        String passwordError = ErrorHandler.validatePassword(password);
-        String confirmPasswordError = ErrorHandler.comparePasswords(password,repeat);
+        String firstNameError       = ErrorHandler.validateFirstName(name);
+        String lastNameError        = ErrorHandler.validateLastName(surname);
+        String emailError           = ErrorHandler.validateEmail(email);
+        String passwordError        = ErrorHandler.validatePassword(password);
+        String confirmPasswordError = ErrorHandler.comparePasswords(password, repeat);
 
-        if
-        (
-                !emailError.isEmpty()
-                        || !passwordError.isEmpty()
-                        || !firstNameError.isEmpty()
-                        || !lastNameError.isEmpty()
-                        || !confirmPasswordError.isEmpty()
-        ) {
-            Set<String> uniqueErrors = new LinkedHashSet<>();
+        if (!emailError.isEmpty() || !passwordError.isEmpty()
+                || !firstNameError.isEmpty() || !lastNameError.isEmpty()
+                || !confirmPasswordError.isEmpty()) {
 
-            if (!firstNameError.isEmpty()) uniqueErrors.add(firstNameError);
-            if (!lastNameError.isEmpty()) uniqueErrors.add(lastNameError);
+            Set<String> nameErrors = new LinkedHashSet<>();
+            if (!firstNameError.isEmpty()) nameErrors.add(firstNameError);
+            if (!lastNameError.isEmpty())  nameErrors.add(lastNameError);
 
-            statusLabelName.setText(String.join("\n", uniqueErrors));
-            statusLabelName.getStyleClass().removeAll("dialog-status-ok");
-            statusLabelName.getStyleClass().add("dialog-status-error");
-
+            statusLabelName.setText(String.join("\n", nameErrors));
             statusLabelEmail.setText(emailError);
-            statusLabelEmail.getStyleClass().removeAll("dialog-status-ok");
-            statusLabelEmail.getStyleClass().add("dialog-status-error");
             statusLabelPass.setText(passwordError);
-            statusLabelPass.getStyleClass().removeAll("dialog-status-ok");
-            statusLabelPass.getStyleClass().add("dialog-status-error");
             statusLabelPassConfirm.setText(confirmPasswordError);
-            statusLabelPassConfirm.getStyleClass().removeAll("dialog-status-ok");
-            statusLabelPassConfirm.getStyleClass().add("dialog-status-error");
-
             return;
         }
-        // TODO: persist to DB / service here
-        users.add(new UserEntry(name + " " + surname, Role.USER));
-        populateList();
-        hideDialog();
+
+        try {
+            UserDAO dao = new UserDAO(DBConnector.getInstance().getConnection());
+
+            if (dao.findByEmail(email) != null) {
+                statusLabelEmail.setText(NavigationUtilities.getBundle().getString("user_management.email_in_use"));
+                return;
+            }
+
+            User newUser = new User(name, surname, email, Role.USER);
+            newUser.setPassword(PasswordUtils.hash(password));
+            dao.insert(newUser);
+
+            User saved = dao.findByEmail(email);
+            users.add(new UserEntry(saved.getId(), name + " " + surname, Role.USER));
+            populateList();
+            hideDialog();
+
+        } catch (SQLException e) {
+            log.error("Add user failed", e);
+            statusLabelEmail.setText(NavigationUtilities.getBundle().getString("user_management.add_failed"));
+        }
     }
-
-//    private void showError(String message) {
-//        statusLabel.setText(message);
-
-//    }
 
     // ── Row actions ───────────────────────────────────────────────────────────
 
     private void onDeleteUser(UserEntry user) {
-        // TODO: confirm + delete from DB
-        users.remove(user);
-        populateList();
+        try {
+            new UserDAO(DBConnector.getInstance().getConnection()).deleteUser(user.id());
+            users.remove(user);
+            log.info("Deleted user. User_id: {}", user.id);
+            populateList();
+        } catch (SQLException e) {
+            log.error("Delete user failed", e);
+        }
     }
 
     private void onRoleChanged(UserEntry user, Role newRole) {
-        // TODO: persist role change to DB / service
-        System.out.printf("Role changed: %s → %s%n", user.fullName(), newRole);
+        try {
+            new UserDAO(DBConnector.getInstance().getConnection()).updateRole(user.id(), newRole);
+            log.info("Changed role of user_id={}, to new role={}", user.id, newRole);
+        } catch (SQLException e) {
+            log.error("Role update failed for user {}", user.id(), e);
+        }
     }
 }

@@ -179,3 +179,7 @@ VALUES (5, 10);
 --getPrice(weight)
 SELECT sp.cost_sp FROM sp_price_list sp WHERE sp.weight_sp = 5;
 ------------------------------------------------------------------------------------------------------
+
+DELETE FROM Parameter_list pl USING Region r
+WHERE pl.region_ID = r.region_ID
+AND r.warehouse_ID = ?;

@@ -25,7 +25,7 @@
 
         <!-- TITLE ROW -->
         <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
-            <Label text="%cost_breakdown.title" styleClass="ce-title" />
+            <Label text="%cost_breakdown.title" styleClass="page-title" />
         </HBox>
 
         <!-- Main breakdown grid, populated dynamically from CostEstimationInput -->

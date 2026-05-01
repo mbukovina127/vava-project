@@ -17,7 +17,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.controller.utils.AuthUtils;
+import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.session.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.shippin.controller.ShipmentDetailController;
+import org.shippin.controller.utils.ShipmentData;
+import org.shippin.controller.utils.CostEstimationInput;
 
 @Log4j2
 public class MenuController implements Initializable {
@@ -60,7 +67,7 @@ public class MenuController implements Initializable {
     // CONTENT
     @FXML private StackPane contentArea;
     private Screens currentScreen;
-    
+
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
             region.setMaxHeight(Region.USE_PREF_SIZE);
@@ -80,6 +87,10 @@ public class MenuController implements Initializable {
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
+        if (!screen.isAccessibleBy(Session.getRole())) {
+            log.warn("Access denied to screen: {} (current role: {})", screen, Session.getRole());
+            return;
+        }
         currentScreen = screen;
         try {
             URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
@@ -112,6 +123,8 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        langButton.setText(NavigationUtilities.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+
         //TODO dat meno usera zo session (get string)
         //UserNameLabel.setText(username);
 
@@ -140,6 +153,12 @@ public class MenuController implements Initializable {
 
             final ImageView finalIcon = icon;
             VBox.setMargin(btn, new Insets(10, 5, 0, 5));
+
+            if (item.screen() != null) {
+                Role required = item.screen().getRequiredRole();
+                if (required != null) AuthUtils.guard(btn, required);
+            }
+
             buttons.add(btn);
 
             btn.setOnAction(e -> {
@@ -166,6 +185,61 @@ public class MenuController implements Initializable {
 
             leftSidebar.getChildren().add(btn);
         }
+
+
+        //..TOTO ZMAZAT OD TADE
+        Button testBtn = new Button();
+        testBtn.getStyleClass().add("sidebar-btn");
+
+        var testStream = getClass().getResourceAsStream("/icons/png-dark/plus_black.png");
+        if (testStream != null) {
+            ImageView testIcon = new ImageView(new Image(testStream));
+            testIcon.setFitWidth(40);
+            testIcon.setFitHeight(40);
+            testIcon.setPreserveRatio(true);
+            testBtn.setGraphic(testIcon);
+        }
+
+        VBox.setMargin(testBtn, new Insets(10, 5, 0, 5));
+
+        testBtn.setOnAction(e -> {
+            System.out.println("TEST BUTTON CLICKED!");
+            try {
+                URL fxmlUrl = getClass().getResource("/views/ShipmentDetail.fxml");
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                loader.setResources(NavigationUtilities.getBundle());
+                Node node = loader.load();
+
+                Object ctrl = loader.getController();
+                if (ctrl instanceof BaseController<?> bc) {
+                    bc.setMenuController(this);
+                }
+
+                if (ctrl instanceof ShipmentDetailController sdc) {
+                    CostEstimationInput est = new CostEstimationInput(
+                            "2026-04-30",           // date
+                            "Bratislava",           // from
+                            "09301",                // destination ← PSČ KOŠICE!
+                            54.46,                  // weight
+                            210,                    // volume
+                            5.0,                    // fuelSurcharge
+                            2.0,                    // toll
+                            "TEST",                 // shipment_opt
+                            "TEST",                 // delivery_opt
+                            List.of()               // options
+                    );
+                    ShipmentData dummyData = new ShipmentData(est, "Test", 321);
+                    sdc.onData(dummyData);
+                }
+
+                contentArea.getChildren().setAll(node);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        leftSidebar.getChildren().add(testBtn);
+        //PO TADE
 
         loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }

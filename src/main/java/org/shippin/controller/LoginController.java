@@ -1,23 +1,24 @@
 package org.shippin.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
-import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.NavigationUtilities;
+import org.shippin.controller.utils.PasswordUtils;
+import org.shippin.database.DBConnector;
+import org.shippin.database.dao.UserDAO;
+import org.shippin.domain.User;
 import org.shippin.dto.Screens;
+import org.shippin.session.Session;
 
-import java.util.List;
+import java.sql.SQLException;
 import java.util.Locale;
 
-
+@Log4j2
 public class LoginController {
 
     @FXML private TextField emailTextField;
@@ -39,7 +40,6 @@ public class LoginController {
     {
         if (passwordShown)
         {
-            // Switch back to hidden
             passwordField.setText(passwordVisible.getText());
             passwordField.setManaged(true);
             passwordField.setVisible(true);
@@ -50,7 +50,6 @@ public class LoginController {
         }
         else
         {
-            // Switch to visible
             passwordVisible.setText(passwordField.getText());
             passwordVisible.setManaged(true);
             passwordVisible.setVisible(true);
@@ -63,30 +62,37 @@ public class LoginController {
 
     @FXML private void onLogin()
     {
-
-        String email = emailTextField.getText();
+        String email    = emailTextField.getText();
         String password = passwordShown ? passwordVisible.getText() : passwordField.getText();
 
-        // SYNTACTICAL VERIFICATION OF INPUT
-        String emailError = ErrorHandler.validateEmail(email);
-        String passwordError = ErrorHandler.validatePassword(password);
+//        String emailError    = ErrorHandler.validateEmail(email);
+//        String passwordError = ErrorHandler.validatePassword(password);
 
-        if (!emailError.isEmpty() || !passwordError.isEmpty())
-        {
-            statusLabelEmail.setText(emailError);
-            statusLabelPass.setText(passwordError);
-            return;
+//        if (!emailError.isEmpty() || !passwordError.isEmpty())
+//        {
+//            statusLabelPass.setText(passwordError);
+//            return;
+//        }
+
+        try {
+            UserDAO userDAO = new UserDAO(DBConnector.getInstance().getConnection());
+            User user = userDAO.authenticate(email, PasswordUtils.hash(password));
+
+            if (user == null) {
+                statusLabelEmail.setText("Invalid email or password");
+                statusLabelPass.setText("");
+                return;
+            }
+
+            Session.login(user);
+            log.info("User logged in: {}", user.getEmail());
+            NavigationUtilities.navigateTo(Screens.HOME);
+
+        } catch (SQLException e) {
+            log.error("Login DB error", e);
+            statusLabelEmail.setText("Login failed, please try again");
         }
-
-        // TODO verification function to DB (email,password)
-        NavigationUtilities.navigateTo(Screens.HOME);
     }
-
-    //TODO implement maybe
-//    @FXML private void onForgotPassword()
-//    {
-//
-//    }
 
     @FXML private void onGoToRegister()
     {

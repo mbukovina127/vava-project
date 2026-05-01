@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/cost_estimation.css"
+<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shippin.controller.CostEstimationController">
 
@@ -26,7 +26,7 @@
 
     <!-- TITLE ROW -->
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
-        <Label fx:id="sectionTitleLabel" styleClass="ce-title" text="%cost_estimation.title" />
+        <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
         <Region HBox.hgrow="ALWAYS" />
         <HBox alignment="CENTER_RIGHT" spacing="8">
             <Label styleClass="ce-date-label" text="%cost_estimation.date" />
@@ -94,7 +94,7 @@
         <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
               GridPane.columnIndex="6" GridPane.rowIndex="0">
             <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
-            <Button fx:id="toScanBtn" styleClass="ce-icon-btn" text="⊕" />
+            <Button fx:id="toScanBtn" onAction="#onTestMap" styleClass="ce-icon-btn" text="⊕" />
         </HBox>
 
         <!-- ── Row 1: status label for destination ── -->
@@ -217,6 +217,7 @@
         <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="%cost_estimation.compute">
             <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
+
     </HBox>
 
 </VBox>

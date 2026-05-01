@@ -139,7 +139,12 @@ public class RegionDAO extends BaseDAO {
      */
     public boolean deleteRegion(int warehouseId, String regionName) throws SQLException {
 
-        String sql = "";//TODO
+        String sql = """
+                DELETE FROM Region r USING Warehouse w
+                WHERE r.warehouse_ID = ?
+                AND r.region_name = ?
+                AND w.warehouse_ID = r.warehouse_ID;
+                """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, warehouseId);
@@ -153,7 +158,9 @@ public class RegionDAO extends BaseDAO {
      */
     public boolean deleteAllRegions(int warehouseId) throws SQLException {
 
-        String sql = "";//TODO
+        String sql = """
+        DELETE FROM Region r WHERE r.warehouse_ID = ?;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, warehouseId);

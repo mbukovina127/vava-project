@@ -13,13 +13,18 @@ application {
     mainClass.set("org.shippin.app.Launcher")
 }
 
+tasks.named<JavaExec>("run") {
+    systemProperties(System.getProperties().mapKeys {
+        it.key.toString() })
+}
+
 repositories {
     mavenCentral()
 }
 
 javafx {
     version = "25.0.2"
-    modules("javafx.controls", "javafx.fxml")
+    modules("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
 }
 
 dependencies {

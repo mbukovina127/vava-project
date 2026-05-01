@@ -209,7 +209,7 @@
         -fx-border-radius: 6;
         -fx-background-radius: 6;
         -fx-cursor: hand;
-        -fx-padding: 11 0 11 0;
+        -fx-padding: 11 5 11 5;
         -fx-pref-height: 42;
     }
 
@@ -549,3 +549,10 @@
 	.content-scroll .corner {
 	    -fx-background-color: transparent;
 	}
+
+    .page-title {
+        -fx-font-family: 'Georgia';
+        -fx-font-size: 26px;
+        -fx-font-weight: bold;
+        -fx-text-fill: #1E1E1E;
+    }

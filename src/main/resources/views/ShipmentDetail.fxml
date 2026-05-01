@@ -31,7 +31,7 @@
                     <!-- ── Title ───────────────────────────── -->
                     <Label fx:id="titleLabel"
                            text="Shipment details #321"
-                           styleClass="sd-title"/>
+                           styleClass="page-title"/>
 
                     <Region prefHeight="18"/>
 
@@ -100,7 +100,9 @@
 
                     <!-- ── Map view ────────────────────────── -->
                     <StackPane fx:id="mapContainer" styleClass="sd-map-container"
-                               prefHeight="200" minHeight="180">
+                               prefHeight="200" minHeight="200" maxHeight="200"
+                               prefWidth="700" maxWidth="700"
+                               alignment="TOP_LEFT">
                         <ImageView fx:id="mapImageView"
                                    fitWidth="700" fitHeight="200"
                                    preserveRatio="false"

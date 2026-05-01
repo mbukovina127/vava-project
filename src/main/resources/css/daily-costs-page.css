@@ -23,16 +23,6 @@
    LEFT COLUMN
    ══════════════════════════════════════════════ */
 
-/* ── Screen title ───────────────────────────── */
-.dcs-title {
-    /* reuses .logo-name font family from shipinn.css */
-    -fx-font-family: 'Georgia';
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1E1E1E;
-    -fx-padding: 0 0 18 0;
-}
-
 /* ── Calendar card container ────────────────── */
 .dcs-calendar-card {
     -fx-background-color: #F7F7F7;

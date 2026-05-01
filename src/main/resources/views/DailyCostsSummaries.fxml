@@ -24,7 +24,8 @@
             <VBox styleClass="dcs-left" spacing="0">
 
                 <!-- Screen title -->
-                <Label styleClass="dcs-title" text="%daily_summaries.title"/>
+                <Label styleClass="page-title" text="%daily_summaries.title"/>
+                <Region prefHeight="18"/>
 
                 <!-- Calendar card -->
                 <VBox styleClass="dcs-calendar-card" spacing="0">

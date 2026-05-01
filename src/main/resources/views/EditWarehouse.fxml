@@ -8,7 +8,7 @@
 <ScrollPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.shippin.controller.EditWarehouseController"
-            stylesheets="@../css/edit-warehouse.css"
+            stylesheets="@../css/shipinn.css, @../css/edit-warehouse.css"
             styleClass="page"
             fitToWidth="true"
             hbarPolicy="NEVER"

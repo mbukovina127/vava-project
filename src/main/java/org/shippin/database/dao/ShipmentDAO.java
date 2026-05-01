@@ -431,7 +431,9 @@ public class ShipmentDAO extends BaseDAO {
     }
 
     public boolean deleteShipment(int shipmentID) throws SQLException {
-        String sql = "";//TODO
+        String sql = """
+        DELETE FROM Shipment WHERE shipment_ID = ?;
+        """;
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, shipmentID);
         return stmt.executeUpdate() > 0;
