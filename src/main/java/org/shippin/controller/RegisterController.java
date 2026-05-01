@@ -24,19 +24,19 @@ import java.util.Set;
 @Log4j2
 public class RegisterController {
 
-    public TextField firstNameField;
-    public TextField lastNameField;
-    public TextField emailField;
-    public PasswordField passwordField;
-    public PasswordField passwordFieldRep;
-    public Label statusLabelPass;
-    public Label statusLabelEmail;
-    public Label statusLabelPassConfirm;
-    public Label statusLabelName;
-    public TextField passwordVisible;
-    public TextField passwordVisibleRep;
-    public Button eyeButton;
-    public Button eyeButtonRep;
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
+    @FXML private TextField emailField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField passwordFieldRep;
+    @FXML private Label statusLabelPass;
+    @FXML private Label statusLabelEmail;
+    @FXML private Label statusLabelPassConfirm;
+    @FXML private Label statusLabelName;
+    @FXML private TextField passwordVisible;
+    @FXML private TextField passwordVisibleRep;
+    @FXML private Button eyeButton;
+    @FXML private Button eyeButtonRep;
 
     private boolean passwordShown    = false;
     private boolean passwordShownRep = false;

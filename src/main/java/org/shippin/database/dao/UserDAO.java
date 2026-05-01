@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO extends BaseDAO {
 
@@ -85,6 +87,33 @@ public class UserDAO extends BaseDAO {
             );
         }
         return null;
+    }
+
+    public List<User> getAllUsers() throws SQLException {
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users ORDER BY user_ID;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        List<User> result = new ArrayList<>();
+        while (rs.next()) {
+            result.add(new User(
+                    rs.getInt("user_ID"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    rs.getString("email"),
+                    null,
+                    Role.values()[rs.getInt("role")],
+                    null
+            ));
+        }
+        return result;
+    }
+
+    public void updateRole(int userId, Role role) throws SQLException {
+        String sql = "UPDATE Users SET role = ? WHERE user_ID = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, role.ordinal());
+        stmt.setInt(2, userId);
+        stmt.executeUpdate();
     }
 
     public boolean deleteUser(int userID) throws SQLException {

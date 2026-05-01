@@ -13,6 +13,11 @@ application {
     mainClass.set("org.shippin.app.Launcher")
 }
 
+tasks.named<JavaExec>("run") {
+    systemProperties(System.getProperties().mapKeys {
+        it.key.toString() })
+}
+
 repositories {
     mavenCentral()
 }
