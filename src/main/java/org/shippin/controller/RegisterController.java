@@ -38,7 +38,7 @@ public class RegisterController {
     @FXML private TextField passwordVisibleRep;
     @FXML private Button eyeButton;
     @FXML private Button eyeButtonRep;
-    public Button langButton;
+    @FXML private Button langButton;
 
     private boolean passwordShown    = false;
 
