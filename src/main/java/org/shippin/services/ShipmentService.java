@@ -55,9 +55,27 @@ public class ShipmentService {
         shipment.setDest_region(destPostalCode);
         shipment.setState(State.NOT_READY);
 
-        shipment.estimateCost(volume, weight, fuelSurchargeCoefficient, toll, baseCost);
+        estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);
 
         return shipment;
+    }
+
+    private void estimateCost(Shipment shipment, float fuelSurchargeCoefficient, float toll, float baseCost) {
+        float cost = baseCost * (fuelSurchargeCoefficient + toll + 1);
+
+        float modifierSum = 0;
+        float defaultCostSum = 0;
+        if (shipment.getServices() != null) {
+            for (AdditionalService s : shipment.getServices()) {
+                modifierSum += s.getCostModifier();
+                defaultCostSum += s.getDefaultCost();
+            }
+        }
+
+        cost = cost * (modifierSum + 1);
+        cost = cost + defaultCostSum;
+
+        shipment.setTotalCost(cost);
     }
 
     private String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
