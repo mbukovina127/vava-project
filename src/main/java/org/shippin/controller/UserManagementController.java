@@ -10,10 +10,9 @@ import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.PasswordUtils;
-import org.shippin.database.DBConnector;
-import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
+import org.shippin.services.UserService;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -49,8 +48,7 @@ public class UserManagementController extends BaseController<Void> implements In
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            UserDAO dao = new UserDAO(DBConnector.getInstance().getConnection());
-            for (User u : dao.getAllUsers()) {
+            for (User u : UserService.getAllUsers()) {
                 users.add(new UserEntry(u.getId(), u.getFirstName() + " " + u.getLastName(), u.getRole()));
             }
         } catch (SQLException e) {
@@ -210,18 +208,16 @@ public class UserManagementController extends BaseController<Void> implements In
         }
 
         try {
-            UserDAO dao = new UserDAO(DBConnector.getInstance().getConnection());
-
-            if (dao.findByEmail(email) != null) {
+            if (UserService.findByEmail(email) != null) {
                 statusLabelEmail.setText(NavigationService.getBundle().getString("user_management.email_in_use"));
                 return;
             }
 
             User newUser = new User(name, surname, email, Role.USER);
             newUser.setPassword(PasswordUtils.hash(password));
-            dao.insert(newUser);
+            UserService.register(newUser);
 
-            User saved = dao.findByEmail(email);
+            User saved = UserService.findByEmail(email);
             users.add(new UserEntry(saved.getId(), name + " " + surname, Role.USER));
             populateList();
             hideDialog();
@@ -236,7 +232,7 @@ public class UserManagementController extends BaseController<Void> implements In
 
     private void onDeleteUser(UserEntry user) {
         try {
-            new UserDAO(DBConnector.getInstance().getConnection()).deleteUser(user.id());
+            UserService.deleteUser(user.id());
             users.remove(user);
             log.info("Deleted user. User_id: {}", user.id);
             populateList();
@@ -247,7 +243,7 @@ public class UserManagementController extends BaseController<Void> implements In
 
     private void onRoleChanged(UserEntry user, Role newRole) {
         try {
-            new UserDAO(DBConnector.getInstance().getConnection()).updateRole(user.id(), newRole);
+            UserService.updateRole(user.id(), newRole);
             log.info("Changed role of user_id={}, to new role={}", user.id, newRole);
         } catch (SQLException e) {
             log.error("Role update failed for user {}", user.id(), e);

@@ -3,7 +3,6 @@ package org.shippin.database.dao;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,8 +11,17 @@ import java.util.List;
 
 public class UserDAO extends BaseDAO {
 
-    public UserDAO(Connection conn) {
-        super(conn);
+    private static UserDAO instance;
+
+    private UserDAO() {
+        super();
+    }
+
+    public static UserDAO getInstance() {
+        if (instance == null) {
+            instance = new UserDAO();
+        }
+        return instance;
     }
 
     public void insert(User user) throws SQLException {

@@ -10,8 +10,17 @@ import java.util.List;
 
 public class ShipmentDAO extends BaseDAO {
 
-    public ShipmentDAO(Connection conn) {
-        super(conn);
+    private static ShipmentDAO instance;
+
+    private ShipmentDAO() {
+        super();
+    }
+
+    public static ShipmentDAO getInstance() {
+        if (instance == null) {
+            instance = new ShipmentDAO();
+        }
+        return instance;
     }
 
     //maps db to object

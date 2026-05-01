@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.domain.AdditionalService;
@@ -25,25 +24,22 @@ import org.shippin.domain.enums.State;
 
 public class ShipmentDaoTest {
 
-    private static DBConnector dbc;
     private static ShipmentDAO shipmentDAO;
 
     @BeforeAll
-    static void connect() throws SQLException {
-        dbc = new DBConnector(new Config());
-        dbc.connect();
-        shipmentDAO = new ShipmentDAO(dbc.getConnection());
+    static void connect() {
+        shipmentDAO = ShipmentDAO.getInstance();
     }
 
     @BeforeEach
     void begin() throws SQLException {
-        dbc.getConnection().setAutoCommit(false);
+        DBConnector.getInstance().getConnection().setAutoCommit(false);
     }
 
     @AfterEach
     void rollback() throws SQLException {
-        dbc.getConnection().rollback();
-        dbc.getConnection().setAutoCommit(true);
+        DBConnector.getInstance().getConnection().rollback();
+        DBConnector.getInstance().getConnection().setAutoCommit(true);
     }
 
     @Test
@@ -99,7 +95,7 @@ public class ShipmentDaoTest {
     }
 
     private int insertServiceDirectly(String name) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Service(service_name, default_cost, cost_modificator)
             VALUES (?, 5, 1)
             RETURNING service_ID
@@ -114,7 +110,7 @@ public class ShipmentDaoTest {
     }
 
     private int insertUserDirectly(String email) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Users(first_name, last_name, password, email, role)
             VALUES ('Shipment', 'Tester', 'pass', ?, 0)
             RETURNING user_ID
@@ -129,7 +125,7 @@ public class ShipmentDaoTest {
     }
 
     private int insertWarehouseDirectly(String name) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Warehouse(storage_region, warehouse_region_name, price_list_file)
             VALUES (100, ?, 'shipment_test.xlsx')
             RETURNING warehouse_ID
@@ -144,7 +140,7 @@ public class ShipmentDaoTest {
     }
 
     private int insertShipmentDirectly(int userId, int warehouseId) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Shipment(user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, status)
             VALUES (?, ?, 1, 5, 100, 'NOT_READY')
             RETURNING shipment_ID
@@ -177,7 +173,7 @@ public class ShipmentDaoTest {
         int shipmentId = insertShipmentDirectly(userId, warehouseId);
         int serviceId = insertServiceDirectly("Fragile Test Service");
 
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Service_list(service_ID, shipment_ID)
             VALUES (?, ?)
         """);

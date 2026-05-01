@@ -2,12 +2,14 @@ package org.shippin.database.dao;
 
 
 import java.sql.Connection;
+import org.shippin.database.DBConnector;
+
 public abstract class BaseDAO {
 
     protected Connection connection;
 
-    public BaseDAO(Connection conn){
-        connection = conn;
+    protected BaseDAO() {
+        this.connection = DBConnector.getInstance().getConnection();
     }
 
 }

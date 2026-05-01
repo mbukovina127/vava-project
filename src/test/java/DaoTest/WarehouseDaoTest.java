@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.BriefWarehouse;
@@ -24,25 +23,22 @@ import org.shippin.domain.Warehouse;
 
 public class WarehouseDaoTest {
 
-    private static DBConnector dbc;
     private static WarehouseDAO warehouseDAO;
 
     @BeforeAll
-    static void connect() throws SQLException {
-        dbc = new DBConnector(new Config());
-        dbc.connect();
-        warehouseDAO = new WarehouseDAO(dbc.getConnection());
+    static void connect() {
+        warehouseDAO = WarehouseDAO.getInstance();
     }
 
     @BeforeEach
     void begin() throws SQLException {
-        dbc.getConnection().setAutoCommit(false);
+        DBConnector.getInstance().getConnection().setAutoCommit(false);
     }
 
     @AfterEach
     void rollback() throws SQLException {
-        if (!dbc.getConnection().getAutoCommit()) {
-            dbc.getConnection().rollback();
+        if (!DBConnector.getInstance().getConnection().getAutoCommit()) {
+            DBConnector.getInstance().getConnection().rollback();
         }
     }
 
@@ -53,7 +49,7 @@ public class WarehouseDaoTest {
                 RETURNING warehouse_ID;
                 """;
 
-        PreparedStatement stmt = dbc.getConnection().prepareStatement(sql);
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement(sql);
         stmt.setInt(1, storageRegion);
         stmt.setString(2, name);
         stmt.setString(3, priceListFile);
@@ -121,7 +117,7 @@ public class WarehouseDaoTest {
 
         warehouseDAO.upsertWarehouse(warehouse);
 
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
                 SELECT warehouse_ID, warehouse_region_name, price_list_file
                 FROM Warehouse
                 WHERE warehouse_ID = ?;

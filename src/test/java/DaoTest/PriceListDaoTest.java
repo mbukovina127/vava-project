@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.PriceListDAO;
 import org.shippin.domain.PriceList;
@@ -20,29 +19,26 @@ import org.shippin.domain.PriceListEntry;
 
 public class PriceListDaoTest {
 
-    private static DBConnector dbc;
     private static PriceListDAO priceListDAO;
 
     @BeforeAll
-    static void connect() throws SQLException {
-        dbc = new DBConnector(new Config());
-        dbc.connect();
-        priceListDAO = new PriceListDAO(dbc.getConnection());
+    static void connect() {
+        priceListDAO = PriceListDAO.getInstance();
     }
 
     @BeforeEach
     void begin() throws SQLException {
-        dbc.getConnection().setAutoCommit(false);
+        DBConnector.getInstance().getConnection().setAutoCommit(false);
     }
 
     @AfterEach
     void rollback() throws SQLException {
-        dbc.getConnection().rollback();
-        dbc.getConnection().setAutoCommit(true);
+        DBConnector.getInstance().getConnection().rollback();
+        DBConnector.getInstance().getConnection().setAutoCommit(true);
     }
 
     private int insertWarehouse(String name) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Warehouse(storage_region, warehouse_region_name, price_list_file)
             VALUES (100, ?, 'test.xlsx')
             RETURNING warehouse_ID
@@ -55,7 +51,7 @@ public class PriceListDaoTest {
     }
 
     private int insertRegion(int warehouseId, String regionName) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Region(warehouse_ID, region_name)
             VALUES (?, ?)
             RETURNING region_ID
@@ -71,7 +67,7 @@ public class PriceListDaoTest {
     }
 
     private void insertPriceItem(int regionId, float weight, float volume, float cost) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Parameter_list(region_ID, weight, volume, cost)
             VALUES (?, ?, ?, ?)
         """);

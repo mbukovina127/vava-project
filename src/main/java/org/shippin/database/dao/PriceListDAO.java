@@ -14,8 +14,17 @@ import java.util.List;
 
 public class PriceListDAO extends BaseDAO {
 
-    public PriceListDAO(Connection conn) {
-        super(conn);
+    private static PriceListDAO instance;
+
+    private PriceListDAO() {
+        super();
+    }
+
+    public static PriceListDAO getInstance() {
+        if (instance == null) {
+            instance = new PriceListDAO();
+        }
+        return instance;
     }
 
     /**

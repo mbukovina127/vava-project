@@ -1,7 +1,6 @@
 package DaoTest;
 
 import org.junit.jupiter.api.*;
-import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
@@ -13,29 +12,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserDaoTest {
 
-    private static DBConnector dbc;
     private static UserDAO userDAO;
 
     @BeforeAll
-    static void connect() throws SQLException {
-        dbc = new DBConnector(new Config());
-        dbc.connect();
-        userDAO = new UserDAO(dbc.getConnection());
+    static void connect() {
+        userDAO = UserDAO.getInstance();
     }
 
     @BeforeEach
     void begin() throws SQLException {
-        dbc.getConnection().setAutoCommit(false);
+        DBConnector.getInstance().getConnection().setAutoCommit(false);
     }
 
     @AfterEach
     void rollback() throws SQLException {
-        dbc.getConnection().rollback();
-        dbc.getConnection().setAutoCommit(true);
+        DBConnector.getInstance().getConnection().rollback();
+        DBConnector.getInstance().getConnection().setAutoCommit(true);
     }
 
     private int getUserIdByEmail(String email) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection()
+        PreparedStatement stmt = DBConnector.getInstance().getConnection()
                 .prepareStatement("SELECT user_ID FROM Users WHERE email = ?");
         stmt.setString(1, email);
 
@@ -50,7 +46,7 @@ public class UserDaoTest {
     void insertStoresUserInDatabase() throws SQLException {
         userDAO.insert(new User("Alice", "Goober", "alice.dao@test.com", Role.USER));
 
-        PreparedStatement stmt = dbc.getConnection()
+        PreparedStatement stmt = DBConnector.getInstance().getConnection()
                 .prepareStatement("SELECT first_name, last_name, email, role FROM Users WHERE email = ?");
         stmt.setString(1, "alice.dao@test.com");
 

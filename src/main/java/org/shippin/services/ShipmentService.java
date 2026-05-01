@@ -6,7 +6,6 @@ import org.shippin.domain.*;
 import org.shippin.domain.enums.State;
 import org.shippin.util.Range;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,18 +13,17 @@ import java.util.List;
 
 public class ShipmentService {
 
-    private final Connection connection;
-
-    public ShipmentService(Connection connection) {
-        this.connection = connection;
+    public ShipmentService() {
     }
 
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
                                    float fuelSurchargeCoefficient, float toll, int weight, int volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
-        WarehouseDAO warehouseDAO = new WarehouseDAO(connection);
-        ShipmentDAO shipmentDAO = new ShipmentDAO(connection);
+
+
+        WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 

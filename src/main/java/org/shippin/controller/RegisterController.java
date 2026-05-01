@@ -10,8 +10,6 @@ import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.PasswordUtils;
-import org.shippin.database.DBConnector;
-import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
@@ -131,18 +129,16 @@ public class RegisterController {
         }
 
         try {
-            UserDAO userDAO = new UserDAO(DBConnector.getInstance().getConnection());
-
-            if (userDAO.findByEmail(email) != null) {
+            if (UserService.findByEmail(email) != null) {
                 statusLabelEmail.setText("Email already in use");
                 return;
             }
 
             User newUser = new User(firstName, lastName, email, Role.USER);
             newUser.setPassword(PasswordUtils.hash(password));
-            userDAO.insert(newUser);
+            UserService.register(newUser);
 
-            UserService.login(userDAO.findByEmail(email));
+            UserService.login(UserService.findByEmail(email));
             NavigationService.navigateTo(Screens.HOME);
 
         } catch (SQLException e) {

@@ -8,8 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WarehouseDAO extends BaseDAO {
-    public WarehouseDAO(Connection conn) {
-        super(conn);
+
+    private static WarehouseDAO instance;
+
+    private WarehouseDAO() {
+        super();
+    }
+
+    public static WarehouseDAO getInstance() {
+        if (instance == null) {
+            instance = new WarehouseDAO();
+        }
+        return instance;
     }
 
     public Warehouse getById(int id) throws SQLException {
@@ -29,8 +39,8 @@ public class WarehouseDAO extends BaseDAO {
         warehouse.setRegionName(rs.getString("price_list_file"));
 
 
-        RegionDAO regionDAO = new RegionDAO(connection);
-        PriceListDAO priceListDAO = new PriceListDAO(connection);
+        RegionDAO regionDAO = RegionDAO.getInstance();
+        PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
         String warehouseName = warehouse.getName();
 
@@ -118,11 +128,10 @@ public class WarehouseDAO extends BaseDAO {
         try {
             connection.setAutoCommit(false);
 
-            WarehouseDAO warehouseDAO = new WarehouseDAO(connection);
-            warehouseDAO.upsertWarehouse(warehouse);
+            upsertWarehouse(warehouse);
 
             if (warehouse.getRegionTable() != null) {
-                RegionDAO regionDAO = new RegionDAO(connection);
+                RegionDAO regionDAO = RegionDAO.getInstance();
 
                 for (var entry : warehouse.getRegionTable().getEntries()) {
                     regionDAO.insertFullRegion(entry, warehouse);
@@ -130,7 +139,7 @@ public class WarehouseDAO extends BaseDAO {
             }
 
             if (warehouse.getPriceList() != null) {
-                PriceListDAO priceListDAO = new PriceListDAO(connection);
+                PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
                 for (var item : warehouse.getPriceList().getEntries()) {
                     priceListDAO.insertPriceListEntry(item, warehouse.getName());
@@ -184,8 +193,8 @@ public class WarehouseDAO extends BaseDAO {
             }
 
             //reinsert regions + pl
-            RegionDAO regionDAO = new RegionDAO(connection);
-            PriceListDAO priceListDAO = new PriceListDAO(connection);
+            RegionDAO regionDAO = RegionDAO.getInstance();
+            PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
             //remove old regions+pl cascade
             regionDAO.deleteAllRegions(w.getId());

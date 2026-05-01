@@ -8,8 +8,6 @@ import javafx.scene.control.Label;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.PasswordUtils;
-import org.shippin.database.DBConnector;
-import org.shippin.database.dao.UserDAO;
 import org.shippin.domain.User;
 import org.shippin.dto.Screens;
 import org.shippin.services.UserService;
@@ -74,8 +72,7 @@ public class LoginController {
 //        }
 
         try {
-            UserDAO userDAO = new UserDAO(DBConnector.getInstance().getConnection());
-            User user = userDAO.authenticate(email, PasswordUtils.hash(password));
+            User user = UserService.authenticate(email, PasswordUtils.hash(password));
 
             if (user == null) {
                 statusLabelEmail.setText("Invalid email or password");

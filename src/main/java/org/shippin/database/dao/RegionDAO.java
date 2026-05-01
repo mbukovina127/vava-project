@@ -10,8 +10,17 @@ import java.util.*;
 
 public class RegionDAO extends BaseDAO {
 
-    public RegionDAO(Connection conn) {
-        super(conn);
+    private static RegionDAO instance;
+
+    private RegionDAO() {
+        super();
+    }
+
+    public static RegionDAO getInstance() {
+        if (instance == null) {
+            instance = new RegionDAO();
+        }
+        return instance;
     }
 
     /**

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.shippin.database.Config;
 import org.shippin.database.DBConnector;
 import org.shippin.database.dao.RegionDAO;
 import org.shippin.domain.RegionTable;
@@ -25,29 +24,26 @@ import org.shippin.util.Range;
 
 public class RegionDaoTest {
 
-    private static DBConnector dbc;
     private static RegionDAO regionDAO;
 
     @BeforeAll
-    static void connect() throws SQLException {
-        dbc = new DBConnector(new Config());
-        dbc.connect();
-        regionDAO = new RegionDAO(dbc.getConnection());
+    static void connect() {
+        regionDAO = RegionDAO.getInstance();
     }
 
     @BeforeEach
     void begin() throws SQLException {
-        dbc.getConnection().setAutoCommit(false);
+        DBConnector.getInstance().getConnection().setAutoCommit(false);
     }
 
     @AfterEach
     void rollback() throws SQLException {
-        dbc.getConnection().rollback();
-        dbc.getConnection().setAutoCommit(true);
+        DBConnector.getInstance().getConnection().rollback();
+        DBConnector.getInstance().getConnection().setAutoCommit(true);
     }
 
     private int insertWarehouse(String name) throws SQLException {
-        PreparedStatement stmt = dbc.getConnection().prepareStatement("""
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
             INSERT INTO Warehouse(storage_region, warehouse_region_name, price_list_file)
             VALUES (100, ?, 'test.xlsx')
             RETURNING warehouse_ID
