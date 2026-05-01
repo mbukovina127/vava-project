@@ -13,6 +13,27 @@ public class RegionDAO extends BaseDAO {
     public RegionDAO(Connection conn) {
         super(conn);
     }
+    
+    public boolean deleteFullRegionTable(int warehouseID) throws SQLException {
+        String deletePSC = """
+                DELETE FROM Postal_code_list
+				WHERE region_ID IN (
+				    SELECT region_ID
+				    FROM Region
+				    WHERE warehouse_ID = ?
+				);""";
+
+        PreparedStatement pcStmt = connection.prepareStatement(deletePSC);
+        pcStmt.setInt(1, warehouseID);
+
+        return pcStmt.executeUpdate() > 0;
+    }
+    
+    public void insertFullRegionTable(RegionTable regionTable, Warehouse warehouse) throws SQLException {
+    	for (var entry : regionTable.getEntries()) {
+    		this.insertFullRegion(entry, warehouse);
+        }
+    }
 
     /**
      * gets all regions for warehouse
