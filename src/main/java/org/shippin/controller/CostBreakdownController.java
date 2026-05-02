@@ -20,7 +20,7 @@ import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.Shipment;
 import org.shippin.services.ShipmentService;
-import org.shippin.session.Session;
+import org.shippin.services.UserService;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -186,7 +186,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         confirmButton.setOnAction(e -> {
             hideModal();
             try {
-                shipmentService.saveShipment(shipment, Session.getUser().getId());
+                shipmentService.saveShipment(shipment, UserService.getUser().getId());
                 loadScreen(SHIPMENT_DETAIL, shipment);
             } catch (SQLException ex) {
                 new Alert(Alert.AlertType.ERROR, "Could not save shipment: " + ex.getMessage()).showAndWait();
