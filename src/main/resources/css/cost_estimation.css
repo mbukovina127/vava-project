@@ -217,3 +217,41 @@
     -fx-letter-spacing: 4;
 }
 
+/* ── Cost Breakdown grid ── */
+.cb-grid {
+    -fx-padding: 16 24 8 0;
+}
+
+/* Ľavý stĺpec — popis */
+.cb-bold {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+
+.cb-italic {
+    -fx-font-style: italic;
+}
+
+/* Pravý stĺpec — hodnota */
+.cb-value {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Separator — tenká hnedá čiara */
+.cb-separator-total {
+    -fx-background-color: #1E1E1E;
+    -fx-pref-height: 2;
+}
+
+/* Celková suma */
+.cb-total {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E1E1E;
+}
+

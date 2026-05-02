@@ -20,7 +20,6 @@
 
     <!-- ToggleGroups defined here, referenced via $ below -->
     <fx:define>
-        <ToggleGroup fx:id="shipmentTypeGroup"/>
         <ToggleGroup fx:id="deliveryTypeGroup"/>
     </fx:define>
 
@@ -33,14 +32,6 @@
 <!--            <TextField fx:id="dateField" prefWidth="130" promptText="%cost_estimation.date.prompt" styleClass="input-field ce-date-field" />-->
 <!--            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />-->
 <!--        </HBox>-->
-    </HBox>
-
-    <!-- TYPE TOGGLES  —  Small Package / Shipment -->
-    <HBox alignment="CENTER_LEFT" spacing="24" styleClass="ce-toggle-row">
-        <RadioButton fx:id="rbSmallPackage" styleClass="ce-toggle" text="%cost_estimation.small_package"
-                     toggleGroup="$shipmentTypeGroup" />
-        <RadioButton fx:id="rbShipment" selected="true" styleClass="ce-toggle" text="%cost_estimation.shipment"
-                     toggleGroup="$shipmentTypeGroup" />
     </HBox>
 
     <!-- FIELDS ROW — restructured as a single GridPane for proper alignment -->
