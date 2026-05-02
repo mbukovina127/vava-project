@@ -260,7 +260,8 @@ public class PriceListDAO extends BaseDAO {
 
         String sql = """
         INSERT INTO Sp_price_list(weight_sp, cost_sp)
-        VALUES (?,?);
+        VALUES (?,?)
+        RETURNING sp_price_list_id;
         """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);

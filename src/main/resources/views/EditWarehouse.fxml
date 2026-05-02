@@ -25,12 +25,12 @@
         <HBox spacing="30" alignment="CENTER_LEFT" styleClass="top-row">
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Label text="%edit_warehouse.document_title"/>
-                <TextField text="ZBS - BA" prefWidth="220"/>
+                <TextField fx:id="documentTitleField" prefWidth="220"/>
             </HBox>
             <Region HBox.hgrow="ALWAYS"/>
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Label text="%edit_warehouse.pickup_place"/>
-                <TextField text="Sklad BA" prefWidth="280"/>
+                <TextField fx:id="pickupPlaceField" prefWidth="280"/>
             </HBox>
         </HBox>
 
@@ -85,7 +85,7 @@
 
         <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
             <Button text="%edit_warehouse.cancel" styleClass="tertiary-button" onAction="#handleLeave"/>
-            <Button text="%edit_warehouse.save" styleClass="primary-button" onAction="#handleLeave"/>
+            <Button text="%edit_warehouse.save" styleClass="primary-button" onAction="#handleSave"/>
         </HBox>
 
     </VBox>

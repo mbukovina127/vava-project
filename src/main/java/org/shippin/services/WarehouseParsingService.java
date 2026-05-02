@@ -1,18 +1,22 @@
 package org.shippin.services;
 
+import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Table;
+import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
 import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
 import org.shippin.infrastructure.xml.PriceListXmlParser;
 import org.shippin.infrastructure.xml.RegionTableXmlParser;
 import org.shippin.infrastructure.xml.SmallPriceListXmlParser;
+import org.shippin.util.WarehouseConvertor;
 import org.shippin.util.io.TextFileHandler;
 
 import java.io.File;
@@ -219,5 +223,15 @@ public class WarehouseParsingService {
         }
 
         return name.substring(dotIndex + 1).toLowerCase();
+    }
+    
+    public void parseTable(BriefWarehouse briefWarehouse, String tableType, File file) {
+    	Warehouse warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
+    	WarehouseFormatted warehouseFormatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
+
+    	switch(tableType) {
+    	case "Price List" -> this.writePriceList(file, warehouseFormatted.getPriceList());
+    	case "Region Table" -> this.writeRegionTable(file, warehouseFormatted.getRegionTable());
+    	}
     }
 }
