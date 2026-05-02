@@ -64,7 +64,6 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
-
     @Override
     protected void onData(Shipment data) {
         if (data == null) {
