@@ -6,11 +6,17 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.shippin.dto.Screens;
+import org.shippin.services.NavigationService;
+import org.shippin.services.ShipmentService;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
@@ -22,7 +28,9 @@ import java.util.*;
  *  - Highlight the selected / today date
  *  - Populate the "most recent summaries" list on the right
  */
-public class DailyCostsSummariesController implements Initializable {
+public class DailyCostsSummariesController
+        extends BaseController<Void>
+        implements Initializable {
 
     // ── FXML injections ──────────────────────────────────────────────────────
 
@@ -48,18 +56,36 @@ public class DailyCostsSummariesController implements Initializable {
     }};
 
     // ── Initializable ─────────────────────────────────────────────────────────
+    private ShipmentService shipmentService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        shipmentService = new ShipmentService();
+
         selectedDate    = LocalDate.now();
         currentYearMonth = YearMonth.now();
 
         initMonthCombo();
         initYearCombo();
         buildCalendar();
-        buildSummaryList();
+        loadSummaryData();
+        //buildSummaryList();
     }
-
+/*
+    @Override
+    protected Class<LocalDate> getDataType() {
+        return LocalDate.class;
+    }
+    @Override
+    protected void onData(LocalDate date) {
+        if (date != null) {
+            selectedDate = date;
+            currentYearMonth = YearMonth.from(date);
+            syncCombos();
+            buildCalendar();
+            loadSummaryData();
+        }
+    }*/
     // ── ComboBox setup ────────────────────────────────────────────────────────
 
     private void initMonthCombo() {
@@ -197,8 +223,14 @@ public class DailyCostsSummariesController implements Initializable {
 
     private void onDaySelected(LocalDate date) {
         selectedDate = date;
-        buildCalendar();  // re-render to move the selection highlight
-        // TODO: load cost details for this date and display them
+        buildCalendar();
+
+        try {
+            loadScreen(Screens.DAILY_COST_SUM, selectedDate);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // ── Summary list builder ──────────────────────────────────────────────────
@@ -207,12 +239,25 @@ public class DailyCostsSummariesController implements Initializable {
      * Builds the right-hand "most recent summaries" list.
      * Replace costData with a real service/repository call.
      */
-    private void buildSummaryList() {
+    private void loadSummaryData() {
         summaryList.getChildren().clear();
 
-        for (Map.Entry<String, Integer> entry : costData.entrySet()) {
-            HBox row = buildSummaryRow(entry.getKey(), entry.getValue());
-            summaryList.getChildren().add(row);
+        try {
+            Map<LocalDate, Double> data =
+                    shipmentService.getDailySummaries(currentYearMonth);
+
+            data.entrySet().stream()
+                    .sorted(Map.Entry.<LocalDate, Double>comparingByKey().reversed())
+                    .forEach(entry -> {
+                        String dateStr = entry.getKey()
+                                .format(DateTimeFormatter.ofPattern("d.M.yyyy"));
+
+                        HBox row = buildSummaryRow(dateStr, entry.getValue().intValue());
+                        summaryList.getChildren().add(row);
+                    });
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -237,16 +282,23 @@ public class DailyCostsSummariesController implements Initializable {
         row.setMaxWidth(Double.MAX_VALUE);
 
         // Click → open detail for this date
-        row.setOnMouseClicked(e -> onSummaryRowClicked(dateStr));
+        row.setOnMouseClicked(e -> {
+            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
+            onSummaryRowClicked(date);
+        });
 
         return row;
     }
 
-    private void onSummaryRowClicked(String dateStr) {
-        // TODO: navigate to / open the daily detail view for dateStr
-        System.out.println("Opening summary for: " + dateStr);
-    }
+    private void onSummaryRowClicked(LocalDate date) {
+        selectedDate = date;
 
+        try {
+            loadScreen(Screens.DAILY_COST_SUM, date);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // ── Public API (call from parent controller if needed) ───────────────────
 
     /**
@@ -256,7 +308,8 @@ public class DailyCostsSummariesController implements Initializable {
     public void loadSummaries(Map<String, Integer> data) {
         costData.clear();
         costData.putAll(data);
-        buildSummaryList();
+        //buildSummaryList();
+        loadSummaryData();
     }
 
     /**

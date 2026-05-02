@@ -18,11 +18,6 @@
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shippin.controller.CostEstimationController">
 
-    <!-- ToggleGroups defined here, referenced via $ below -->
-    <fx:define>
-        <ToggleGroup fx:id="deliveryTypeGroup"/>
-    </fx:define>
-
     <!-- TITLE ROW -->
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
         <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
@@ -134,75 +129,27 @@
 
     </GridPane>
 
-    <!-- ADDITIONAL FEES TOGGLE -->
-    <HBox alignment="CENTER_LEFT" styleClass="ce-fees-header-row">
-        <CheckBox fx:id="chkAdditionalFees" selected="true" styleClass="ce-toggle" text="%cost_estimation.additional_fees" />
-        <VBox.margin><Insets /></VBox.margin>
-        <padding><Insets top="10.0" /></padding>
-    </HBox>
+    <!-- ADDITIONAL FEES — dynamic sections -->
+    <VBox styleClass="ce-fees-body">
+        <padding><Insets top="80.0" /></padding>
 
-    <!-- ADDITIONAL FEES  —  columns -->
-    <HBox alignment="TOP_LEFT" spacing="60" styleClass="ce-fees-body">
-        <padding><Insets top="20.0" /></padding>
-
-        <!-- Left: Obstarávané služby -->
-        <VBox spacing="10">
-            <Label styleClass="ce-fees-group-label" text="%cost_estimation.procured_services" />
-            <CheckBox fx:id="chkADR"         styleClass="ce-check" text="%cost_estimation.adr" />
-            <CheckBox fx:id="chkDobierka"    styleClass="ce-check" text="%cost_estimation.cod" />
-            <CheckBox fx:id="chkPripoistenie" styleClass="ce-check" text="%cost_estimation.insurance" />
-            <CheckBox fx:id="chkVratenieEUP" styleClass="ce-check" text="%cost_estimation.eup_return" />
+        <!-- Produkty pre ZBS — radio buttons, populated from DB -->
+        <VBox fx:id="productsContainer" spacing="10">
+            <padding><Insets bottom="16.0" /></padding>
         </VBox>
 
-        <!-- Middle: Produkty pre ZBS -->
-        <VBox spacing="10">
-            <Label styleClass="ce-fees-group-label" text="%cost_estimation.zbs_products" />
-            <GridPane hgap="40" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints />
-                    <ColumnConstraints />
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints />
-                    <RowConstraints />
-                    <RowConstraints />
-                </rowConstraints>
-                <CheckBox fx:id="chkPremium"   styleClass="ce-check" text="Premium"    GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <CheckBox fx:id="chkFIX"       styleClass="ce-check" text="FIX"        GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <CheckBox fx:id="chkPremium10" styleClass="ce-check" text="Premium 10" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <CheckBox fx:id="chkFIX10"     styleClass="ce-check" text="FIX 10"     GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <CheckBox fx:id="chkPremium13" styleClass="ce-check" text="Premium 13" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <CheckBox fx:id="chkFIX13"     styleClass="ce-check" text="FIX 13"     GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            </GridPane>
+        <!-- Obstarávané služby — checkboxes, populated from DB -->
+        <VBox fx:id="servicesContainer" spacing="10">
+            <padding><Insets bottom="16.0" /></padding>
         </VBox>
 
-        <!-- Right: Typ Doručenia -->
-        <HBox spacing="24">
-            <VBox spacing="10">
-                <Label styleClass="ce-fees-group-label" text="%cost_estimation.delivery_type" />
-                <RadioButton fx:id="rbExpress" text="%cost_estimation.express" mnemonicParsing="false"
-                             toggleGroup="$deliveryTypeGroup" selected="true"
-                             styleClass="ce-toggle" />
-                <RadioButton fx:id="rbClassic" text="%cost_estimation.classic" mnemonicParsing="false"
-                             toggleGroup="$deliveryTypeGroup"
-                             styleClass="ce-toggle" />
-                <RadioButton fx:id="rbEconomy" text="%cost_estimation.economy" mnemonicParsing="false"
-                             toggleGroup="$deliveryTypeGroup"
-                             styleClass="ce-toggle" />
-            </VBox>
-            <VBox spacing="10">
-                <Label styleClass="ce-sub-label" text="%cost_estimation.estimated_time" />
-                <Label styleClass="ce-sub-label" text="%cost_estimation.time_1_3" />
-                <Label styleClass="ce-sub-label" text="%cost_estimation.time_3_7" />
-                <Label styleClass="ce-sub-label" text="%cost_estimation.time_7_plus" />
-            </VBox>
-        </HBox>
+        <!-- Príplatky — checkboxes, populated from DB -->
+        <VBox fx:id="paymentsContainer" spacing="10" />
 
-    </HBox>
+    </VBox>
 
     <!-- BOTTOM ROW -->
     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-bottom-row">
-        <Label styleClass="ce-dots" text="• • •" />
         <Region HBox.hgrow="ALWAYS" />
         <Button fx:id="resetButton" onAction="#onReset" styleClass="ce-btn-reset" text="%cost_estimation.reset" />
         <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="%cost_estimation.compute">

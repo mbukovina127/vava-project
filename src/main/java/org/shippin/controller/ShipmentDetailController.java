@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -65,7 +66,6 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
-
     @Override
     protected void onData(Shipment data) {
         if (data == null) {

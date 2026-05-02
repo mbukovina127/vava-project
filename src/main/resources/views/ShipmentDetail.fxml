@@ -65,7 +65,7 @@
                     <Region prefHeight="12" />
                <ScrollPane hbarPolicy="NEVER" maxHeight="100.0" styleClass="sd-history-container" stylesheets="@../css/shipment-detail.css">
                   <content>
-      
+
                                 <!-- ── History grid ────────────────────── -->
                           <GridPane fx:id="historyGrid" hgap="0" styleClass="sd-history-grid" vgap="4">
                               <columnConstraints>

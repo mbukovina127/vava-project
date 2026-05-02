@@ -92,7 +92,8 @@ CREATE TABLE Service (
     service_name TEXT NOT NULL,
     default_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
     cost_modificator NUMERIC(10,2) NOT NULL DEFAULT 1,
-    description TEXT
+    description TEXT,
+    service_type TEXT NOT NULL CHECK (service_type IN ('SERVICES', 'PRODUCTS', 'ADDITIONAL_PAYMENTS'))
 );
 
 CREATE TABLE Service_list (
