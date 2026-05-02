@@ -33,7 +33,6 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
-    -fx-pref-width: 100;
 }
 
 /* Route string */
@@ -188,7 +187,7 @@
 
 /* ── History grid cells ──────────────────────────────────────── */
 .sd-history-grid {
-    -fx-padding: 0;
+    -fx-padding: 2 10;
     -fx-hgap: 0;
     -fx-vgap: 6;
 }
@@ -218,6 +217,12 @@
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
     -fx-padding: 4 0 4 0;
+}
+
+.sd-history-container {
+    -fx-background-color: #EEEEEE;
+    -fx-background-radius: 8;
+    -fx-padding: 5;
 }
 
 /* ══════════════════════════════════════════════════════════════

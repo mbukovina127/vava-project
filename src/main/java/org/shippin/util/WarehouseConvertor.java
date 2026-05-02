@@ -44,7 +44,7 @@ public class WarehouseConvertor {
         return formatted;
     }
 
-    private static PriceList convertPriceList(PriceListFormatted formatted) {
+    public static PriceList convertPriceList(PriceListFormatted formatted) {
         PriceList priceList = new PriceList();
         List<PriceListEntry> entries = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class WarehouseConvertor {
         return priceList;
     }
 
-    private static RegionTable convertRegionTable(RegionTableFormatted formatted) {
+    public static RegionTable convertRegionTable(RegionTableFormatted formatted) {
         RegionTable regionTable = new RegionTable();
         List<RegionTableEntry> entries = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class WarehouseConvertor {
         return regionTable;
     }
 
-    private static PriceListFormatted convertPriceListFormatted(PriceList priceList) {
+    public static PriceListFormatted convertPriceListFormatted(PriceList priceList) {
         PriceListFormatted formatted = new PriceListFormatted();
 
         LinkedHashMap<String, PriceListRow> rowMap = new LinkedHashMap<>();
@@ -103,7 +103,7 @@ public class WarehouseConvertor {
         return formatted;
     }
 
-    private static RegionTableFormatted convertRegionTableFormatted(RegionTable regionTable) {
+    public static RegionTableFormatted convertRegionTableFormatted(RegionTable regionTable) {
         RegionTableFormatted formatted = new RegionTableFormatted();
 
         for (RegionTableEntry entry : regionTable.getEntries()) {

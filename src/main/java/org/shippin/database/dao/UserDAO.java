@@ -1,5 +1,6 @@
 package org.shippin.database.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
 
@@ -9,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class UserDAO extends BaseDAO {
 
     private static UserDAO instance;
@@ -35,6 +37,7 @@ public class UserDAO extends BaseDAO {
         stmt.setString(4, user.getPassword());
         stmt.setInt(5, user.getRole().ordinal());
         stmt.executeUpdate();
+        log.info("Inserted user: {}", user.getEmail());
     }
 
     public User GetUser(int id) throws SQLException {
@@ -122,6 +125,7 @@ public class UserDAO extends BaseDAO {
         stmt.setInt(1, role.ordinal());
         stmt.setInt(2, userId);
         stmt.executeUpdate();
+        log.info("Updated role for user #{} -> {}", userId, role);
     }
 
     public boolean deleteUser(int userID) throws SQLException {
@@ -134,7 +138,8 @@ public class UserDAO extends BaseDAO {
         stmt.setInt(1, userID);
 
         int affectedRows = stmt.executeUpdate();
-
+        if (affectedRows > 0) log.info("Deleted user #{}", userID);
+        else log.warn("deleteUser: user #{} not found", userID);
         return affectedRows > 0;
     }
 
