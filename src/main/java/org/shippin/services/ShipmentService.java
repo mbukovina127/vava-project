@@ -8,21 +8,22 @@ import org.shippin.domain.enums.State;
 import org.shippin.util.Range;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ShipmentService {
 
-    public ShipmentService() {
-    }
+    private final ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+    public ShipmentDAO getDao() { return shipmentDAO; }
 
     public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
-        return ShipmentDAO.getInstance().getShipmentHistoryByShipmentID(shipmentId);
+        return shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
     }
-
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
-        ShipmentDAO.getInstance().insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
         return shipment;
     }
 
@@ -33,7 +34,6 @@ public class ShipmentService {
 
 
         WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
-        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 
@@ -60,7 +60,7 @@ public class ShipmentService {
         shipment.setServices(new ArrayList<>(selected));
         shipment.setWarehouse(new BriefWarehouse(
                 warehouse.getId(), warehouse.getName(), warehouse.getRegionName()));
-        shipment.setCreated_at(deliveryDate);
+        shipment.setCreated_at(new Timestamp(deliveryDate.getTime()));
         shipment.setDest_region(destPostalCode);
         shipment.setWeight(weight);
         shipment.setVolume(volume);
@@ -141,5 +141,27 @@ public class ShipmentService {
         }
 
         return bestCost;
+    }
+
+    public Shipment updateShipmentState(Shipment shipment, State newState) throws SQLException {
+        shipmentDAO.setAutoCommit(false);
+        try {
+            shipment.setState(newState);
+            shipmentDAO.updateShipmentStatus(shipment.getShipment_id(), newState);
+
+            ShipmentHistory entry = new ShipmentHistory();
+            entry.setShipment_id(shipment.getShipment_id());
+            entry.setState(newState);
+            entry.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            shipmentDAO.addShipmentHistory(entry);
+
+            shipmentDAO.commit();
+            return shipment;
+        } catch (SQLException e) {
+            shipmentDAO.rollback();
+            throw e;
+        } finally {
+            shipmentDAO.setAutoCommit(true);
+        }
     }
 }
