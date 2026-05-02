@@ -23,7 +23,7 @@ repositories {
 }
 
 javafx {
-    version = "25.0.2"
+    version = "26"
     modules("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
 }
 

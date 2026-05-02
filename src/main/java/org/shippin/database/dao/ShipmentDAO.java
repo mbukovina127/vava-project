@@ -62,8 +62,11 @@ public class ShipmentDAO extends BaseDAO {
     public Shipment getShipmentById(int shipmentID) throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
-                           s.created_at, s.dest_region, s.user_ID
-                    FROM Shipment s WHERE s.shipment_ID = ?;
+                           s.created_at, s.dest_region, s.user_ID,
+                           w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region
+                    FROM Shipment s
+                    JOIN Warehouse w ON s.warehouse_ID = w.warehouse_ID
+                    WHERE s.shipment_ID = ?;
                     """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -71,7 +74,12 @@ public class ShipmentDAO extends BaseDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            return mapShipment(rs);
+            Shipment sh = mapShipment(rs);
+            sh.setWarehouse(new BriefWarehouse(
+                    rs.getInt("wh_id"),
+                    rs.getString("wh_name"),
+                    rs.getString("wh_region")));
+            return sh;
         }
 
         return null;

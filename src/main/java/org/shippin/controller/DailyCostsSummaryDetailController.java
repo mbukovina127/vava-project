@@ -11,6 +11,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.State;
+import org.shippin.dto.Screens;
 import org.shippin.services.ShipmentService;
 
 import java.net.URL;
@@ -127,6 +128,8 @@ public class DailyCostsSummaryDetailController
         HBox row = new HBox(16);
         row.getStyleClass().add("dcd-row");
         row.setAlignment(Pos.CENTER_LEFT);
+        row.setCursor(javafx.scene.Cursor.HAND);
+        row.setOnMouseClicked(e -> handleEdit(entry));
 
         // ── Left: ID + time ───────────────────────────────────────────
         VBox leftBox = new VBox(2);
@@ -193,8 +196,12 @@ public class DailyCostsSummaryDetailController
 
     /** Edit action for a shipment row. */
     private void handleEdit(ShipmentEntry entry) {
-        // TODO: open Edit Shipment dialog pre-filled with entry data.
-        System.out.println("Edit: " + entry);
+        try {
+            Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
+            loadScreen(Screens.SHIPMENT_DETAIL, shipment);
+        } catch (SQLException | java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /** Delete action for a shipment row. */
