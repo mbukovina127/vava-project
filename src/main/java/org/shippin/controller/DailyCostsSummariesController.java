@@ -282,16 +282,23 @@ public class DailyCostsSummariesController
         row.setMaxWidth(Double.MAX_VALUE);
 
         // Click → open detail for this date
-        row.setOnMouseClicked(e -> onSummaryRowClicked(dateStr));
+        row.setOnMouseClicked(e -> {
+            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("d.M.yyyy"));
+            onSummaryRowClicked(date);
+        });
 
         return row;
     }
 
-    private void onSummaryRowClicked(String dateStr) {
-        // TODO: navigate to / open the daily detail view for dateStr
-        System.out.println("Opening summary for: " + dateStr);
-    }
+    private void onSummaryRowClicked(LocalDate date) {
+        selectedDate = date;
 
+        try {
+            loadScreen(Screens.DAILY_COST_SUM, date);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // ── Public API (call from parent controller if needed) ───────────────────
 
     /**
