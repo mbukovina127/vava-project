@@ -12,31 +12,28 @@
 
 <!-- Wrap everything in a StackPane -->
 
-<?import javafx.scene.image.Image?>
-<StackPane maxHeight="820" maxWidth="1440" minHeight="820" minWidth="1440" prefHeight="820" prefWidth="1440" stylesheets="@../css/menu.css, @../css/shipinn.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.MenuController">
+<StackPane maxHeight="820" maxWidth="1440" minHeight="820" minWidth="1440" prefHeight="820" prefWidth="1440" stylesheets="@../css/menu-page.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.MenuController">
 
 	<BorderPane styleClass="menu-root">
 
 	    <top>
 	        <HBox fx:id="topNavBar" alignment="CENTER_LEFT" prefHeight="100" prefWidth="1440" styleClass="nav-bar">
-				<!--LEFT TOP BAR-->
+
 	            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
-					<ImageView fitHeight="40" preserveRatio="true">
-						<Image url="@../icons/png-dark/logoShippin_black.png"/>
-					</ImageView>
+	                <ImageView fx:id="brandLogoImageView" fitHeight="55" fitWidth="55" preserveRatio="true" />
 	                <Label fx:id="appNameLabel" styleClass="nav-app-name" text="%menu.logo" />
 	            </HBox>
-				<!--RIGHT TOP BAR-->
+
 	            <HBox alignment="CENTER_RIGHT" spacing="14">
-					<Button fx:id="langButton" onAction="#onToggleLanguage" styleClass="profile-btn" text="SK" />
-					<Label fx:id="UserNameLabel" styleClass="nav-date"/>
+	                <Label fx:id="UserNameLabel" styleClass="nav-date" text="" />
+	                <Button fx:id="langButton" onAction="#onToggleLanguage" styleClass="profile-btn" text="SK" />
 	                <Button fx:id="profileButton" onAction="#onProfileClicked" styleClass="profile-btn" />
 	            </HBox>
 	        </HBox>
 	    </top>
 
 	    <left>
-	        <VBox fx:id="leftSidebar" alignment="TOP_CENTER" prefHeight="720" prefWidth="100" styleClass="sidebar">
+	        <VBox fx:id="leftSidebar" alignment="CENTER" prefHeight="720" prefWidth="100" spacing="0" styleClass="sidebar">
 
 	            <!--This is where the menu is loaded-->
 
@@ -44,19 +41,21 @@
 	    </left>
 
 	    <center>
-			<ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" styleClass="content-scroll">
-				<StackPane fx:id="contentArea" maxHeight="Infinity" maxWidth="Infinity" styleClass="content-area">
-					<padding>
-						<Insets bottom="24" left="24" right="24" top="24"/>
-					</padding>
-				</StackPane>
-			</ScrollPane>
+	        <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" styleClass="content-scroll">
+	            <content>
+	                <StackPane fx:id="contentArea" maxHeight="Infinity" maxWidth="Infinity" styleClass="content-area">
+	                    <padding>
+	                        <Insets bottom="24" left="24" right="24" top="24" />
+	                    </padding>
+	                </StackPane>
+	            </content>
+	        </ScrollPane>
 	    </center>
 
 	</BorderPane>
 
     <!-- Overlay is now a sibling of BorderPane, so it stacks on top -->
-    <StackPane fx:id="modalOverlay" managed="false" styleClass="modal-overlay" visible="false" />
+    <StackPane fx:id="modalOverlay" managed="false" pickOnBounds="true" styleClass="modal-overlay" visible="false" />
 
     <VBox fx:id="modalContentHolder" alignment="CENTER" managed="false" maxWidth="620.0" visible="false" />
 

@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.services.NavigationService;
 
-
 @Log4j2
 public class Main extends Application {
 

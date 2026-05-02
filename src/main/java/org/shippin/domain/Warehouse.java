@@ -13,10 +13,4 @@ import lombok.Setter;
 public class Warehouse extends CoreWarehouseInfo{
     private PriceList priceList;
     private RegionTable regionTable;
-    
-    public Warehouse(String name, String regionName, PriceList priceList, RegionTable regionTable) {
-    	super(-1, name, regionName);
-    	this.priceList = priceList;
-    	this.regionTable = regionTable;
-    }
 }

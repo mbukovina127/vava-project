@@ -18,7 +18,7 @@
 
     <!-- ── Main content ──────────────────────────────────────────────────── -->
     <VBox
-            styleClass="screen-root"
+            styleClass="ce-root"
             stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
             prefWidth="1340"
     >
@@ -48,7 +48,7 @@
                     fx:id="deleteButton"
                     text="%cost_breakdown.delete"
                     onAction="#onDelete"
-                    styleClass="secondary-button" />
+                    styleClass="cb-btn-delete" />
 
             <Region HBox.hgrow="ALWAYS" />
 
@@ -56,7 +56,7 @@
                     fx:id="printPdfButton"
                     text="%cost_breakdown.print_pdf"
                     onAction="#onPrintPdf"
-                    styleClass="tertiary-button"
+                    styleClass="ce-btn-reset"
                     prefWidth="160"
                     prefHeight="46" />
 
@@ -64,7 +64,7 @@
                     fx:id="saveButton"
                     text="%cost_breakdown.save"
                     onAction="#onSave"
-                    styleClass="primary-button"
+                    styleClass="ce-btn-compute"
                     prefWidth="200"
                     prefHeight="46">
                 <HBox.margin><Insets left="16" /></HBox.margin>

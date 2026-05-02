@@ -90,8 +90,7 @@
                                         mnemonicParsing="false"
                                         prefWidth="335.0"
                                         prefHeight="42.0"
-                                        styleClass="secondary-button"
-                                        onAction="#handleReplaceSmallPriceList">
+                                        styleClass="secondary-button">
                                     <graphic>
                                         <ImageView fx:id="changePriceListIcon" fitWidth="18.0" fitHeight="18.0" preserveRatio="true"/>
                                     </graphic>

@@ -306,7 +306,9 @@ public class PriceListDAO extends BaseDAO {
         return stmt.executeUpdate() >= 0;
     }
 
-    
+
+
+
     public SmallPriceList getSmallPriceList() throws SQLException {
         List<SmallPriceListEntry> entries = new ArrayList<>();
 
@@ -356,6 +358,26 @@ public class PriceListDAO extends BaseDAO {
 
         return null;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

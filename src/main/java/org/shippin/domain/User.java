@@ -24,9 +24,5 @@ public class User {
         this.role = role;
     }
 
-    public String getFullUserName() {
-        return this.firstName + " " + this.lastName;
-    }
-
 }
 

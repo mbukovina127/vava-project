@@ -9,15 +9,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class UserService {
 
-    private static final Logger log = Logger.getLogger(UserService.class.getName());
     private static User currentUser;
 
-    public static void login(User user) { currentUser = user; log.info("User logged in: " + user.getEmail()); }
-    public static void logout()         { log.info("User logged out: " + (currentUser != null ? currentUser.getEmail() : "none")); currentUser = null; }
+    public static void login(User user) { currentUser = user; }
+    public static void logout()         { currentUser = null; }
     public static User getUser()        { return currentUser; }
     public static Role getRole()        { return currentUser != null ? currentUser.getRole() : null; }
 
@@ -39,7 +37,7 @@ public class UserService {
 
     public static User authenticate(String email, String plainPassword) throws SQLException {
         User user = UserDAO.getInstance().authenticate(email, hash(plainPassword, email));
-        if (user != null) login(user); else log.warning("Failed login attempt for: " + email);
+        if (user != null) login(user);
         return user;
     }
 
@@ -50,7 +48,6 @@ public class UserService {
     public static void register(User user, String plainPassword) throws SQLException {
         user.setPassword(hash(plainPassword, user.getEmail()));
         UserDAO.getInstance().insert(user);
-        log.info("Registered new user: " + user.getEmail());
     }
 
     public static List<User> getAllUsers() throws SQLException {
@@ -58,14 +55,11 @@ public class UserService {
     }
 
     public static boolean deleteUser(int userId) throws SQLException {
-        boolean deleted = UserDAO.getInstance().deleteUser(userId);
-        if (deleted) log.info("Deleted user: " + userId);
-        return deleted;
+        return UserDAO.getInstance().deleteUser(userId);
     }
 
     public static void updateRole(int userId, Role role) throws SQLException {
         UserDAO.getInstance().updateRole(userId, role);
-        log.info("Updated role for user " + userId + " to " + role);
     }
 
 }

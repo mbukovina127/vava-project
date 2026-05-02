@@ -4,7 +4,6 @@ import org.shippin.dto.Screens;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public abstract class BaseController<T> implements Navigatable {
 
@@ -21,7 +20,7 @@ public abstract class BaseController<T> implements Navigatable {
     // prijem dat na aktualnom screen z predosleho
     // kontrola spravnej generickosti
     @Override
-    public final void onNavigatedTo(Object data) throws SQLException {
+    public final void onNavigatedTo(Object data) {
         Class<T> dataType = getDataType();
 
         if (data == null) {
@@ -47,7 +46,7 @@ public abstract class BaseController<T> implements Navigatable {
     }
 
     // child controllery overridujú toto (receive data from last screen)
-    protected void onData(T data) throws SQLException {}
+    protected void onData(T data) {}
 
     // child controllery volajú toto (send data to next screen)
     protected void loadScreen(Screens screen) throws IOException {loadScreen(screen, null);}

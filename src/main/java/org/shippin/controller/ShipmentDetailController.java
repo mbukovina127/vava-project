@@ -1,9 +1,7 @@
 package org.shippin.controller;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -13,24 +11,17 @@ import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.domain.ShipmentHistory;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.ShipmentData;
-import lombok.extern.log4j.Log4j2;
-import org.shippin.domain.Shipment;
-import org.shippin.domain.enums.State;
-import org.shippin.services.MapService;
 import org.shippin.services.ShipmentService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.shippin.dto.Screens.DAILY_COST_SUM;
 
-
-@Log4j2
-public class ShipmentDetailController extends BaseController<Shipment> implements Initializable {
+public class ShipmentDetailController extends BaseController<ShipmentData> implements Initializable {
 
     @FXML private Label      titleLabel;
     @FXML private Label      routeLabel;
@@ -45,22 +36,27 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @FXML private Label      mapFallbackLabel;
     @FXML private Button     dailySummaryBtn;
 
-    private record HistoryEntry(String time, String status) {}
+    public record HistoryEntry(String time, String driver, String location, String status) {}
 
-    private final ShipmentService shipmentService = new ShipmentService();
-    private final MapService      mapService      = new MapService();
-
-    private Shipment shipment;
-    private State    currentState  = null;
-    private String   currentStatus = "UNKNOWN";
+    // Current shipment state — populated from ShipmentData in onData()
+    private ShipmentData        shipmentData;
+    private CostEstimationInput estimation;
+    private String              currentStatus = "COMPLETED";
 
     // Map coords
     private double fromLat = 48.894;
     private double fromLon = 18.044;
     private double toLat   = 48.974;
     private double toLon   = 19.302;
+    private int toLocationPostalCode = 0; //postal code of the destination
 
-    private List<HistoryEntry> history = List.of();
+    // Placeholder history — replace with real data from backend
+    private List<HistoryEntry> history = List.of(
+            new HistoryEntry("20:21", "Martin", "Modra",    "COMPLETED"),
+            new HistoryEntry("19:00", "Martin", "Sklad BA", "BEING DELIVERED"),
+            new HistoryEntry("9:55",  "Emil",   "Sklad BA", "READY"),
+            new HistoryEntry("9:21",  "Juraj",  "Sklad BA", "NOT READY")
+    );
 
     // ── BaseController ────────────────────────────────────────────
 
@@ -68,27 +64,26 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     protected Class<ShipmentData> getDataType() { return ShipmentData.class; }
     private ShipmentService shipmentService;
     @Override
-    protected void onData(Shipment data) {
-        if (data == null) {
-            log.warn("ShipmentDetailController received null data");
-            return;
-        }
-        this.shipment      = data;
-        this.currentState  = data.getState();
-        this.currentStatus = stateToDisplay(data.getState());
-
-        if (data.getStartCoordinate() != null) {
-            fromLat = data.getStartCoordinate().getX();
-            fromLon = data.getStartCoordinate().getY();
-        }
+    protected void onData(ShipmentData data) {
+        this.shipmentData = data;
+        this.estimation   = data.getData();
 
         populateHeader();
         populateStatusRow();
-        loadHistoryAsync();
+        populateHistoryGrid();
+
         loadMapImage();
 
-        if (data.getDest_region() > 0) {
-            getCoordinatesFromPostalCode(data.getDest_region());
+        if (estimation != null && estimation.destination() != null && !estimation.destination().isEmpty())
+        {
+            try {
+                toLocationPostalCode = Integer.parseInt(estimation.destination().replaceAll("[^0-9]", ""));
+                if (toLocationPostalCode > 0) {
+                    getCoordinatesFromPostalCode(toLocationPostalCode);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid PSČ: " + estimation.destination());
+            }
         }
     }
 
@@ -100,93 +95,63 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     // ── Header ────────────────────────────────────────────────────
 
     private void populateHeader() {
-        titleLabel.setText("Shipment number: #" + shipment.getShipment_id());
+        titleLabel.setText("Shipment details #" + shipmentData.getShipmentID());
 
-        String dest = shipment.getDest_region() > 0
-                ? String.format("%05d", shipment.getDest_region()) : "—";
-
-        String route_text = "Unknown";
-        try {
-            String from = shipment.getWarehouse().getName();
-            route_text = from + " → " + dest;
-        } catch (NullPointerException ex) {
-            log.error("Shipment has unknown warehouse");
+        if (estimation != null) {
+            routeLabel.setText(estimation.from() + " - " + estimation.destination());
+            distanceLabel.setText("(- km)");
+            totalCostLabel.setText("9"); // TODO: computeTotalCost(estimation)
+        } else {
+            routeLabel.setText("—");
+            distanceLabel.setText("");
+            totalCostLabel.setText("—");
         }
-        routeLabel.setText(route_text);
-        distanceLabel.setText("(- km)");
-        totalCostLabel.setText(String.format("%.2f €", shipment.getTotalCost()));
     }
 
     // ── Status row ────────────────────────────────────────────────
 
     private void populateStatusRow() {
-        currentStatus = stateToDisplay(currentState);
         statusBadge.setText(currentStatus);
         statusBadge.getStyleClass().removeIf(c -> c.startsWith("sd-badge-"));
-        statusBadge.getStyleClass().add(badgeStyleClass(currentState));
+        statusBadge.getStyleClass().add(badgeStyleClass(currentStatus));
     }
 
-    private String badgeStyleClass(State state) {
-        if (state == null) return "sd-badge-default";
-        return switch (state) {
-            case DELIVERED          -> "sd-badge-completed";
-            case BEING_DELIVERED    -> "sd-badge-delivering";
-            case READY_FOR_DELIVERY -> "sd-badge-ready";
-            case NOT_READY          -> "sd-badge-not-ready";
-            default                 -> "sd-badge-default";
+    private String badgeStyleClass(String status) {
+        return switch (status.toUpperCase()) {
+            case "COMPLETED"       -> "sd-badge-completed";
+            case "BEING DELIVERED" -> "sd-badge-delivering";
+            case "READY"           -> "sd-badge-ready";
+            case "NOT READY"       -> "sd-badge-not-ready";
+            default                -> "sd-badge-default";
         };
     }
-
-    private String stateToDisplay(State state) {
-        if (state == null) return bundle().getString("shipment_detail.state_unknown");
-        return switch (state) {
-            case NOT_READY          -> bundle().getString("shipment_detail.state_not_ready");
-            case READY_FOR_DELIVERY -> bundle().getString("shipment_detail.state_ready_for_delivery");
-            case BEING_DELIVERED    -> bundle().getString("shipment_detail.state_being_delivered");
-            case DELIVERED          -> bundle().getString("shipment_detail.state_completed");
-            case CANCELED           -> bundle().getString("shipment_detail.state_canceled");
-            case FAILED             -> bundle().getString("shipment_detail.state_failed");
-        };
-    }
-
-    private State displayToState(String display, List<State> candidates) {
-        return candidates.stream()
-                .filter(s -> stateToDisplay(s).equalsIgnoreCase(display))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private ResourceBundle bundle() { return NavigationService.getBundle(); }
 
     // ── History grid ──────────────────────────────────────────────
 
-    private void loadHistoryAsync() {
-        new Thread(() -> {
-            try {
-                List<ShipmentHistory> raw = shipmentService.getShipmentHistory(shipment.getShipment_id());
-                DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
-                List<HistoryEntry> entries = raw.stream()
-                        .map(h -> new HistoryEntry(h.getTimestamp().toLocalDateTime().format(fmt), stateToDisplay(h.getState())
-                        ))
-                        .toList()
-                        .reversed();
-
-                Platform.runLater(() -> {
-                    history = entries;
-                    populateHistoryGrid();
-                });
-            } catch (Exception e) {
-                log.error("Failed to load shipment history for #{}", shipment.getShipment_id(), e);
-            }
-        }).start();
-    }
-
     private void populateHistoryGrid() {
         historyGrid.getChildren().clear();
-        for (int i = 0; i < history.size(); i++) {
-            HistoryEntry e = history.get(i);
-            historyGrid.add(historyCell(e.time(),   "sd-history-time"),   0, i);
-            historyGrid.add(historyCell(e.status(), "sd-history-status"), 1, i);
+
+        try {
+            List<ShipmentHistory> historyList =
+                    shipmentService.getShipmentHistory(shipmentData.getShipmentID());
+
+            for (int i = 0; i < historyList.size(); i++) {
+                ShipmentHistory h = historyList.get(i);
+
+                historyGrid.add(historyCell(
+                        h.getTimestamp().toLocalDateTime().toLocalTime().toString(),
+                        "sd-history-time"), 0, i);
+
+                historyGrid.add(historyCell("-", "sd-history-cell"), 1, i);
+                historyGrid.add(historyCell("-", "sd-history-cell"), 2, i);
+
+                historyGrid.add(historyCell(
+                        h.getState().name(),
+                        "sd-history-status"), 3, i);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -194,26 +159,65 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         Label lbl = new Label(text);
         lbl.getStyleClass().addAll(styleClasses);
         lbl.setAlignment(Pos.CENTER_LEFT);
-        lbl.setMinWidth(Region.USE_PREF_SIZE);
         lbl.setMaxWidth(Double.MAX_VALUE);
         return lbl;
     }
 
     // ── Map ───────────────────────────────────────────────────────
 
-    private void loadMapImage() {
-        try {
-            String url = mapService.buildStaticMapUrl(fromLat, fromLon, toLat, toLon);
-            Image mapImage = new Image(url, true);
-            mapImage.errorProperty().addListener((obs, old, isError) -> {
-                if (isError) showMapFallback();
-            });
-            mapImageView.setImage(mapImage);
-            mapImageView.setVisible(true);
-            mapFallbackLabel.setVisible(false);
-        } catch (Exception ex) {
-            showMapFallback();
-        }
+        private void loadMapImage() {
+            double centerLat = (fromLat + toLat) / 2.0;
+            double centerLon = (fromLon + toLon) / 2.0;
+
+            double distance = calculateDistance(fromLat, fromLon, toLat, toLon);
+            int zoom = calculateZoom(distance);
+
+            String apiKey = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+            String url = String.format(
+                    "https://maps.googleapis.com/maps/api/staticmap?" +
+                            "center=%.4f,%.4f&zoom=%d&size=900x200" +
+                            "&markers=color:white|%.4f,%.4f" +
+                            "&markers=color:red|%.4f,%.4f" +
+                            "&path=color:0xff0000|weight:2|%.4f,%.4f|%.4f,%.4f" +
+                            "&key=%s",
+                    centerLat, centerLon, zoom,
+                    fromLat, fromLon,
+                    toLat, toLon,
+                    fromLat, fromLon, toLat, toLon,
+                    apiKey
+            );
+
+            try {
+                Image mapImage = new Image(url, true);
+                mapImage.errorProperty().addListener((obs, old, isError) -> {
+                    if (isError) showMapFallback();
+                });
+                mapImageView.setImage(mapImage);
+                mapImageView.setVisible(true);
+                mapFallbackLabel.setVisible(false);
+            } catch (Exception ex) {
+                showMapFallback();
+            }
+    }
+
+    //calculateDistance a calculateZoom aby mapa bola viac zoomnuta ak je kratka vzdialenost, a oddialena ak je daleka, aby sa to zmestilo
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    private int calculateZoom(double distance) {
+        if (distance < 20) return 11;
+        if (distance < 50) return 10;
+        if (distance < 100) return 9;
+        if (distance < 200) return 8;
+        return 7;
     }
 
     private void showMapFallback() {
@@ -222,93 +226,148 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         mapFallbackLabel.setText(NavigationService.getBundle().getString("shipment_detail.map_unavailable"));
     }
 
+
     private void getCoordinatesFromPostalCode(int postalCode) {
         new Thread(() -> {
             try {
-                double[] coords = mapService.fetchCoordinatesForPostalCode(postalCode);
-                toLat = coords[0];
-                toLon = coords[1];
+                String psc = String.format("%05d", postalCode);
+                String apiKey = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+                String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
+                        + java.net.URLEncoder.encode(psc + " Slovakia", "UTF-8")
+                        + "&key=" + apiKey;
+
+                java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                        .uri(java.net.URI.create(url))
+                        .GET()
+                        .build();
+
+                java.net.http.HttpResponse<String> response = client.send(request,
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
+
+                System.out.println("Geocoding response: " + response.body());
+
+                com.google.gson.JsonObject json = com.google.gson.JsonParser
+                        .parseString(response.body()).getAsJsonObject();
+
+                if (json.has("results") && json.getAsJsonArray("results").size() > 0) {
+                    com.google.gson.JsonObject location = json.getAsJsonArray("results")
+                            .get(0).getAsJsonObject()
+                            .getAsJsonObject("geometry")
+                            .getAsJsonObject("location");
+                    toLat = location.get("lat").getAsDouble();
+                    toLon = location.get("lng").getAsDouble();
+                    System.out.println("Got coords: " + toLat + ", " + toLon);
+                }
+
+                javafx.application.Platform.runLater(this::loadMapImage);
             } catch (Exception e) {
-                log.error("Failed to fetch coordinates for postal code {}", postalCode, e);
-            } finally {
-                Platform.runLater(this::loadMapImage);
+                System.err.println("Geocoding error: ");
+                e.printStackTrace();
+                javafx.application.Platform.runLater(this::loadMapImage);
             }
         }).start();
     }
 
     // ── Change status popup ───────────────────────────────────────
 
+    /**
+     * Shows "Change status of shipment" modal.
+     * Pattern mirrors WarehouseManagementController.showAddWarehousePopup().
+     */
     private void showChangeStatusPopup() {
         VBox popup = createPopupRoot();
-        popup.setMaxWidth(400);
-        popup.setPrefWidth(400);
-        popup.getStyleClass().add("sd-popup-container");
+        popup.setMaxWidth(480);
+        popup.setPrefWidth(480);
 
-        Label title = createPopupTitle(bundle().getString("shipment_detail.popup_title"));
+        Label title = createPopupTitle("Change status of shippment");
 
-        List<State> states = Arrays.asList(State.values());
-        Label stateLabel = createFormLabel(bundle().getString("shipment_detail.state"));
-        ComboBox<String> stateCombo = new ComboBox<>();
-        stateCombo.getItems().addAll(states.stream().map(this::stateToDisplay).toList());
-        stateCombo.setValue(currentStatus);
-        stateCombo.setMaxWidth(Double.MAX_VALUE);
-        stateCombo.getStyleClass().add("popup-text-field");
-
+        // ── Form grid ─────────────────────────────────────────────
         GridPane formGrid = new GridPane();
         formGrid.setHgap(16);
         formGrid.setVgap(14);
+
         ColumnConstraints labelCol = new ColumnConstraints();
         labelCol.setPrefWidth(100);
+
         ColumnConstraints fieldCol = new ColumnConstraints();
         fieldCol.setHgrow(Priority.ALWAYS);
-        formGrid.getColumnConstraints().addAll(labelCol, fieldCol);
-        formGrid.add(stateLabel, 0, 0);
-        formGrid.add(stateCombo, 1, 0);
 
+        formGrid.getColumnConstraints().addAll(labelCol, fieldCol);
+
+        // Name field
+        Label nameLabel = createFormLabel("Name:");
+        TextField nameField = createPopupTextField("Value");
+        nameField.setText(shipmentData.getEstimationName() != null
+                ? shipmentData.getEstimationName() : "");
+
+        // Location field
+        Label locationLabel = createFormLabel("Location:");
+        TextField locationField = createPopupTextField("Value");
+        if (estimation != null) {
+            locationField.setText(estimation.destination());
+        }
+
+        // State dropdown — values match your existing badge states
+        Label stateLabel = createFormLabel("State:");
+        ComboBox<String> stateCombo = new ComboBox<>();
+        stateCombo.getItems().addAll(
+                "NOT READY",
+                "READY",
+                "BEING DELIVERED",
+                "COMPLETED"
+        );
+        stateCombo.setValue(currentStatus);
+        stateCombo.setMaxWidth(Double.MAX_VALUE);
+        stateCombo.getStyleClass().add("popup-text-field"); // reuse same border style
+
+        formGrid.add(nameLabel,    0, 0);
+        formGrid.add(nameField,    1, 0);
+        formGrid.add(locationLabel, 0, 1);
+        formGrid.add(locationField, 1, 1);
+        formGrid.add(stateLabel,   0, 2);
+        formGrid.add(stateCombo,   1, 2);
+
+        // ── Buttons ───────────────────────────────────────────────
         HBox buttons = new HBox(18);
         buttons.setAlignment(Pos.CENTER_LEFT);
 
-        Button cancelButton = new Button(bundle().getString("shipment_detail.popup_cancel"));
+        Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
         cancelButton.setPrefSize(140, 42);
         cancelButton.setOnAction(e -> hideModal());
 
-        Button saveButton = new Button(bundle().getString("shipment_detail.popup_save"));
+        Button saveButton = new Button("Update status");
         saveButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         saveButton.setPrefSize(160, 42);
         saveButton.setOnAction(e -> {
             String picked = stateCombo.getValue();
             if (picked != null) {
-                State newState = displayToState(picked, states);
-                if (newState != null && newState != shipment.getState()) {
-                    try {
-                        shipmentService.updateShipmentState(shipment, newState);
-                        currentState = newState;
-                    } catch (SQLException ex) {
-                        log.error("Failed to update shipment {}", shipment.getShipment_id(), ex);
-                        new Alert(Alert.AlertType.ERROR, "Failed to update shipment!\n - " + ex.getMessage()).showAndWait();
-                    }
-                }
+                currentStatus = picked;
                 populateStatusRow();
-                loadHistoryAsync();
+                // TODO: persist status change to backend
+                System.out.println("Status updated to: " + currentStatus
+                        + " | name: " + nameField.getText()
+                        + " | location: " + locationField.getText());
             }
             hideModal();
         });
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+
         buttons.getChildren().addAll(cancelButton, spacer, saveButton);
 
         popup.getChildren().addAll(title, formGrid, buttons);
+
         showModal(popup);
     }
 
-    // ── Popup helpers ─────────────────────────────────────────────
+    // ── Popup helpers (same pattern as WarehouseManagementController) ──
 
     private VBox createPopupRoot() {
         VBox root = new VBox(28);
         root.setAlignment(Pos.TOP_LEFT);
-        root.setPadding(new Insets(24));
         root.getStyleClass().add("popup-root");
         return root;
     }
@@ -325,11 +384,20 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         return label;
     }
 
+    private TextField createPopupTextField(String prompt) {
+        TextField textField = new TextField();
+        textField.setPromptText(prompt);
+        textField.getStyleClass().add("popup-text-field");
+        textField.setPrefHeight(38);
+        return textField;
+    }
+
     // ── Actions ───────────────────────────────────────────────────
 
     @FXML
     private void onCostBreakdown() {
-        log.info("Cost breakdown requested for shipment #{}", shipment.getShipment_id());
+        // navigateTo("CostEstimation.fxml", shipmentData);
+        System.out.println("Cost breakdown for shipment #" + shipmentData.getShipmentID());
     }
 
     @FXML
@@ -338,8 +406,13 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     }
 
     @FXML
-    private void onDailySummary() throws java.io.IOException {
+    private void onDailySummary() throws IOException {
         loadScreen(DAILY_COST_SUM);
     }
 
+    // ── Setters ───────────────────────────────────────────────────
+
+    public void setFromCoords(double lat, double lon) { fromLat = lat; fromLon = lon; }
+    public void setToCoords(double lat, double lon)   { toLat = lat;   toLon = lon; }
+    public void setCurrentStatus(String s)            { this.currentStatus = s; }
 }
