@@ -13,14 +13,15 @@ import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.ShipmentHistory;
 import org.shippin.domain.enums.State;
+import org.shippin.dto.Screens;
 import org.shippin.services.MapService;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -246,13 +247,18 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
         Label title = createPopupTitle(bundle().getString("shipment_detail.popup_title"));
 
-        List<State> states = Arrays.asList(State.values());
+        List<State> states = currentState != null ? currentState.allowedTransitions() : List.of();
         Label stateLabel = createFormLabel(bundle().getString("shipment_detail.state"));
         ComboBox<String> stateCombo = new ComboBox<>();
         stateCombo.getItems().addAll(states.stream().map(this::stateToDisplay).toList());
-        stateCombo.setValue(currentStatus);
         stateCombo.setMaxWidth(Double.MAX_VALUE);
         stateCombo.getStyleClass().add("popup-text-field");
+        if (states.isEmpty()) {
+            stateCombo.setPromptText("No transitions available");
+            stateCombo.setDisable(true);
+        } else {
+            stateCombo.getSelectionModel().selectFirst();
+        }
 
         GridPane formGrid = new GridPane();
         formGrid.setHgap(16);
@@ -330,6 +336,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @FXML
     private void onCostBreakdown() {
         log.info("Cost breakdown requested for shipment #{}", shipment.getShipment_id());
+        try {
+            loadScreen(Screens.COST_BREAKDOWN, shipment);
+        } catch (IOException e) {
+            log.error("When trying to change screens with data {}", shipment, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
