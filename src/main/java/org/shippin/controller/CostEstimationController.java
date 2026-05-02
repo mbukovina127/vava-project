@@ -3,6 +3,7 @@ package org.shippin.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
@@ -35,6 +36,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Postal codes
     @FXML private ComboBox<String> fromCombo;
     @FXML private TextField destinationField;
+    @FXML private HBox toBox;
 
     // Size row
     @FXML private TextField weightField;
@@ -87,6 +89,11 @@ public class CostEstimationController extends BaseController<Void> implements In
         fromCombo.setValue(fromCombo.getItems().getFirst());
         //TODO: nacitat poskytovane doplnkove sluzby z db (strings) a asi zotriedit do skupin
         initializeOptions();
+        destinationField.focusedProperty().addListener((obs, old, isFocused) -> {
+            if (isFocused) toBox.getStyleClass().add("ce-to-box-focused");
+            else toBox.getStyleClass().remove("ce-to-box-focused");
+        });
+
     }
 
     public void initializeOptions()
@@ -147,7 +154,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML
     private void onReset()
     {
-        dateField.clear();
+//        dateField.clear();
         fromCombo.getSelectionModel().selectFirst();
         destinationField.clear();
         weightField.clear();
@@ -158,7 +165,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         rbShipment.setSelected(true);
         rbClassic.setSelected(true);
 
-        chkAdditionalFees.setSelected(true);
+        chkAdditionalFees.setSelected(false);
         chkADR.setSelected(false);
         chkDobierka.setSelected(false);
         chkPripoistenie.setSelected(false);

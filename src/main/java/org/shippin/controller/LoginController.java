@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.services.NavigationService;
 import org.shippin.domain.User;
@@ -24,12 +25,23 @@ public class LoginController {
     @FXML private Label statusLabelEmail;
     @FXML private Label statusLabelPass;
     @FXML private Button langButton;
+    @FXML private HBox passwordWrapper;
 
     private boolean passwordShown = false;
 
     @FXML
     private void initialize() {
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+        // password wrapper focus efekt
+        passwordField.focusedProperty().addListener((obs, old, isFocused) -> {
+            if (isFocused) passwordWrapper.getStyleClass().add("password-wrapper-focused");
+            else passwordWrapper.getStyleClass().remove("password-wrapper-focused");
+        });
+
+        passwordVisible.focusedProperty().addListener((obs, old, isFocused) -> {
+            if (isFocused) passwordWrapper.getStyleClass().add("password-wrapper-focused");
+            else passwordWrapper.getStyleClass().remove("password-wrapper-focused");
+        });
     }
 
     @FXML private void onTogglePassword()
