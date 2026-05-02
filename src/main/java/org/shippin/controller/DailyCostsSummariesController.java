@@ -227,6 +227,7 @@ public class DailyCostsSummariesController
 
         try {
             loadScreen(Screens.DAILY_COST_SUM, selectedDate);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

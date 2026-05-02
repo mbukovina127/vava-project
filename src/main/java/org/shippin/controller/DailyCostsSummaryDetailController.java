@@ -45,7 +45,7 @@ public class DailyCostsSummaryDetailController
     @FXML private Label  lblTotal;
 
     // ── State ──────────────────────────────────────────────────────────
-    private LocalDate            currentDate;
+    private LocalDate            currentDate = java.time.LocalDate.now();
     private List<ShipmentEntry>  entries = new ArrayList<>();
 
     // ── Date formatter shown in the title (e.g. "1.4.2026") ───────────
@@ -64,7 +64,10 @@ public class DailyCostsSummaryDetailController
 
     @Override
     protected void onData(LocalDate date) {
-        this.currentDate = date;
+        if(date != null){
+            this.currentDate = date;
+        }
+
         loadFromService();
     }
 
