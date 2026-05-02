@@ -112,8 +112,8 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getString("service_name"),
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
-                    rs.getString("description"),
-                    ServiceType.valueOf(rs.getString("service_type"))
+                    ServiceType.valueOf(rs.getString("service_type")),
+                    rs.getString("description")
             );
             serviceList.add(as);
         }
@@ -137,8 +137,8 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getString("service_name"),
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
-                    rs.getString("description"),
-                    ServiceType.valueOf(rs.getString("service_type"))
+                    ServiceType.valueOf(rs.getString("service_type")),
+                    rs.getString("description")
             );
             serviceList.add(as);
         }
