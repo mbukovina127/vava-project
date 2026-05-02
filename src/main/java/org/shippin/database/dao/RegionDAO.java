@@ -228,7 +228,8 @@ public class RegionDAO extends BaseDAO {
      * insert full region with PSC ranges
      */
     public void insertFullRegion(RegionTableEntry region, Warehouse wareHouse) throws SQLException {
-            int regionID = insertRegion(region.getRegionCode(), wareHouse.getId());
+    	connection.setAutoCommit(false);
+        int regionID = insertRegion(region.getRegionCode(), wareHouse.getId());
             if (regionID == -1){
                 throw new SQLException("Failed to insert region: " + region.getRegionCode());
             }
@@ -238,8 +239,7 @@ public class RegionDAO extends BaseDAO {
         for (Range r : ranges) {
             insertPSCRange(regionID, r.getMin(), r.getMax());
         }
-
         connection.commit();
-
+        connection.setAutoCommit(true);
     }
 }

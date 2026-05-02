@@ -23,4 +23,26 @@ public class FilePicker {
 
 	    return fileChooser.showOpenDialog(ownerWindow);
 	}
+	
+	public static File saveFile(Window ownerWindow, FileChooser.ExtensionFilter... filters) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file as");
+
+        if (filters.length > 0) {
+            fileChooser.getExtensionFilters().addAll(filters);
+        }
+
+        File file = fileChooser.showSaveDialog(ownerWindow);
+
+        if (file != null && !file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        return file;
+    }
 }

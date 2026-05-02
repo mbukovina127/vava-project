@@ -131,7 +131,8 @@ public class WarehouseDAO extends BaseDAO {
         try {
             connection.setAutoCommit(false);
 
-            upsertWarehouse(warehouse);
+            int newId = insertWarehouse(warehouse);
+            warehouse.setId(newId);
 
             if (warehouse.getRegionTable() != null) {
                 RegionDAO regionDAO = RegionDAO.getInstance();
@@ -145,7 +146,7 @@ public class WarehouseDAO extends BaseDAO {
                 PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
                 for (var item : warehouse.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, warehouse.getName());
+                    priceListDAO.insertPriceListEntry(item, warehouse.getId());
                 }
             }
 
@@ -159,6 +160,27 @@ public class WarehouseDAO extends BaseDAO {
         } finally {
             connection.setAutoCommit(true);
         }
+    }
+    
+    public int insertWarehouse(Warehouse w) throws SQLException {
+        String sql = """
+                INSERT INTO Warehouse(warehouse_region_name, price_list_file)
+                VALUES (?,?)
+                RETURNING warehouse_id;
+                ;""";
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, w.getName()); //SK PSC+region aka name
+        stmt.setString(2, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("warehouse_id");
+            return id;
+        }
+        
+        throw new SQLException("insert failed");
     }
 
 
@@ -219,7 +241,7 @@ public class WarehouseDAO extends BaseDAO {
                 priceListDAO.deletePriceListByWarehouseID(w.getId());
 
                 for (var item : w.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, w.getName());
+                    priceListDAO.insertPriceListEntry(item, w.getId());
                 }
             }
 

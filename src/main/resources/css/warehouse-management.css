@@ -17,22 +17,6 @@
     -fx-border-color: transparent;
 }
 
-.upload-button {
-    -fx-background-color: #d9d9d9;
-    -fx-border-color: transparent;
-    -fx-text-fill: #111111;
-    -fx-padding: 0 14 0 14;
-}
-
-.upload-button:hover {
-    -fx-background-color: #cfcfcf;
-}
-
-.upload-button:pressed {
-    -fx-background-color: #bfbfbf;
-    -fx-translate-y: 1;
-}
-
 .upload-icon {
     -fx-font-size: 16;
     -fx-font-weight: 700;
@@ -50,3 +34,4 @@
     -fx-border-radius: 18;
     -fx-padding: 28 30 24 30;
 }
+

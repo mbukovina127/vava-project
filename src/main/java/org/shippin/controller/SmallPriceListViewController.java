@@ -10,6 +10,8 @@ import javafx.scene.layout.RowConstraints;
 import org.shippin.domain.Table;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.services.WarehouseService;
+
 import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
 
 import java.io.IOException;
@@ -27,7 +29,7 @@ public class SmallPriceListViewController extends BaseController<Void> implement
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        table = buildStaticTable();
+        this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
         populateGrid(table);
     }
 
@@ -38,22 +40,6 @@ public class SmallPriceListViewController extends BaseController<Void> implement
     public void setTable(Table<SmallPriceListRow> table) {
         this.table = table;
         populateGrid(table);
-    }
-
-    // -------------------------------------------------------------------------
-    // Static table data — replace with backend call when ready
-    // -------------------------------------------------------------------------
-    private SmallPriceListFormatted buildStaticTable() {
-        SmallPriceListFormatted priceList = new SmallPriceListFormatted();
-        priceList.addRow(new SmallPriceListRow(1f,  3.66f));
-        priceList.addRow(new SmallPriceListRow(3f,  3.98f));
-        priceList.addRow(new SmallPriceListRow(5f,  4.06f));
-        priceList.addRow(new SmallPriceListRow(10f, 4.59f));
-        priceList.addRow(new SmallPriceListRow(15f, 5.47f));
-        priceList.addRow(new SmallPriceListRow(20f, 6.52f));
-        priceList.addRow(new SmallPriceListRow(25f, 7.58f));
-        priceList.addRow(new SmallPriceListRow(30f, 8.45f));
-        return priceList;
     }
 
     // -------------------------------------------------------------------------
