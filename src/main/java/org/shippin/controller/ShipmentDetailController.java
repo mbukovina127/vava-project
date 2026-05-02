@@ -3,11 +3,13 @@ package org.shippin.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.ShipmentHistory;
 import org.shippin.domain.enums.State;
@@ -16,12 +18,16 @@ import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.shippin.dto.Screens.DAILY_COST_SUM;
 
+
+@Log4j2
 public class ShipmentDetailController extends BaseController<Shipment> implements Initializable {
 
     @FXML private Label      titleLabel;
@@ -43,6 +49,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     private final MapService      mapService      = new MapService();
 
     private Shipment shipment;
+    private State    currentState  = null;
     private String   currentStatus = "UNKNOWN";
 
     // Map coords
@@ -60,7 +67,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     @Override
     protected void onData(Shipment data) {
+        if (data == null) {
+            log.warn("ShipmentDetailController received null data");
+            return;
+        }
         this.shipment      = data;
+        this.currentState  = data.getState();
         this.currentStatus = stateToDisplay(data.getState());
 
         if (data.getStartCoordinate() != null) {
@@ -84,14 +96,19 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     // ── Header ────────────────────────────────────────────────────
 
     private void populateHeader() {
-        titleLabel.setText("Shipment details #" + shipment.getShipment_id());
+        titleLabel.setText("Shipment number: #" + shipment.getShipment_id());
 
         String dest = shipment.getDest_region() > 0
                 ? String.format("%05d", shipment.getDest_region()) : "—";
-        String from = shipment.getStartCoordinate() != null
-                ? shipment.getStartCoordinate().getX() + ", " + shipment.getStartCoordinate().getY()
-                : "—";
-        routeLabel.setText(from + " → " + dest);
+
+        String route_text = "Unknown";
+        try {
+            String from = shipment.getWarehouse().getName();
+            route_text = from + " → " + dest;
+        } catch (NullPointerException ex) {
+            log.error("Shipment has unknown warehouse");
+        }
+        routeLabel.setText(route_text);
         distanceLabel.setText("(- km)");
         totalCostLabel.setText(String.format("%.2f €", shipment.getTotalCost()));
     }
@@ -99,44 +116,43 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     // ── Status row ────────────────────────────────────────────────
 
     private void populateStatusRow() {
+        currentStatus = stateToDisplay(currentState);
         statusBadge.setText(currentStatus);
         statusBadge.getStyleClass().removeIf(c -> c.startsWith("sd-badge-"));
-        statusBadge.getStyleClass().add(badgeStyleClass(currentStatus));
+        statusBadge.getStyleClass().add(badgeStyleClass(currentState));
     }
 
-    private String badgeStyleClass(String status) {
-        return switch (status.toUpperCase()) {
-            case "COMPLETED"       -> "sd-badge-completed";
-            case "BEING DELIVERED" -> "sd-badge-delivering";
-            case "READY"           -> "sd-badge-ready";
-            case "NOT READY"       -> "sd-badge-not-ready";
-            default                -> "sd-badge-default";
+    private String badgeStyleClass(State state) {
+        if (state == null) return "sd-badge-default";
+        return switch (state) {
+            case DELIVERED          -> "sd-badge-completed";
+            case BEING_DELIVERED    -> "sd-badge-delivering";
+            case READY_FOR_DELIVERY -> "sd-badge-ready";
+            case NOT_READY          -> "sd-badge-not-ready";
+            default                 -> "sd-badge-default";
         };
     }
 
     private String stateToDisplay(State state) {
-        if (state == null) return "UNKNOWN";
+        if (state == null) return bundle().getString("shipment_detail.state_unknown");
         return switch (state) {
-            case NOT_READY          -> "NOT READY";
-            case READY_FOR_DELIVERY -> "READY";
-            case BEING_DELIVERED    -> "BEING DELIVERED";
-            case DELIVERED          -> "COMPLETED";
-            case CANCELED           -> "CANCELED";
-            case FAILED             -> "FAILED";
+            case NOT_READY          -> bundle().getString("shipment_detail.state_not_ready");
+            case READY_FOR_DELIVERY -> bundle().getString("shipment_detail.state_ready_for_delivery");
+            case BEING_DELIVERED    -> bundle().getString("shipment_detail.state_being_delivered");
+            case DELIVERED          -> bundle().getString("shipment_detail.state_completed");
+            case CANCELED           -> bundle().getString("shipment_detail.state_canceled");
+            case FAILED             -> bundle().getString("shipment_detail.state_failed");
         };
     }
 
-    private State displayToState(String display) {
-        return switch (display.toUpperCase()) {
-            case "NOT READY"       -> State.NOT_READY;
-            case "READY"           -> State.READY_FOR_DELIVERY;
-            case "BEING DELIVERED" -> State.BEING_DELIVERED;
-            case "COMPLETED"       -> State.DELIVERED;
-            case "CANCELED"        -> State.CANCELED;
-            case "FAILED"          -> State.FAILED;
-            default                -> null;
-        };
+    private State displayToState(String display, List<State> candidates) {
+        return candidates.stream()
+                .filter(s -> stateToDisplay(s).equalsIgnoreCase(display))
+                .findFirst()
+                .orElse(null);
     }
+
+    private ResourceBundle bundle() { return NavigationService.getBundle(); }
 
     // ── History grid ──────────────────────────────────────────────
 
@@ -148,14 +164,15 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
                 List<HistoryEntry> entries = raw.stream()
                         .map(h -> new HistoryEntry(h.getTimestamp().toLocalDateTime().format(fmt), stateToDisplay(h.getState())
                         ))
-                        .toList();
+                        .toList()
+                        .reversed();
 
                 Platform.runLater(() -> {
                     history = entries;
                     populateHistoryGrid();
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Failed to load shipment history for #{}", shipment.getShipment_id(), e);
             }
         }).start();
     }
@@ -173,6 +190,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         Label lbl = new Label(text);
         lbl.getStyleClass().addAll(styleClasses);
         lbl.setAlignment(Pos.CENTER_LEFT);
+        lbl.setMinWidth(Region.USE_PREF_SIZE);
         lbl.setMaxWidth(Double.MAX_VALUE);
         return lbl;
     }
@@ -207,7 +225,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
                 toLat = coords[0];
                 toLon = coords[1];
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Failed to fetch coordinates for postal code {}", postalCode, e);
             } finally {
                 Platform.runLater(this::loadMapImage);
             }
@@ -220,19 +238,14 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         VBox popup = createPopupRoot();
         popup.setMaxWidth(400);
         popup.setPrefWidth(400);
+        popup.getStyleClass().add("sd-popup-container");
 
-        Label title = createPopupTitle("Change status of shipment");
+        Label title = createPopupTitle(bundle().getString("shipment_detail.popup_title"));
 
-        Label stateLabel = createFormLabel("State:");
+        List<State> states = Arrays.asList(State.values());
+        Label stateLabel = createFormLabel(bundle().getString("shipment_detail.state"));
         ComboBox<String> stateCombo = new ComboBox<>();
-        stateCombo.getItems().addAll(
-                "NOT READY",
-                "READY",
-                "BEING DELIVERED",
-                "COMPLETED",
-                "CANCELED",
-                "FAILED"
-        );
+        stateCombo.getItems().addAll(states.stream().map(this::stateToDisplay).toList());
         stateCombo.setValue(currentStatus);
         stateCombo.setMaxWidth(Double.MAX_VALUE);
         stateCombo.getStyleClass().add("popup-text-field");
@@ -251,24 +264,29 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         HBox buttons = new HBox(18);
         buttons.setAlignment(Pos.CENTER_LEFT);
 
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button(bundle().getString("shipment_detail.popup_cancel"));
         cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
         cancelButton.setPrefSize(140, 42);
         cancelButton.setOnAction(e -> hideModal());
 
-        Button saveButton = new Button("Update status");
+        Button saveButton = new Button(bundle().getString("shipment_detail.popup_save"));
         saveButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         saveButton.setPrefSize(160, 42);
         saveButton.setOnAction(e -> {
             String picked = stateCombo.getValue();
             if (picked != null) {
-                currentStatus = picked;
-                State newState = displayToState(picked);
-                if (newState != null) {
-                    shipment.setState(newState);
+                State newState = displayToState(picked, states);
+                if (newState != null && newState != shipment.getState()) {
+                    try {
+                        shipmentService.updateShipmentState(shipment, newState);
+                        currentState = newState;
+                    } catch (SQLException ex) {
+                        log.error("Failed to update shipment {}", shipment.getShipment_id(), ex);
+                        new Alert(Alert.AlertType.ERROR, "Failed to update shipment!\n - " + ex.getMessage()).showAndWait();
+                    }
                 }
                 populateStatusRow();
-                // TODO: persist status change via ShipmentDAO
+                loadHistoryAsync();
             }
             hideModal();
         });
@@ -286,6 +304,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     private VBox createPopupRoot() {
         VBox root = new VBox(28);
         root.setAlignment(Pos.TOP_LEFT);
+        root.setPadding(new Insets(24));
         root.getStyleClass().add("popup-root");
         return root;
     }
@@ -306,7 +325,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     @FXML
     private void onCostBreakdown() {
-        System.out.println("Cost breakdown for shipment #" + shipment.getShipment_id());
+        log.info("Cost breakdown requested for shipment #{}", shipment.getShipment_id());
     }
 
     @FXML
