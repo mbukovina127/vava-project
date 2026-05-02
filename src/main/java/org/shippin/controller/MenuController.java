@@ -67,6 +67,7 @@ public class MenuController implements Initializable {
     // CONTENT
     @FXML private StackPane contentArea;
     private Screens currentScreen;
+    private Object  currentData;
 
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
@@ -92,6 +93,7 @@ public class MenuController implements Initializable {
             return;
         }
         currentScreen = screen;
+        currentData   = data;
         try {
             URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
             if (fxmlUrl == null) {
@@ -124,9 +126,7 @@ public class MenuController implements Initializable {
     public void initialize(URL location, ResourceBundle resources)
     {
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
-
-        //TODO dat meno usera zo session (get string)
-        //UserNameLabel.setText(username);
+        UserNameLabel.setText(UserService.getUser().getFullUserName());
 
         List<Button> buttons = new ArrayList<>();
 
@@ -185,62 +185,6 @@ public class MenuController implements Initializable {
 
             leftSidebar.getChildren().add(btn);
         }
-
-
-//        //..TOTO ZMAZAT OD TADE
-//        Button testBtn = new Button();
-//        testBtn.getStyleClass().add("sidebar-btn");
-//
-//        var testStream = getClass().getResourceAsStream("/icons/png-dark/plus_black.png");
-//        if (testStream != null) {
-//            ImageView testIcon = new ImageView(new Image(testStream));
-//            testIcon.setFitWidth(40);
-//            testIcon.setFitHeight(40);
-//            testIcon.setPreserveRatio(true);
-//            testBtn.setGraphic(testIcon);
-//        }
-//
-//        VBox.setMargin(testBtn, new Insets(10, 5, 0, 5));
-//
-//        testBtn.setOnAction(e -> {
-//            System.out.println("TEST BUTTON CLICKED!");
-//            try {
-//                URL fxmlUrl = getClass().getResource("/views/ShipmentDetail.fxml");
-//                FXMLLoader loader = new FXMLLoader(fxmlUrl);
-//                loader.setResources(NavigationService.getBundle());
-//                Node node = loader.load();
-//
-//                Object ctrl = loader.getController();
-//                if (ctrl instanceof BaseController<?> bc) {
-//                    bc.setMenuController(this);
-//                }
-//
-//                if (ctrl instanceof ShipmentDetailController sdc) {
-//                    CostEstimationInput est = new CostEstimationInput(
-//                            "2026-04-30",           // date
-//                            "Bratislava",           // from
-//                            "09301",                // destination ← PSČ KOŠICE!
-//                            54.46,                  // weight
-//                            210,                    // volume
-//                            5.0,                    // fuelSurcharge
-//                            2.0,                    // toll
-//                            "TEST",                 // shipment_opt
-//                            "TEST",                 // delivery_opt
-//                            List.of()               // options
-//                    );
-//                    ShipmentData dummyData = new ShipmentData(est, "Test", 321);
-//                    sdc.onData(dummyData);
-//                }
-//
-//                contentArea.getChildren().setAll(node);
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//
-//        leftSidebar.getChildren().add(testBtn);
-//        //PO TADE
-
         loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
 
@@ -254,27 +198,12 @@ public class MenuController implements Initializable {
         NavigationService.setLocale(next);
         langButton.setText(next.getLanguage().equals("sk") ? "EN" : "SK");
         if (currentScreen != null) {
-            loadScreen(currentScreen, null);
+            loadScreen(currentScreen, currentData);
         }
     }
 
-    private void setActive(Button activeBtn) {
-        // remove active from all
-//        sidebarBtn1.getStyleClass().remove("sidebar-btn-active");
-//        sidebarBtn2.getStyleClass().remove("sidebar-btn-active");
-//        sidebarBtn3.getStyleClass().remove("sidebar-btn-active");
-//        sidebarBtn4.getStyleClass().remove("sidebar-btn-active");
-//        sidebarBtn5.getStyleClass().remove("sidebar-btn-active");
-//        sidebarBtn6.getStyleClass().remove("sidebar-btn-active");
-//
-//        // add normal class back (optional safety)
-//        sidebarBtn1.getStyleClass().add("sidebar-btn");
-//        sidebarBtn2.getStyleClass().add("sidebar-btn");
-//        sidebarBtn3.getStyleClass().add("sidebar-btn");
-//        sidebarBtn4.getStyleClass().add("sidebar-btn");
-//        sidebarBtn5.getStyleClass().add("sidebar-btn");
-//        sidebarBtn6.getStyleClass().add("sidebar-btn");
-
+    private void setActive(Button activeBtn)
+    {
         // remove normal from clicked
         activeBtn.getStyleClass().remove("sidebar-btn");
 

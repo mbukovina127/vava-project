@@ -14,13 +14,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="1340" styleClass="ce-root" stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
+<VBox prefWidth="1340" styleClass="screen-root" stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.shippin.controller.CostEstimationController">
 
     <!-- ToggleGroups defined here, referenced via $ below -->
     <fx:define>
-        <ToggleGroup fx:id="shipmentTypeGroup"/>
         <ToggleGroup fx:id="deliveryTypeGroup"/>
     </fx:define>
 
@@ -28,19 +27,11 @@
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
         <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
         <Region HBox.hgrow="ALWAYS" />
-        <HBox alignment="CENTER_RIGHT" spacing="8">
-            <Label styleClass="ce-date-label" text="%cost_estimation.date" />
-            <TextField fx:id="dateField" prefWidth="130" promptText="%cost_estimation.date.prompt" styleClass="input-field ce-date-field" />
-            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />
-        </HBox>
-    </HBox>
-
-    <!-- TYPE TOGGLES  —  Small Package / Shipment -->
-    <HBox alignment="CENTER_LEFT" spacing="24" styleClass="ce-toggle-row">
-        <RadioButton fx:id="rbSmallPackage" styleClass="ce-toggle" text="%cost_estimation.small_package"
-                     toggleGroup="$shipmentTypeGroup" />
-        <RadioButton fx:id="rbShipment" selected="true" styleClass="ce-toggle" text="%cost_estimation.shipment"
-                     toggleGroup="$shipmentTypeGroup" />
+<!--        <HBox alignment="CENTER_RIGHT" spacing="8">-->
+<!--            <Label styleClass="ce-date-label" text="%cost_estimation.date" />-->
+<!--            <TextField fx:id="dateField" prefWidth="130" promptText="%cost_estimation.date.prompt" styleClass="input-field ce-date-field" />-->
+<!--            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />-->
+<!--        </HBox>-->
     </HBox>
 
     <!-- FIELDS ROW — restructured as a single GridPane for proper alignment -->
@@ -80,7 +71,7 @@
         </rowConstraints>
 
         <!-- ── Row 0: Postal codes ── -->
-        <Label styleClass="ce-row-label" text="%cost_estimation.postal_codes"
+        <Label styleClass="field-label" text="%cost_estimation.postal_codes"
                GridPane.columnIndex="0" GridPane.rowIndex="0" />
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.from"
@@ -91,14 +82,14 @@
         <Label styleClass="ce-sub-label" text="%cost_estimation.to"
                GridPane.columnIndex="5" GridPane.rowIndex="0" />
         <!-- To field + scan button in an HBox so button stays flush -->
-        <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
+        <HBox fx:id="toBox" alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
               GridPane.columnIndex="6" GridPane.rowIndex="0">
             <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
             <Button fx:id="toScanBtn" onAction="#onTestMap" styleClass="ce-icon-btn" text="⊕" />
         </HBox>
 
         <!-- ── Row 1: status label for destination ── -->
-        <Label fx:id="statusLabelDestination" maxWidth="220" styleClass="status-label" text="" wrapText="true"
+        <Label fx:id="statusLabelDestination" maxWidth="220" styleClass="status-label" wrapText="true"
                GridPane.columnIndex="6" GridPane.rowIndex="1" />
 
         <!-- ── Row 2: Size ── -->
@@ -213,8 +204,8 @@
     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="ce-bottom-row">
         <Label styleClass="ce-dots" text="• • •" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="resetButton" onAction="#onReset" styleClass="ce-btn-reset" text="%cost_estimation.reset" />
-        <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="ce-btn-compute" text="%cost_estimation.compute">
+        <Button fx:id="resetButton" onAction="#onReset" styleClass="secondary-button" text="%cost_estimation.reset" />
+        <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="primary-button" text="%cost_estimation.compute">
             <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
 
