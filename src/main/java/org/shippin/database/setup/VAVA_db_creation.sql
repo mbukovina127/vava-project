@@ -14,7 +14,7 @@ CASCADE;
 
 CREATE TABLE Warehouse (
 	warehouse_ID SERIAL PRIMARY KEY,
-	storage_region TEXT,
+	storage_region INT,
 	warehouse_region_name TEXT NOT NULL,
     latitude  DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
@@ -68,13 +68,13 @@ CREATE TABLE Shipment (
     shipment_ID SERIAL PRIMARY KEY,
     user_ID INT NOT NULL REFERENCES Users(user_ID) ON DELETE SET NULL,
     warehouse_ID INT NOT NULL REFERENCES Warehouse(warehouse_ID) ON DELETE CASCADE,
-    dest_region TEXT NOT NULL,
-    weight NUMERIC(10,2) NOT NULL DEFAULT 0,
-    volume NUMERIC(10,2) NOT NULL DEFAULT 0,
+    dest_region INT NOT NULL,
     fuel_payment NUMERIC(10,2) NOT NULL DEFAULT 0,
     total_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
+    weight NUMERIC(10,2) NOT NULL DEFAULT 0,
+    volume NUMERIC(10,2) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status TEXT NOT NULL DEFAULT 'NOT_READY' CHECK (status in ('NOT_READY', 'READY', 'CANCELED', 'BEING_DELIVERED', 'DELIVERED', 'FAILED')),
+    status TEXT NOT NULL DEFAULT 'NOT_READY' CHECK (status in ('NOT_READY', 'READY', 'CANCELED', 'BEING_DELIVERED', 'DELIVERED', 'FAILED')),-- generuj random 
     is_sp BOOLEAN DEFAULT  FALSE NOT NULL
 );
 
@@ -89,7 +89,8 @@ CREATE TABLE Service (
     service_ID SERIAL PRIMARY KEY,
     service_name TEXT NOT NULL,
     default_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
-    cost_modificator NUMERIC(10,2) NOT NULL DEFAULT 1
+    cost_modificator NUMERIC(10,2) NOT NULL DEFAULT 1,
+    description TEXT
 );
 
 CREATE TABLE Service_list (
@@ -98,16 +99,16 @@ CREATE TABLE Service_list (
     shipment_ID INT NOT NULL REFERENCES Shipment(shipment_ID) ON DELETE CASCADE
 );
 
--- Seed admin user  (password: Admin1234!  →  SHA-256)
-INSERT INTO Users (first_name, last_name, email, password, role)
-VALUES ('Admin', 'Admin', 'admin@shippin.com',
-        'd07e7c4cce2afb5fdab874b1f6c1f95a06564921bad3486805e5bd27fad62457', 2);
+CREATE OR REPLACE FUNCTION delete_parent_postal_code()
+RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM Postal_code
+    WHERE postal_code_id = OLD.postal_code_id;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
 
--- CREATE TABLE Session (
---     session_ID SERIAL PRIMARY KEY,
---     user_ID INT REFERENCES Users(user_ID) ON DELETE CASCADE,
---     token TEXT NOT NULL,
---     created_at TIMESTAMP NOT NULL,
---     expires_at TIMESTAMP NOT NULL,
---     is_active BOOLEAN NOT NULL
--- );
+CREATE OR REPLACE TRIGGER trg_delete_postal_code
+AFTER DELETE ON postal_code_list
+FOR EACH ROW
+EXECUTE FUNCTION delete_parent_postal_code();
