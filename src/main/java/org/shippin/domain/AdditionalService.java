@@ -1,9 +1,9 @@
 package org.shippin.domain;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.shippin.domain.enums.ServiceType;
 
 @Data
 @AllArgsConstructor
@@ -13,4 +13,5 @@ public class AdditionalService {
     private String name;
     private float defaultCost;
     private float costModifier;
+    private ServiceType serviceType;
 }

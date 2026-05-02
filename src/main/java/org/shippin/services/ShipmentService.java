@@ -24,6 +24,7 @@ public class ShipmentService {
     }
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
         shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        updateShipmentState(shipment, shipment.getState());
         return shipment;
     }
 
