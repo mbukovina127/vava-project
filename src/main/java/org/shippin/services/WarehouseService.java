@@ -36,9 +36,9 @@ public class WarehouseService {
 	private RegionDAO regionDao;
 	
 	public WarehouseService() {
-		this.warehouseDao = new WarehouseDAO(DBConnector.getInstance().getConnection());
-		this.priceListDao = new PriceListDAO(DBConnector.getInstance().getConnection());
-		this.regionDao = new RegionDAO(DBConnector.getInstance().getConnection());
+		this.warehouseDao = WarehouseDAO.getInstance();
+		this.priceListDao = PriceListDAO.getInstance();
+		this.regionDao = RegionDAO.getInstance();
 	}
 	
 	public WarehouseFormatted getWarehouseFormatted(BriefWarehouse briefWarehouse) {
