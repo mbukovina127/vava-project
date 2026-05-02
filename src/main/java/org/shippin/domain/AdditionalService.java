@@ -14,4 +14,5 @@ public class AdditionalService {
     private float defaultCost;
     private float costModifier;
     private ServiceType serviceType;
+    private String description;
 }
