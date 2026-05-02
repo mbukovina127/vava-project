@@ -19,11 +19,13 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
+import org.shippin.domain.Warehouse;
 import org.shippin.services.WarehouseParsingService;
 import org.shippin.util.io.FilePicker;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.services.WarehouseService;
 
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
@@ -35,7 +37,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WarehouseManagementController extends BaseController<Void> implements Initializable {
+public class WarehouseManagementController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML private ImageView addWarehouseIcon;
     @FXML private ImageView changePriceListIcon;
@@ -50,6 +52,10 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     
     private WarehouseParsingService warehouseParsingService;
 	private WarehouseService warehouseService;
+	private List<BriefWarehouse> warehouseList;
+	private Warehouse selectedWarehouse;
+	private RegionTableFormatted selectedRegionTableFormatted;
+	private PriceListFormatted selectedPriceListFormatted;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,11 +73,12 @@ public class WarehouseManagementController extends BaseController<Void> implemen
             stylesheetUrl = cssResource.toExternalForm();
         }
 
-        List<CoreWarehouseInfo> warehouses = createWarehouses();
-        renderWarehouses(warehouses);
-        
         this.warehouseParsingService = new WarehouseParsingService();
         this.warehouseService = new WarehouseService();
+        
+        //List<CoreWarehouseInfo> warehouses = createWarehouses();
+        this.warehouseList = warehouseService.getBriefWarehouses();
+        renderWarehouses(warehouseList);
     }
 
     // Dummy data
@@ -83,15 +90,15 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         );
     }
 
-    private void renderWarehouses(List<CoreWarehouseInfo> warehouses) {
+    private void renderWarehouses(List<BriefWarehouse> warehouses) {
         warehouseRowsContainer.getChildren().clear();
 
-        for (CoreWarehouseInfo warehouse : warehouses) {
+        for (BriefWarehouse warehouse : warehouses) {
             warehouseRowsContainer.getChildren().add(createWarehouseRow(warehouse));
         }
     }
 
-    private GridPane createWarehouseRow(CoreWarehouseInfo warehouse) {
+    private GridPane createWarehouseRow(BriefWarehouse warehouse) {
         GridPane row = new GridPane();
         row.setStyle("-fx-border-color: transparent transparent #2b2b2b transparent; -fx-border-width: 0 0 2 0;");
 
@@ -124,7 +131,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
 
         Button editButton = createTableIconButton(editIcon, 22.0, 22.0, 32.0, 32.0);
         editButton.setOnAction(event -> {
-				this.handleOpenWarehouse();
+				this.handleOpenWarehouse(warehouse);
 		});
         GridPane.setColumnIndex(editButton, 1);
 
@@ -172,6 +179,10 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     @FXML
     private void handleAddWarehouse() {
         showAddWarehousePopup();
+    }
+    
+    private Warehouse fetchFullWarehouse(BriefWarehouse briefWarehouse) {
+    	return this.warehouseService.getWarehouse(briefWarehouse);
     }
 
     private void showAddWarehousePopup() {
@@ -274,7 +285,8 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         showModal(popup);
     }
 
-    private void showReplaceWarehousePopup(CoreWarehouseInfo warehouse) {
+    private void showReplaceWarehousePopup(BriefWarehouse warehouse) {
+    	this.selectedWarehouse = fetchFullWarehouse(warehouse);
         VBox popup = createPopupRoot();
         popup.setMaxWidth(560);
         popup.setPrefWidth(560);
@@ -321,6 +333,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
 
             // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
         	if (priceListFormatted == null) { return; }
+        	this.selectedPriceListFormatted = priceListFormatted;
         	
         	priceListFile.setText(file.getName());
         });
@@ -344,6 +357,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         	
             // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
             if(regionTableFormatted == null) { return; }
+            this.selectedRegionTableFormatted = regionTableFormatted;
             
             regionTableFile.setText(file.getName());
         });
@@ -373,7 +387,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         Button addButton = new Button("Apply changes");
         addButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         addButton.setPrefSize(160, 42);
-        addButton.setOnAction(e -> hideModal());
+        addButton.setOnAction(e -> this.handleReplaceSaved());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -475,10 +489,11 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         return new Image(resource.toExternalForm());
     }
     
-    private void handleOpenWarehouse() {
+    private void handleOpenWarehouse(BriefWarehouse briefWarehouse) {
     	System.out.println("EDIT WAREHOUSE CLICKED");
     	try {
-			loadScreen(EDIT_WAREHOUSE);
+    		WarehouseFormatted warehouseFormatted = this.warehouseService.getWarehouseFormatted(briefWarehouse);
+			loadScreen(EDIT_WAREHOUSE, warehouseFormatted);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -488,6 +503,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     @FXML
     private void handleOpenSmallPriceList() {
     	try {
+    		SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -512,17 +528,18 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     	if (smallPriceListFormatted == null) { return; }
     }
     
-    private void handleReplaceSaved(PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) {
-    	if(priceListFormatted == null && regionTableFormatted == null) {
+    private void handleReplaceSaved() {
+    	if(this.selectedPriceListFormatted == null && this.selectedRegionTableFormatted == null) {
     		return;
     		// Make popup about not adding anything
     	}
     	
-    	if(priceListFormatted != null) {
-    		warehouseService.replacePriceList(priceListFormatted);
+    	if(this.selectedPriceListFormatted != null) {
+    		warehouseService.replacePriceList(this.selectedPriceListFormatted, this.selectedWarehouse);
     	}
-    	if(regionTableFormatted != null) {
-    		warehouseService.replaceRegionTable(regionTableFormatted);
+    	if(this.selectedRegionTableFormatted != null) {
+    		warehouseService.replaceRegionTable(this.selectedRegionTableFormatted, this.selectedWarehouse);
     	}
+    	hideModal();
     }
 }

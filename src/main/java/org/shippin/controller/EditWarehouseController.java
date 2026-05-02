@@ -12,10 +12,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 import org.shippin.controller.utils.CostEstimationInput;
+import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
+import org.shippin.domain.formatted.WarehouseFormatted;
+import org.shippin.services.WarehouseService;
 import org.shippin.util.Range;
 import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
 
@@ -25,13 +29,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EditWarehouseController extends BaseController<Void> {
+public class EditWarehouseController extends BaseController<WarehouseFormatted> {
 
     @FXML
     private GridPane regionGrid;
 
     private PriceListFormatted priceList;
     private RegionTableFormatted regionTableFormatted;
+
+	private WarehouseService warehouseService;
+
+	private WarehouseFormatted warehouse;
 
     private void addCell(GridPane grid, String text, int col, int row, int colspan, int rowspan, String styleClass) {
         Label label = new Label(text);
@@ -48,6 +56,20 @@ public class EditWarehouseController extends BaseController<Void> {
 
         grid.add(label, col, row, colspan, rowspan);
     }
+    
+    @Override
+    protected void onData(WarehouseFormatted warehouseFormatted) {
+    	this.warehouse = warehouseFormatted;
+    	this.priceList = this.warehouse.getPriceList();
+    	setupPriceListTable();
+    	this.regionTableFormatted = this.warehouse.getRegionTable();
+        setupRegionGrid();
+        this.warehouseService = WarehouseService.getInstance();
+        System.out.println(warehouse);
+    }
+    
+    @Override
+    protected Class<WarehouseFormatted> getDataType() {return WarehouseFormatted.class;}
     
     private void setupRegionGrid() {
         regionGrid.getChildren().clear();
@@ -88,8 +110,6 @@ public class EditWarehouseController extends BaseController<Void> {
     @FXML
     public void initialize() {
         loadData();
-        setupPriceListTable();
-        setupRegionGrid();
     }
 
     @FXML

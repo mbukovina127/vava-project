@@ -297,30 +297,55 @@ public class PriceListDAO extends BaseDAO {
         return stmt.executeUpdate() >= 0;
     }
 
+    public SmallPriceList getSmallPriceList() throws SQLException {
+        List<SmallPriceListEntry> entries = new ArrayList<>();
 
+        String sql = """
+        SELECT sp_price_list_ID, weight_sp, cost_sp
+        FROM Sp_price_list;
+        """;
 
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
 
+        while (rs.next()) {
+            SmallPriceListEntry entry = new SmallPriceListEntry(
+                    rs.getInt("sp_price_list_ID"),
+                    rs.getFloat("weight_sp"),
+                    rs.getFloat("cost_sp")
+            );
+            entries.add(entry);
+        }
 
+        SmallPriceList list = new SmallPriceList();
+        list.setEntries(entries);
 
+        return list;
+    }
 
+    public SmallPriceListEntry getSmallPriceListEntryByWeight(float weight) throws SQLException {
 
+        String sql = """
+        SELECT sp_price_list_ID, weight_sp, cost_sp
+        FROM Sp_price_list
+        WHERE weight_sp = ?;
+        """;
 
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setFloat(1, weight);
 
+        ResultSet rs = stmt.executeQuery();
 
+        if (rs.next()) {
+            return new SmallPriceListEntry(
+                    rs.getInt("sp_price_list_ID"),
+                    rs.getFloat("weight_sp"),
+                    rs.getFloat("cost_sp")
+            );
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return null;
+    }
 }
 
 

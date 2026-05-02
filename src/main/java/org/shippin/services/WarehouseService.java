@@ -7,6 +7,8 @@ import org.shippin.domain.SmallPriceList;
 import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
+import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.util.WarehouseConvertor;
 import org.shippin.domain.BriefWarehouse;
 
@@ -17,18 +19,46 @@ import lombok.NoArgsConstructor;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.shippin.database.DBConnector;
 import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.RegionDAO;
 import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.util.WarehouseConvertor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class WarehouseService {
+	
+	private static WarehouseService instance;
 	
 	private WarehouseDAO warehouseDao;
 	private PriceListDAO priceListDao;
 	private RegionDAO regionDao;
+	
+	public WarehouseService() {
+		this.warehouseDao = new WarehouseDAO(DBConnector.getInstance().getConnection());
+		this.priceListDao = new PriceListDAO(DBConnector.getInstance().getConnection());
+		this.regionDao = new RegionDAO(DBConnector.getInstance().getConnection());
+	}
+	
+	public WarehouseFormatted getWarehouseFormatted(BriefWarehouse briefWarehouse) {
+		Warehouse warehouse;
+		try {
+			warehouse = warehouseDao.getById(briefWarehouse.getId());
+			return WarehouseConvertor.toWarehouseFormatted(warehouse);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static WarehouseService getInstance() {
+		if (instance == null) {
+            instance = new WarehouseService();
+        }
+        return instance;
+    }
 	
 	public void replacePriceList(PriceListFormatted priceListFormatted, Warehouse warehouse) {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
@@ -40,7 +70,7 @@ public class WarehouseService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void replaceRegionTable(RegionTableFormatted regionTableFormatted, Warehouse warehouse) {
 		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
 		try {
@@ -85,7 +115,7 @@ public class WarehouseService {
 		}
 	}
 	
-	public List<BriefWarehouse> getBriefWarehouses(CoreWarehouseInfo warehouseInfo) {
+	public List<BriefWarehouse> getBriefWarehouses() {
 		try {
 			return warehouseDao.getAllBriefWarehouses();
 		} catch (SQLException e) {
@@ -105,7 +135,46 @@ public class WarehouseService {
 		return null;
 	}
 	
-	public SmallPriceList getSmallPackagePriceList(SmallPriceList smallPackagePriceList) {
-		return priceListDao.get
+	public SmallPriceList getSmallPriceList() {
+		try {
+			return priceListDao.getSmallPriceList();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public SmallPriceListFormatted getSmallPriceListFormatted() {
+		try {
+			SmallPriceList priceList = priceListDao.getSmallPriceList();
+			return WarehouseConvertor.toSmallPriceListFormatted(priceList);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void setSmallPriceList(SmallPriceList smallPriceList) {
+		try {
+			priceListDao.deleteSmallPriceList();
+			priceListDao.insertSmallPriceList(smallPriceList);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public SmallPriceListFormatted setSmallPriceListFormatted(SmallPriceListFormatted smallPriceListFormatted) {
+		try {
+			SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(smallPriceListFormatted);
+			priceListDao.deleteSmallPriceList();
+			priceListDao.insertSmallPriceList(smallPriceList);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

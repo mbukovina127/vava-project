@@ -18,6 +18,8 @@ import org.shippin.util.io.TextFileHandler;
 import java.io.File;
 
 public class WarehouseParsingService {
+	
+	private static WarehouseParsingService instance;
 
     private final TextFileHandler textFileHandler;
 
@@ -41,6 +43,13 @@ public class WarehouseParsingService {
 
         this.smallPriceListCsvParser = new SmallPriceListCsvParser();
         this.smallPriceListXmlParser = new SmallPriceListXmlParser();
+    }
+    
+    public static WarehouseParsingService getInstance() {
+		if (instance == null) {
+            instance = new WarehouseParsingService();
+        }
+        return instance;
     }
 
     // ---------------------------------------------------------------------
