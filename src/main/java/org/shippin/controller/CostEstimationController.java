@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.database.dao.ShipmentDAO;
@@ -14,6 +15,11 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.ServiceType;
 import org.shippin.services.ShipmentService;
+import org.shippin.database.dao.ShipmentDAO;
+import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Shipment;
+import org.shippin.services.ShipmentService;
 
 import org.shippin.app.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
@@ -21,6 +27,8 @@ import org.shippin.controller.MapPickerController;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.*;
 
 import static java.lang.Double.parseDouble;
@@ -37,6 +45,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Postal codes
     @FXML private ComboBox<String> fromCombo;
     @FXML private TextField destinationField;
+    @FXML private HBox toBox;
 
     // Size row
     @FXML private TextField weightField;
@@ -225,7 +234,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         statusLabelFuel.setText("");
         statusLabelToll.setText("");
     }
-
     @FXML
     private void onComputeCost() throws IOException
     {

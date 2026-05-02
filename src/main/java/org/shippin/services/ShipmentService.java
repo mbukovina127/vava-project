@@ -33,30 +33,13 @@ public class ShipmentService {
                                    float fuelSurchargeCoefficient, float toll, float weight, float volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
-
-
         WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
 
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 
         List<AdditionalService> allServices = shipmentDAO.getSAllServices();
-        List<AdditionalService> selected = allServices.stream().filter(s -> serviceIds.contains(s.getId())).toList();
-
-        float baseCost;
-        if (weight > 30) {
-            String regionCode = findRegionForPostalCode(
-                    warehouse.getRegionTable(), destPostalCode);
-
-            float costByWeight = findCostInPriceList(
-                    warehouse.getPriceList(), regionCode, weight, true);
-            float costByVolume = findCostInPriceList(
-                    warehouse.getPriceList(), regionCode, volume, false);
-            baseCost = Math.max(costByWeight, costByVolume);
-        } else {
-            PriceListDAO priceListDAO = PriceListDAO.getInstance();
-            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
-            baseCost = findCostInSmallPriceList(smallPriceList, weight);
-        }
+        List<AdditionalService> selected = allServices.stream()
+                .filter(s -> serviceIds.contains(s.getId())).toList();
 
         Shipment shipment = new Shipment();
         shipment.setServices(new ArrayList<>(selected));
@@ -66,18 +49,72 @@ public class ShipmentService {
         shipment.setDest_region(destPostalCode);
         shipment.setWeight(weight);
         shipment.setVolume(volume);
+        shipment.setToll(toll);
         shipment.setFuel_payment(fuelSurchargeCoefficient);
+        shipment.setToll(toll);
         shipment.setState(State.NOT_READY);
 
-        estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);
-        shipment.setToll(toll);
+        float baseCost = calculateBaseCost(shipment);
+        System.out.println(baseCost);
+        shipment.setTotalCost(calculateTotalCost(shipment, baseCost));
 
         return shipment;
     }
 
-    private void estimateCost(Shipment shipment, float fuelSurchargeCoefficient, float toll, float baseCost) {
-        float cost = baseCost * (fuelSurchargeCoefficient + toll + 1);
+    // ── Cost calculations ─────────────────────────────────────────
 
+    public static float calculateBaseCost(Shipment shipment) throws SQLException {
+        WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
+        Warehouse warehouse = warehouseDAO.getById(shipment.getWarehouse().getId());
+
+        float weight = shipment.getWeight();
+        float volume = shipment.getVolume();
+        int destPostalCode = shipment.getDest_region();
+
+        if (weight > 30) {
+            String regionCode = findRegionForPostalCode(warehouse.getRegionTable(), destPostalCode);
+            float costByWeight = findCostInPriceList(warehouse.getPriceList(), regionCode, weight, true);
+            float costByVolume = findCostInPriceList(warehouse.getPriceList(), regionCode, volume, false);
+            return Math.max(costByWeight, costByVolume);
+        } else {
+            PriceListDAO priceListDAO = PriceListDAO.getInstance();
+            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
+            return findCostInSmallPriceList(smallPriceList, weight);
+        }
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateFuelCost(Shipment shipment, float baseCost) {
+        return baseCost * shipment.getFuel_payment();
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateTollCost(Shipment shipment, float baseCost) {
+        return baseCost * shipment.getToll();
+    }
+
+    public static float calculateServiceCost(Shipment shipment, float baseCost) {
+        List<AdditionalService> services = shipment.getServices();
+        if (services == null || services.isEmpty()) return 0;
+        float baseWithCoefficients = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
+        float modifierSum = 0;
+        float defaultCostSum = 0;
+        for (AdditionalService s : services) {
+            modifierSum += s.getCostModifier();
+            defaultCostSum += s.getDefaultCost();
+        }
+        return baseWithCoefficients * modifierSum + defaultCostSum;
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateServiceCost(Shipment shipment,float baseCost,AdditionalService service)
+    {
+        float mainCost = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
+        return mainCost * service.getCostModifier() + service.getDefaultCost();
+    }
+
+    public static float calculateTotalCost(Shipment shipment, float baseCost) {
+        float baseWithCoefficients = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
         float modifierSum = 0;
         float defaultCostSum = 0;
         if (shipment.getServices() != null) {
@@ -86,14 +123,12 @@ public class ShipmentService {
                 defaultCostSum += s.getDefaultCost();
             }
         }
-
-        cost = cost * (modifierSum + 1);
-        cost = cost + defaultCostSum;
-
-        shipment.setTotalCost(cost);
+        return baseWithCoefficients * (modifierSum + 1) + defaultCostSum;
     }
 
-    private String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
+    // ── Private helpers ───────────────────────────────────────────
+
+    private static String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
         for (RegionTableEntry entry : regionTable.getEntries()) {
             for (Range range : entry.getRanges()) {
                 if (range.contains(postalCode)) {
@@ -104,7 +139,7 @@ public class ShipmentService {
         throw new IllegalArgumentException("No region found for postal code: " + postalCode);
     }
 
-    private float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
+    private static float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
         float bestCost = -1;
         float bestThreshold = Float.MAX_VALUE;
 
@@ -122,8 +157,8 @@ public class ShipmentService {
         return bestCost;
     }
 
-    private float findCostInPriceList(PriceList priceList, String regionCode,
-                                      float value, boolean byWeight) {
+    private static float findCostInPriceList(PriceList priceList, String regionCode,
+                                             float value, boolean byWeight) {
         float bestCost = -1;
         float bestThreshold = Float.MAX_VALUE;
 

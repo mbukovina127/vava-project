@@ -86,7 +86,7 @@
                           <Region prefHeight="28" />
                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
-      
+
                                 <!-- ── Map view ────────────────────────── -->
                           <StackPane fx:id="mapContainer" alignment="TOP_LEFT" maxHeight="200" maxWidth="700" minHeight="200" prefHeight="200" prefWidth="700" styleClass="sd-map-container">
                               <ImageView fx:id="mapImageView" fitHeight="200" fitWidth="700" preserveRatio="false" styleClass="sd-map-image" />
