@@ -226,7 +226,7 @@ public class WarehouseDAO extends BaseDAO {
         }
     }
 
-    private boolean updateWarehouse(Warehouse w) throws SQLException {
+    public boolean updateWarehouse(Warehouse w) throws SQLException {
 
         String sql = """
         UPDATE Warehouse
