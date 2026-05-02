@@ -64,7 +64,7 @@ public class WarehouseService {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		try {
 			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
-			priceListDao.insertPriceList(priceList, warehouse.getRegionName());
+			priceListDao.insertPriceList(priceList, warehouse.getId());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -178,5 +178,21 @@ public class WarehouseService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void replaceTables(PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted, Warehouse warehouse) {
+		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
+		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
+		
+		try {
+			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
+			regionDao.deleteFullRegionTable(warehouse.getId());
+			
+			priceListDao.insertPriceList(priceList, warehouse.getId());
+			regionDao.insertFullRegionTable(regionTable, warehouse);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

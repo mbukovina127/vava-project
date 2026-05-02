@@ -143,7 +143,7 @@ public class WarehouseDAO extends BaseDAO {
                 PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
                 for (var item : warehouse.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, warehouse.getName());
+                    priceListDAO.insertPriceListEntry(item, warehouse.getId());
                 }
             }
 
@@ -233,7 +233,7 @@ public class WarehouseDAO extends BaseDAO {
                 priceListDAO.deletePriceListByWarehouseID(w.getId());
 
                 for (var item : w.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, w.getName());
+                    priceListDAO.insertPriceListEntry(item, w.getId());
                 }
             }
 

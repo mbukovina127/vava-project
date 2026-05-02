@@ -269,7 +269,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
             if (regionTableFormatted == null) { return; }
 
-            this.selectedRegionTableFormatted = regionTableFormatted;
+            this.selectedRegionTableFormatted = regionTableFormatted;;
             addRegionTableButton.setText(file.getName());
         });
 
@@ -384,7 +384,8 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
             if (regionTableFormatted == null) { return; }
             this.selectedRegionTableFormatted = regionTableFormatted;
-
+            
+            System.out.println(regionTableFormatted);
             regionTableFile.setText(file.getName());
         });
 
@@ -546,12 +547,12 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     
     private void handleReplaceSaved() {
     	
-    	if(this.selectedPriceListFormatted != null) {
-    		warehouseService.replacePriceList(this.selectedPriceListFormatted, this.selectedWarehouse);
+    	if(this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
+    		return;
     	}
-    	if(this.selectedRegionTableFormatted != null) {
-    		warehouseService.replaceRegionTable(this.selectedRegionTableFormatted, this.selectedWarehouse);
-    	}
+    	
+    	warehouseService.replaceTables(this.selectedPriceListFormatted, this.selectedRegionTableFormatted, this.selectedWarehouse);
+    	
     	hideModal();
     }
 

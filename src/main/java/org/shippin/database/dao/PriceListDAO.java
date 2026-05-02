@@ -194,25 +194,25 @@ public class PriceListDAO extends BaseDAO {
     /**
      * appends PriceListEntry to warehouse, returns its ID from db
      */
-    public int insertPriceListEntry(PriceListEntry item, String sourceWarehouse) throws SQLException {
+    public int insertPriceListEntry(PriceListEntry item, int warehouseId) throws SQLException {
 
         //get region_ID where region_name=BA1 BA2 AND warehouseID=warehouseID
         String regionSql = """
         SELECT r.region_ID
         FROM Region r
         JOIN Warehouse w ON w.warehouse_ID = r.warehouse_ID
-        WHERE w.warehouse_region_name = ?
+        WHERE w.warehouse_ID = ?
           AND r.region_name = ?
     """;
 
         PreparedStatement regionStmt = connection.prepareStatement(regionSql);
-        regionStmt.setString(1, sourceWarehouse);
+        regionStmt.setInt(1, warehouseId);
         regionStmt.setString(2, item.getZone());
 
         ResultSet rs = regionStmt.executeQuery();
 
         if (!rs.next()) {
-            throw new SQLException("region not found warehouse=" + sourceWarehouse + " zone=" + item.getZone());
+            throw new SQLException("region not found warehouse=" + warehouseId + " zone=" + item.getZone());
         }
 
         int regionId = rs.getInt("region_ID");
@@ -242,12 +242,15 @@ public class PriceListDAO extends BaseDAO {
     /**
      * insert PriceList into warehouse
      */
-    public void insertPriceList(PriceList pl, String sourceWarehouse) throws SQLException {
+    public void insertPriceList(PriceList pl, int warehouseId) throws SQLException {
 
+    	for (String regionName : pl.getRegions()) {
+    		RegionDAO.getInstance().insertRegion(regionName, warehouseId);
+    	}
+    	
         for (PriceListEntry item : pl.getEntries()) {
-            insertPriceListEntry(item, sourceWarehouse);
+            insertPriceListEntry(item, warehouseId);
         }
-
     }
 
 
