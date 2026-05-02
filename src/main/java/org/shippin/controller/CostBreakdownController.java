@@ -94,6 +94,9 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
         addTotalSeparator();
         addTotalRow();
+
+        saveButton.setVisible(shipment.getShipment_id() == 0);
+        saveButton.setManaged(shipment.getShipment_id() == 0);
     }
 
     // ── Grid helpers ──────────────────────────────────────────────

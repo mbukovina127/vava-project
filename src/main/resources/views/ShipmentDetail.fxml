@@ -37,6 +37,7 @@
                         <Label fx:id="distanceLabel" minWidth="-Infinity" styleClass="sd-info-muted" text="0" />
                         <Region prefWidth="32" />
                         <Label minWidth="-Infinity" styleClass="sd-info-key" text="%shipment_detail.total_cost" />
+                  <Region prefHeight="42.0" prefWidth="9.0" />
                         <Label fx:id="totalCostLabel" minWidth="-Infinity" styleClass="sd-info-cost" text="54,46 €" />
                         <Region prefWidth="20" />
                         <Button fx:id="costBreakdownBtn" onAction="#onCostBreakdown" styleClass="sd-btn-breakdown" text="%shipment_detail.cost_breakdown" />
@@ -64,7 +65,7 @@
                     <Region prefHeight="12" />
                <ScrollPane hbarPolicy="NEVER" maxHeight="100.0" styleClass="sd-history-container" stylesheets="@../css/shipment-detail.css">
                   <content>
-      
+
                                 <!-- ── History grid ────────────────────── -->
                           <GridPane fx:id="historyGrid" hgap="0" styleClass="sd-history-grid" vgap="4">
                               <columnConstraints>

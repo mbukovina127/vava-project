@@ -18,5 +18,7 @@ public class ShipmentHistory {
     private Timestamp timestamp;
     private State state;
     private int shipment_id;
+    private int user_id;
+    private String userName;
 
 }

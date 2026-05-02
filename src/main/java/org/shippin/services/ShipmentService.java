@@ -9,7 +9,6 @@ import org.shippin.util.Range;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Timestamp;
 import java.time.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -71,6 +70,7 @@ public class ShipmentService {
         shipment.setState(State.NOT_READY);
 
         estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);
+        shipment.setToll(toll);
 
         return shipment;
     }
@@ -156,6 +156,8 @@ public class ShipmentService {
             entry.setShipment_id(shipment.getShipment_id());
             entry.setState(newState);
             entry.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            User currentUser = UserService.getUser();
+            entry.setUser_id(currentUser != null ? currentUser.getId() : 0);
             shipmentDAO.addShipmentHistory(entry);
 
             shipmentDAO.commit();
@@ -167,8 +169,6 @@ public class ShipmentService {
             shipmentDAO.setAutoCommit(true);
         }
     }
-
-
 
     public Map<LocalDate, Double> getDailySummaries(YearMonth ym) throws SQLException {
 

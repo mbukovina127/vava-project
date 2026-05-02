@@ -13,10 +13,12 @@ import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.ShipmentHistory;
 import org.shippin.domain.enums.State;
+import org.shippin.dto.Screens;
 import org.shippin.services.MapService;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +45,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @FXML private Label      mapFallbackLabel;
     @FXML private Button     dailySummaryBtn;
 
-    private record HistoryEntry(String time, String status) {}
+    private record HistoryEntry(String time, String status, String actor) {}
 
     private final ShipmentService shipmentService = new ShipmentService();
     private final MapService      mapService      = new MapService();
@@ -161,7 +163,10 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
                 List<ShipmentHistory> raw = shipmentService.getShipmentHistory(shipment.getShipment_id());
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
                 List<HistoryEntry> entries = raw.stream()
-                        .map(h -> new HistoryEntry(h.getTimestamp().toLocalDateTime().format(fmt), stateToDisplay(h.getState())
+                        .map(h -> new HistoryEntry(
+                                h.getTimestamp().toLocalDateTime().format(fmt),
+                                stateToDisplay(h.getState()),
+                                h.getUserName() != null ? h.getUserName() : "—"
                         ))
                         .toList()
                         .reversed();
@@ -182,6 +187,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
             HistoryEntry e = history.get(i);
             historyGrid.add(historyCell(e.time(),   "sd-history-time"),   0, i);
             historyGrid.add(historyCell(e.status(), "sd-history-status"), 1, i);
+            historyGrid.add(historyCell(e.actor(),  "sd-history-actor"),  2, i);
         }
     }
 
@@ -241,13 +247,18 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
         Label title = createPopupTitle(bundle().getString("shipment_detail.popup_title"));
 
-        List<State> states = Arrays.asList(State.values());
+        List<State> states = currentState != null ? currentState.allowedTransitions() : List.of();
         Label stateLabel = createFormLabel(bundle().getString("shipment_detail.state"));
         ComboBox<String> stateCombo = new ComboBox<>();
         stateCombo.getItems().addAll(states.stream().map(this::stateToDisplay).toList());
-        stateCombo.setValue(currentStatus);
         stateCombo.setMaxWidth(Double.MAX_VALUE);
         stateCombo.getStyleClass().add("popup-text-field");
+        if (states.isEmpty()) {
+            stateCombo.setPromptText("No transitions available");
+            stateCombo.setDisable(true);
+        } else {
+            stateCombo.getSelectionModel().selectFirst();
+        }
 
         GridPane formGrid = new GridPane();
         formGrid.setHgap(16);
@@ -325,6 +336,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @FXML
     private void onCostBreakdown() {
         log.info("Cost breakdown requested for shipment #{}", shipment.getShipment_id());
+        try {
+            loadScreen(Screens.COST_BREAKDOWN, shipment);
+        } catch (IOException e) {
+            log.error("When trying to change screens with data {}", shipment, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML

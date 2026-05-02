@@ -19,6 +19,7 @@ public abstract class CoreShipmentInfo{
     private float weight;
     private float volume;
     private float fuel_payment;
+    private float toll;
     private float totalCost;
     private State state;
 }
