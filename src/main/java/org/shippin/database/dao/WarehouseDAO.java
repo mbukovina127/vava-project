@@ -246,6 +246,4 @@ public class WarehouseDAO extends BaseDAO {
         return affectedRows > 0;
     }
 
-
-
 }

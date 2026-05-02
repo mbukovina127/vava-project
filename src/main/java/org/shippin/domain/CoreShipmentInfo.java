@@ -14,11 +14,11 @@ import java.util.Date;
 public abstract class CoreShipmentInfo{
     private int shipment_id;
     private int user_ID;
-    // private String name;
     private Date created_at;
-    // private String sourcePostalCode;
     private int dest_region;
     private Coordinates startCoordinate;
+    private float weight;
+    private float volume;
     private float fuel_payment;
     private float totalCost;
     private State state;
