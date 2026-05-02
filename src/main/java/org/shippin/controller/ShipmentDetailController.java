@@ -43,7 +43,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @FXML private Label      mapFallbackLabel;
     @FXML private Button     dailySummaryBtn;
 
-    private record HistoryEntry(String time, String status) {}
+    private record HistoryEntry(String time, String status, String actor) {}
 
     private final ShipmentService shipmentService = new ShipmentService();
     private final MapService      mapService      = new MapService();
@@ -162,7 +162,10 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
                 List<ShipmentHistory> raw = shipmentService.getShipmentHistory(shipment.getShipment_id());
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
                 List<HistoryEntry> entries = raw.stream()
-                        .map(h -> new HistoryEntry(h.getTimestamp().toLocalDateTime().format(fmt), stateToDisplay(h.getState())
+                        .map(h -> new HistoryEntry(
+                                h.getTimestamp().toLocalDateTime().format(fmt),
+                                stateToDisplay(h.getState()),
+                                h.getUserName() != null ? h.getUserName() : "—"
                         ))
                         .toList()
                         .reversed();
@@ -183,6 +186,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
             HistoryEntry e = history.get(i);
             historyGrid.add(historyCell(e.time(),   "sd-history-time"),   0, i);
             historyGrid.add(historyCell(e.status(), "sd-history-status"), 1, i);
+            historyGrid.add(historyCell(e.actor(),  "sd-history-actor"),  2, i);
         }
     }
 
