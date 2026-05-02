@@ -12,21 +12,32 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
+import org.shippin.domain.Warehouse;
+import org.shippin.services.WarehouseParsingService;
+import org.shippin.util.io.FilePicker;
+import org.shippin.domain.formatted.PriceListFormatted;
+import org.shippin.domain.formatted.RegionTableFormatted;
+import org.shippin.domain.formatted.SmallPriceListFormatted;
+import org.shippin.domain.formatted.WarehouseFormatted;
+import org.shippin.services.WarehouseService;
+
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
 import static org.shippin.dto.Screens.SMALL_PRICE_LIST_VIEW;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WarehouseManagementController extends BaseController<Void> implements Initializable {
+public class WarehouseManagementController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML private ImageView addWarehouseIcon;
     @FXML private ImageView changePriceListIcon;
@@ -38,6 +49,13 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     private Image exportIcon;
     private Image deleteIcon;
     private String stylesheetUrl;
+    
+    private WarehouseParsingService warehouseParsingService;
+	private WarehouseService warehouseService;
+	private List<BriefWarehouse> warehouseList;
+	private Warehouse selectedWarehouse;
+	private RegionTableFormatted selectedRegionTableFormatted;
+	private PriceListFormatted selectedPriceListFormatted;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -55,8 +73,12 @@ public class WarehouseManagementController extends BaseController<Void> implemen
             stylesheetUrl = cssResource.toExternalForm();
         }
 
-        List<CoreWarehouseInfo> warehouses = createWarehouses();
-        renderWarehouses(warehouses);
+        this.warehouseParsingService = new WarehouseParsingService();
+        this.warehouseService = new WarehouseService();
+        
+        //List<CoreWarehouseInfo> warehouses = createWarehouses();
+        this.warehouseList = warehouseService.getBriefWarehouses();
+        renderWarehouses(warehouseList);
     }
 
     // Dummy data
@@ -68,15 +90,15 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         );
     }
 
-    private void renderWarehouses(List<CoreWarehouseInfo> warehouses) {
+    private void renderWarehouses(List<BriefWarehouse> warehouses) {
         warehouseRowsContainer.getChildren().clear();
 
-        for (CoreWarehouseInfo warehouse : warehouses) {
+        for (BriefWarehouse warehouse : warehouses) {
             warehouseRowsContainer.getChildren().add(createWarehouseRow(warehouse));
         }
     }
 
-    private GridPane createWarehouseRow(CoreWarehouseInfo warehouse) {
+    private GridPane createWarehouseRow(BriefWarehouse warehouse) {
         GridPane row = new GridPane();
         row.setStyle("-fx-border-color: transparent transparent #2b2b2b transparent; -fx-border-width: 0 0 2 0;");
 
@@ -109,7 +131,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
 
         Button editButton = createTableIconButton(editIcon, 22.0, 22.0, 32.0, 32.0);
         editButton.setOnAction(event -> {
-				this.handleOpenWarehouse();
+				this.handleOpenWarehouse(warehouse);
 		});
         GridPane.setColumnIndex(editButton, 1);
 
@@ -158,6 +180,10 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     private void handleAddWarehouse() {
         showAddWarehousePopup();
     }
+    
+    private Warehouse fetchFullWarehouse(BriefWarehouse briefWarehouse) {
+    	return this.warehouseService.getWarehouse(briefWarehouse);
+    }
 
     private void showAddWarehousePopup() {
         VBox popup = createPopupRoot();
@@ -186,9 +212,43 @@ public class WarehouseManagementController extends BaseController<Void> implemen
 
         Label priceListLabel = createFormLabel("Import price list:");
         Button addPriceListButton = createUploadButton("Click to add");
+        addPriceListButton.setOnAction(event -> {
+            Window currentWindow = addPriceListButton.getScene().getWindow();
+
+            File file = FilePicker.pickFile(currentWindow,
+            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+            	);
+
+            if (file == null) { return; }
+            
+        	PriceListFormatted priceListFormatted = warehouseParsingService.parsePriceList(file);
+
+            // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
+        	if (priceListFormatted == null) { return; }
+        	
+        	addPriceListButton.setText(file.getName());
+        });
 
         Label regionTableLabel = createFormLabel("Import region table:");
         Button addRegionTableButton = createUploadButton("Click to add");
+        addRegionTableButton.setOnAction(event -> {
+            Window currentWindow = addRegionTableButton.getScene().getWindow();
+
+            File file = FilePicker.pickFile(currentWindow,
+            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+            	);
+
+            if (file == null) { return; }
+            
+        	RegionTableFormatted regionTableFormatted = warehouseParsingService.parseRegionTable(file);
+
+            // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
+        	if (regionTableFormatted == null) { return; }
+        	
+        	addRegionTableButton.setText(file.getName());
+        });
 
         formGrid.add(nameLabel, 0, 0);
         formGrid.add(nameField, 1, 0);
@@ -213,6 +273,7 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         Button addButton = new Button("Add warehouse");
         addButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         addButton.setPrefSize(160, 42);
+        addButton.setOnAction(e -> hideModal());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -224,7 +285,8 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         showModal(popup);
     }
 
-    private void showReplaceWarehousePopup(CoreWarehouseInfo warehouse) {
+    private void showReplaceWarehousePopup(BriefWarehouse warehouse) {
+    	this.selectedWarehouse = fetchFullWarehouse(warehouse);
         VBox popup = createPopupRoot();
         popup.setMaxWidth(560);
         popup.setPrefWidth(560);
@@ -257,12 +319,48 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         Button replacePriceListButton = new Button("Replace");
         replacePriceListButton.getStyleClass().addAll("popup-button", "popup-danger-button");
         replacePriceListButton.setPrefSize(120, 38);
+        replacePriceListButton.setOnAction(event -> {
+            Window currentWindow = replacePriceListButton.getScene().getWindow();
+
+            File file = FilePicker.pickFile(currentWindow,
+            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+            	);
+
+            if (file == null) { return; }
+            
+        	PriceListFormatted priceListFormatted = warehouseParsingService.parsePriceList(file);
+
+            // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
+        	if (priceListFormatted == null) { return; }
+        	this.selectedPriceListFormatted = priceListFormatted;
+        	
+        	priceListFile.setText(file.getName());
+        });
 
         Label regionTableLabel = createFormLabel("Region table:");
         Label regionTableFile = createFileLabel("regiontable2019.csv");
         Button replaceRegionTableButton = new Button("Replace");
         replaceRegionTableButton.getStyleClass().addAll("popup-button", "popup-danger-button");
         replaceRegionTableButton.setPrefSize(120, 38);
+        replaceRegionTableButton.setOnAction(event -> {
+            Window currentWindow = replaceRegionTableButton.getScene().getWindow();
+
+            File file = FilePicker.pickFile(currentWindow,
+            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+            	);
+            
+            if(file == null) { return; }
+
+            RegionTableFormatted regionTableFormatted = warehouseParsingService.parseRegionTable(file);
+        	
+            // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
+            if(regionTableFormatted == null) { return; }
+            this.selectedRegionTableFormatted = regionTableFormatted;
+            
+            regionTableFile.setText(file.getName());
+        });
 
         formGrid.add(titleDocLabel, 0, 0);
         formGrid.add(titleDocValue, 1, 0);
@@ -286,9 +384,10 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         cancelButton.setPrefSize(160, 42);
         cancelButton.setOnAction(e -> hideModal());
 
-        Button addButton = new Button("Add warehouse");
+        Button addButton = new Button("Apply changes");
         addButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         addButton.setPrefSize(160, 42);
+        addButton.setOnAction(e -> this.handleReplaceSaved());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -390,10 +489,11 @@ public class WarehouseManagementController extends BaseController<Void> implemen
         return new Image(resource.toExternalForm());
     }
     
-    private void handleOpenWarehouse() {
+    private void handleOpenWarehouse(BriefWarehouse briefWarehouse) {
     	System.out.println("EDIT WAREHOUSE CLICKED");
     	try {
-			loadScreen(EDIT_WAREHOUSE);
+    		WarehouseFormatted warehouseFormatted = this.warehouseService.getWarehouseFormatted(briefWarehouse);
+			loadScreen(EDIT_WAREHOUSE, warehouseFormatted);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -403,10 +503,43 @@ public class WarehouseManagementController extends BaseController<Void> implemen
     @FXML
     private void handleOpenSmallPriceList() {
     	try {
+    		SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    @FXML
+    private void handleReplaceSmallPriceList() {
+    	Window currentWindow = addWarehouseButton.getScene().getWindow();
+
+        File file = FilePicker.pickFile(currentWindow,
+        	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+        	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+        	);
+
+        if (file == null) { return; }
+        
+    	SmallPriceListFormatted smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
+
+        // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
+    	if (smallPriceListFormatted == null) { return; }
+    }
+    
+    private void handleReplaceSaved() {
+    	if(this.selectedPriceListFormatted == null && this.selectedRegionTableFormatted == null) {
+    		return;
+    		// Make popup about not adding anything
+    	}
+    	
+    	if(this.selectedPriceListFormatted != null) {
+    		warehouseService.replacePriceList(this.selectedPriceListFormatted, this.selectedWarehouse);
+    	}
+    	if(this.selectedRegionTableFormatted != null) {
+    		warehouseService.replaceRegionTable(this.selectedRegionTableFormatted, this.selectedWarehouse);
+    	}
+    	hideModal();
     }
 }
