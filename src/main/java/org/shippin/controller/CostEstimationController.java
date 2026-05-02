@@ -253,8 +253,8 @@ public class CostEstimationController extends BaseController<Void> implements In
                     destPostalCode,
                     (float) getFuelSurcharge(),
                     (float) getToll(),
-                    (int) getWeight(),
-                    (int) getVolume(),
+                    (float) getWeight(),
+                    (float) getVolume(),
                     warehouseId,
                     serviceIds
             );

@@ -28,7 +28,7 @@ public class ShipmentService {
     }
 
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
-                                   float fuelSurchargeCoefficient, float toll, int weight, int volume,
+                                   float fuelSurchargeCoefficient, float toll, float weight, float volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
 
