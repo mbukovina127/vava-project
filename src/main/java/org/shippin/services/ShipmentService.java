@@ -1,5 +1,6 @@
 package org.shippin.services;
 
+import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.*;
@@ -14,6 +15,15 @@ import java.util.List;
 public class ShipmentService {
 
     public ShipmentService() {
+    }
+
+    public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
+        return ShipmentDAO.getInstance().getShipmentHistoryByShipmentID(shipmentId);
+    }
+
+    public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
+        ShipmentDAO.getInstance().insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        return shipment;
     }
 
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
@@ -41,8 +51,9 @@ public class ShipmentService {
                     warehouse.getPriceList(), regionCode, volume, false);
             baseCost = Math.max(costByWeight, costByVolume);
         } else {
-            // TODO: small price list path
-            baseCost = 0;
+            PriceListDAO priceListDAO = PriceListDAO.getInstance();
+            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
+            baseCost = findCostInSmallPriceList(smallPriceList, weight);
         }
 
         Shipment shipment = new Shipment();
@@ -51,11 +62,32 @@ public class ShipmentService {
                 warehouse.getId(), warehouse.getName(), warehouse.getRegionName()));
         shipment.setCreated_at(deliveryDate);
         shipment.setDest_region(destPostalCode);
+        shipment.setWeight(weight);
+        shipment.setVolume(volume);
+        shipment.setFuel_payment(fuelSurchargeCoefficient);
         shipment.setState(State.NOT_READY);
 
-        shipment.estimateCost(volume, weight, fuelSurchargeCoefficient, toll, baseCost);
+        estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);
 
         return shipment;
+    }
+
+    private void estimateCost(Shipment shipment, float fuelSurchargeCoefficient, float toll, float baseCost) {
+        float cost = baseCost * (fuelSurchargeCoefficient + toll + 1);
+
+        float modifierSum = 0;
+        float defaultCostSum = 0;
+        if (shipment.getServices() != null) {
+            for (AdditionalService s : shipment.getServices()) {
+                modifierSum += s.getCostModifier();
+                defaultCostSum += s.getDefaultCost();
+            }
+        }
+
+        cost = cost * (modifierSum + 1);
+        cost = cost + defaultCostSum;
+
+        shipment.setTotalCost(cost);
     }
 
     private String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
@@ -67,6 +99,24 @@ public class ShipmentService {
             }
         }
         throw new IllegalArgumentException("No region found for postal code: " + postalCode);
+    }
+
+    private float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
+        float bestCost = -1;
+        float bestThreshold = Float.MAX_VALUE;
+
+        for (SmallPriceListEntry entry : smallPriceList.getEntries()) {
+            if (entry.getWeight() >= weight && entry.getWeight() < bestThreshold) {
+                bestThreshold = entry.getWeight();
+                bestCost = entry.getCost();
+            }
+        }
+
+        if (bestCost < 0) {
+            throw new IllegalArgumentException("No small price list entry found for weight: " + weight);
+        }
+
+        return bestCost;
     }
 
     private float findCostInPriceList(PriceList priceList, String regionCode,
