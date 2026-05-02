@@ -1,5 +1,6 @@
 package org.shippin.database.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.*;
 import org.shippin.domain.enums.State;
 import org.shippin.domain.BriefShippment;
@@ -8,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class ShipmentDAO extends BaseDAO {
 
     private static ShipmentDAO instance;
@@ -357,6 +359,17 @@ public class ShipmentDAO extends BaseDAO {
         return list;
     }
 
+    public boolean updateShipmentStatus(int shipmentId, State state) throws SQLException {
+        String sql = "UPDATE Shipment SET status = ? WHERE shipment_ID = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, state.name());
+        stmt.setInt(2, shipmentId);
+        boolean updated = stmt.executeUpdate() > 0;
+        if (updated) log.info("Shipment #{} status -> {}", shipmentId, state);
+        else log.warn("updateShipmentStatus: shipment #{} not found", shipmentId);
+        return updated;
+    }
+
     public boolean updateShipmentByID(Shipment sh) throws SQLException {
         String sql = """
                 UPDATE Shipment
@@ -378,7 +391,7 @@ public class ShipmentDAO extends BaseDAO {
         stmt.setFloat(4, sh.getFuel_payment());
         stmt.setFloat(5, sh.getTotalCost());
         stmt.setInt(6, sh.getDest_region());
-        stmt.setTimestamp(7, (Timestamp) sh.getCreated_at());
+        stmt.setTimestamp(7, sh.getCreated_at());
         stmt.setInt(8, sh.getUser_ID());
         stmt.setInt(9, sh.getShipment_id());
 
@@ -428,7 +441,7 @@ public class ShipmentDAO extends BaseDAO {
         stmt.setFloat(5, sh.getVolume());
         stmt.setFloat(6, sh.getFuel_payment());
         stmt.setFloat(7, sh.getTotalCost());
-        stmt.setTimestamp(8, (Timestamp) sh.getCreated_at());
+        stmt.setTimestamp(8, sh.getCreated_at());
         stmt.setString(9, sh.getState().name());
         stmt.setBoolean(10, false);
 
@@ -439,11 +452,11 @@ public class ShipmentDAO extends BaseDAO {
         if (generatedKeys.next()) {
             int shipmentId = generatedKeys.getInt(1);
             sh.setShipment_id(shipmentId);
-
             insertShipmentServices(shipmentId, sh.getServices());
-
+            log.info("Inserted shipment #{} for user #{}", shipmentId, userID);
             return shipmentId;
         }
+        log.warn("insertShipment: no generated key returned");
         return -1;
     }
 
@@ -453,7 +466,10 @@ public class ShipmentDAO extends BaseDAO {
         """;
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, shipmentID);
-        return stmt.executeUpdate() > 0;
+        boolean deleted = stmt.executeUpdate() > 0;
+        if (deleted) log.info("Deleted shipment #{}", shipmentID);
+        else log.warn("deleteShipment: shipment #{} not found", shipmentID);
+        return deleted;
     }
 
     private void insertShipmentServices(int shipmentId, List<AdditionalService> services) throws SQLException {
