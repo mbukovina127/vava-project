@@ -60,8 +60,12 @@ public class CostBreakdownController extends BaseController<Shipment> implements
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
 
+    private static String fmt(float value) {
+        return String.format("%.2f €", value);
+    }
+
     @Override
-    protected void onData(Shipment data) {
+    protected void onData(Shipment data)throws SQLException {
         breakdownGrid.getChildren().clear();
         pdfRows.clear();
         gridRow = 0;
@@ -75,25 +79,36 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         // Size
         String size = data.getWeight() + " kg";
         if (data.getVolume() > 0) size += "  /  " + data.getVolume() + " m³";
-        addRow("Size:", size, "", true, false);
+
+        float baseCost = ShipmentService.calculateBaseCost(shipment);
+        addRow("Size:", size, fmt(baseCost), true, false);
 
         addSeparator();
 
         // Fuel surcharge
         String fuelPct = (int)(data.getFuel_payment() * 100) + "%";
-        addRow("Fuel surcharge:", fuelPct, "", true, false);
+        addRow("Fuel surcharge:", fuelPct, fmt(ShipmentService.calculateFuelCost(shipment, baseCost)), true, false);
+
+        // Toll
+        String tollPct = (int)(data.getToll() * 100) + "%";
+        addRow("Toll:", tollPct, fmt(ShipmentService.calculateTollCost(shipment, baseCost)), true, false);
 
         addSeparator();
 
+
         // Additional services
         if (data.getServices() != null) {
-            for (AdditionalService s : data.getServices()) {
-                addRow(s.getName(), "", "", true, false);
+            for (AdditionalService s : data.getServices())
+            {
+                addRow(s.getName(), "", fmt(ShipmentService.calculateServiceCost(shipment,baseCost,s)), true, false);
             }
         }
 
         addTotalSeparator();
         addTotalRow();
+
+        saveButton.setVisible(shipment.getShipment_id() == 0);
+        saveButton.setManaged(shipment.getShipment_id() == 0);
     }
 
     // ── Grid helpers ──────────────────────────────────────────────
@@ -128,7 +143,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
     private void addSeparator() {
         Separator sep = new Separator();
-        sep.getStyleClass().add("cb-separator");
+        sep.getStyleClass().add("separator");
         GridPane.setColumnIndex(sep, 0);
         GridPane.setRowIndex(sep, gridRow);
         GridPane.setColumnSpan(sep, 2);
@@ -139,7 +154,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
     private void addTotalSeparator() {
         Separator sep = new Separator();
-        sep.getStyleClass().addAll("cb-separator", "cb-separator-total");
+        sep.getStyleClass().addAll("separator", "separator-total");
         GridPane.setColumnIndex(sep, 0);
         GridPane.setRowIndex(sep, gridRow);
         GridPane.setColumnSpan(sep, 2);

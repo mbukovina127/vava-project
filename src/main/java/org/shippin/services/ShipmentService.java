@@ -9,9 +9,10 @@ import org.shippin.util.Range;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.*;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
 
 public class ShipmentService {
 
@@ -24,6 +25,7 @@ public class ShipmentService {
     }
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
         shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        updateShipmentState(shipment, shipment.getState());
         return shipment;
     }
 
@@ -31,30 +33,13 @@ public class ShipmentService {
                                    float fuelSurchargeCoefficient, float toll, float weight, float volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
-
-
         WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
 
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 
         List<AdditionalService> allServices = shipmentDAO.getSAllServices();
-        List<AdditionalService> selected = allServices.stream().filter(s -> serviceIds.contains(s.getId())).toList();
-
-        float baseCost;
-        if (weight > 30) {
-            String regionCode = findRegionForPostalCode(
-                    warehouse.getRegionTable(), destPostalCode);
-
-            float costByWeight = findCostInPriceList(
-                    warehouse.getPriceList(), regionCode, weight, true);
-            float costByVolume = findCostInPriceList(
-                    warehouse.getPriceList(), regionCode, volume, false);
-            baseCost = Math.max(costByWeight, costByVolume);
-        } else {
-            PriceListDAO priceListDAO = PriceListDAO.getInstance();
-            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
-            baseCost = findCostInSmallPriceList(smallPriceList, weight);
-        }
+        List<AdditionalService> selected = allServices.stream()
+                .filter(s -> serviceIds.contains(s.getId())).toList();
 
         Shipment shipment = new Shipment();
         shipment.setServices(new ArrayList<>(selected));
@@ -64,17 +49,72 @@ public class ShipmentService {
         shipment.setDest_region(destPostalCode);
         shipment.setWeight(weight);
         shipment.setVolume(volume);
+        shipment.setToll(toll);
         shipment.setFuel_payment(fuelSurchargeCoefficient);
+        shipment.setToll(toll);
         shipment.setState(State.NOT_READY);
 
-        estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);
+        float baseCost = calculateBaseCost(shipment);
+        System.out.println(baseCost);
+        shipment.setTotalCost(calculateTotalCost(shipment, baseCost));
 
         return shipment;
     }
 
-    private void estimateCost(Shipment shipment, float fuelSurchargeCoefficient, float toll, float baseCost) {
-        float cost = baseCost * (fuelSurchargeCoefficient + toll + 1);
+    // ── Cost calculations ─────────────────────────────────────────
 
+    public static float calculateBaseCost(Shipment shipment) throws SQLException {
+        WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
+        Warehouse warehouse = warehouseDAO.getById(shipment.getWarehouse().getId());
+
+        float weight = shipment.getWeight();
+        float volume = shipment.getVolume();
+        int destPostalCode = shipment.getDest_region();
+
+        if (weight > 30) {
+            String regionCode = findRegionForPostalCode(warehouse.getRegionTable(), destPostalCode);
+            float costByWeight = findCostInPriceList(warehouse.getPriceList(), regionCode, weight, true);
+            float costByVolume = findCostInPriceList(warehouse.getPriceList(), regionCode, volume, false);
+            return Math.max(costByWeight, costByVolume);
+        } else {
+            PriceListDAO priceListDAO = PriceListDAO.getInstance();
+            SmallPriceList smallPriceList = priceListDAO.getSmallPriceList();
+            return findCostInSmallPriceList(smallPriceList, weight);
+        }
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateFuelCost(Shipment shipment, float baseCost) {
+        return baseCost * shipment.getFuel_payment();
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateTollCost(Shipment shipment, float baseCost) {
+        return baseCost * shipment.getToll();
+    }
+
+    public static float calculateServiceCost(Shipment shipment, float baseCost) {
+        List<AdditionalService> services = shipment.getServices();
+        if (services == null || services.isEmpty()) return 0;
+        float baseWithCoefficients = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
+        float modifierSum = 0;
+        float defaultCostSum = 0;
+        for (AdditionalService s : services) {
+            modifierSum += s.getCostModifier();
+            defaultCostSum += s.getDefaultCost();
+        }
+        return baseWithCoefficients * modifierSum + defaultCostSum;
+    }
+
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateServiceCost(Shipment shipment,float baseCost,AdditionalService service)
+    {
+        float mainCost = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
+        return mainCost * service.getCostModifier() + service.getDefaultCost();
+    }
+
+    public static float calculateTotalCost(Shipment shipment, float baseCost) {
+        float baseWithCoefficients = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
         float modifierSum = 0;
         float defaultCostSum = 0;
         if (shipment.getServices() != null) {
@@ -83,14 +123,12 @@ public class ShipmentService {
                 defaultCostSum += s.getDefaultCost();
             }
         }
-
-        cost = cost * (modifierSum + 1);
-        cost = cost + defaultCostSum;
-
-        shipment.setTotalCost(cost);
+        return baseWithCoefficients * (modifierSum + 1) + defaultCostSum;
     }
 
-    private String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
+    // ── Private helpers ───────────────────────────────────────────
+
+    private static String findRegionForPostalCode(RegionTable regionTable, int postalCode) {
         for (RegionTableEntry entry : regionTable.getEntries()) {
             for (Range range : entry.getRanges()) {
                 if (range.contains(postalCode)) {
@@ -101,7 +139,7 @@ public class ShipmentService {
         throw new IllegalArgumentException("No region found for postal code: " + postalCode);
     }
 
-    private float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
+    private static float findCostInSmallPriceList(SmallPriceList smallPriceList, float weight) {
         float bestCost = -1;
         float bestThreshold = Float.MAX_VALUE;
 
@@ -119,8 +157,8 @@ public class ShipmentService {
         return bestCost;
     }
 
-    private float findCostInPriceList(PriceList priceList, String regionCode,
-                                      float value, boolean byWeight) {
+    private static float findCostInPriceList(PriceList priceList, String regionCode,
+                                             float value, boolean byWeight) {
         float bestCost = -1;
         float bestThreshold = Float.MAX_VALUE;
 
@@ -153,6 +191,8 @@ public class ShipmentService {
             entry.setShipment_id(shipment.getShipment_id());
             entry.setState(newState);
             entry.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            User currentUser = UserService.getUser();
+            entry.setUser_id(currentUser != null ? currentUser.getId() : 0);
             shipmentDAO.addShipmentHistory(entry);
 
             shipmentDAO.commit();
@@ -164,4 +204,43 @@ public class ShipmentService {
             shipmentDAO.setAutoCommit(true);
         }
     }
+
+    public Map<LocalDate, Double> getDailySummaries(YearMonth ym) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(ym.plusMonths(1).atDay(1).atStartOfDay());
+
+        List<Shipment> shipments = shipmentDAO.getAllShipmentsByDate(from, to);
+
+        Map<LocalDate, Double> result = new HashMap<>();
+
+        for (Shipment s : shipments) {
+            LocalDate date = s.getCreated_at()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().toLocalDate();
+
+            result.put(date,
+                    result.getOrDefault(date, 0.0) + s.getTotalCost());
+        }
+
+        return result;
+    }
+
+    public List<Shipment> getShipmentsForDay(LocalDate date) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(date.atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(date.plusDays(1).atStartOfDay());
+
+        return shipmentDAO.getAllShipmentsByDate(from, to);
+    }
+
+
+
+
+
 }

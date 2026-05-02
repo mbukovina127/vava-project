@@ -23,5 +23,10 @@ public class User {
         this.email = email;
         this.role = role;
     }
+
+    public String getFullUserName() {
+        return this.firstName + " " + this.lastName;
+    }
+
 }
 
