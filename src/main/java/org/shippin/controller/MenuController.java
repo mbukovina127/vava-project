@@ -67,6 +67,7 @@ public class MenuController implements Initializable {
     // CONTENT
     @FXML private StackPane contentArea;
     private Screens currentScreen;
+    private Object  currentData;
     private List<Button> buttons = new ArrayList<>();
 
     public void showOverlay(javafx.scene.Node content) {
@@ -93,6 +94,7 @@ public class MenuController implements Initializable {
             return;
         }
         currentScreen = screen;
+        currentData   = data;
         try {
             URL fxmlUrl = getClass().getResource(Screens.resolveScreen(screen));
             if (fxmlUrl == null) {
@@ -255,7 +257,7 @@ public class MenuController implements Initializable {
         NavigationService.setLocale(next);
         langButton.setText(next.getLanguage().equals("sk") ? "EN" : "SK");
         if (currentScreen != null) {
-            loadScreen(currentScreen, null);
+            loadScreen(currentScreen, currentData);
         }
     }
 

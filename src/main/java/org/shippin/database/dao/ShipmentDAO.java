@@ -1,6 +1,8 @@
 package org.shippin.database.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.*;
+import org.shippin.domain.enums.ServiceType;
 import org.shippin.domain.enums.State;
 import org.shippin.domain.BriefShippment;
 
@@ -8,6 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class ShipmentDAO extends BaseDAO {
 
     private static ShipmentDAO instance;
@@ -28,6 +31,8 @@ public class ShipmentDAO extends BaseDAO {
         Shipment sh = new Shipment();
         sh.setShipment_id(rs.getInt("shipment_ID"));
         sh.setState(State.valueOf(rs.getString("status")));
+        sh.setWeight(rs.getFloat("weight"));
+        sh.setVolume(rs.getFloat("volume"));
         sh.setFuel_payment(rs.getFloat("fuel_payment"));
         sh.setTotalCost(rs.getFloat("total_cost"));
         sh.setCreated_at(rs.getTimestamp("created_at"));
@@ -39,24 +44,22 @@ public class ShipmentDAO extends BaseDAO {
 
     private BriefShippment mapBriefShipment(ResultSet rs) throws SQLException {
         BriefShippment sh = new BriefShippment();
-
         sh.setShipment_id(rs.getInt("shipment_ID"));
         sh.setState(State.valueOf(rs.getString("status")));
+        sh.setWeight(rs.getFloat("weight"));
+        sh.setVolume(rs.getFloat("volume"));
         sh.setFuel_payment(rs.getFloat("fuel_payment"));
         sh.setTotalCost(rs.getFloat("total_cost"));
         sh.setCreated_at(rs.getTimestamp("created_at"));
         sh.setDest_region(rs.getInt("dest_region"));
         sh.setUser_ID(rs.getInt("user_ID"));
-
-        // sh.setStartCoordinate(new Coordinates(rs.getFloat("x"), rs.getFloat("y")));
-
         return sh;
     }
 
 
     public Shipment getShipmentById(int shipmentID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.shipment_ID = ?;
                     """;
@@ -74,7 +77,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public BriefShippment getBriefShippmentById(int shipmentID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.shipment_ID = ?;
             """;
@@ -94,7 +97,7 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getShipmentServices(int shipmentID) throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
                     FROM Service_list sl JOIN Service s ON sl.service_ID = s.service_id
                     WHERE sl.shipment_ID = ?;
                     """;
@@ -108,7 +111,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getInt("service_ID"),
                     rs.getString("service_name"),
                     rs.getFloat("default_cost"),
-                    rs.getFloat("cost_modificator")
+                    rs.getFloat("cost_modificator"),
+                    ServiceType.valueOf(rs.getString("service_type")),
+                    rs.getString("description")
             );
             serviceList.add(as);
         }
@@ -119,7 +124,7 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getSAllServices() throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
                     FROM Service s;
                     """;
 
@@ -131,7 +136,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getInt("service_ID"),
                     rs.getString("service_name"),
                     rs.getFloat("default_cost"),
-                    rs.getFloat("cost_modificator")
+                    rs.getFloat("cost_modificator"),
+                    ServiceType.valueOf(rs.getString("service_type")),
+                    rs.getString("description")
             );
             serviceList.add(as);
         }
@@ -191,7 +198,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<Shipment> getShipmentByWarehouseID(int warehouseID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.warehouse_ID = ?;
                     """;
@@ -212,7 +219,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<BriefShippment> getBriefShippmentsByWarehouseID(int warehouseID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.warehouse_ID = ?;
                     """;
@@ -233,7 +240,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<Shipment> getShipmentByUserID(int userID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.user_ID = ?;
                     """;
@@ -254,7 +261,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<BriefShippment> getBriefShippmentsByUserID(int userID) throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s WHERE s.user_ID = ?;
             """;
@@ -275,10 +282,10 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<Shipment> getAllShipments() throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                     s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s;
-                    """;
+""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -294,7 +301,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<BriefShippment> getAllBriefShippments() throws SQLException {
         String sql = """
-                    SELECT s.shipment_ID, s.status, s.fuel_payment, s.total_cost,
+                    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,
                     s.created_at, s.dest_region, s.user_ID
                     FROM Shipment s;
             """;
@@ -313,7 +320,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<Shipment> getAllShipmentsByDate(Timestamp from, Timestamp to) throws SQLException {
         String sql = """
-                SELECT s.shipment_ID, s.status, s.fuel_payment,
+                SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment,
                 s.total_cost, s.created_at, s.dest_region, s.user_ID
                 FROM Shipment s
                 WHERE s.created_at >=  ?
@@ -336,7 +343,7 @@ public class ShipmentDAO extends BaseDAO {
 
     public List<BriefShippment> getBriefShippmentsByDate(Timestamp from, Timestamp to) throws SQLException {
         String sql = """
-                SELECT s.shipment_ID, s.status, s.fuel_payment,
+                SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment,
                 s.total_cost, s.created_at, s.dest_region, s.user_ID
                 FROM Shipment s
                 WHERE s.created_at >=  ?
@@ -357,10 +364,23 @@ public class ShipmentDAO extends BaseDAO {
         return list;
     }
 
+    public boolean updateShipmentStatus(int shipmentId, State state) throws SQLException {
+        String sql = "UPDATE Shipment SET status = ? WHERE shipment_ID = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, state.name());
+        stmt.setInt(2, shipmentId);
+        boolean updated = stmt.executeUpdate() > 0;
+        if (updated) log.info("Shipment #{} status -> {}", shipmentId, state);
+        else log.warn("updateShipmentStatus: shipment #{} not found", shipmentId);
+        return updated;
+    }
+
     public boolean updateShipmentByID(Shipment sh) throws SQLException {
         String sql = """
                 UPDATE Shipment
                 SET status = ?,
+                weight = ?,
+                volume = ?,
                 fuel_payment = ?,
                 total_cost = ?,
                 dest_region = ?,
@@ -371,12 +391,14 @@ public class ShipmentDAO extends BaseDAO {
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, sh.getState().name());
-        stmt.setFloat(2, sh.getFuel_payment());
-        stmt.setFloat(3, sh.getTotalCost());
-        stmt.setInt(4, sh.getDest_region());
-        stmt.setTimestamp(5, (Timestamp) sh.getCreated_at());
-        stmt.setInt(6, sh.getUser_ID());
-        stmt.setInt(7, sh.getShipment_id());
+        stmt.setFloat(2, sh.getWeight());
+        stmt.setFloat(3, sh.getVolume());
+        stmt.setFloat(4, sh.getFuel_payment());
+        stmt.setFloat(5, sh.getTotalCost());
+        stmt.setInt(6, sh.getDest_region());
+        stmt.setTimestamp(7, sh.getCreated_at());
+        stmt.setInt(8, sh.getUser_ID());
+        stmt.setInt(9, sh.getShipment_id());
 
         int affectedRows = stmt.executeUpdate();
 
@@ -399,13 +421,15 @@ public class ShipmentDAO extends BaseDAO {
 
     public int insertShipment(Shipment sh, int warehouseID, int userID) throws SQLException {
         String sql = """
-                INSERT INTO Shipment (user_ID, warehouse_ID, dest_region, fuel_payment, total_cost, created_at, status, is_sp)
-                    VALUES (?,?,?,?,?,?,?,?)
+                INSERT INTO Shipment (user_ID, warehouse_ID, dest_region, weight, volume, fuel_payment, total_cost, created_at, status, is_sp)
+                    VALUES (?,?,?,?,?,?,?,?,?,?)
                     ON CONFLICT (shipment_ID)
                     DO UPDATE SET
                     	user_ID = EXCLUDED.user_ID,
                     	warehouse_ID = EXCLUDED.warehouse_ID,
                     	dest_region = EXCLUDED.dest_region,
+                    	weight = EXCLUDED.weight,
+                    	volume = EXCLUDED.volume,
                     	fuel_payment = EXCLUDED.fuel_payment,
                     	total_cost = EXCLUDED.total_cost,
                     	created_at = EXCLUDED.created_at,
@@ -418,11 +442,13 @@ public class ShipmentDAO extends BaseDAO {
         stmt.setInt(1, userID);
         stmt.setInt(2, warehouseID);
         stmt.setInt(3, sh.getDest_region());
-        stmt.setFloat(4, sh.getFuel_payment());
-        stmt.setFloat(5, sh.getTotalCost());
-        stmt.setTimestamp(6, (Timestamp) sh.getCreated_at());
-        stmt.setString(7, sh.getState().name());
-        stmt.setBoolean(8, false);
+        stmt.setFloat(4, sh.getWeight());
+        stmt.setFloat(5, sh.getVolume());
+        stmt.setFloat(6, sh.getFuel_payment());
+        stmt.setFloat(7, sh.getTotalCost());
+        stmt.setTimestamp(8, sh.getCreated_at());
+        stmt.setString(9, sh.getState().name());
+        stmt.setBoolean(10, false);
 
         stmt.executeUpdate();
 
@@ -431,11 +457,11 @@ public class ShipmentDAO extends BaseDAO {
         if (generatedKeys.next()) {
             int shipmentId = generatedKeys.getInt(1);
             sh.setShipment_id(shipmentId);
-
             insertShipmentServices(shipmentId, sh.getServices());
-
+            log.info("Inserted shipment #{} for user #{}", shipmentId, userID);
             return shipmentId;
         }
+        log.warn("insertShipment: no generated key returned");
         return -1;
     }
 
@@ -445,7 +471,10 @@ public class ShipmentDAO extends BaseDAO {
         """;
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, shipmentID);
-        return stmt.executeUpdate() > 0;
+        boolean deleted = stmt.executeUpdate() > 0;
+        if (deleted) log.info("Deleted shipment #{}", shipmentID);
+        else log.warn("deleteShipment: shipment #{} not found", shipmentID);
+        return deleted;
     }
 
     private void insertShipmentServices(int shipmentId, List<AdditionalService> services) throws SQLException {
