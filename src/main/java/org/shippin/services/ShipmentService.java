@@ -128,6 +128,13 @@ public class ShipmentService {
         return baseWithCoefficients * modifierSum + defaultCostSum;
     }
 
+    // only help function for CostBreakdown (patrial sums in rows)
+    public static float calculateServiceCost(Shipment shipment,float baseCost,AdditionalService service)
+    {
+        float mainCost = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
+        return mainCost * service.getCostModifier() + service.getDefaultCost();
+    }
+
     public static float calculateTotalCost(Shipment shipment, float baseCost) {
         float baseWithCoefficients = baseCost * (shipment.getFuel_payment() + shipment.getToll() + 1);
         float modifierSum = 0;

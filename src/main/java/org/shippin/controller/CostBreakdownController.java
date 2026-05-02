@@ -95,10 +95,12 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
         addSeparator();
 
+
         // Additional services
         if (data.getServices() != null) {
-            for (AdditionalService s : data.getServices()) {
-                addRow(s.getName(), "", "", true, false);
+            for (AdditionalService s : data.getServices())
+            {
+                addRow(s.getName(), "", fmt(ShipmentService.calculateServiceCost(shipment,baseCost,s)), true, false);
             }
         }
 
