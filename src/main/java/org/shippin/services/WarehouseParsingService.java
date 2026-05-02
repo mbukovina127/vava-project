@@ -225,13 +225,15 @@ public class WarehouseParsingService {
         return name.substring(dotIndex + 1).toLowerCase();
     }
     
-    public void parseTable(BriefWarehouse briefWarehouse, String tableType, File file) {
+    public void parseTable(BriefWarehouse briefWarehouse, boolean isPriceList, File file) {
     	Warehouse warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
     	WarehouseFormatted warehouseFormatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-    	switch(tableType) {
-    	case "Price List" -> this.writePriceList(file, warehouseFormatted.getPriceList());
-    	case "Region Table" -> this.writeRegionTable(file, warehouseFormatted.getRegionTable());
+    	if(isPriceList) {
+    		this.writePriceList(file, warehouseFormatted.getPriceList());
+    	}
+    	else {
+    		this.writeRegionTable(file, warehouseFormatted.getRegionTable());
     	}
     }
 }

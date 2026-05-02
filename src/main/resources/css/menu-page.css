@@ -148,6 +148,27 @@
     -fx-background-color: transparent;
 }
 
+.upload-button {
+    -fx-background-color: #e0e0e0;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+
+.upload-button:hover {
+    -fx-background-color: #d4d4d4;
+}
+
+.upload-button:pressed {
+    -fx-background-color: #c8c8c8;
+}
+
+.upload-button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: #e0e0e0;
+}
+
+
 /* POPUP */
 .popup-root {
     -fx-background-color: #f4f4f4;
@@ -237,17 +258,17 @@
     -fx-translate-y: 1;
 }
 
-.popup-danger-button {
+.danger-button {
     -fx-background-color: #f2a7a7;
     -fx-text-fill: #111111;
     -fx-border-color: #7a2d2d;
 }
 
-.popup-danger-button:hover {
+.danger-button:hover {
     -fx-background-color: #eb9898;
 }
 
-.popup-danger-button:pressed {
+.danger-button:pressed {
     -fx-background-color: #e18686;
     -fx-translate-y: 1;
 }

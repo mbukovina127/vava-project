@@ -9,7 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -22,6 +24,7 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
 import org.shippin.domain.Warehouse;
 import org.shippin.services.WarehouseParsingService;
+import org.shippin.util.WarehouseConvertor;
 import org.shippin.util.io.FilePicker;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
@@ -63,7 +66,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     	this.resources = resources;
-        Image addIcon = loadImage("/icons/png-dark/plus_black.png");
+        Image addIcon = loadImage("/icons/png-dark/plus_no_circle_black.png");
         editIcon = loadImage("/icons/png-dark/rewrite_black.png");
         replaceIcon = loadImage("/icons/png-dark/upload_black.png");
         exportIcon = loadImage("/icons/png-dark/export_black.png");
@@ -137,14 +140,12 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         Button exportButton = createTableIconButton(exportIcon, 26.0, 26.0, 34.0, 32.0);
         GridPane.setColumnIndex(exportButton, 3);
         exportButton.setOnAction(event -> {
-        	this.exportTable(warehouse);
+        	this.showExportChoicePopup(warehouse);
         });
 
         Button deleteButton = createTableIconButton(deleteIcon, 22.0, 22.0, 32.0, 32.0);
         GridPane.setColumnIndex(deleteButton, 4);
-        deleteButton.setOnAction(event -> {
-        	this.deleteWarehouse(warehouse);
-        });
+        deleteButton.setOnAction(event -> this.showDeleteWarehousePopup(warehouse));
 
         row.getChildren().addAll(
                 nameLabel,
@@ -197,7 +198,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         label.getStyleClass().add("popup-title");
         return label;
     }
-    
+
     private String t(String key) {
         if (this.resources == null) { return key; }
         try {
@@ -206,6 +207,43 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
             System.err.println("Missing i18n key: " + key);
             return key; // fallback: show the raw key if not found
         }
+    }
+    
+    private void showDeleteWarehousePopup(BriefWarehouse warehouse) {
+        VBox popup = createPopupRoot();
+        popup.setMaxWidth(420);
+        popup.setPrefWidth(420);
+
+        Label title = createPopupTitle(t("%warehouse_management.delete.title"));
+
+        Label message = new Label(t("%warehouse_management.delete.message"));
+        message.getStyleClass().add("popup-message");
+        message.setWrapText(true);
+
+        HBox buttons = new HBox(18);
+        buttons.setAlignment(Pos.CENTER_LEFT);
+
+        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
+        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
+        cancelButton.setPrefSize(160, 42);
+        cancelButton.setOnAction(e -> hideModal());
+
+        Button deleteButton = new Button(t("%warehouse_management.delete.button_confirm"));
+        deleteButton.getStyleClass().addAll("popup-button", "danger-button");
+        deleteButton.setPrefSize(160, 42);
+        deleteButton.setOnAction(e -> {
+            this.deleteWarehouse(warehouse);
+            hideModal();
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        buttons.getChildren().addAll(cancelButton, spacer, deleteButton);
+
+        popup.getChildren().addAll(title, message, buttons);
+
+        showModal(popup);
     }
 
     private void showAddWarehousePopup() {
@@ -252,6 +290,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
             this.selectedPriceListFormatted = priceListFormatted;
             addPriceListButton.setText(file.getName());
         });
+        addPriceListButton.getStyleClass().addAll("upload-button");
 
         Label regionTableLabel = createFormLabel(t("%warehouse_management.add.region_table"));
         Button addRegionTableButton = createUploadButton(t("%warehouse_management.button.click_to_add"));
@@ -272,6 +311,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
             this.selectedRegionTableFormatted = regionTableFormatted;;
             addRegionTableButton.setText(file.getName());
         });
+        addRegionTableButton.getStyleClass().addAll("upload-button");
 
         formGrid.add(nameLabel, 0, 0);
         formGrid.add(nameField, 1, 0);
@@ -315,6 +355,10 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
     private void showReplaceWarehousePopup(BriefWarehouse warehouse) {
         this.selectedWarehouse = fetchFullWarehouse(warehouse);
+        
+        this.selectedPriceListFormatted = WarehouseConvertor.convertPriceListFormatted(this.selectedWarehouse.getPriceList());
+        this.selectedRegionTableFormatted = WarehouseConvertor.convertRegionTableFormatted(this.selectedWarehouse.getRegionTable());
+        
         VBox popup = createPopupRoot();
         popup.setMaxWidth(560);
         popup.setPrefWidth(560);
@@ -343,9 +387,9 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         Label pickupPlaceValue = createValueLabel(warehouse.getRegionName());
 
         Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));
-        Label priceListFile = createFileLabel("pricelist2020.csv");
+        Label priceListFile = createFileLabel("Original price list");
         Button replacePriceListButton = new Button(t("%warehouse_management.button.replace"));
-        replacePriceListButton.getStyleClass().addAll("popup-button", "popup-danger-button");
+        replacePriceListButton.getStyleClass().addAll("popup-button", "danger-button");
         replacePriceListButton.setPrefSize(120, 38);
         replacePriceListButton.setOnAction(event -> {
             Window currentWindow = replacePriceListButton.getScene().getWindow();
@@ -366,9 +410,9 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         });
 
         Label regionTableLabel = createFormLabel(t("%warehouse_management.replace.region_table"));
-        Label regionTableFile = createFileLabel("regiontable2019.csv");
+        Label regionTableFile = createFileLabel("Original region table");
         Button replaceRegionTableButton = new Button(t("%warehouse_management.button.replace"));
-        replaceRegionTableButton.getStyleClass().addAll("popup-button", "popup-danger-button");
+        replaceRegionTableButton.getStyleClass().addAll("popup-button", "danger-button");
         replaceRegionTableButton.setPrefSize(120, 38);
         replaceRegionTableButton.setOnAction(event -> {
             Window currentWindow = replaceRegionTableButton.getScene().getWindow();
@@ -422,6 +466,67 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         buttons.getChildren().addAll(cancelButton, spacer, addButton);
 
         popup.getChildren().addAll(title, formGrid, buttons);
+
+        showModal(popup);
+    }
+    
+    private void showExportChoicePopup(BriefWarehouse briefWarehouse) {
+        VBox popup = createPopupRoot();
+        popup.setMaxWidth(420);
+        popup.setPrefWidth(420);
+
+        Label title = createPopupTitle(t("%warehouse_management.export.title"));
+
+        Label message = new Label(t("%warehouse_management.export.message"));
+        message.getStyleClass().add("popup-message");
+        message.setWrapText(true);
+
+        ToggleGroup toggleGroup = new ToggleGroup();
+
+        RadioButton priceListOption = new RadioButton(t("%warehouse_management.export.option_price_list"));
+        priceListOption.setToggleGroup(toggleGroup);
+        priceListOption.setSelected(true);
+        priceListOption.getStyleClass().add("popup-toggle-button");
+
+        RadioButton regionTableOption = new RadioButton(t("%warehouse_management.export.option_region_table"));
+        regionTableOption.setToggleGroup(toggleGroup);
+        regionTableOption.getStyleClass().add("popup-toggle-button");
+
+        VBox options = new VBox(10, priceListOption, regionTableOption);
+
+        HBox buttons = new HBox(18);
+        buttons.setAlignment(Pos.CENTER_LEFT);
+
+        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
+        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
+        cancelButton.setPrefSize(160, 42);
+        cancelButton.setOnAction(e -> hideModal());
+
+        Button exportButton = new Button(t("%warehouse_management.export.button_confirm"));
+        exportButton.getStyleClass().addAll("popup-button", "primary-button");
+        exportButton.setPrefSize(160, 42);
+        exportButton.setOnAction(e -> {
+            boolean isPriceList = priceListOption.isSelected();
+
+            Window currentWindow = exportButton.getScene().getWindow();
+            
+            File file = FilePicker.saveFile(currentWindow,
+            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
+            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
+            	);
+
+            if (file == null) { return; }
+            
+            this.warehouseParsingService.parseTable(briefWarehouse, isPriceList, file);
+            hideModal();
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        buttons.getChildren().addAll(cancelButton, spacer, exportButton);
+
+        popup.getChildren().addAll(title, message, options, buttons);
 
         showModal(popup);
     }
@@ -505,7 +610,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     }
     
     private void handleOpenWarehouse(BriefWarehouse briefWarehouse) {
-    	System.out.println("EDIT WAREHOUSE CLICKED");
+    	
     	try {
 			loadScreen(EDIT_WAREHOUSE, briefWarehouse);
 		} catch (IOException e) {
@@ -554,28 +659,6 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	warehouseService.replaceTables(this.selectedPriceListFormatted, this.selectedRegionTableFormatted, this.selectedWarehouse);
     	
     	hideModal();
-    }
-
-    private void exportTable(BriefWarehouse briefWarehouse) {
-        Window currentWindow = addWarehouseButton.getScene().getWindow();
-
-        // Show choice popup
-        ChoiceDialog<String> dialog = new ChoiceDialog<>("Price List", "Price List", "Region Table");
-        dialog.setTitle("Export");
-        dialog.setHeaderText("What would you like to export?");
-        dialog.setContentText("Choose:");
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isEmpty()) { return; } // user cancelled
-
-        File file = FilePicker.saveFile(currentWindow,
-                new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-                new FileChooser.ExtensionFilter("XML files", "*.xml")
-        );
-
-        if (file == null) { return; }
-
-        this.warehouseParsingService.parseTable(briefWarehouse, result.get(), file);
     }
     
     private void deleteWarehouse(BriefWarehouse briefWarehouse) {
