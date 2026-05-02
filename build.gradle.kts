@@ -3,7 +3,7 @@ plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
     kotlin("jvm")
-
+    id("jacoco")
 }
 
 group = "org.shippin"
@@ -60,7 +60,18 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 kotlin {
     jvmToolchain(25)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(false)
+    }
 }
