@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.shippin.controller.ShipmentDetailController"
-            styleClass="sd-root"
-            stylesheets="@../css/shipinn.css, @../css/shipment-detail.css">
+<BorderPane styleClass="sd-root" stylesheets="@../css/shipinn.css, @../css/shipment-detail.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.ShipmentDetailController">
 
     <!-- ══════════════════════════════════════════
          MAIN CONTENT
@@ -26,104 +21,80 @@
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <content>
-                <VBox styleClass="sd-content" spacing="0">
+                <VBox spacing="0" styleClass="sd-content">
 
                     <!-- ── Title ───────────────────────────── -->
-                    <Label fx:id="titleLabel"
-                           text="Shipment details #321"
-                           styleClass="page-title"/>
+                    <Label fx:id="titleLabel" styleClass="page-title" text="UNKNOWN SHIPMENT" />
 
-                    <Region prefHeight="18"/>
+                    <Region prefHeight="18" />
 
                     <!-- ── Total cost row ──────────────────── -->
-                    <HBox styleClass="sd-info-row" alignment="CENTER_LEFT" spacing="0">
-                        <Label text="%shipment_detail.total_cost" styleClass="sd-info-key"/>
-                        <Region prefWidth="16"/>
-                        <Label fx:id="routeLabel"
-                               text="Sklad BA - 14863 (Horná Dolná 28)"
-                               styleClass="sd-info-value"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Label fx:id="distanceLabel"
-                               text="(210 km)"
-                               styleClass="sd-info-muted"/>
-                        <Region prefWidth="32"/>
-                        <Label fx:id="totalCostLabel"
-                               text="54,46 €"
-                               styleClass="sd-info-cost"/>
-                        <Region prefWidth="20"/>
-                        <Button fx:id="costBreakdownBtn"
-                                text="%shipment_detail.cost_breakdown"
-                                styleClass="sd-btn-breakdown"
-                                onAction="#onCostBreakdown"/>
+                    <HBox alignment="CENTER_LEFT" spacing="0" styleClass="sd-info-row">
+                        <Label styleClass="sd-info-key" text="%shipment_detail.total_cost" />
+                        <Region prefWidth="16" />
+                        <Label fx:id="routeLabel" styleClass="sd-info-value" text="Sklad BA - 14863 (Horná Dolná 28)" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="distanceLabel" styleClass="sd-info-muted" text="(210 km)" />
+                        <Region prefWidth="32" />
+                        <Label fx:id="totalCostLabel" styleClass="sd-info-cost" text="54,46 €" />
+                        <Region prefWidth="20" />
+                        <Button fx:id="costBreakdownBtn" onAction="#onCostBreakdown" styleClass="sd-btn-breakdown" text="%shipment_detail.cost_breakdown" />
                     </HBox>
 
-                    <Region prefHeight="18"/>
-                    <Separator styleClass="sd-separator"/>
-                    <Region prefHeight="18"/>
+                    <Region prefHeight="18" />
+                    <Separator styleClass="sd-separator" />
+                    <Region prefHeight="18" />
 
                     <!-- ── State row ───────────────────────── -->
-                    <HBox styleClass="sd-state-row" alignment="CENTER_LEFT" spacing="14">
-                        <Label text="%shipment_detail.state" styleClass="sd-info-key"/>
-                        <Label fx:id="statusBadge"
-                               text="%shipment_detail.status_completed"
-                               styleClass="sd-badge, sd-badge-completed"/>
-                        <Button fx:id="changeStatusBtn"
-                                text="%shipment_detail.change_status"
-                                styleClass="sd-btn-action"
-                                onAction="#onChangeStatus"/>
+                    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="sd-state-row">
+                        <Label styleClass="sd-info-key" text="%shipment_detail.state" />
+                        <Label fx:id="statusBadge" styleClass="sd-badge, sd-badge-completed" text="%shipment_detail.status_completed" />
+                        <Button fx:id="changeStatusBtn" onAction="#onChangeStatus" styleClass="sd-btn-action" text="%shipment_detail.change_status" />
                     </HBox>
 
-                    <Region prefHeight="24"/>
-                    <Separator styleClass="sd-separator"/>
-                    <Region prefHeight="18"/>
+                    <Region prefHeight="24" />
+                    <Separator styleClass="sd-separator" />
+                    <Region prefHeight="18" />
 
                     <!-- ── History header ──────────────────── -->
-                    <Label text="%shipment_detail.history" styleClass="sd-section-header"/>
-                    <Region prefHeight="12"/>
+                    <Label styleClass="sd-section-header" text="%shipment_detail.history" />
+                    <Region prefHeight="12" />
 
                     <!-- ── History grid ────────────────────── -->
-                    <GridPane fx:id="historyGrid" styleClass="sd-history-grid" hgap="0" vgap="4">
+                    <GridPane fx:id="historyGrid" hgap="0" styleClass="sd-history-grid" vgap="4">
                         <columnConstraints>
                             <!-- Time -->
-                            <ColumnConstraints minWidth="80" prefWidth="100"/>
+                            <ColumnConstraints minWidth="80" prefWidth="100" />
                             <!-- Driver -->
-                            <ColumnConstraints minWidth="120" prefWidth="160"/>
+                            <ColumnConstraints minWidth="120" prefWidth="160" />
                             <!-- Location -->
-                            <ColumnConstraints minWidth="120" prefWidth="180"/>
+                            <ColumnConstraints minWidth="120" prefWidth="180" />
                             <!-- Status -->
-                            <ColumnConstraints minWidth="140" prefWidth="200" hgrow="ALWAYS"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="140" prefWidth="200" />
                         </columnConstraints>
                         <!-- Rows populated programmatically in controller -->
                     </GridPane>
 
-                    <Region prefHeight="28"/>
+                    <Region prefHeight="28" />
+               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+      
+                          <!-- ── Map view ────────────────────────── -->
+                          <StackPane fx:id="mapContainer" alignment="TOP_LEFT" maxHeight="200" maxWidth="700" minHeight="200" prefHeight="200" prefWidth="700" styleClass="sd-map-container">
+                              <ImageView fx:id="mapImageView" fitHeight="200" fitWidth="700" preserveRatio="false" styleClass="sd-map-image" />
+                              <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="%shipment_detail.map_loading" visible="false" />
+                          </StackPane>
+                  </children>
+               </HBox>
 
-                    <!-- ── Map view ────────────────────────── -->
-                    <StackPane fx:id="mapContainer" styleClass="sd-map-container"
-                               prefHeight="200" minHeight="200" maxHeight="200"
-                               prefWidth="700" maxWidth="700"
-                               alignment="TOP_LEFT">
-                        <ImageView fx:id="mapImageView"
-                                   fitWidth="700" fitHeight="200"
-                                   preserveRatio="false"
-                                   styleClass="sd-map-image"/>
-                        <Label fx:id="mapFallbackLabel"
-                               text="%shipment_detail.map_loading"
-                               styleClass="sd-map-fallback"
-                               visible="false"/>
-                    </StackPane>
-
-                    <Region prefHeight="32"/>
+                    <Region prefHeight="32" />
 
                     <!-- ── Bottom bar ──────────────────────── -->
-                    <HBox styleClass="sd-bottom-bar" alignment="CENTER_RIGHT">
-                        <Button fx:id="dailySummaryBtn"
-                                text="%shipment_detail.daily_summary"
-                                styleClass="sd-btn-action"
-                                onAction="#onDailySummary"/>
+                    <HBox alignment="CENTER_RIGHT" styleClass="sd-bottom-bar">
+                        <Button fx:id="dailySummaryBtn" onAction="#onDailySummary" styleClass="sd-btn-action" text="%shipment_detail.daily_summary" />
                     </HBox>
 
-                    <Region prefHeight="24"/>
+                    <Region prefHeight="24" />
 
                 </VBox>
             </content>

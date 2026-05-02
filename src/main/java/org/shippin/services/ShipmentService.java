@@ -17,6 +17,15 @@ public class ShipmentService {
     public ShipmentService() {
     }
 
+    public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
+        return ShipmentDAO.getInstance().getShipmentHistoryByShipmentID(shipmentId);
+    }
+
+    public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
+        ShipmentDAO.getInstance().insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        return shipment;
+    }
+
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
                                    float fuelSurchargeCoefficient, float toll, int weight, int volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
@@ -53,6 +62,9 @@ public class ShipmentService {
                 warehouse.getId(), warehouse.getName(), warehouse.getRegionName()));
         shipment.setCreated_at(deliveryDate);
         shipment.setDest_region(destPostalCode);
+        shipment.setWeight(weight);
+        shipment.setVolume(volume);
+        shipment.setFuel_payment(fuelSurchargeCoefficient);
         shipment.setState(State.NOT_READY);
 
         estimateCost(shipment, fuelSurchargeCoefficient, toll, baseCost);

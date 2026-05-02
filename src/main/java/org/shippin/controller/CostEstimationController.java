@@ -3,7 +3,6 @@ package org.shippin.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import org.shippin.controller.utils.CostEstimationInput;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.ExtraOption;
 import org.shippin.database.dao.ShipmentDAO;
@@ -103,6 +102,7 @@ public class CostEstimationController extends BaseController<Void> implements In
 
     public void initializeOptions()
     {
+        //TODO treba doplnit z databazy
         ExtraOption.ADDITIONAL_FEES.bind(chkAdditionalFees);
         ExtraOption.ADR.bind(chkADR);
         ExtraOption.DOBIERKA.bind(chkDobierka);
@@ -157,8 +157,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Action handlers
 
     @FXML
-    private void onReset()
-    {
+    private void onReset(){
         dateField.clear();
         fromCombo.getSelectionModel().selectFirst();
         destinationField.clear();
@@ -182,8 +181,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         chkFIX13.setSelected(false);
     }
 
-    private String getSelectedText(ToggleGroup group)
-    {
+    private String getSelectedText(ToggleGroup group) {
         return group.getSelectedToggle() != null
                 ? ((RadioButton) group.getSelectedToggle()).getText()
                 : "";
@@ -194,7 +192,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         // zistime rychlost dorucenia
         String deliveryTime = getSelectedText(deliveryTypeGroup);
 
-        //TODO:pridat mapu alebo aky vstup?
         String destination = destinationField.getText().trim();
 
         String weightText = weightField.getText().trim();
@@ -269,20 +266,7 @@ public class CostEstimationController extends BaseController<Void> implements In
             return;
         }
 
-        CostEstimationInput input = new CostEstimationInput(
-                getDate(),
-                getFrom(),
-                warehouseId,
-                getDestination(),
-                getWeight(),
-                getVolume(),
-                getFuelSurcharge(),
-                getToll(),
-                deliveryTime,
-                getSelectedOptions(),
-                computedShipment
-        );
-        loadScreen(COST_BREAKDOWN, input);
+        loadScreen(COST_BREAKDOWN, computedShipment);
     }
 
     @FXML
@@ -292,5 +276,4 @@ public class CostEstimationController extends BaseController<Void> implements In
         });
         MapPickerController.open();
     }
-
 }
