@@ -15,7 +15,7 @@ public class Warehouse extends CoreWarehouseInfo{
     private RegionTable regionTable;
     
     public Warehouse(String name, String regionName, PriceList priceList, RegionTable regionTable) {
-    	super(-1, name, regionName);
+        super(-1, name, regionName, 0);
     	this.priceList = priceList;
     	this.regionTable = regionTable;
     }
