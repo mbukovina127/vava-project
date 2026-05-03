@@ -206,7 +206,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     			return;
     		} 
     		
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup);
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, 0);
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -217,14 +217,4 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 		}
     }
     
-    @FXML
-    private void handleSave() {
-    	try {
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, documentTitleField.getText(), pickupPlaceField.getText());
-			loadScreen(WAREHOUSE_MANAGEMENT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
 }

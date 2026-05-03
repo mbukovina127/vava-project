@@ -249,8 +249,8 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Missing table: you need to upload both a price list and a region table.");
     	}
     	
-    	try { 
-    		this.warehouseService.addWarehouse(name, pickup, 
+    	try {
+    		this.warehouseService.addWarehouse(name, pickup, 0,
     				this.selectedPriceListFormatted, this.selectedRegionTableFormatted);
     		hideModal();
     	} catch (IncompatibleTablesException e) {
@@ -347,10 +347,4 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         renderWarehouses(warehouseList);
     }
     
-    private void deleteWarehouse(BriefWarehouse briefWarehouse) {
-    	this.warehouseService.deleteWarehouse(briefWarehouse);
-    	
-    	this.warehouseList = warehouseService.getBriefWarehouses();
-        renderWarehouses(warehouseList);
-    }
 }

@@ -51,25 +51,26 @@ public class WarehouseService {
         return instance;
     }
 	
-	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName) throws SQLException {
+	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName, int postalCode) throws SQLException {
 		Warehouse warehouse = this.getWarehouse(briefWarehouse);
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
+		warehouse.setPostalCode(postalCode);
 		warehouseDao.updateWarehouse(warehouse);
 	}
 	
-	public void addWarehouse(String name, String regionName, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws IncompatibleTablesException, SQLException {
+	public void addWarehouse(String name, String regionName, int postalCode, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws IncompatibleTablesException, SQLException {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
-		
+
 		boolean compatibleTables = WarehouseParsingService.getInstance()
 				.checkTableCompatibility(priceList, regionTable);
-		
+
 		if (!compatibleTables) {
 			throw new IncompatibleTablesException();
 		}
-		
-		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable);;
+
+		Warehouse warehouse = new Warehouse(name, regionName, postalCode, priceList, regionTable);
 		warehouseDao.insertFullWarehouse(warehouse);
 	}
 	
@@ -146,19 +147,4 @@ public class WarehouseService {
 		}
 	}
 	
-	public void replaceTables(PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted, Warehouse warehouse) {
-		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
-		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
-		
-		try {
-			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
-			regionDao.deleteFullRegionTable(warehouse.getId());
-			
-			priceListDao.insertPriceList(priceList, warehouse.getId());
-			regionDao.insertFullRegionTable(regionTable, warehouse);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
