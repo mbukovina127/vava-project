@@ -145,20 +145,4 @@ public class WarehouseService {
 			regionDao.setAutoCommit(true);
 		}
 	}
-	
-	public void replaceTables(PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted, Warehouse warehouse) {
-		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
-		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
-		
-		try {
-			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
-			regionDao.deleteFullRegionTable(warehouse.getId());
-			
-			priceListDao.insertPriceList(priceList, warehouse.getId());
-			regionDao.insertFullRegionTable(regionTable, warehouse);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
