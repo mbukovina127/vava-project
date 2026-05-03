@@ -346,4 +346,11 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 		}
         renderWarehouses(warehouseList);
     }
+    
+    private void deleteWarehouse(BriefWarehouse briefWarehouse) {
+    	this.warehouseService.deleteWarehouse(briefWarehouse);
+    	
+    	this.warehouseList = warehouseService.getBriefWarehouses();
+        renderWarehouses(warehouseList);
+    }
 }
