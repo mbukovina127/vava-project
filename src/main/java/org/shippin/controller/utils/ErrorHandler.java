@@ -137,4 +137,12 @@ public class ErrorHandler {
             return msg("error.field.number");
         }
     }
+
+    public static String validatePostalCode(String value)
+    {
+        String error = validateRequired(value);
+        if (!error.isEmpty()) return error;
+        if (!matches(value.trim(), RegPattern.POSTAL_CODE)) return msg("error.field.postal_code");
+        return "";
+    }
 }

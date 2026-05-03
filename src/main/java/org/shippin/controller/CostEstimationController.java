@@ -244,7 +244,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-//        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
+        String destinationError = ErrorHandler.validatePostalCode(destination);
         String weightError = ErrorHandler.validatePositiveDouble(weightText);
         String volumeError = ErrorHandler.validatePositiveDouble(volumeText);
 
@@ -255,14 +255,15 @@ public class CostEstimationController extends BaseController<Void> implements In
 
         if
         (
-//                !destinationError.isEmpty()
-                !weightError.isEmpty()
+                !destinationError.isEmpty()
+                || !weightError.isEmpty()
                 || !volumeError.isEmpty()
                 || !fuelSurchargeError.isEmpty()
                 || !tollError.isEmpty()
+
         )
         {
-//            statusLabelDestination.setText(destinationError);
+            statusLabelDestination.setText(destinationError);
             statusLabelVolume.setText(volumeError);
             statusLabelWeight.setText(weightError);
             statusLabelToll.setText(tollError);
