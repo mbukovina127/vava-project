@@ -27,7 +27,7 @@ public class WarehouseDAO extends BaseDAO {
     public Warehouse getById(int id) throws SQLException {
         String sql = """
                     SELECT w.warehouse_ID, w.storage_region, w.warehouse_region_name, w.price_list_file
-                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
+                    FROM Warehouse w WHERE w.warehouse_id = ? AND w.is_active = true;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -60,7 +60,7 @@ public class WarehouseDAO extends BaseDAO {
 
 
     public List<BriefWarehouse> getAllBriefWarehouses() throws SQLException {
-        String sql = "SELECT w.warehouse_ID, w.storage_region, w.warehouse_region_name, w.price_list_file FROM Warehouse w;";
+        String sql = "SELECT w.warehouse_ID, w.storage_region, w.warehouse_region_name, w.price_list_file FROM Warehouse w WHERE w.is_active = true;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -83,7 +83,7 @@ public class WarehouseDAO extends BaseDAO {
     public BriefWarehouse getlBriefWarehouse(int briefWarehouseID) throws SQLException {
         String sql = """
                     SELECT w.warehouse_ID, w.storage_region, w.warehouse_region_name, w.price_list_file
-                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
+                    FROM Warehouse w WHERE w.warehouse_id = ? AND w.is_active = true;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, briefWarehouseID);
@@ -109,14 +109,13 @@ public class WarehouseDAO extends BaseDAO {
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-                INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file, storage_region)
-                VALUES (?,?,?,?)
-                ON CONFLICT(warehouse_id)
-                DO UPDATE SET
-                    warehouse_id = EXCLUDED.warehouse_id,
-                    warehouse_region_name = EXCLUDED.warehouse_region_name,
-                    price_list_file = EXCLUDED.price_list_file,
-                    storage_region = EXCLUDED.storage_region;""";
+        INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file, is_active)
+        VALUES (?,?,?, true)
+        ON CONFLICT(warehouse_id)
+        DO UPDATE SET
+            warehouse_region_name = EXCLUDED.warehouse_region_name,
+            price_list_file = EXCLUDED.price_list_file;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
@@ -169,10 +168,10 @@ public class WarehouseDAO extends BaseDAO {
     
     public int insertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-                INSERT INTO Warehouse(warehouse_region_name, price_list_file, storage_region)
-                VALUES (?,?,?)
-                RETURNING warehouse_id;
-                ;""";
+        INSERT INTO Warehouse(warehouse_region_name, price_list_file, is_active)
+        VALUES (?,?, true)
+        RETURNING warehouse_id;
+        """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, w.getName()); //SK PSC+region aka name
@@ -194,17 +193,23 @@ public class WarehouseDAO extends BaseDAO {
         boolean autoCommit = connection.getAutoCommit();
         connection.setAutoCommit(false);
 
-        String sql = "DELETE FROM Warehouse where warehouse_ID = ?";
+        String sql = """
+        UPDATE Warehouse
+        SET is_active = false
+        WHERE warehouse_ID = ?
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, warehouseID);
 
-
-            int removed = stmt.executeUpdate();
+            int updated = stmt.executeUpdate();
             connection.commit();
-            if (removed > 0) log.info("Deleted warehouse #{}", warehouseID);
+
+            if (updated > 0) log.info("Soft-deleted warehouse #{}", warehouseID);
             else log.warn("deleteFullWarehouse: warehouse #{} not found", warehouseID);
-            return removed > 0;
+
+            return updated > 0;
+
         } catch (SQLException ex) {
             log.error("deleteFullWarehouse failed for warehouse #{}, rolling back", warehouseID, ex);
             connection.rollback();
