@@ -7,6 +7,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+
+import org.shippin.controller.utils.GenericPopup;
 import org.shippin.domain.Table;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
@@ -16,6 +18,7 @@ import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,7 +32,12 @@ public class SmallPriceListViewController extends BaseController<Void> implement
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
+        try {
+			this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
         populateGrid(table);
     }
 

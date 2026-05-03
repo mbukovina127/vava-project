@@ -1,6 +1,8 @@
 package org.shippin.services;
 
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.PriceList;
+import org.shippin.domain.RegionTable;
 import org.shippin.domain.Table;
 import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
@@ -20,6 +22,8 @@ import org.shippin.util.WarehouseConvertor;
 import org.shippin.util.io.TextFileHandler;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 
 public class WarehouseParsingService {
 	
@@ -35,6 +39,14 @@ public class WarehouseParsingService {
 
     private final SmallPriceListCsvParser smallPriceListCsvParser;
     private final SmallPriceListXmlParser smallPriceListXmlParser;
+    
+    public boolean checkTableCompatibility(PriceList priceList, RegionTable regionTable) {
+    	List<String> priceListRegions = priceList.getRegions();
+    	List<String> regionTableRegions = regionTable.getRegions();
+    	
+    	return priceListRegions.containsAll(regionTableRegions) && 
+    		       regionTableRegions.containsAll(priceListRegions);
+    }
 
     public WarehouseParsingService() {
         this.textFileHandler = new TextFileHandler();
@@ -225,8 +237,10 @@ public class WarehouseParsingService {
         return name.substring(dotIndex + 1).toLowerCase();
     }
     
-    public void parseTable(BriefWarehouse briefWarehouse, boolean isPriceList, File file) {
-    	Warehouse warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
+    public void exportTable(BriefWarehouse briefWarehouse, boolean isPriceList, File file) throws SQLException {
+    	Warehouse warehouse;
+		
+    	warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
     	WarehouseFormatted warehouseFormatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
     	if(isPriceList) {

@@ -20,6 +20,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+
+import org.shippin.controller.utils.GenericPopup;
+import org.shippin.controller.utils.InputValidator;
+import org.shippin.controller.utils.warehousemanagement.popups.AddWarehousePopup;
+import org.shippin.controller.utils.warehousemanagement.popups.DeleteWarehousePopup;
+import org.shippin.controller.utils.warehousemanagement.popups.ExportChoicePopup;
+import org.shippin.controller.utils.warehousemanagement.popups.ReplaceWarehousePopup;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.CoreWarehouseInfo;
 import org.shippin.domain.Warehouse;
@@ -30,6 +37,7 @@ import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.WarehouseFormatted;
+import org.shippin.exception.IncompatibleTablesException;
 import org.shippin.services.WarehouseService;
 
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
@@ -38,9 +46,12 @@ import static org.shippin.dto.Screens.SMALL_PRICE_LIST_VIEW;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import lombok.Getter;
+import lombok.Setter;
 
 public class WarehouseManagementController extends BaseController<BriefWarehouse> implements Initializable {
 
@@ -59,8 +70,12 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     private WarehouseParsingService warehouseParsingService;
 	private WarehouseService warehouseService;
 	private List<BriefWarehouse> warehouseList;
+	
+	@Getter @Setter
 	private Warehouse selectedWarehouse;
+	@Getter @Setter
 	private RegionTableFormatted selectedRegionTableFormatted;
+	@Getter @Setter
 	private PriceListFormatted selectedPriceListFormatted;
 
     @Override
@@ -84,7 +99,12 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         this.warehouseService = new WarehouseService();
         
         //List<CoreWarehouseInfo> warehouses = createWarehouses();
-        this.warehouseList = warehouseService.getBriefWarehouses();
+        try {
+			this.warehouseList = warehouseService.getBriefWarehouses();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
         renderWarehouses(warehouseList);
     }
 
@@ -134,18 +154,25 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         GridPane.setColumnIndex(editButton, 1);
 
         Button replaceButton = createTableIconButton(replaceIcon, 26.0, 26.0, 32.0, 32.0);
-        replaceButton.setOnAction(event -> showReplaceWarehousePopup(warehouse));
+        replaceButton.setOnAction(event -> {
+			try {
+				new ReplaceWarehousePopup(resources).show(this, warehouse);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			}
+		});
         GridPane.setColumnIndex(replaceButton, 2);
 
         Button exportButton = createTableIconButton(exportIcon, 26.0, 26.0, 34.0, 32.0);
         GridPane.setColumnIndex(exportButton, 3);
         exportButton.setOnAction(event -> {
-        	this.showExportChoicePopup(warehouse);
+        	new ExportChoicePopup(resources).show(this, warehouse);
         });
 
         Button deleteButton = createTableIconButton(deleteIcon, 22.0, 22.0, 32.0, 32.0);
         GridPane.setColumnIndex(deleteButton, 4);
-        deleteButton.setOnAction(event -> this.showDeleteWarehousePopup(warehouse));
+        deleteButton.setOnAction(event -> new DeleteWarehousePopup(resources).show(this, warehouse));
 
         row.getChildren().addAll(
                 nameLabel,
@@ -180,425 +207,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
     @FXML
     private void handleAddWarehouse() {
-        showAddWarehousePopup();
-    }
-    
-    private Warehouse fetchFullWarehouse(BriefWarehouse briefWarehouse) {
-    	return this.warehouseService.getWarehouse(briefWarehouse);
-    }
-    
-    private Label createFormLabel(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add("popup-label");
-        return label;
-    }
-
-    private Label createPopupTitle(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add("popup-title");
-        return label;
-    }
-
-    private String t(String key) {
-        if (this.resources == null) { return key; }
-        try {
-            return this.resources.getString(key.substring(1)); // strips the % and looks up the key
-        } catch (java.util.MissingResourceException e) {
-            System.err.println("Missing i18n key: " + key);
-            return key; // fallback: show the raw key if not found
-        }
-    }
-    
-    private void showDeleteWarehousePopup(BriefWarehouse warehouse) {
-        VBox popup = createPopupRoot();
-        popup.setMaxWidth(420);
-        popup.setPrefWidth(420);
-
-        Label title = createPopupTitle(t("%warehouse_management.delete.title"));
-
-        Label message = new Label(t("%warehouse_management.delete.message"));
-        message.getStyleClass().add("popup-message");
-        message.setWrapText(true);
-
-        HBox buttons = new HBox(18);
-        buttons.setAlignment(Pos.CENTER_LEFT);
-
-        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
-        cancelButton.setPrefSize(160, 42);
-        cancelButton.setOnAction(e -> hideModal());
-
-        Button deleteButton = new Button(t("%warehouse_management.delete.button_confirm"));
-        deleteButton.getStyleClass().addAll("popup-button", "danger-button");
-        deleteButton.setPrefSize(160, 42);
-        deleteButton.setOnAction(e -> {
-            this.deleteWarehouse(warehouse);
-            hideModal();
-        });
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        buttons.getChildren().addAll(cancelButton, spacer, deleteButton);
-
-        popup.getChildren().addAll(title, message, buttons);
-
-        showModal(popup);
-    }
-
-    private void showAddWarehousePopup() {
-        VBox popup = createPopupRoot();
-        popup.setMaxWidth(510);
-        popup.setPrefWidth(510);
-
-        Label title = createPopupTitle(t("%warehouse_management.add.title"));
-
-        GridPane formGrid = new GridPane();
-        formGrid.setHgap(16);
-        formGrid.setVgap(14);
-
-        ColumnConstraints labelColumn = new ColumnConstraints();
-        labelColumn.setPrefWidth(135);
-
-        ColumnConstraints fieldColumn = new ColumnConstraints();
-        fieldColumn.setHgrow(Priority.ALWAYS);
-
-        formGrid.getColumnConstraints().addAll(labelColumn, fieldColumn);
-
-        Label nameLabel = createFormLabel(t("%warehouse_management.add.name"));
-        TextField nameField = createPopupTextField("Value");
-
-        Label pickupLabel = createFormLabel(t("%warehouse_management.add.pickup_place"));
-        TextField pickupField = createPopupTextField("Value");
-
-        Label priceListLabel = createFormLabel(t("%warehouse_management.add.price_list"));
-        Button addPriceListButton = createUploadButton(t("%warehouse_management.button.click_to_add"));
-        addPriceListButton.setOnAction(event -> {
-            Window currentWindow = addPriceListButton.getScene().getWindow();
-
-            File file = FilePicker.pickFile(currentWindow,
-                    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-                    new FileChooser.ExtensionFilter("XML files", "*.xml")
-            );
-
-            if (file == null) { return; }
-
-            PriceListFormatted priceListFormatted = warehouseParsingService.parsePriceList(file);
-
-            if (priceListFormatted == null) { return; }
-
-            this.selectedPriceListFormatted = priceListFormatted;
-            addPriceListButton.setText(file.getName());
-        });
-        addPriceListButton.getStyleClass().addAll("upload-button");
-
-        Label regionTableLabel = createFormLabel(t("%warehouse_management.add.region_table"));
-        Button addRegionTableButton = createUploadButton(t("%warehouse_management.button.click_to_add"));
-        addRegionTableButton.setOnAction(event -> {
-            Window currentWindow = addRegionTableButton.getScene().getWindow();
-
-            File file = FilePicker.pickFile(currentWindow,
-                    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-                    new FileChooser.ExtensionFilter("XML files", "*.xml")
-            );
-
-            if (file == null) { return; }
-
-            RegionTableFormatted regionTableFormatted = warehouseParsingService.parseRegionTable(file);
-
-            if (regionTableFormatted == null) { return; }
-
-            this.selectedRegionTableFormatted = regionTableFormatted;;
-            addRegionTableButton.setText(file.getName());
-        });
-        addRegionTableButton.getStyleClass().addAll("upload-button");
-
-        formGrid.add(nameLabel, 0, 0);
-        formGrid.add(nameField, 1, 0);
-
-        formGrid.add(pickupLabel, 0, 1);
-        formGrid.add(pickupField, 1, 1);
-
-        formGrid.add(priceListLabel, 0, 2);
-        formGrid.add(addPriceListButton, 1, 2);
-
-        formGrid.add(regionTableLabel, 0, 3);
-        formGrid.add(addRegionTableButton, 1, 3);
-
-        HBox buttons = new HBox(18);
-        buttons.setAlignment(Pos.CENTER_LEFT);
-
-        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
-        cancelButton.setPrefSize(160, 42);
-        cancelButton.setOnAction(e -> hideModal());
-
-        Button addButton = new Button(t("%warehouse_management.add.button_confirm"));
-        addButton.getStyleClass().addAll("popup-button", "popup-primary-button");
-        addButton.setPrefSize(160, 42);
-        addButton.setOnAction(e -> {
-            this.warehouseService.addWarehouse(nameField.getText(), pickupField.getText(), selectedPriceListFormatted, selectedRegionTableFormatted);
-            hideModal();
-            this.warehouseList = warehouseService.getBriefWarehouses();
-            renderWarehouses(warehouseList);
-        });
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        buttons.getChildren().addAll(cancelButton, spacer, addButton);
-
-        popup.getChildren().addAll(title, formGrid, buttons);
-
-        showModal(popup);
-    }
-
-    private void showReplaceWarehousePopup(BriefWarehouse warehouse) {
-        this.selectedWarehouse = fetchFullWarehouse(warehouse);
-        
-        this.selectedPriceListFormatted = WarehouseConvertor.convertPriceListFormatted(this.selectedWarehouse.getPriceList());
-        this.selectedRegionTableFormatted = WarehouseConvertor.convertRegionTableFormatted(this.selectedWarehouse.getRegionTable());
-        
-        VBox popup = createPopupRoot();
-        popup.setMaxWidth(560);
-        popup.setPrefWidth(560);
-
-        Label title = createPopupTitle(t("%warehouse_management.replace.title"));
-
-        GridPane formGrid = new GridPane();
-        formGrid.setHgap(16);
-        formGrid.setVgap(18);
-
-        ColumnConstraints labelColumn = new ColumnConstraints();
-        labelColumn.setPrefWidth(135);
-
-        ColumnConstraints fieldColumn = new ColumnConstraints();
-        fieldColumn.setHgrow(Priority.ALWAYS);
-
-        ColumnConstraints buttonColumn = new ColumnConstraints();
-        buttonColumn.setPrefWidth(130);
-
-        formGrid.getColumnConstraints().addAll(labelColumn, fieldColumn, buttonColumn);
-
-        Label titleDocLabel = createFormLabel(t("%warehouse_management.popup.name"));
-        Label titleDocValue = createValueLabel(warehouse.getName());
-
-        Label pickupPlaceLabel = createFormLabel(t("%warehouse_management.replace.pickup_place"));
-        Label pickupPlaceValue = createValueLabel(warehouse.getRegionName());
-
-        Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));
-        Label priceListFile = createFileLabel("Original price list");
-        Button replacePriceListButton = new Button(t("%warehouse_management.button.replace"));
-        replacePriceListButton.getStyleClass().addAll("popup-button", "danger-button");
-        replacePriceListButton.setPrefSize(120, 38);
-        replacePriceListButton.setOnAction(event -> {
-            Window currentWindow = replacePriceListButton.getScene().getWindow();
-
-            File file = FilePicker.pickFile(currentWindow,
-                    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-                    new FileChooser.ExtensionFilter("XML files", "*.xml")
-            );
-
-            if (file == null) { return; }
-
-            PriceListFormatted priceListFormatted = warehouseParsingService.parsePriceList(file);
-
-            if (priceListFormatted == null) { return; }
-            this.selectedPriceListFormatted = priceListFormatted;
-
-            priceListFile.setText(file.getName());
-        });
-
-        Label regionTableLabel = createFormLabel(t("%warehouse_management.replace.region_table"));
-        Label regionTableFile = createFileLabel("Original region table");
-        Button replaceRegionTableButton = new Button(t("%warehouse_management.button.replace"));
-        replaceRegionTableButton.getStyleClass().addAll("popup-button", "danger-button");
-        replaceRegionTableButton.setPrefSize(120, 38);
-        replaceRegionTableButton.setOnAction(event -> {
-            Window currentWindow = replaceRegionTableButton.getScene().getWindow();
-
-            File file = FilePicker.pickFile(currentWindow,
-                    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-                    new FileChooser.ExtensionFilter("XML files", "*.xml")
-            );
-
-            if (file == null) { return; }
-
-            RegionTableFormatted regionTableFormatted = warehouseParsingService.parseRegionTable(file);
-
-            if (regionTableFormatted == null) { return; }
-            this.selectedRegionTableFormatted = regionTableFormatted;
-            
-            System.out.println(regionTableFormatted);
-            regionTableFile.setText(file.getName());
-        });
-
-        formGrid.add(titleDocLabel, 0, 0);
-        formGrid.add(titleDocValue, 1, 0);
-
-        formGrid.add(pickupPlaceLabel, 0, 1);
-        formGrid.add(pickupPlaceValue, 1, 1);
-
-        formGrid.add(priceListLabel, 0, 2);
-        formGrid.add(priceListFile, 1, 2);
-        formGrid.add(replacePriceListButton, 2, 2);
-
-        formGrid.add(regionTableLabel, 0, 3);
-        formGrid.add(regionTableFile, 1, 3);
-        formGrid.add(replaceRegionTableButton, 2, 3);
-
-        HBox buttons = new HBox(18);
-        buttons.setAlignment(Pos.CENTER_LEFT);
-
-        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
-        cancelButton.setPrefSize(160, 42);
-        cancelButton.setOnAction(e -> hideModal());
-
-        Button addButton = new Button(t("%warehouse_management.replace.button_confirm"));
-        addButton.getStyleClass().addAll("popup-button", "popup-primary-button");
-        addButton.setPrefSize(160, 42);
-        addButton.setOnAction(e -> this.handleReplaceSaved());
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        buttons.getChildren().addAll(cancelButton, spacer, addButton);
-
-        popup.getChildren().addAll(title, formGrid, buttons);
-
-        showModal(popup);
-    }
-    
-    private void showExportChoicePopup(BriefWarehouse briefWarehouse) {
-        VBox popup = createPopupRoot();
-        popup.setMaxWidth(420);
-        popup.setPrefWidth(420);
-
-        Label title = createPopupTitle(t("%warehouse_management.export.title"));
-
-        Label message = new Label(t("%warehouse_management.export.message"));
-        message.getStyleClass().add("popup-message");
-        message.setWrapText(true);
-
-        ToggleGroup toggleGroup = new ToggleGroup();
-
-        RadioButton priceListOption = new RadioButton(t("%warehouse_management.export.option_price_list"));
-        priceListOption.setToggleGroup(toggleGroup);
-        priceListOption.setSelected(true);
-        priceListOption.getStyleClass().add("popup-toggle-button");
-
-        RadioButton regionTableOption = new RadioButton(t("%warehouse_management.export.option_region_table"));
-        regionTableOption.setToggleGroup(toggleGroup);
-        regionTableOption.getStyleClass().add("popup-toggle-button");
-
-        VBox options = new VBox(10, priceListOption, regionTableOption);
-
-        HBox buttons = new HBox(18);
-        buttons.setAlignment(Pos.CENTER_LEFT);
-
-        Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
-        cancelButton.setPrefSize(160, 42);
-        cancelButton.setOnAction(e -> hideModal());
-
-        Button exportButton = new Button(t("%warehouse_management.export.button_confirm"));
-        exportButton.getStyleClass().addAll("popup-button", "primary-button");
-        exportButton.setPrefSize(160, 42);
-        exportButton.setOnAction(e -> {
-            boolean isPriceList = priceListOption.isSelected();
-
-            Window currentWindow = exportButton.getScene().getWindow();
-            
-            File file = FilePicker.saveFile(currentWindow,
-            	    new FileChooser.ExtensionFilter("CSV files", "*.csv"),
-            	    new FileChooser.ExtensionFilter("XML files", "*.xml")
-            	);
-
-            if (file == null) { return; }
-            
-            this.warehouseParsingService.parseTable(briefWarehouse, isPriceList, file);
-            hideModal();
-        });
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        buttons.getChildren().addAll(cancelButton, spacer, exportButton);
-
-        popup.getChildren().addAll(title, message, options, buttons);
-
-        showModal(popup);
-    }
-    
-    private Stage createPopupStage(String titleText) {
-        Stage stage = new Stage();
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setTitle(titleText);
-
-        Window owner = warehouseRowsContainer.getScene() != null
-                ? warehouseRowsContainer.getScene().getWindow()
-                : null;
-
-        if (owner != null) {
-            stage.initOwner(owner);
-        }
-
-        return stage;
-    }
-
-    private VBox createPopupRoot() {
-        VBox root = new VBox(28);
-        root.setPadding(new Insets(28, 30, 24, 30));
-        root.setAlignment(Pos.TOP_LEFT);
-        root.getStyleClass().add("popup-root");
-        return root;
-    }
-
-    private Label createValueLabel(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add("popup-value-label");
-        return label;
-    }
-
-    private Label createFileLabel(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add("popup-file-label");
-        label.setMaxWidth(Double.MAX_VALUE);
-        return label;
-    }
-
-    private TextField createPopupTextField(String prompt) {
-        TextField textField = new TextField();
-        textField.setPromptText(prompt);
-        textField.getStyleClass().add("popup-text-field");
-        textField.setPrefHeight(38);
-        return textField;
-    }
-
-    private Button createUploadButton(String text) {
-        Image importIcon = loadImage("/icons/png-dark/import_black.png");
-
-        ImageView iconView = new ImageView(importIcon);
-        iconView.setFitWidth(18);
-        iconView.setFitHeight(18);
-        iconView.setPreserveRatio(true);
-
-        Label label = new Label(text);
-        label.getStyleClass().add("upload-button-text");
-
-        HBox content = new HBox(12, iconView, label);
-        content.setAlignment(Pos.CENTER_LEFT);
-
-        Button button = new Button();
-        button.setGraphic(content);
-        button.setAlignment(Pos.CENTER_LEFT);
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setPrefHeight(40);
-        button.getStyleClass().addAll("popup-button", "upload-button");
-
-        return button;
+        new AddWarehousePopup(resources).show(this);
     }
 
     private Image loadImage(String path) {
@@ -619,10 +228,58 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 		}
     }
     
+    public void handleAddWarehouseSaved(String name, String pickup) {
+    	if(!InputValidator.isNotBlank(name)) {
+			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
+			return;
+		} else if(!InputValidator.isValidLength(name, 20)) {
+			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
+			return;
+		}
+				
+		if(!InputValidator.isNotBlank(pickup)) {
+			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
+			return;
+		} else if(!InputValidator.isValidLength(pickup, 30)) {
+			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
+			return;
+		} 
+    	
+    	if (this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
+    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Missing table: you need to upload both a price list and a region table.");
+    	}
+    	
+    	try { 
+    		this.warehouseService.addWarehouse(name, pickup, 
+    				this.selectedPriceListFormatted, this.selectedRegionTableFormatted);
+    		hideModal();
+    	} catch (IncompatibleTablesException e) {
+    		System.out.println(this.selectedPriceListFormatted);
+    		System.out.println(this.selectedRegionTableFormatted);
+    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Invalid tables: imported price list and region tables are incompatible. Both tables must include the same set of regions.");
+    	} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
+    	
+        try {
+			this.warehouseList = warehouseService.getBriefWarehouses();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
+        renderWarehouses(warehouseList);
+    }
+    
     @FXML
     private void handleOpenSmallPriceList() {
     	try {
-    		SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
+    		try {
+				SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			}
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -646,25 +303,47 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
     	if (smallPriceListFormatted == null) { return; }
 
-    	System.out.println(smallPriceListFormatted);
-    	this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
+    	try {
+			this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
     }
     
-    private void handleReplaceSaved() {
+    public void handleReplaceSaved() {
     	
     	if(this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
+    		new GenericPopup(this.resources).showOkPopup(this, "Replace failed", "Missing table: you need to upload both a price list and a region table.");
     		return;
     	}
     	
-    	warehouseService.replaceTables(this.selectedPriceListFormatted, this.selectedRegionTableFormatted, this.selectedWarehouse);
-    	
-    	hideModal();
+    	try {
+    		warehouseService.replaceTables(this.selectedPriceListFormatted, 
+    				this.selectedRegionTableFormatted, this.selectedWarehouse);
+    		hideModal();
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+    	} catch (IncompatibleTablesException e) {
+    		new GenericPopup(this.resources).showOkPopup(this, "Invalid tables", "Imported price list and region tables are incompatible. Both tables must include the same set of regions.");
+    	}
     }
     
-    private void deleteWarehouse(BriefWarehouse briefWarehouse) {
-    	this.warehouseService.deleteWarehouse(briefWarehouse);
+    public void deleteWarehouse(BriefWarehouse briefWarehouse) {
+    	try {
+			this.warehouseService.deleteWarehouse(briefWarehouse);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
     	
-    	this.warehouseList = warehouseService.getBriefWarehouses();
+    	try {
+			this.warehouseList = warehouseService.getBriefWarehouses();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
         renderWarehouses(warehouseList);
     }
 }

@@ -38,7 +38,7 @@
                                         prefWidth="212.0"
                                         prefHeight="46.0"
                                         mnemonicParsing="false"
-                                        styleClass="secondary-button"
+                                        styleClass="tertiary-button"
                                         onAction="#handleAddWarehouse">
                                     <graphic>
                                         <ImageView fx:id="addWarehouseIcon" fitWidth="18.0" fitHeight="18.0" pickOnBounds="true" preserveRatio="true"/>
@@ -82,7 +82,7 @@
                                 <Button text="%warehouse_management.view_price_list"
                                         prefWidth="355.0"
                                         prefHeight="42.0"
-                                        styleClass="secondary-button"
+                                        styleClass="tertiary-button"
                                         onAction="#handleOpenSmallPriceList"/>
 
                                 <Button text="%warehouse_management.replace_price_list"
@@ -90,7 +90,7 @@
                                         mnemonicParsing="false"
                                         prefWidth="335.0"
                                         prefHeight="42.0"
-                                        styleClass="secondary-button"
+                                        styleClass="tertiary-button"
                                         onAction="#handleReplaceSmallPriceList">
                                     <graphic>
                                         <ImageView fx:id="changePriceListIcon" fitWidth="18.0" fitHeight="18.0" preserveRatio="true"/>
