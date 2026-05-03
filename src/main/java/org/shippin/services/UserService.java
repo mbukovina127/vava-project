@@ -52,7 +52,9 @@ public class UserService {
         UserDAO.getInstance().insert(user);
         log.info("Registered new user: " + user.getEmail());
     }
-
+    public static User getUser(int userId) throws SQLException {
+        return UserDAO.getInstance().GetUser(userId);
+    }
     public static List<User> getAllUsers() throws SQLException {
         return UserDAO.getInstance().getAllUsers();
     }
@@ -67,5 +69,4 @@ public class UserService {
         UserDAO.getInstance().updateRole(userId, role);
         log.info("Updated role for user " + userId + " to " + role);
     }
-
 }
