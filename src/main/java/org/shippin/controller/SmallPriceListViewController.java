@@ -33,11 +33,11 @@ public class SmallPriceListViewController extends BaseController<Void> implement
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-			this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
+        this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
+      } catch (SQLException e) {
+        e.printStackTrace();
+        new GenericPopup(resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+      }
         populateGrid(table);
     }
 
@@ -108,11 +108,11 @@ public class SmallPriceListViewController extends BaseController<Void> implement
     
     @FXML
     private void handleLeave() {
-    	try {
-			loadScreen(WAREHOUSE_MANAGEMENT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+        loadScreen(WAREHOUSE_MANAGEMENT);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 }

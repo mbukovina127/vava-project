@@ -304,11 +304,11 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	if (smallPriceListFormatted == null) { return; }
 
     	try {
-			this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
+        this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
+      } catch (SQLException e) {
+        e.printStackTrace();
+        new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+      }
     }
     
     public void handleReplaceSaved() {
@@ -344,6 +344,13 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 			e.printStackTrace();
 			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
 		}
+        renderWarehouses(warehouseList);
+    }
+    
+    private void deleteWarehouse(BriefWarehouse briefWarehouse) {
+    	this.warehouseService.deleteWarehouse(briefWarehouse);
+    	
+    	this.warehouseList = warehouseService.getBriefWarehouses();
         renderWarehouses(warehouseList);
     }
 }

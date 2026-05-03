@@ -55,9 +55,9 @@ public class MenuController implements Initializable {
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
+            new NavItem(Screens.MY_SHIPMENTS, "My Shipments", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"),
             new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
             new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
-            new NavItem(Screens.DAILY_COST_SUM, "Daily Costs Summary", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"), //FIXME testing menu item
             new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png") //FIXME testing menu item
 //            new NavItem(null, "Home", "", "")
 

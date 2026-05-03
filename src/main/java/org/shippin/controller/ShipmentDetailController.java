@@ -21,6 +21,8 @@ import org.shippin.services.ShipmentService;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -351,7 +353,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     @FXML
     private void onDailySummary() throws java.io.IOException {
-        loadScreen(DAILY_COST_SUM);
+        try {
+            LocalDate date = shipment.getCreated_at().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            loadScreen(DAILY_COST_SUM, date);
+        } catch (Exception ex) {
+            log.error("Exception probably caused by shipment={} createdat={}", shipment.getShipment_id(), shipment.getCreated_at(), ex);
+        }
     }
 
 }

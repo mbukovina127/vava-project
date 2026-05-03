@@ -178,11 +178,11 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     @FXML
     private void handleLeave() {
     	try {
-			loadScreen(WAREHOUSE_MANAGEMENT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        loadScreen(WAREHOUSE_MANAGEMENT);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     
     @FXML
@@ -214,6 +214,17 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 		} catch (SQLException e) {
 			e.printStackTrace();
 			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
+    }
+    
+    @FXML
+    private void handleSave() {
+    	try {
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, documentTitleField.getText(), pickupPlaceField.getText());
+			loadScreen(WAREHOUSE_MANAGEMENT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
     }
 }

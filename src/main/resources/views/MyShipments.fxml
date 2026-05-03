@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.shippin.controller.MyShipmentsController"
+      styleClass="dcd-root"
+      stylesheets="@../css/shipinn.css, @../css/daily-costs-detail.css">
+
+    <!-- ── Top bar: title + search + sort + Add button ───────── -->
+    <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT" spacing="8">
+        <Label fx:id="lblTitle" styleClass="page-title" text="My Shipments" />
+        <Region HBox.hgrow="ALWAYS" />
+        <TextField fx:id="searchField"
+                   styleClass="dcd-search-field"
+                   promptText="%my_shipments.search_placeholder" />
+        <ComboBox fx:id="sortCombo" styleClass="dcd-sort-combo" />
+        <Button fx:id="btnAddShipment"
+                styleClass="dcd-btn-add"
+                text="%my_shipments.add_shipment"
+                onAction="#handleAddShipment" />
+    </HBox>
+
+    <!-- ── Shipment list ────────────────────────────────────── -->
+    <VBox fx:id="shipmentList" styleClass="dcd-list" VBox.vgrow="ALWAYS" />
+
+    <!-- ── Divider ───────────────────────────────────────────── -->
+    <Separator styleClass="dcd-separator" />
+
+    <!-- ── Total row ─────────────────────────────────────────── -->
+    <HBox styleClass="dcd-total-row" alignment="CENTER_RIGHT">
+        <Label fx:id="lblTotal" styleClass="dcd-total-box" text="0€" />
+    </HBox>
+
+</VBox>
