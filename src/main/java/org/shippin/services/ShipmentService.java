@@ -239,7 +239,9 @@ public class ShipmentService {
         return shipmentDAO.getAllShipmentsByDate(from, to);
     }
 
-
+    public List<Shipment> getShipmentsByUser(int userId) throws SQLException {
+        return shipmentDAO.getShipmentByUserID(userId);
+    }
 
 
 
