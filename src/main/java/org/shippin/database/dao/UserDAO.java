@@ -28,7 +28,7 @@ public class UserDAO extends BaseDAO {
 
     public void insert(User user) throws SQLException {
 
-        String sql = "INSERT INTO Users(first_name, last_name, email, password, role)VALUES (?,?,?,?,?);";
+        String sql = "INSERT INTO Users(first_name, last_name, email, password, role, is_active) VALUES (?,?,?,?,?, true);";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, user.getFirstName());
@@ -42,7 +42,7 @@ public class UserDAO extends BaseDAO {
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE user_ID = ?;";
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE user_ID = ? AND is_active = true;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -65,7 +65,7 @@ public class UserDAO extends BaseDAO {
 
     /** Returns the user (without password) if email + already-hashed password match, null otherwise. */
     public User authenticate(String email, String passwordHash) throws SQLException {
-        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ? AND password = ?;";
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ? AND password = ? AND is_active = true;";
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, email);
         stmt.setString(2, passwordHash);
@@ -85,7 +85,7 @@ public class UserDAO extends BaseDAO {
     }
 
     public User findByEmail(String email) throws SQLException {
-        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ?;";
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE email = ? AND is_active = true;";
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, email);
         ResultSet rs = stmt.executeQuery();
@@ -104,7 +104,12 @@ public class UserDAO extends BaseDAO {
     }
 
     public List<User> getAllUsers() throws SQLException {
-        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users ORDER BY user_ID;";
+        String sql = """
+        SELECT user_ID, first_name, last_name, email, role
+        FROM Users
+        WHERE is_active = true
+        ORDER BY user_ID;
+        """;
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
         List<User> result = new ArrayList<>();
@@ -133,65 +138,19 @@ public class UserDAO extends BaseDAO {
 
     public boolean deleteUser(int userID) throws SQLException {
 
-        String sql = """
-        DELETE FROM Users WHERE user_ID = ?;
-        """;//Will set null when deleted from shipment
+        String sql = "UPDATE Users SET is_active = false WHERE user_ID = ?;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, userID);
 
         int affectedRows = stmt.executeUpdate();
-        if (affectedRows > 0) log.info("Deleted user #{}", userID);
+
+        if (affectedRows > 0) log.info("Soft-deleted user #{}", userID);
         else log.warn("deleteUser: user #{} not found", userID);
+
         return affectedRows > 0;
     }
 
-/*
-Won't be needed since no token will be used ↓
- */
 
-
-/*
-called at login, after login deletes old token, requests new
- */
-    public String createAccessToken(int userId) throws SQLException {
-        String sql = "";//TODO insert into table with tokens:  delete old token where userID + gen_random_uuid(), expire date, user id + cron to delete old tokens
-
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setInt(1, userId);
-
-        ResultSet rs = stmt.executeQuery();
-
-        if (rs.next()) {
-            return rs.getString("token");
-        }
-
-        return null;
-    }
-
-
-    public Integer validateAccessToken(String token) throws SQLException {
-        String sql = ""; //TODO select WHERE token=token
-
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, token);
-
-        ResultSet rs = stmt.executeQuery();
-
-        if (rs.next()) {
-            return rs.getInt("user_id"); //valid token
-        }
-
-        return null; //invalid or expired
-    }
-
-
-    public void deleteAccessToken(String token) throws SQLException {
-        String sql = ""; //TODO
-
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, token);
-        stmt.executeUpdate();
-    }
 
 }
