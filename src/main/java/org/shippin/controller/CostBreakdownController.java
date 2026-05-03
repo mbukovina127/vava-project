@@ -17,8 +17,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.shippin.controller.utils.AuthUtils;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.Shipment;
+import org.shippin.domain.enums.Role;
+import org.shippin.dto.Screens;
 import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
 
@@ -55,7 +58,9 @@ public class CostBreakdownController extends BaseController<Shipment> implements
     private final List<PdfRow> pdfRows = new ArrayList<>();
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources)
+    {
+    }
 
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
@@ -111,7 +116,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         saveButton.setManaged(shipment.getShipment_id() == 0);
     }
 
-    // ── Grid helpers ──────────────────────────────────────────────
+    // Grid helpers
 
     private void addRow(String leftText, String middleText, String rightText, boolean bold, boolean italic) {
         Label left = new Label(leftText);
@@ -175,7 +180,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         gridRow++;
     }
 
-    // ── Save popup ────────────────────────────────────────────────
+    //Save popup
 
     private void showSaveEstimationPopup() {
         VBox popup = createPopupRoot();
@@ -198,6 +203,13 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         Button confirmButton = new Button("Save");
         confirmButton.getStyleClass().addAll("popup-button", "popup-primary-button");
         confirmButton.setPrefSize(150, 42);
+
+//        Role required = Screens.COST_BREAKDOWN.getRequiredRole();
+//        if (required != null) //
+
+        //TODO: toto Marko takto? ze save estimation moze len ADMIN?
+        AuthUtils.guard(confirmButton, Role.USER);
+
         confirmButton.setOnAction(e -> {
             hideModal();
             try {
@@ -218,7 +230,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         showModal(popup);
     }
 
-    // ── Popup helpers ─────────────────────────────────────────────
+    // Popup helpers
 
     private VBox createPopupRoot() {
         VBox root = new VBox(24);
@@ -234,7 +246,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         return label;
     }
 
-    // ── Button handlers ───────────────────────────────────────────
+    // Button handlers
 
     @FXML
     private void onDelete() throws IOException {
@@ -246,7 +258,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         showSaveEstimationPopup();
     }
 
-    // ── PDF export ────────────────────────────────────────────────
+    // PDF export
 
     @FXML
     private void onPrintPdf() {

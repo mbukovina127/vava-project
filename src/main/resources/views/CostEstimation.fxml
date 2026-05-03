@@ -22,47 +22,42 @@
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
         <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
         <Region HBox.hgrow="ALWAYS" />
-<!--        <HBox alignment="CENTER_RIGHT" spacing="8">-->
-<!--            <Label styleClass="ce-date-label" text="%cost_estimation.date" />-->
-<!--            <TextField fx:id="dateField" prefWidth="130" promptText="%cost_estimation.date.prompt" styleClass="input-field ce-date-field" />-->
-<!--            <Label fx:id="statusLabelDate" maxWidth="200" styleClass="status-label" wrapText="true" />-->
-<!--        </HBox>-->
     </HBox>
 
-    <!-- FIELDS ROW — restructured as a single GridPane for proper alignment -->
-    <GridPane hgap="16" vgap="4" styleClass="ce-fields-grid">
-        <padding><Insets top="8" bottom="8" /></padding>
+    <!-- FIELDS ROW -->
+    <GridPane hgap="10" vgap="0" styleClass="ce-fields-grid">
+        <padding><Insets top="8" bottom="8" left="8" right="8" /></padding>
         <columnConstraints>
-            <!-- Row label (Postal codes / Size / Coefficients) -->
-            <ColumnConstraints minWidth="120" prefWidth="140" halignment="LEFT" />
-            <!-- Sub-label From/Weight/Fuel — widened so text isn't cramped -->
-            <ColumnConstraints minWidth="120" prefWidth="150" halignment="RIGHT" />
-            <!-- From field -->
-            <ColumnConstraints minWidth="180" prefWidth="200" />
-            <!-- Status label From -->
-            <ColumnConstraints minWidth="0" prefWidth="160" />
-            <!-- Spacer -->
-            <ColumnConstraints minWidth="40" prefWidth="60" />
-            <!-- Sub-label To/Volume/Toll — widened to match left side -->
-            <ColumnConstraints minWidth="80" prefWidth="100" halignment="RIGHT" />
-            <!-- To field + button -->
-            <ColumnConstraints minWidth="180" prefWidth="220" />
-            <!-- Status label To -->
-            <ColumnConstraints minWidth="0" prefWidth="160" />
+            <!-- Col 0: Row label (Postal codes / Size / Coefficients) -->
+            <ColumnConstraints minWidth="110" prefWidth="120" maxWidth="140" halignment="LEFT" />
+            <!-- Col 1: Sub-label From/Weight/Fuel -->
+            <ColumnConstraints minWidth="100" prefWidth="120" maxWidth="140" halignment="RIGHT" />
+            <!-- Col 2: From field -->
+            <ColumnConstraints minWidth="160" prefWidth="180" maxWidth="220" />
+            <!-- Col 3: Status label — grows to fill remaining left-side space -->
+            <ColumnConstraints minWidth="120" prefWidth="160" hgrow="ALWAYS" />
+            <!-- Col 4: Spacer -->
+            <ColumnConstraints minWidth="8" prefWidth="16" maxWidth="24" />
+            <!-- Col 5: Sub-label To/Volume/Toll -->
+            <ColumnConstraints minWidth="100" prefWidth="120" maxWidth="140" halignment="RIGHT" />
+            <!-- Col 6: To field + button -->
+            <ColumnConstraints minWidth="160" prefWidth="180" maxWidth="220" />
+            <!-- Col 7: Status label — grows to fill remaining right-side space -->
+            <ColumnConstraints minWidth="120" prefWidth="160" hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
             <!-- Row 0: Postal codes -->
-            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
-            <!-- Row 1: Status label for destination — sits flush under To field -->
-            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <RowConstraints minHeight="40" prefHeight="44" valignment="CENTER" />
+            <!-- Row 1: Status label destination — auto-grow pre dlhé texty -->
+            <RowConstraints minHeight="20" prefHeight="24" maxHeight="60" vgrow="SOMETIMES" valignment="TOP" />
             <!-- Row 2: Size -->
-            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
-            <!-- Row 3: Status labels for weight / volume -->
-            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <RowConstraints minHeight="40" prefHeight="44" valignment="CENTER" />
+            <!-- Row 3: Status labels weight / volume -->
+            <RowConstraints minHeight="20" prefHeight="24" maxHeight="60" vgrow="SOMETIMES" valignment="TOP" />
             <!-- Row 4: Coefficients -->
-            <RowConstraints minHeight="36" prefHeight="40" valignment="CENTER" />
-            <!-- Row 5: Status labels for fuel / toll -->
-            <RowConstraints minHeight="0" prefHeight="12" valignment="TOP" />
+            <RowConstraints minHeight="40" prefHeight="44" valignment="CENTER" />
+            <!-- Row 5: Status labels fuel / toll -->
+            <RowConstraints minHeight="20" prefHeight="24" maxHeight="60" vgrow="SOMETIMES" valignment="TOP" />
         </rowConstraints>
 
         <!-- ── Row 0: Postal codes ── -->
@@ -71,21 +66,24 @@
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.from"
                GridPane.columnIndex="1" GridPane.rowIndex="0" />
-        <ComboBox fx:id="fromCombo" prefHeight="36" prefWidth="200" styleClass="ce-combo"
+        <ComboBox fx:id="fromCombo" prefHeight="36" maxWidth="Infinity" styleClass="ce-combo"
                   GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+        <!-- Status label From — col 3 -->
+        <Label fx:id="statusLabelFrom" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="3" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.to"
                GridPane.columnIndex="5" GridPane.rowIndex="0" />
-        <!-- To field + scan button in an HBox so button stays flush -->
         <HBox fx:id="toBox" alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
               GridPane.columnIndex="6" GridPane.rowIndex="0">
-            <TextField fx:id="destinationField" prefHeight="36" prefWidth="180" styleClass="ce-to-field" />
+            <TextField fx:id="destinationField" prefHeight="36" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="ce-to-field" />
             <Button fx:id="toScanBtn" onAction="#onTestMap" styleClass="ce-icon-btn" text="⊕" />
         </HBox>
 
-        <!-- ── Row 1: status label for destination ── -->
-        <Label fx:id="statusLabelDestination" maxWidth="220" styleClass="status-label" wrapText="true"
-               GridPane.columnIndex="6" GridPane.rowIndex="1" />
+        <!-- ── Row 1: status label destination ── -->
+        <Label fx:id="statusLabelDestination" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="1" GridPane.columnSpan="2" />
 
         <!-- ── Row 2: Size ── -->
         <Label styleClass="ce-row-label" text="%cost_estimation.size"
@@ -93,19 +91,19 @@
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.weight"
                GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <TextField fx:id="weightField" prefHeight="36" prefWidth="200" styleClass="input-field"
+        <TextField fx:id="weightField" prefHeight="36" maxWidth="Infinity" styleClass="input-field"
                    GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.volume"
                GridPane.columnIndex="5" GridPane.rowIndex="2" />
-        <TextField fx:id="volumeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+        <TextField fx:id="volumeField" prefHeight="36" maxWidth="Infinity" styleClass="input-field"
                    GridPane.columnIndex="6" GridPane.rowIndex="2" />
 
-        <!-- ── Row 3: status labels for weight / volume ── -->
-        <Label fx:id="statusLabelWeight" maxWidth="200" styleClass="status-label" text="" wrapText="true"
-               GridPane.columnIndex="2" GridPane.rowIndex="3" />
-        <Label fx:id="statusLabelVolume" maxWidth="200" styleClass="status-label" text="" wrapText="true"
-               GridPane.columnIndex="6" GridPane.rowIndex="3" />
+        <!-- ── Row 3: status labels weight / volume ── -->
+        <Label fx:id="statusLabelWeight" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.columnSpan="2" />
+        <Label fx:id="statusLabelVolume" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="3" GridPane.columnSpan="2" />
 
         <!-- ── Row 4: Coefficients ── -->
         <Label styleClass="ce-row-label" text="%cost_estimation.coefficients"
@@ -113,19 +111,19 @@
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.fuel_surcharge"
                GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <TextField fx:id="fuelSurchargeField" prefHeight="36" prefWidth="200" styleClass="input-field"
+        <TextField fx:id="fuelSurchargeField" prefHeight="36" maxWidth="Infinity" styleClass="input-field"
                    GridPane.columnIndex="2" GridPane.rowIndex="4" />
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.toll"
                GridPane.columnIndex="5" GridPane.rowIndex="4" />
-        <TextField fx:id="tollField" prefHeight="36" prefWidth="200" styleClass="input-field"
+        <TextField fx:id="tollField" prefHeight="36" maxWidth="Infinity" styleClass="input-field"
                    GridPane.columnIndex="6" GridPane.rowIndex="4" />
 
-        <!-- ── Row 5: status labels for fuel / toll ── -->
-        <Label fx:id="statusLabelFuel" maxWidth="200" styleClass="status-label" text="" wrapText="true"
-               GridPane.columnIndex="2" GridPane.rowIndex="5" />
-        <Label fx:id="statusLabelToll" maxWidth="200" styleClass="status-label" text="" wrapText="true"
-               GridPane.columnIndex="6" GridPane.rowIndex="5" />
+        <!-- ── Row 5: status labels fuel / toll ── -->
+        <Label fx:id="statusLabelFuel" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.columnSpan="2" />
+        <Label fx:id="statusLabelToll" maxWidth="Infinity" styleClass="status-label" wrapText="true"
+               GridPane.columnIndex="6" GridPane.rowIndex="5" GridPane.columnSpan="2" />
 
     </GridPane>
 
@@ -155,7 +153,6 @@
         <Button fx:id="computeButton" onAction="#onComputeCost" styleClass="primary-button" text="%cost_estimation.compute">
             <HBox.margin><Insets left="16" /></HBox.margin>
         </Button>
-
     </HBox>
 
 </VBox>

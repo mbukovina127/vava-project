@@ -197,7 +197,7 @@
     .status-label {
         -fx-text-fill: #cc0000;
         -fx-font-size: 12px;
-        -fx-padding: 4 0 0 0;
+        -fx-padding: 2 0 2 0;
     }
 
 
