@@ -84,7 +84,7 @@
         </VBox>
 
         <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
-            <Button text="%edit_warehouse.cancel" styleClass="tertiary-button" onAction="#handleLeave"/>
+            <Button text="%edit_warehouse.cancel" styleClass="secondary-button" onAction="#handleLeave"/>
             <Button text="%edit_warehouse.save" styleClass="primary-button" onAction="#handleSave"/>
         </HBox>
 

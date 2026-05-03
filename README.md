@@ -61,6 +61,11 @@ Instructions on running unit tests and integration tests will be added.
 Detailed documentation is available in the `doc/` folder. This includes design decisions, architecture diagrams, and user guides.
 
 ## Contributing
+This repository is public for reference and portfolio purposes only. Contributions are not accepted.
 
 ## License
-License information will be added here.
+Copyright (c) 2025 VAVA Team Six. All rights reserved.
+
+This source code is made publicly visible for reference and portfolio purposes only.
+Copying, forking, redistribution, or use in any project (commercial or otherwise)
+is strictly prohibited without explicit written permission from the author.

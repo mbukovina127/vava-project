@@ -2,6 +2,7 @@ package org.shippin.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegionTable implements EntityTable<RegionTableEntry>{
 
@@ -10,6 +11,12 @@ public class RegionTable implements EntityTable<RegionTableEntry>{
     @Override
     public List<RegionTableEntry> getEntries() {
         return entries;
+    }
+    
+    public List<String> getRegions() {
+    	return entries.stream()
+    		    .map(RegionTableEntry::getRegionCode)
+    		    .collect(Collectors.toList());
     }
 
     @Override

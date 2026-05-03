@@ -42,7 +42,7 @@ public class UserDAO extends BaseDAO {
 
     public User GetUser(int id) throws SQLException {
 
-        String sql = "SELECT first_name, last_name, email, role FROM Users WHERE user_ID = ?;";
+        String sql = "SELECT user_ID, first_name, last_name, email, role FROM Users WHERE user_ID = ?;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -51,10 +51,13 @@ public class UserDAO extends BaseDAO {
 
         if (rs.next()) {
             return new User(
+                    rs.getInt("user_ID"),
                     rs.getString("first_name"),
                     rs.getString("last_name"),
                     rs.getString("email"),
-                    Role.values()[(rs.getInt("role"))]
+                    null,
+                    Role.values()[rs.getInt("role")],
+                    null
             );
         }
         return null;

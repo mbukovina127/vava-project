@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -12,6 +14,7 @@ import javafx.scene.layout.VBox;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.State;
 import org.shippin.dto.Screens;
+import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 
 import java.net.URL;
@@ -20,9 +23,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Controller for DailyCostsSummaryDetail.fxml
@@ -40,14 +45,17 @@ public class DailyCostsSummaryDetailController
         implements Initializable {
 
     // ── FXML injections ────────────────────────────────────────────────
-    @FXML private Label  lblTitle;
-    @FXML private VBox   shipmentList;
-    @FXML private Button btnAddShipment;
-    @FXML private Label  lblTotal;
+    @FXML private Label               lblTitle;
+    @FXML private VBox                shipmentList;
+    @FXML private Label               lblTotal;
+    @FXML private TextField           searchField;
+    @FXML private ComboBox<String>    sortCombo;
 
     // ── State ──────────────────────────────────────────────────────────
     private LocalDate            currentDate = java.time.LocalDate.now();
     private List<ShipmentEntry>  entries = new ArrayList<>();
+
+    private enum SortType { TIME, COST, STATE }
 
     // ── Date formatter shown in the title (e.g. "1.4.2026") ───────────
     private static final DateTimeFormatter TITLE_FMT =
@@ -74,10 +82,18 @@ public class DailyCostsSummaryDetailController
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Nothing to do here — data is pushed via setDate().
-        // If you wire this screen standalone (e.g. in Scene Builder preview)
-        // you can call loadSampleData() for convenience.
         shipmentService = new ShipmentService();
+
+        ResourceBundle bundle = NavigationService.getBundle();
+        sortCombo.getItems().addAll(
+                bundle.getString("my_shipments.sort_time"),
+                bundle.getString("my_shipments.sort_cost"),
+                bundle.getString("my_shipments.sort_state")
+        );
+        sortCombo.getSelectionModel().selectFirst();
+
+        searchField.textProperty().addListener((obs, old, val) -> applyFilterAndSort());
+        sortCombo.valueProperty().addListener((obs, old, val) -> applyFilterAndSort());
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -86,35 +102,39 @@ public class DailyCostsSummaryDetailController
 
 
     // ══════════════════════════════════════════════════════════════════
-    // FXML handlers
-    // ══════════════════════════════════════════════════════════════════
-
-    /** "+ Add new shipment" button — open add-shipment dialog/screen. */
-    @FXML
-    private void handleAddShipment() {
-        // TODO: open AddShipmentDialog or navigate to Add Shipment screen.
-        System.out.println("Add shipment for " + currentDate);
-    }
-
-    // ══════════════════════════════════════════════════════════════════
     // Private helpers
     // ══════════════════════════════════════════════════════════════════
 
-    /** Re-renders the title, shipment list and total from current state. */
-    private void refresh() {
-        // Title
+    private void applyFilterAndSort() {
+        String query = searchField.getText().trim();
+        int selectedIndex = sortCombo.getSelectionModel().getSelectedIndex();
+        SortType sort = SortType.values()[Math.max(0, selectedIndex)];
+
+        List<ShipmentEntry> filtered = entries.stream()
+                .filter(e -> query.isEmpty() || String.valueOf(e.shipmentId()).startsWith(query))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        Comparator<ShipmentEntry> comparator = switch (sort) {
+            case TIME  -> Comparator.comparing(ShipmentEntry::time);
+            case COST  -> Comparator.comparingDouble(ShipmentEntry::totalCost).reversed();
+            case STATE -> Comparator.comparingInt(e -> e.state().ordinal());
+        };
+        filtered.sort(comparator);
+
+        renderRows(filtered);
+    }
+
+    private void renderRows(List<ShipmentEntry> rows) {
         if (currentDate != null) {
             lblTitle.setText(currentDate.format(TITLE_FMT) + " – Daily costs summary");
         }
 
-        // Shipment rows
         shipmentList.getChildren().clear();
-        for (ShipmentEntry entry : entries) {
+        for (ShipmentEntry entry : rows) {
             shipmentList.getChildren().add(buildRow(entry));
         }
 
-        // Total
-        double total = entries.stream().mapToDouble(ShipmentEntry::totalCost).sum();
+        double total = rows.stream().mapToDouble(ShipmentEntry::totalCost).sum();
         lblTotal.setText(formatCost(total));
     }
 
@@ -208,8 +228,7 @@ public class DailyCostsSummaryDetailController
     private void handleDelete(ShipmentEntry entry) {
         // TODO: show confirmation dialog, then remove from DB and refresh.
         entries.remove(entry);
-        refresh();
-        System.out.println("Deleted: " + entry);
+        applyFilterAndSort();
     }
 
     /**
@@ -251,7 +270,7 @@ public class DailyCostsSummaryDetailController
                         s.getState()
                 ));
             }
-            refresh();
+            applyFilterAndSort();
         } catch (SQLException e) {
             e.printStackTrace();
         }

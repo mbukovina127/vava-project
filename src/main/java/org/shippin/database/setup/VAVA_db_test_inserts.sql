@@ -3,7 +3,7 @@
 -- ============================================================
 
 -- Warehouse
-INSERT INTO Warehouse (warehouse_ID, storage_region, warehouse_region_name, latitude, longitude, price_list_file) VALUES
+INSERT INTO Warehouse (warehouse_ID, postal_code, warehouse_region_name, latitude, longitude, price_list_file) VALUES
   (1, 83104, 'Bratislava', 48.1486, 17.1077, 'Cenník ZBS - BA'),
   (2, 1001, 'Žilina', 49.2231, 18.7394, 'Cenník ZBS - ZA'),
   (3, 97401, 'Banská Bystrica', 48.7395, 19.153, 'Cenník ZBS - BB'),
