@@ -65,7 +65,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
     }
 
     @Override
-    protected void onData(Shipment data) throws SQLException {
+    protected void onData(Shipment data)throws SQLException {
         breakdownGrid.getChildren().clear();
         pdfRows.clear();
         gridRow = 0;
@@ -74,7 +74,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         // Route
         String from = data.getWarehouse() != null ? data.getWarehouse().getName() : "—";
         String dest = data.getDest_region() > 0 ? String.format("%05d", data.getDest_region()) : "—";
-        addRow("Route:", from + " – " + dest,"" , true, false);
+        addRow("Route:", from + " – " + dest, "", true, false);
 
         // Size
         String size = data.getWeight() + " kg";
@@ -106,6 +106,9 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
         addTotalSeparator();
         addTotalRow();
+
+        saveButton.setVisible(shipment.getShipment_id() == 0);
+        saveButton.setManaged(shipment.getShipment_id() == 0);
     }
 
     // ── Grid helpers ──────────────────────────────────────────────

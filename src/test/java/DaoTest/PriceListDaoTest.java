@@ -140,7 +140,7 @@ public class PriceListDaoTest {
                 new PriceListEntry(0, 25, 5, 50, "NR1");
 
         assertDoesNotThrow(() ->
-                priceListDAO.insertPriceListEntry(item, "PL Test NR")
+                priceListDAO.insertPriceListEntry(item, warehouseId)
         );
     }
 
@@ -158,7 +158,7 @@ public class PriceListDaoTest {
         ));
 
         assertDoesNotThrow(() ->
-                priceListDAO.insertPriceList(priceList, "PL Full Insert Test")
+                priceListDAO.insertPriceList(priceList, warehouseId)
         );
     }
 }

@@ -64,7 +64,7 @@ public class WarehouseService {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		try {
 			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
-			priceListDao.insertPriceList(priceList, warehouse.getRegionName());
+			priceListDao.insertPriceList(priceList, warehouse.getId());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,7 +82,8 @@ public class WarehouseService {
 		}
 	}
 	
-	public void updateWarehouse(Warehouse warehouse, String name, String regionName) {
+	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName) {
+		Warehouse warehouse = this.getWarehouse(briefWarehouse);
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
 		try {
@@ -97,7 +98,7 @@ public class WarehouseService {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
 		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable);
-		
+		System.out.println(warehouse);
 		try {
 			warehouseDao.insertFullWarehouse(warehouse);
 		} catch (SQLException e) {
@@ -169,6 +170,7 @@ public class WarehouseService {
 	public SmallPriceListFormatted setSmallPriceListFormatted(SmallPriceListFormatted smallPriceListFormatted) {
 		try {
 			SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(smallPriceListFormatted);
+			System.out.println(smallPriceList.getEntries());
 			priceListDao.deleteSmallPriceList();
 			priceListDao.insertSmallPriceList(smallPriceList);
 		} catch (SQLException e) {
@@ -176,5 +178,21 @@ public class WarehouseService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void replaceTables(PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted, Warehouse warehouse) {
+		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
+		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
+		
+		try {
+			priceListDao.deletePriceListByWarehouseID(warehouse.getId());
+			regionDao.deleteFullRegionTable(warehouse.getId());
+			
+			priceListDao.insertPriceList(priceList, warehouse.getId());
+			regionDao.insertFullRegionTable(regionTable, warehouse);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

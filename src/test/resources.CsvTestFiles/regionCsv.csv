@@ -9,3 +9,12 @@ ZV;;93400-93999;96000-96999;97400-99399;;
 ;;05001-05001;;;;
 KE;;04000-04900;04902-04912;04919-04960;;
 ;;04965-05000;05002-06599;06600-09599;;
+
+
+Popup for "Are you sure you want to delete?"
+Change plus sign to not have a cirle
+Export to csv change to export
+Export to csv popup stylization
+Small package price list, when too small, shows gray color at the bottom
+Replace popup should put in csv files from the database by default
+FONT

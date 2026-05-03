@@ -59,6 +59,7 @@ public abstract class BaseController<T> implements Navigatable {
             throw new IllegalStateException("MenuController not set");
         }
         menuController.loadScreen(screen, data);
+        menuController.setActive(screen); //nav bar mark active
     }
     
     protected void showModal(VBox popupContent) {

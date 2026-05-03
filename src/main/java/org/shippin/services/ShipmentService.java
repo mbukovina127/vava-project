@@ -9,9 +9,10 @@ import org.shippin.util.Range;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.*;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
 
 public class ShipmentService {
 
@@ -19,14 +20,12 @@ public class ShipmentService {
 
     public ShipmentDAO getDao() { return shipmentDAO; }
 
-    // ── Public API ────────────────────────────────────────────────
-
     public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
         return shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
     }
-
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
         shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
+        updateShipmentState(shipment, shipment.getState());
         return shipment;
     }
 
@@ -35,6 +34,7 @@ public class ShipmentService {
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
 
         WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
+
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 
         List<AdditionalService> allServices = shipmentDAO.getSAllServices();
@@ -59,28 +59,6 @@ public class ShipmentService {
         shipment.setTotalCost(calculateTotalCost(shipment, baseCost));
 
         return shipment;
-    }
-
-    public Shipment updateShipmentState(Shipment shipment, State newState) throws SQLException {
-        shipmentDAO.setAutoCommit(false);
-        try {
-            shipment.setState(newState);
-            shipmentDAO.updateShipmentStatus(shipment.getShipment_id(), newState);
-
-            ShipmentHistory entry = new ShipmentHistory();
-            entry.setShipment_id(shipment.getShipment_id());
-            entry.setState(newState);
-            entry.setTimestamp(new Timestamp(System.currentTimeMillis()));
-            shipmentDAO.addShipmentHistory(entry);
-
-            shipmentDAO.commit();
-            return shipment;
-        } catch (SQLException e) {
-            shipmentDAO.rollback();
-            throw e;
-        } finally {
-            shipmentDAO.setAutoCommit(true);
-        }
     }
 
     // ── Cost calculations ─────────────────────────────────────────
@@ -202,4 +180,67 @@ public class ShipmentService {
 
         return bestCost;
     }
+
+    public Shipment updateShipmentState(Shipment shipment, State newState) throws SQLException {
+        shipmentDAO.setAutoCommit(false);
+        try {
+            shipment.setState(newState);
+            shipmentDAO.updateShipmentStatus(shipment.getShipment_id(), newState);
+
+            ShipmentHistory entry = new ShipmentHistory();
+            entry.setShipment_id(shipment.getShipment_id());
+            entry.setState(newState);
+            entry.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            User currentUser = UserService.getUser();
+            entry.setUser_id(currentUser != null ? currentUser.getId() : 0);
+            shipmentDAO.addShipmentHistory(entry);
+
+            shipmentDAO.commit();
+            return shipment;
+        } catch (SQLException e) {
+            shipmentDAO.rollback();
+            throw e;
+        } finally {
+            shipmentDAO.setAutoCommit(true);
+        }
+    }
+
+    public Map<LocalDate, Double> getDailySummaries(YearMonth ym) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(ym.plusMonths(1).atDay(1).atStartOfDay());
+
+        List<Shipment> shipments = shipmentDAO.getAllShipmentsByDate(from, to);
+
+        Map<LocalDate, Double> result = new HashMap<>();
+
+        for (Shipment s : shipments) {
+            LocalDate date = s.getCreated_at()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().toLocalDate();
+
+            result.put(date,
+                    result.getOrDefault(date, 0.0) + s.getTotalCost());
+        }
+
+        return result;
+    }
+
+    public List<Shipment> getShipmentsForDay(LocalDate date) throws SQLException {
+
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+
+        Timestamp from = Timestamp.valueOf(date.atStartOfDay());
+        Timestamp to   = Timestamp.valueOf(date.plusDays(1).atStartOfDay());
+
+        return shipmentDAO.getAllShipmentsByDate(from, to);
+    }
+
+
+
+
+
 }

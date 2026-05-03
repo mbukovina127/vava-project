@@ -159,7 +159,7 @@
 
 /* ---------- Fees body ---------- */
 .ce-fees-body {
-    -fx-padding: 0 0 16 0;
+    -fx-padding: 20 0 16 0;
 }
 
 .ce-fees-group-label {
@@ -169,11 +169,77 @@
     -fx-text-fill: #1E1E1E;
 }
 
+.ce-product-row {
+    -fx-padding: 0 0 0 16;
+}
+
+.ce-product-row .radio-button {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C2C2C;
+    -fx-cursor: hand;
+    -fx-min-width: 220;
+}
+
+.ce-product-row .radio-button > .radio {
+    -fx-background-color: #E0E0E0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-padding: 3.5;
+    -fx-pref-width: 14;
+    -fx-pref-height: 14;
+}
+
+.ce-product-row .radio-button:selected > .radio {
+    -fx-background-color: #555555;
+}
+
+.ce-product-row .radio-button > .radio > .dot {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+}
+
+.ce-product-row .radio-button:selected > .radio > .dot {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 50%;
+    -fx-padding: 2;
+}
+
+.ce-product-desc {
+    -fx-font-family: 'System';
+    -fx-font-size: 12px;
+    -fx-text-fill: #555555;
+}
+
 .ce-check {
     -fx-font-family: 'System';
     -fx-font-size: 13px;
     -fx-text-fill: #2C2C2C;
     -fx-cursor: hand;
+    -fx-padding: 0 0 0 16;
+}
+
+.ce-check > .box {
+    -fx-background-color: #E0E0E0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 3.5;
+}
+
+.ce-check:selected > .box {
+    -fx-background-color: #555555;
+}
+
+.ce-check > .box > .mark {
+    -fx-background-color: transparent;
+}
+
+.ce-check:selected > .box > .mark {
+    -fx-background-color: #FFFFFF;
 }
 
 .ce-check:selected {
@@ -211,11 +277,7 @@
     -fx-padding: 16 0 0 0;
 }
 
-.ce-dots {
-    -fx-font-size: 18px;
-    -fx-text-fill: #C4A899;
-    -fx-letter-spacing: 4;
-}
+
 
 /* ── Cost Breakdown grid ── */
 .cb-grid {

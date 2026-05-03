@@ -68,6 +68,7 @@ public class MenuController implements Initializable {
     @FXML private StackPane contentArea;
     private Screens currentScreen;
     private Object  currentData;
+    private List<Button> buttons = new ArrayList<>();
 
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
@@ -128,7 +129,7 @@ public class MenuController implements Initializable {
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
         UserNameLabel.setText(UserService.getUser().getFullUserName());
 
-        List<Button> buttons = new ArrayList<>();
+
 
         for (int i = 0; i < NAV_ITEMS.size(); i++) {
             NavItem item = NAV_ITEMS.get(i);
@@ -209,5 +210,31 @@ public class MenuController implements Initializable {
 
         // set active
         activeBtn.getStyleClass().add("sidebar-btn-active");
+    }
+
+    /*
+     mark active on navbar
+     */
+    public void setActive(Screens screen) {
+        for (int i = 0; i < buttons.size(); i++) {
+            Button b = buttons.get(i);
+            NavItem item = NAV_ITEMS.get(i);
+
+            b.getStyleClass().setAll("sidebar-btn");
+
+            if (!item.icon_dark().isEmpty()) {
+                var s = getClass().getResourceAsStream(item.icon_dark());
+                if (s != null) ((ImageView) b.getGraphic()).setImage(new Image(s));
+            }
+
+            if (item.screen() == screen) {
+                b.getStyleClass().setAll("sidebar-btn-active");
+
+                if (b.getGraphic() instanceof ImageView iv) {
+                    var s = getClass().getResourceAsStream(item.icon_light());
+                    if (s != null) iv.setImage(new Image(s));
+                }
+            }
+        }
     }
 }
