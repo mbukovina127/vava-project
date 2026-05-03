@@ -62,14 +62,14 @@ public abstract class BaseController<T> implements Navigatable {
         menuController.setActive(screen); //nav bar mark active
     }
     
-    protected void showModal(VBox popupContent) {
+    public void showModal(VBox popupContent) {
 
         if (menuController != null) {
             menuController.showOverlay(popupContent);
         }
     }
 
-    protected void hideModal() {
+    public void hideModal() {
 
         if (menuController != null) {
             menuController.hideOverlay();

@@ -3,6 +3,7 @@ package org.shippin.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -13,6 +14,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 import org.shippin.controller.utils.CostEstimationInput;
+import org.shippin.controller.utils.GenericPopup;
+import org.shippin.controller.utils.InputValidator;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
@@ -25,12 +28,15 @@ import org.shippin.util.Range;
 import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
 
 import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class EditWarehouseController extends BaseController<BriefWarehouse> {
+public class EditWarehouseController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML
     private GridPane regionGrid;
@@ -45,6 +51,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> {
 	private WarehouseService warehouseService;
 
 	private WarehouseFormatted warehouse;
+	private ResourceBundle resources;
 
     private void addCell(GridPane grid, String text, int col, int row, int colspan, int rowspan, String styleClass) {
         Label label = new Label(text);
@@ -63,10 +70,20 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> {
     }
     
     @Override
+    public void initialize(URL location, ResourceBundle resources) {
+    	this.resources = resources;
+    }
+    
+    @Override
     protected void onData(BriefWarehouse briefWarehouse) {
     	this.warehouseService = new WarehouseService();
     	this.briefWarehouse = briefWarehouse;
-    	this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
+    	try {
+			this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
     	this.priceList = this.warehouse.getPriceList();
@@ -74,7 +91,6 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> {
     	this.regionTableFormatted = this.warehouse.getRegionTable();
         setupRegionGrid();
         this.warehouseService = WarehouseService.getInstance();
-        System.out.println(warehouse);
     }
     
     @Override
@@ -158,39 +174,46 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> {
             }
         }
     }
-   
-    private RegionTableRow regionRow(String code, Range... ranges) {
-        RegionTableRow row = new RegionTableRow(code);
-
-        for (Range range : ranges) {
-            row.addRange(range);
-        }
-
-        return row;
-    }
-
-    private Range r(int from, int to) {
-        return new Range(from, to);
-    }
     
     @FXML
     private void handleLeave() {
     	try {
-			loadScreen(WAREHOUSE_MANAGEMENT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        loadScreen(WAREHOUSE_MANAGEMENT);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     
     @FXML
     private void handleSave() {
     	try {
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, documentTitleField.getText(), pickupPlaceField.getText());
+    		String title = documentTitleField.getText();  		
+    		if(!InputValidator.isNotBlank(title)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
+    			return;
+    		} else if(!InputValidator.isValidLength(title, 20)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
+    			return;
+    		}
+    		
+    		String pickup = pickupPlaceField.getText(); 		
+    		if(!InputValidator.isNotBlank(pickup)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
+    			return;
+    		} else if(!InputValidator.isValidLength(pickup, 30)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
+    			return;
+    		} 
+    		
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup);
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
 		}
     }
 }
