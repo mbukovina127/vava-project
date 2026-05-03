@@ -2,21 +2,34 @@ package org.shippin.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import org.shippin.controller.utils.CostEstimationInput;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
-import org.shippin.controller.utils.ExtraOption;
+import org.shippin.database.dao.ShipmentDAO;
+import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.domain.AdditionalService;
+import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Shipment;
+import org.shippin.domain.enums.ServiceType;
+import org.shippin.services.ShipmentService;
+import org.shippin.database.dao.ShipmentDAO;
+import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Shipment;
+import org.shippin.services.ShipmentService;
 
 import org.shippin.app.FromCoordsDataGetter;
-
 import org.shippin.controller.MapPickerController;
-import org.shippin.app.FromCoordsDataGetter;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.*;
 
 import static java.lang.Double.parseDouble;
 import static org.shippin.dto.Screens.COST_BREAKDOWN;
@@ -27,14 +40,12 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private Label     sectionTitleLabel;
     @FXML private TextField dateField;
 
-    // Type toggles (small or shipment)
-    @FXML private ToggleGroup shipmentTypeGroup;
-    @FXML private RadioButton rbSmallPackage;
-    @FXML private RadioButton rbShipment;
+    private List<BriefWarehouse> warehouseList;
 
     // Postal codes
     @FXML private ComboBox<String> fromCombo;
     @FXML private TextField destinationField;
+    @FXML private HBox toBox;
 
     // Size row
     @FXML private TextField weightField;
@@ -44,26 +55,10 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private TextField fuelSurchargeField;
     @FXML private TextField tollField;
 
-    // Additional fees
-    @FXML private CheckBox chkAdditionalFees;
-    @FXML private CheckBox chkADR;
-    @FXML private CheckBox chkDobierka;
-    @FXML private CheckBox chkPripoistenie;
-    @FXML private CheckBox chkVratenieEUP;
-
-    // Type toggles (Time of delivery)
-    @FXML private ToggleGroup deliveryTypeGroup;
-    @FXML private RadioButton rbExpress;
-    @FXML private RadioButton rbClassic;
-    @FXML private RadioButton rbEconomy;
-
-    // Additional fees — Produkty pre ZBS
-    @FXML private CheckBox chkPremium;
-    @FXML private CheckBox chkFIX;
-    @FXML private CheckBox chkPremium10;
-    @FXML private CheckBox chkFIX10;
-    @FXML private CheckBox chkPremium13;
-    @FXML private CheckBox chkFIX13;
+    // Dynamic service containers
+    @FXML private VBox productsContainer;
+    @FXML private VBox servicesContainer;
+    @FXML private VBox paymentsContainer;
 
     // ERRORS (labels)
     @FXML private Label  statusLabelDestination;
@@ -77,46 +72,119 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML private Button resetButton;
     @FXML private Button computeButton;
 
+    private final ToggleGroup productsToggleGroup = new ToggleGroup();
+    private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
+    private final Map<RadioButton, AdditionalService> productRadioButtons = new LinkedHashMap<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        rbShipment.setSelected(true);
-        rbClassic.setSelected(true);
-        //TODO: nacitat mena skladov z db (strings)
-        fromCombo.getItems().addAll("Sklad BA", "Sklad KE", "Sklad PO");
-        fromCombo.setValue(fromCombo.getItems().getFirst());
-        //TODO: nacitat poskytovane doplnkove sluzby z db (strings) a asi zotriedit do skupin
-        initializeOptions();
+        try {
+            WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
+            warehouseList = warehouseDAO.getAllBriefWarehouses();
+            for (BriefWarehouse bw : warehouseList) {
+                fromCombo.getItems().add(bw.getName());
+            }
+            fromCombo.setValue(fromCombo.getItems().getFirst());
+
+            ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+            List<AdditionalService> allServices = shipmentDAO.getSAllServices();
+            buildServiceUI(allServices);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void initializeOptions()
+    private void buildServiceUI(List<AdditionalService> allServices)
     {
-        ExtraOption.ADDITIONAL_FEES.bind(chkAdditionalFees);
-        ExtraOption.ADR.bind(chkADR);
-        ExtraOption.DOBIERKA.bind(chkDobierka);
-        ExtraOption.PRIPOISTENIE.bind(chkPripoistenie);
-        ExtraOption.VRATENIE_EUP.bind(chkVratenieEUP);
+        productsContainer.getChildren().add(createGroupLabel("Produkty pre ZBS:"));
+        servicesContainer.getChildren().add(createGroupLabel("Obstarávané služby:"));
+        paymentsContainer.getChildren().add(createGroupLabel("Príplatky:"));
 
-        ExtraOption.PREMIUM.bind(chkPremium);
-        ExtraOption.FIX.bind(chkFIX);
-        ExtraOption.PREMIUM_10.bind(chkPremium10);
-        ExtraOption.FIX_10.bind(chkFIX10);
-        ExtraOption.PREMIUM_13.bind(chkPremium13);
-        ExtraOption.FIX_13.bind(chkFIX13);
+        for (AdditionalService service : allServices)
+        {
+            switch (service.getServiceType())
+            {
+                case SERVICES ->
+                {
+                    RadioButton rb = new RadioButton(service.getName());
+                    rb.setToggleGroup(productsToggleGroup);
+                    rb.setMnemonicParsing(false);
+
+                    HBox row = new HBox(8);
+                    row.setAlignment(Pos.CENTER_LEFT);
+                    row.getStyleClass().add("ce-product-row");
+                    row.getChildren().add(rb);
+
+                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    {
+                        Label desc = new Label(service.getDescription());
+                        desc.getStyleClass().add("ce-product-desc");
+                        desc.setWrapText(true);
+                        row.getChildren().add(desc);
+                    }
+
+                    productsContainer.getChildren().add(row);
+                    productRadioButtons.put(rb, service);
+                }
+                case ADDITIONAL_PAYMENTS ->
+                {
+                    CheckBox cb = new CheckBox(service.getName());
+                    cb.getStyleClass().add("ce-check");
+                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    {
+                        cb.setTooltip(new Tooltip(service.getDescription()));
+                    }
+                    servicesContainer.getChildren().add(cb);
+                    serviceCheckBoxes.put(cb, service);
+                }
+                case PRODUCTS ->
+                {
+                    CheckBox cb = new CheckBox(service.getName());
+                    cb.getStyleClass().add("ce-check");
+                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    {
+                        cb.setTooltip(new Tooltip(service.getDescription()));
+                    }
+                    paymentsContainer.getChildren().add(cb);
+                    serviceCheckBoxes.put(cb, service);
+                }
+            }
+        }
+
+        productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+    }
+
+    private Label createGroupLabel(String text)
+    {
+        Label label = new Label(text);
+        label.getStyleClass().add("ce-fees-group-label");
+        return label;
+    }
+
+    private List<Integer> getSelectedServiceIds()
+    {
+        List<Integer> ids = new ArrayList<>();
+
+        Toggle selectedProduct = productsToggleGroup.getSelectedToggle();
+        if (selectedProduct instanceof RadioButton rb && productRadioButtons.containsKey(rb))
+        {
+            ids.add(productRadioButtons.get(rb).getId());
+        }
+
+        for (Map.Entry<CheckBox, AdditionalService> entry : serviceCheckBoxes.entrySet())
+        {
+            if (entry.getKey().isSelected())
+            {
+                ids.add(entry.getValue().getId());
+            }
+        }
+
+        return ids;
     }
 
 
     // GETTERS
-
-    public List<ExtraOption> getSelectedOptions() {
-        return Arrays.stream(ExtraOption.values())
-                .filter(ExtraOption::isSelected)
-                .toList();
-    }
-
-    public String getDate() {
-        return dateField.getText();
-    }
 
     public String getFrom() {
         return fromCombo.getValue();
@@ -147,7 +215,6 @@ public class CostEstimationController extends BaseController<Void> implements In
     @FXML
     private void onReset()
     {
-        dateField.clear();
         fromCombo.getSelectionModel().selectFirst();
         destinationField.clear();
         weightField.clear();
@@ -155,40 +222,21 @@ public class CostEstimationController extends BaseController<Void> implements In
         fuelSurchargeField.clear();
         tollField.clear();
 
-        rbShipment.setSelected(true);
-        rbClassic.setSelected(true);
+        productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+        for (CheckBox cb : serviceCheckBoxes.keySet())
+        {
+            cb.setSelected(false);
+        }
 
-        chkAdditionalFees.setSelected(true);
-        chkADR.setSelected(false);
-        chkDobierka.setSelected(false);
-        chkPripoistenie.setSelected(false);
-        chkVratenieEUP.setSelected(false);
-        chkPremium.setSelected(false);
-        chkFIX.setSelected(false);
-        chkPremium10.setSelected(false);
-        chkFIX10.setSelected(false);
-        chkPremium13.setSelected(false);
-        chkFIX13.setSelected(false);
+        statusLabelDestination.setText("");
+        statusLabelWeight.setText("");
+        statusLabelVolume.setText("");
+        statusLabelFuel.setText("");
+        statusLabelToll.setText("");
     }
-
-    private String getSelectedText(ToggleGroup group)
-    {
-        return group.getSelectedToggle() != null
-                ? ((RadioButton) group.getSelectedToggle()).getText()
-                : "";
-    }
-
     @FXML
     private void onComputeCost() throws IOException
     {
-        // zistime typ sluzby
-        String shipment = getSelectedText(shipmentTypeGroup);
-        // zistime rychlost dorucenia
-        String deliveryTime = getSelectedText(deliveryTypeGroup);
-
-        //TODO:asi calendar view a errors
-        String date = dateField.getText().trim();
-        //TODO:pridat mapu alebo aky vstup?
         String destination = destinationField.getText().trim();
 
         String weightText = weightField.getText().trim();
@@ -196,8 +244,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-        String toggleError = ErrorHandler.validateShipmentType(shipment);
-       // String dateError = ErrorHandler.validateRequired(date, "Date");
         String destinationError = ErrorHandler.validateRequired(destination, "Destination");
         String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
         String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
@@ -224,20 +270,45 @@ public class CostEstimationController extends BaseController<Void> implements In
             return;
         }
 
-        // send loaded user data to next screen
-        CostEstimationInput input = new CostEstimationInput(
-                getDate(),
-                getFrom(),
-                getDestination(),
-                getWeight(),
-                getVolume(),
-                getFuelSurcharge(),
-                getToll(),
-                shipment,
-                deliveryTime,
-                getSelectedOptions()
-        );
-        loadScreen(COST_BREAKDOWN,input);
+        int warehouseId = warehouseList.stream()
+                .filter(w -> w.getName().equals(getFrom()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Warehouse not found: " + getFrom()))
+                .getId();
+
+        List<Integer> serviceIds = getSelectedServiceIds();
+
+        int destPostalCode;
+        try {
+            destPostalCode = Integer.parseInt(destination.replaceAll("\\s", ""));
+        } catch (NumberFormatException e) {
+            statusLabelDestination.setText("Destination must be a valid postal code");
+            return;
+        }
+
+        Shipment computedShipment;
+        try {
+            ShipmentService service = new ShipmentService();
+            computedShipment = service.createShipment(
+                    null,
+                    new Date(),
+                    destPostalCode,
+                    (float) getFuelSurcharge(),
+                    (float) getToll(),
+                    (float) getWeight(),
+                    (float) getVolume(),
+                    warehouseId,
+                    serviceIds
+            );
+        } catch (SQLException e) {
+            new Alert(Alert.AlertType.ERROR, "Could not compute shipping cost: " + e.getMessage()).showAndWait();
+            return;
+        } catch (IllegalArgumentException e) {
+            new Alert(Alert.AlertType.ERROR, "Invalid input: " + e.getMessage()).showAndWait();
+            return;
+        }
+
+        loadScreen(COST_BREAKDOWN, computedShipment);
     }
 
     @FXML
@@ -247,5 +318,4 @@ public class CostEstimationController extends BaseController<Void> implements In
         });
         MapPickerController.open();
     }
-
 }

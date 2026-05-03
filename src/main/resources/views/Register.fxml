@@ -5,6 +5,8 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <StackPane
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
@@ -30,7 +32,10 @@
             alignment="TOP_CENTER">
 
         <!-- Logo -->
-        <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
+        <HBox styleClass="logo-box">
+            <ImageView fitHeight="40" preserveRatio="true">
+                <Image url="@../icons/png-dark/logoShippin_black.png"/>
+            </ImageView>
             <Label styleClass="logo-name" text="%register.logo"/>
         </HBox>
 
@@ -157,13 +162,13 @@
         <!-- Sign up button -->
         <Button
                 fx:id="registerButton"
-                styleClass="btn"
+                styleClass="primary-button"
                 text="%register.button"
                 maxWidth="Infinity"
                 onAction="#onRegister"/>
 
         <!-- Login link -->
-        <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
+        <HBox styleClass="bottom-link-box">
             <Label styleClass="muted-text" text="%register.have_account"/>
             <Hyperlink
                     fx:id="loginLink"

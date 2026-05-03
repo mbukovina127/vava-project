@@ -1,5 +1,6 @@
 package org.shippin.database.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Warehouse;
 
@@ -7,6 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class WarehouseDAO extends BaseDAO {
 
     private static WarehouseDAO instance;
@@ -118,6 +120,7 @@ public class WarehouseDAO extends BaseDAO {
         stmt.setString(3, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
 
         stmt.executeUpdate();
+        log.info("Upserted warehouse #{} ({})", w.getId(), w.getName());
     }
 
     /**
@@ -128,7 +131,8 @@ public class WarehouseDAO extends BaseDAO {
         try {
             connection.setAutoCommit(false);
 
-            upsertWarehouse(warehouse);
+            int newId = insertWarehouse(warehouse);
+            warehouse.setId(newId);
 
             if (warehouse.getRegionTable() != null) {
                 RegionDAO regionDAO = RegionDAO.getInstance();
@@ -142,18 +146,41 @@ public class WarehouseDAO extends BaseDAO {
                 PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
                 for (var item : warehouse.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, warehouse.getName());
+                    priceListDAO.insertPriceListEntry(item, warehouse.getId());
                 }
             }
 
             connection.commit();
+            log.info("Inserted full warehouse #{} ({})", warehouse.getId(), warehouse.getName());
 
         } catch (Exception e) {
+            log.error("insertFullWarehouse failed for warehouse #{}, rolling back", warehouse.getId(), e);
             connection.rollback();
             throw e;
         } finally {
             connection.setAutoCommit(true);
         }
+    }
+    
+    public int insertWarehouse(Warehouse w) throws SQLException {
+        String sql = """
+                INSERT INTO Warehouse(warehouse_region_name, price_list_file)
+                VALUES (?,?)
+                RETURNING warehouse_id;
+                ;""";
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, w.getName()); //SK PSC+region aka name
+        stmt.setString(2, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("warehouse_id");
+            return id;
+        }
+        
+        throw new SQLException("insert failed");
     }
 
 
@@ -169,8 +196,11 @@ public class WarehouseDAO extends BaseDAO {
 
             int removed = stmt.executeUpdate();
             connection.commit();
+            if (removed > 0) log.info("Deleted warehouse #{}", warehouseID);
+            else log.warn("deleteFullWarehouse: warehouse #{} not found", warehouseID);
             return removed > 0;
         } catch (SQLException ex) {
+            log.error("deleteFullWarehouse failed for warehouse #{}, rolling back", warehouseID, ex);
             connection.rollback();
             throw ex;
         } finally {
@@ -211,14 +241,16 @@ public class WarehouseDAO extends BaseDAO {
                 priceListDAO.deletePriceListByWarehouseID(w.getId());
 
                 for (var item : w.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, w.getName());
+                    priceListDAO.insertPriceListEntry(item, w.getId());
                 }
             }
 
             connection.commit();
+            log.info("Updated full warehouse #{} ({})", w.getId(), w.getName());
             return true;
 
         } catch (Exception e) {
+            log.error("updateFullWarehouse failed for warehouse #{}, rolling back", w.getId(), e);
             connection.rollback();
             throw e;
         } finally {
@@ -226,7 +258,7 @@ public class WarehouseDAO extends BaseDAO {
         }
     }
 
-    private boolean updateWarehouse(Warehouse w) throws SQLException {
+    public boolean updateWarehouse(Warehouse w) throws SQLException {
 
         String sql = """
         UPDATE Warehouse
@@ -245,7 +277,5 @@ public class WarehouseDAO extends BaseDAO {
 
         return affectedRows > 0;
     }
-
-
 
 }
