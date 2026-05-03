@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.shippin.controller.utils.ErrorHandler.msg;
+
 @Log4j2
 public class RegisterController extends AuthController {
 
@@ -105,8 +107,9 @@ public class RegisterController extends AuthController {
         }
 
         try {
-            if (UserService.findByEmail(email) != null) {
-                statusLabelEmail.setText("Email already in use");
+            if (UserService.findByEmail(email) != null)
+            {
+                statusLabelEmail.setText(msg("error.register.invalid"));
                 return;
             }
 
@@ -118,7 +121,7 @@ public class RegisterController extends AuthController {
 
         } catch (SQLException e) {
             log.error("Registration DB error", e);
-            statusLabelEmail.setText("Registration failed, please try again");
+            statusLabelEmail.setText(msg("error.database.invalid.register"));
         }
     }
 

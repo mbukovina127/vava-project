@@ -16,6 +16,8 @@ import org.shippin.services.UserService;
 import java.sql.SQLException;
 import java.util.Locale;
 
+import static org.shippin.controller.utils.ErrorHandler.msg;
+
 @Log4j2
 public class LoginController extends AuthController
 {
@@ -64,8 +66,9 @@ public class LoginController extends AuthController
             User user = UserService.authenticate(email, password);
 
             if (user == null) {
-                statusLabelEmail.setText("Invalid email or password");
-                statusLabelPass.setText("");
+                statusLabelEmail.setText("");
+                statusLabelPass.setText(msg("error.login.invalid"));
+                log.info("Bad login: {}", email);
                 return;
             }
 
@@ -74,7 +77,8 @@ public class LoginController extends AuthController
 
         } catch (SQLException e) {
             log.error("Login DB error", e);
-            statusLabelEmail.setText("Login failed, please try again");
+            statusLabelEmail.setText("");
+            statusLabelPass.setText(msg("error.database.invalid.login"));
         }
     }
 

@@ -245,11 +245,11 @@ public class CostEstimationController extends BaseController<Void> implements In
         String tollText = tollField.getText().trim();
 
 //        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
-        String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
-        String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
+        String weightError = ErrorHandler.validatePositiveDouble(weightText);
+        String volumeError = ErrorHandler.validatePositiveDouble(volumeText);
 
-        String fuelSurchargeError = ErrorHandler.validatePercent(fuelSurchargeText, "Fuel surcharge");
-        String tollError = ErrorHandler.validatePercent(tollText, "Toll");
+        String fuelSurchargeError = ErrorHandler.validatePercent(fuelSurchargeText);
+        String tollError = ErrorHandler.validatePercent(tollText);
 
         // SYNTACTICAL INPUT CHECKING
 
