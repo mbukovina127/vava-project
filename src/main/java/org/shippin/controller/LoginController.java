@@ -7,6 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
 import org.shippin.domain.User;
 import org.shippin.dto.Screens;
@@ -15,9 +16,11 @@ import org.shippin.services.UserService;
 import java.sql.SQLException;
 import java.util.Locale;
 
-@Log4j2
-public class LoginController {
+import static org.shippin.controller.utils.ErrorHandler.msg;
 
+@Log4j2
+public class LoginController extends AuthController
+{
     @FXML private TextField emailTextField;
     @FXML private PasswordField passwordField;
     @FXML private TextField passwordVisible;
@@ -30,42 +33,18 @@ public class LoginController {
     private boolean passwordShown = false;
 
     @FXML
-    private void initialize() {
-        langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
-        // password wrapper focus efekt
-        passwordField.focusedProperty().addListener((obs, old, isFocused) -> {
-            if (isFocused) passwordWrapper.getStyleClass().add("password-wrapper-focused");
-            else passwordWrapper.getStyleClass().remove("password-wrapper-focused");
-        });
-
-        passwordVisible.focusedProperty().addListener((obs, old, isFocused) -> {
-            if (isFocused) passwordWrapper.getStyleClass().add("password-wrapper-focused");
-            else passwordWrapper.getStyleClass().remove("password-wrapper-focused");
-        });
+    private void initialize()
+    {
+        initLangButton(langButton);
+        //change password visibility observer
+        setEyeIcon(eyeButton, false);
+        bindPasswordFocus(passwordWrapper, passwordField, passwordVisible);
     }
 
     @FXML private void onTogglePassword()
     {
-        if (passwordShown)
-        {
-            passwordField.setText(passwordVisible.getText());
-            passwordField.setManaged(true);
-            passwordField.setVisible(true);
-            passwordVisible.setManaged(false);
-            passwordVisible.setVisible(false);
-            eyeButton.setText("👁");
-            passwordShown = false;
-        }
-        else
-        {
-            passwordVisible.setText(passwordField.getText());
-            passwordVisible.setManaged(true);
-            passwordVisible.setVisible(true);
-            passwordField.setManaged(false);
-            passwordField.setVisible(false);
-            eyeButton.setText("🙈");
-            passwordShown = true;
-        }
+        passwordShown = !passwordShown;
+        togglePassword(passwordShown,passwordField,passwordVisible,eyeButton);
     }
 
     @FXML private void onLogin()
@@ -73,21 +52,23 @@ public class LoginController {
         String email    = emailTextField.getText();
         String password = passwordShown ? passwordVisible.getText() : passwordField.getText();
 
-//        String emailError    = ErrorHandler.validateEmail(email);
-//        String passwordError = ErrorHandler.validatePassword(password);
+        String emailError    = ErrorHandler.validateEmail(email);
+        String passwordError = ErrorHandler.validatePassword(password);
 
-//        if (!emailError.isEmpty() || !passwordError.isEmpty())
-//        {
-//            statusLabelPass.setText(passwordError);
-//            return;
-//        }
+        if (!emailError.isEmpty() || !passwordError.isEmpty())
+        {
+            statusLabelPass.setText(passwordError);
+            statusLabelEmail.setText(emailError);
+            return;
+        }
 
         try {
             User user = UserService.authenticate(email, password);
 
             if (user == null) {
-                statusLabelEmail.setText("Invalid email or password");
-                statusLabelPass.setText("");
+                statusLabelEmail.setText("");
+                statusLabelPass.setText(msg("error.login.invalid"));
+                log.info("Bad login: {}", email);
                 return;
             }
 
@@ -96,7 +77,8 @@ public class LoginController {
 
         } catch (SQLException e) {
             log.error("Login DB error", e);
-            statusLabelEmail.setText("Login failed, please try again");
+            statusLabelEmail.setText("");
+            statusLabelPass.setText(msg("error.database.invalid.login"));
         }
     }
 
@@ -107,10 +89,7 @@ public class LoginController {
 
     @FXML private void onToggleLanguage()
     {
-        Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
-                ? Locale.ENGLISH
-                : new Locale("sk");
-        NavigationService.setLocale(next);
-        NavigationService.navigateTo(Screens.LOGIN);
+       toggleLanguage(Screens.LOGIN);
+       log.info("User changed language: {}", NavigationService.getBundle().getLocale().getLanguage());
     }
 }

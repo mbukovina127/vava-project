@@ -73,7 +73,7 @@
             <Button
                     fx:id="eyeButton"
                     styleClass="eye-btn"
-                    text="👁"
+                    text="◉"
                     onAction="#onTogglePassword"/>
         </HBox>
 

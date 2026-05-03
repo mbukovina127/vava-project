@@ -98,7 +98,7 @@
 
         <!-- Password -->
         <Label styleClass="field-label" text="%register.password"/>
-        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <HBox fx:id="passwordWrapper" styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordField"
                     styleClass="password-input"
@@ -114,7 +114,7 @@
             <Button
                     fx:id="eyeButton"
                     styleClass="eye-btn"
-                    text="👁"
+                    text="◉"
                     onAction="#onTogglePassword"/>
         </HBox>
 
@@ -131,7 +131,7 @@
 
         <!-- Repeat Password -->
         <Label styleClass="field-label" text="%register.repeat_password"/>
-        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <HBox fx:id="passwordWrapperRep" styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordFieldRep"
                     styleClass="password-input"
@@ -147,7 +147,7 @@
             <Button
                     fx:id="eyeButtonRep"
                     styleClass="eye-btn"
-                    text="👁"
+                    text="◉"
                     onAction="#onTogglePasswordRep"/>
         </HBox>
 

@@ -244,25 +244,25 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
-        String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
-        String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
+//        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
+        String weightError = ErrorHandler.validatePositiveDouble(weightText);
+        String volumeError = ErrorHandler.validatePositiveDouble(volumeText);
 
-        String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
-        String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
+        String fuelSurchargeError = ErrorHandler.validatePercent(fuelSurchargeText);
+        String tollError = ErrorHandler.validatePercent(tollText);
 
         // SYNTACTICAL INPUT CHECKING
 
         if
         (
-                !destinationError.isEmpty()
-                || !weightError.isEmpty()
+//                !destinationError.isEmpty()
+                !weightError.isEmpty()
                 || !volumeError.isEmpty()
                 || !fuelSurchargeError.isEmpty()
                 || !tollError.isEmpty()
         )
         {
-            statusLabelDestination.setText(destinationError);
+//            statusLabelDestination.setText(destinationError);
             statusLabelVolume.setText(volumeError);
             statusLabelWeight.setText(weightError);
             statusLabelToll.setText(tollError);
