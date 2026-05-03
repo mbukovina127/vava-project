@@ -24,10 +24,7 @@ import org.shippin.services.UserService;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import org.shippin.controller.utils.ShipmentData;
 import org.shippin.controller.utils.CostEstimationInput;
@@ -70,6 +67,20 @@ public class MenuController implements Initializable {
     private Object  currentData;
     private List<Button> buttons = new ArrayList<>();
 
+
+    private void setProfilePicture()
+    {
+        ImageView profileIcon = new ImageView(new Image(
+                Objects.requireNonNull(getClass().getResourceAsStream("/icons/png-dark/user.png"))
+        ));
+        profileIcon.setFitHeight(48);
+        profileIcon.setFitWidth(48);
+        profileIcon.setPreserveRatio(true);
+        profileIcon.setSmooth(true);
+        profileButton.setGraphic(profileIcon);
+        profileButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
+
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
             region.setMaxHeight(Region.USE_PREF_SIZE);
@@ -86,6 +97,8 @@ public class MenuController implements Initializable {
         modalOverlay.setManaged(false);
         modalOverlay.getChildren().clear();
     }
+
+
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
@@ -127,6 +140,7 @@ public class MenuController implements Initializable {
     public void initialize(URL location, ResourceBundle resources)
     {
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+        setProfilePicture();
         UserNameLabel.setText(UserService.getUser().getFullUserName());
 
 

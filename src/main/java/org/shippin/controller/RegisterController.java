@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.services.NavigationService;
@@ -20,7 +21,7 @@ import java.util.Locale;
 import java.util.Set;
 
 @Log4j2
-public class RegisterController {
+public class RegisterController extends AuthController {
 
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
@@ -37,47 +38,28 @@ public class RegisterController {
     @FXML private Button eyeButtonRep;
     public Button langButton;
 
-    private boolean passwordShown    = false;
+    @FXML private HBox passwordWrapper;
+    @FXML private HBox passwordWrapperRep;
 
-    @FXML
-    public void initialize() {
-        langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
-    }
+    private boolean passwordShown = false;
     private boolean passwordShownRep = false;
 
+    private String getPassword()    { return passwordShown    ? passwordVisible.getText()    : passwordField.getText(); }
+    private String getPasswordRep() { return passwordShownRep ? passwordVisibleRep.getText() : passwordFieldRep.getText(); }
 
-    // helpers
 
-    //SHOW/HIDE PASSWORD---
-    private void togglePassword
-    (
-            boolean shown,
-            PasswordField hidden,
-            TextField visible,
-            Button eye
-    )
+    @FXML
+    public void initialize()
     {
-        if (shown)
-        {
-            // show
-            visible.setText(hidden.getText());
-            visible.setManaged(true);
-            visible.setVisible(true);
-            hidden.setManaged(false);
-            hidden.setVisible(false);
-            eye.setText("🙈");
-        }
-        else
-        {
-            // hide
-            hidden.setText(visible.getText());
-            hidden.setManaged(true);
-            hidden.setVisible(true);
-            visible.setManaged(false);
-            visible.setVisible(false);
-            eye.setText("👁");
-        }
+        initLangButton(langButton);
+        //change password visibility observer
+        setEyeIcon(eyeButton,false);
+        setEyeIcon(eyeButtonRep,false);
+        bindPasswordFocus(passwordWrapper, passwordField, passwordVisible);
+        bindPasswordFocus(passwordWrapperRep, passwordFieldRep, passwordVisibleRep);
     }
+
+    // action handlers
 
     @FXML
     private void onTogglePassword()
@@ -92,11 +74,6 @@ public class RegisterController {
         passwordShownRep = !passwordShownRep;
         togglePassword(passwordShownRep, passwordFieldRep, passwordVisibleRep, eyeButtonRep);
     }
-
-    private String getPassword()    { return passwordShown    ? passwordVisible.getText()    : passwordField.getText(); }
-    private String getPasswordRep() { return passwordShownRep ? passwordVisibleRep.getText() : passwordFieldRep.getText(); }
-
-    // action handlers
 
     public void onRegister(ActionEvent actionEvent)
     {
@@ -153,10 +130,7 @@ public class RegisterController {
     @FXML
     public void onToggleLanguage()
     {
-        Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
-                ? Locale.ENGLISH
-                : new Locale("sk");
-        NavigationService.setLocale(next);
-        NavigationService.navigateTo(Screens.REGISTER);
+       toggleLanguage(Screens.REGISTER);
+       log.info("User changed language: {}", NavigationService.getBundle().getLocale().getLanguage());
     }
 }
