@@ -16,7 +16,7 @@
         fx:controller="org.shippin.controller.CostBreakdownController"
 >
 
-    <!-- Main content -->
+    <!-- ── Main content ──────────────────────────────────────────────────── -->
     <VBox
             styleClass="screen-root"
             stylesheets="@../css/shipinn.css, @../css/cost_estimation.css"
@@ -74,7 +74,7 @@
 
     </VBox>
 
-    <!-- Modal overlay (hidden by default)  -->
+    <!-- ── Modal overlay (hidden by default) ─────────────────────────────── -->
     <StackPane
             fx:id="modalOverlay"
             styleClass="modal-overlay"

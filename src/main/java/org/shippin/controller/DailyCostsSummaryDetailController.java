@@ -44,25 +44,26 @@ public class DailyCostsSummaryDetailController
         extends BaseController<LocalDate>
         implements Initializable {
 
-    // FXML injections
+    // ── FXML injections ────────────────────────────────────────────────
     @FXML private Label               lblTitle;
     @FXML private VBox                shipmentList;
     @FXML private Label               lblTotal;
     @FXML private TextField           searchField;
     @FXML private ComboBox<String>    sortCombo;
 
-    // State
+    // ── State ──────────────────────────────────────────────────────────
     private LocalDate            currentDate = java.time.LocalDate.now();
     private List<ShipmentEntry>  entries = new ArrayList<>();
 
     private enum SortType { TIME, COST, STATE }
 
-    // Date formatter shown in the title (e.g. "1.4.2026")
+    // ── Date formatter shown in the title (e.g. "1.4.2026") ───────────
     private static final DateTimeFormatter TITLE_FMT =
             DateTimeFormatter.ofPattern("d.M.yyyy");
 
-
+    // ══════════════════════════════════════════════════════════════════
     // Initializable
+    // ══════════════════════════════════════════════════════════════════
     private ShipmentService shipmentService;
 
     @Override
@@ -95,10 +96,14 @@ public class DailyCostsSummaryDetailController
         sortCombo.valueProperty().addListener((obs, old, val) -> applyFilterAndSort());
     }
 
+    // ══════════════════════════════════════════════════════════════════
     // Public API — called by the parent controller
+    // ══════════════════════════════════════════════════════════════════
 
 
+    // ══════════════════════════════════════════════════════════════════
     // Private helpers
+    // ══════════════════════════════════════════════════════════════════
 
     private void applyFilterAndSort() {
         String query = searchField.getText().trim();
@@ -146,7 +151,7 @@ public class DailyCostsSummaryDetailController
         row.setCursor(javafx.scene.Cursor.HAND);
         row.setOnMouseClicked(e -> handleEdit(entry));
 
-        // Left: ID + time
+        // ── Left: ID + time ───────────────────────────────────────────
         VBox leftBox = new VBox(2);
         Label lblId   = new Label("#" + entry.shipmentId());
         lblId.getStyleClass().add("dcd-row-id");
@@ -178,7 +183,7 @@ public class DailyCostsSummaryDetailController
 
         rightBox.getChildren().addAll(lblState, lblAmount);
 
-        // Action buttons
+        // ── Action buttons ────────────────────────────────────────────
         VBox btnBox = new VBox(4);
         btnBox.setAlignment(Pos.CENTER);
 

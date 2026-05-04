@@ -35,7 +35,7 @@
                                 <Button fx:id="addWarehouseButton"
                                         text="%warehouse_management.add"
                                         graphicTextGap="10.0"
-                                        prefWidth="250.0"
+                                        prefWidth="212.0"
                                         prefHeight="46.0"
                                         mnemonicParsing="false"
                                         styleClass="tertiary-button"
