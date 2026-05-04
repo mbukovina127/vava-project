@@ -120,7 +120,7 @@ public class UserManagementController extends BaseController<Void> implements In
         outer.setOnMouseClicked(e -> {
             try {
                 User u = UserService.getUser(user.id());
-                loadScreen(Screens.DAILY_COST_SUM, u);
+                loadScreen(Screens.MY_SHIPMENTS, u);
             } catch (SQLException | java.io.IOException ex) {
                 log.error("Failed to navigate to My Shipments for user {}", user.id(), ex);
             }

@@ -254,8 +254,10 @@ public class CostBreakdownController extends BaseController<Shipment> implements
     // Button handlers
 
     @FXML
-    private void onDelete() throws IOException {
-        if (shipment.getShipment_id() == 0) {
+    private void onDelete() throws IOException
+    {
+        if (shipment.getShipment_id() == 0)
+        {
             loadScreen(COST_ESTIMATION, null);
         }
         else

@@ -370,6 +370,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     private void onDailySummary() throws java.io.IOException {
         try {
             LocalDate date = shipment.getCreated_at().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            System.out.println(date);
             loadScreen(DAILY_COST_SUM, date);
         } catch (Exception ex) {
             log.error("Exception probably caused by shipment={} createdat={}", shipment.getShipment_id(), shipment.getCreated_at(), ex);
