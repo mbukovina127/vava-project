@@ -79,7 +79,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         // Route
         String from = data.getWarehouse() != null ? data.getWarehouse().getName() : "—";
         String dest = data.getDest_region() > 0 ? String.format("%05d", data.getDest_region()) : "—";
-        addRow("Route:", from + " – " + dest, "", true, false);
+        addRow("Route:", from + " –> " + dest, "", true, false);
 
         // Size
         String size = data.getWeight() + " kg";
@@ -114,6 +114,11 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
         saveButton.setVisible(shipment.getShipment_id() == 0);
         saveButton.setManaged(shipment.getShipment_id() == 0);
+
+        if (shipment.getShipment_id() != 0)
+        {
+            deleteButton.setText("Go Back");
+        }
     }
 
     // Grid helpers
@@ -196,19 +201,19 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         buttons.setAlignment(Pos.CENTER_LEFT);
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
+        cancelButton.getStyleClass().addAll("secondary-button");
         cancelButton.setPrefSize(150, 42);
         cancelButton.setOnAction(e -> hideModal());
 
         Button confirmButton = new Button("Save");
-        confirmButton.getStyleClass().addAll("popup-button", "popup-primary-button");
+        confirmButton.getStyleClass().addAll("tertiary-button");
         confirmButton.setPrefSize(150, 42);
 
 //        Role required = Screens.COST_BREAKDOWN.getRequiredRole();
 //        if (required != null) //
 
-        //TODO: toto Marko takto? ze save estimation moze len ADMIN?
-        AuthUtils.guard(confirmButton, Role.USER);
+//        //TODO: toto Marko takto? ze save estimation moze len ADMIN?
+//        AuthUtils.guard(confirmButton, Role.USER);
 
         confirmButton.setOnAction(e -> {
             hideModal();
@@ -250,7 +255,14 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
     @FXML
     private void onDelete() throws IOException {
-        loadScreen(COST_ESTIMATION, null);
+        if (shipment.getShipment_id() == 0) {
+            loadScreen(COST_ESTIMATION, null);
+        }
+        else
+        {
+            loadScreen(SHIPMENT_DETAIL, shipment);
+        }
+
     }
 
     @FXML

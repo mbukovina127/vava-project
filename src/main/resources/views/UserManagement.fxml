@@ -27,7 +27,7 @@
                     fx:id="addUserButton"
                     text="%user_management.add"
                     onAction="#onAddUser"
-                    styleClass="btn"
+                    styleClass="tertiary-button"
                     prefHeight="46"/>
         </HBox>
 

@@ -75,7 +75,7 @@
 
         <Label styleClass="ce-sub-label" text="%cost_estimation.to"
                GridPane.columnIndex="5" GridPane.rowIndex="0" />
-        <HBox fx:id="toBox" alignment="CENTER_LEFT" spacing="0" styleClass="ce-to-box"
+        <HBox fx:id="toBox" alignment="CENTER_LEFT" spacing="0" styleClass="input-field"
               GridPane.columnIndex="6" GridPane.rowIndex="0">
             <TextField fx:id="destinationField" prefHeight="36" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="ce-to-field" />
             <Button fx:id="toScanBtn" onAction="#onTestMap" styleClass="ce-icon-btn" text="⊕" />
