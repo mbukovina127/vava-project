@@ -104,7 +104,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         Label pickupPlaceValue = createValueLabel(briefWarehouse.getRegionName());
         
         Label postalCodeLabel = createFormLabel(t("%warehouse_management.popup.postal_code"));
-        Label postalCodeValue = createValueLabel(String.valueOf(briefWarehouse.getPostal_code()));
+        Label postalCodeValue = createValueLabel(String.valueOf(briefWarehouse.getPostalCode()));
 
         Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));
         Label priceListFile = createFileLabel("Original price list");

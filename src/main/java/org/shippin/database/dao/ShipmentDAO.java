@@ -82,7 +82,7 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getInt("wh_id"),
                     rs.getString("wh_name"),
                     rs.getString("wh_region"),
-                    rs.getInt("storage_region"),
+                    rs.getInt("wh_postal_code"),
                     coordinates));
             return sh;
         }

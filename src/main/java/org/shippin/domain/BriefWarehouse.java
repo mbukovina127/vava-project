@@ -9,10 +9,10 @@ public class BriefWarehouse extends CoreWarehouseInfo {
   }
   
 	public BriefWarehouse(int id, String name, String regionName) {
-		super(id, name, regionName, 0);
+		super(id, name, regionName, 0, new Coordinates(0, 0));
 	}
 
 	public BriefWarehouse(int id, String name, String regionName, int postalCode) {
-		super(id, name, regionName, postalCode);
+		super(id, name, regionName, postalCode, new Coordinates(0, 0));
 	}
 }

@@ -41,7 +41,7 @@ public class WarehouseDAO extends BaseDAO {
         warehouse.setId(rs.getInt("warehouse_ID"));
         warehouse.setName(rs.getString("warehouse_region_name"));
         warehouse.setRegionName(rs.getString("price_list_file"));
-        warehouse.setPostal_code(rs.getInt("storage_region"));
+        warehouse.setPostalCode(rs.getInt("storage_region"));
         warehouse.setCoord(new Coordinates(
         		rs.getDouble("latitude"), rs.getDouble("longitude")));
 
@@ -130,13 +130,23 @@ public class WarehouseDAO extends BaseDAO {
                     latitude = EXCLUDED.latitude,
                     longitude = EXCLUDED.longitude;""";
 
+        double latitude;
+        double longitude;
+        if(w.getCoord() == null) {
+        	latitude = 0;
+        	longitude = 0;
+        } else {
+        	latitude = w.getCoord().getX();
+        	longitude = w.getCoord().getY();
+        }
+        
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
         stmt.setString(2, w.getName()); //SK PSC+region aka name
         stmt.setString(3, w.getRegionName());
-        stmt.setInt(4, w.getPostal_code());
-        stmt.setDouble(5, w.getCoord().getX());
-        stmt.setDouble(6, w.getCoord().getY());
+        stmt.setInt(4, w.getPostalCode());
+        stmt.setDouble(5, latitude);
+        stmt.setDouble(6, longitude);
         
         stmt.executeUpdate();
         log.info("Upserted warehouse #{} ({})", w.getId(), w.getName());
@@ -188,12 +198,22 @@ public class WarehouseDAO extends BaseDAO {
                 RETURNING warehouse_id;
                 ;""";
 
+        double latitude;
+        double longitude;
+        if(w.getCoord() == null) {
+        	latitude = 0;
+        	longitude = 0;
+        } else {
+        	latitude = w.getCoord().getX();
+        	longitude = w.getCoord().getY();
+        }
+        
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, w.getName()); //SK PSC+region aka name
         stmt.setString(2, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
-        stmt.setInt(3, w.getPostal_code());
-        stmt.setDouble(4, w.getCoord().getX());
-        stmt.setDouble(5, w.getCoord().getY());
+        stmt.setInt(3, w.getPostalCode());
+        stmt.setDouble(4, latitude);
+        stmt.setDouble(5, longitude);
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
@@ -295,7 +315,7 @@ public class WarehouseDAO extends BaseDAO {
 
         stmt.setString(1, w.getName());          // warehouse_region_name
         stmt.setString(2, w.getRegionName());	// price_list_file (your file/ref field)
-        stmt.setInt(3, w.getPostal_code());
+        stmt.setInt(3, w.getPostalCode());
         stmt.setDouble(4, w.getCoord().getX());
         stmt.setDouble(5, w.getCoord().getY());
         stmt.setInt(6, w.getId());

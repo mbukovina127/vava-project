@@ -88,9 +88,9 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
-    	System.out.println(briefWarehouse.getPostal_code());  
-    	System.out.println(String.valueOf(briefWarehouse.getPostal_code())); 
-    	storageRegionField.setText(String.valueOf(briefWarehouse.getPostal_code()));
+    	System.out.println(briefWarehouse.getPostalCode());  
+    	System.out.println(String.valueOf(briefWarehouse.getPostalCode())); 
+    	storageRegionField.setText(String.valueOf(briefWarehouse.getPostalCode()));
     	this.priceList = this.warehouse.getPriceList();
     	setupPriceListTable();
     	this.regionTableFormatted = this.warehouse.getRegionTable();
