@@ -231,49 +231,6 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 		}
     }
     
-    public void handleAddWarehouseSaved(String name, String pickup) {
-    	if(!InputValidator.isNotBlank(name)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
-			return;
-		} else if(!InputValidator.isValidLength(name, 20)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
-			return;
-		}
-				
-		if(!InputValidator.isNotBlank(pickup)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
-			return;
-		} else if(!InputValidator.isValidLength(pickup, 30)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
-			return;
-		} 
-    	
-    	if (this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
-    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Missing table: you need to upload both a price list and a region table.");
-    	}
-    	
-    	try {
-    		this.warehouseService.addWarehouse(name, pickup, 0,
-    				this.selectedPriceListFormatted, this.selectedRegionTableFormatted);
-    		hideModal();
-    	} catch (IncompatibleTablesException e) {
-    		System.out.println(this.selectedPriceListFormatted);
-    		System.out.println(this.selectedRegionTableFormatted);
-    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Invalid tables: imported price list and region tables are incompatible. Both tables must include the same set of regions.");
-    	} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
-    	
-        try {
-			this.warehouseList = warehouseService.getBriefWarehouses();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
-        renderWarehouses(warehouseList);
-    }
-    
     @FXML
     private void handleOpenSmallPriceList() {
     	try {
@@ -281,7 +238,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 				SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
@@ -310,7 +267,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
       } catch (SQLException e) {
         e.printStackTrace();
-        new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+        new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
       }
     }
     
