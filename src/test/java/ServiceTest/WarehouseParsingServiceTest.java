@@ -2,8 +2,10 @@ package ServiceTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,10 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.PriceList;
 import org.shippin.domain.PriceListEntry;
 import org.shippin.domain.RegionTable;
 import org.shippin.domain.RegionTableEntry;
+import org.shippin.domain.Warehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.domain.formatted.RegionTableFormatted;
@@ -28,12 +32,13 @@ import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
 import org.shippin.services.WarehouseParsingService;
+import org.shippin.services.WarehouseService;
 import org.shippin.util.Range;
-
 
 public class WarehouseParsingServiceTest {
 
     private final WarehouseParsingService service = new WarehouseParsingService();
+
     @TempDir
     Path tempDir;
 
@@ -484,5 +489,126 @@ public class WarehouseParsingServiceTest {
         ));
 
         assertFalse(service.checkTableCompatibility(priceList, regionTable));
+    }
+
+    @Test
+    void exportTableWritesPriceListWhenPriceListFlagIsTrue() throws Exception {
+        WarehouseService originalWarehouseService = getWarehouseServiceSingleton();
+        Warehouse warehouse = warehouseForExport();
+
+        try {
+            setWarehouseServiceSingleton(new FakeWarehouseService(warehouse));
+
+            File file = tempDir.resolve("export-price.csv").toFile();
+
+            service.exportTable(
+                    new BriefWarehouse(warehouse.getId(), warehouse.getName(), warehouse.getRegionName()),
+                    true,
+                    file
+            );
+
+            String content = readFile(file);
+
+            assertTrue(file.exists());
+            assertTrue(content.contains("Hmotnosť do (v kg)"));
+            assertTrue(content.contains("Objem do (v m³)"));
+            assertTrue(content.contains("BA"));
+            assertTrue(content.contains("NR"));
+            assertTrue(content.contains("5,20"));
+            assertTrue(content.contains("6,30"));
+        } finally {
+            setWarehouseServiceSingleton(originalWarehouseService);
+        }
+    }
+
+    @Test
+    void exportTableWritesRegionTableWhenPriceListFlagIsFalse() throws Exception {
+        WarehouseService originalWarehouseService = getWarehouseServiceSingleton();
+        Warehouse warehouse = warehouseForExport();
+
+        try {
+            setWarehouseServiceSingleton(new FakeWarehouseService(warehouse));
+
+            File file = tempDir.resolve("export-regions.csv").toFile();
+
+            service.exportTable(
+                    new BriefWarehouse(warehouse.getId(), warehouse.getName(), warehouse.getRegionName()),
+                    false,
+                    file
+            );
+
+            String content = readFile(file);
+
+            assertTrue(file.exists());
+            assertTrue(content.contains("Rozdelenie PSČ:"));
+            assertTrue(content.contains("BA"));
+            assertTrue(content.contains("NR"));
+            assertTrue(content.contains("81000-81999"));
+            assertTrue(content.contains("94900-94999"));
+        } finally {
+            setWarehouseServiceSingleton(originalWarehouseService);
+        }
+    }
+
+    private Warehouse warehouseForExport() {
+        Warehouse warehouse = new Warehouse();
+
+        warehouse.setId(123);
+        warehouse.setName("WPS_TEST_EXPORT_WAREHOUSE");
+        warehouse.setRegionName("wps-test-export.xlsx");
+        warehouse.setPriceList(priceListForExport());
+        warehouse.setRegionTable(regionTableForExport());
+
+        return warehouse;
+    }
+
+    private PriceList priceListForExport() {
+        PriceList priceList = new PriceList();
+
+        priceList.setEntries(List.of(
+                new PriceListEntry(1, 10f, 0.5f, 5.2f, "BA"),
+                new PriceListEntry(2, 10f, 0.5f, 6.3f, "NR")
+        ));
+
+        return priceList;
+    }
+
+    private RegionTable regionTableForExport() {
+        RegionTable regionTable = new RegionTable();
+
+        regionTable.setEntries(List.of(
+                new RegionTableEntry(1, new ArrayList<>(List.of(new Range(81000, 81999))), "BA"),
+                new RegionTableEntry(2, new ArrayList<>(List.of(new Range(94900, 94999))), "NR")
+        ));
+
+        return regionTable;
+    }
+
+    private WarehouseService getWarehouseServiceSingleton() throws Exception {
+        Field field = WarehouseService.class.getDeclaredField("instance");
+        field.setAccessible(true);
+
+        return (WarehouseService) field.get(null);
+    }
+
+    private void setWarehouseServiceSingleton(WarehouseService warehouseService) throws Exception {
+        Field field = WarehouseService.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(null, warehouseService);
+    }
+
+    private static class FakeWarehouseService extends WarehouseService {
+
+        private final Warehouse warehouse;
+
+        private FakeWarehouseService(Warehouse warehouse) {
+            super(null, null, null);
+            this.warehouse = warehouse;
+        }
+
+        @Override
+        public Warehouse getWarehouse(BriefWarehouse briefWarehouse) throws SQLException {
+            return warehouse;
+        }
     }
 }
