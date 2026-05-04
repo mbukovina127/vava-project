@@ -14,7 +14,7 @@ CASCADE;
 
 CREATE TABLE Warehouse (
 	warehouse_ID SERIAL PRIMARY KEY,
-	storage_region INT,
+	postal_code INT,
 	warehouse_region_name TEXT NOT NULL,
     latitude  DOUBLE PRECISION,
     longitude DOUBLE PRECISION,

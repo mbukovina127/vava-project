@@ -45,7 +45,7 @@ public class ShipmentService {
         shipment.setServices(new ArrayList<>(selected));
         shipment.setWarehouse(new BriefWarehouse(
                 warehouse.getId(), warehouse.getName(), warehouse.getRegionName(), 
-                warehouse.getPostal_code(), warehouse.getCoord()));
+                warehouse.getPostalCode(), warehouse.getCoord()));
         
         shipment.setCreated_at(new Timestamp(deliveryDate.getTime()));
         shipment.setDest_region(destPostalCode);
@@ -61,6 +61,10 @@ public class ShipmentService {
         shipment.setTotalCost(calculateTotalCost(shipment, baseCost));
 
         return shipment;
+    }
+
+    public List<Shipment> getAllShipments() throws SQLException {
+        return shipmentDAO.getAllShipments();
     }
 
     // ── Cost calculations ─────────────────────────────────────────

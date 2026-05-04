@@ -119,16 +119,16 @@ public class WarehouseDAO extends BaseDAO {
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-                INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file, storage_region)
+                INSERT INTO Warehouse(warehouse_id, price_list_file, warehouse_region_name, storage_region, latitude, longitude)
                 VALUES (?,?,?,?,?,?)
                 ON CONFLICT(warehouse_id)
                 DO UPDATE SET
                     warehouse_id = EXCLUDED.warehouse_id,
                     warehouse_region_name = EXCLUDED.warehouse_region_name,
                     price_list_file = EXCLUDED.price_list_file,
-                    storage_region = EXCLUDED storage_region,
-                    latitude = EXCLUDED latitude,
-                    longitude = EXCLUDED longitude;""";
+                    storage_region = EXCLUDED.storage_region,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());

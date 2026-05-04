@@ -304,7 +304,8 @@ public class ShipmentDAO extends BaseDAO {
         return list;
     }
 
-    public List<Shipment> getAllShipments() throws SQLException {
+    //STARA VERZIA, MAX UROBIL UPDATE NOVA FUNKCIA JE NIZSIE.
+    /*public List<Shipment> getAllShipments() throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
                     s.created_at, s.dest_region, s.user_ID
@@ -318,6 +319,33 @@ public class ShipmentDAO extends BaseDAO {
 
         while (rs.next()) {
             shipments.add(mapShipment(rs));
+        }
+
+        return shipments;
+    }*/
+
+    public List<Shipment> getAllShipments() throws SQLException {
+        String sql = """
+    SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
+    s.created_at, s.dest_region, s.user_ID,
+    w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region
+    FROM Shipment s
+    JOIN Warehouse w ON s.warehouse_ID = w.warehouse_ID;
+    """;
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        List<Shipment> shipments = new ArrayList<>();
+
+        while (rs.next()) {
+            Shipment sh = mapShipment(rs);
+            sh.setWarehouse(new BriefWarehouse(
+                    rs.getInt("wh_id"),
+                    rs.getString("wh_name"),
+                    rs.getString("wh_region")));
+
+            shipments.add(sh);
         }
 
         return shipments;

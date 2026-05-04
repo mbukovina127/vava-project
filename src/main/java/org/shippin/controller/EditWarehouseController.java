@@ -233,4 +233,5 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.map.postal_code_to_coordinates_failed");
 		}
     }
+    
 }

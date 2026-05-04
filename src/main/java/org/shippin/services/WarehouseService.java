@@ -56,7 +56,7 @@ public class WarehouseService {
 		Warehouse warehouse = this.getWarehouse(briefWarehouse);
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
-		warehouse.setPostal_code(postalCode);
+		warehouse.setPostalCode(postalCode);
 		
 		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
 		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
@@ -156,4 +156,5 @@ public class WarehouseService {
 			regionDao.setAutoCommit(true);
 		}
 	}
+	
 }

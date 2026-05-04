@@ -38,8 +38,13 @@ public class RegionDaoTest {
 
     @AfterEach
     void rollback() throws SQLException {
-        DBConnector.getInstance().getConnection().rollback();
-        DBConnector.getInstance().getConnection().setAutoCommit(true);
+        var connection = DBConnector.getInstance().getConnection();
+
+        if (!connection.getAutoCommit()) {
+            connection.rollback();
+        }
+
+        connection.setAutoCommit(true);
     }
 
     private int insertWarehouse(String name) throws SQLException {
