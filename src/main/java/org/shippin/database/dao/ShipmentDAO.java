@@ -63,7 +63,8 @@ public class ShipmentDAO extends BaseDAO {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
                            s.created_at, s.dest_region, s.user_ID,
-                           w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region, w.storage_region as wh_postal_code
+                           w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region,
+                           w.storage_region as wh_postal_code, w.latitude as wh_latitude, w.longitude as wh_longitude
                     FROM Shipment s
                     JOIN Warehouse w ON s.warehouse_ID = w.warehouse_ID
                     WHERE s.shipment_ID = ?;
@@ -75,11 +76,14 @@ public class ShipmentDAO extends BaseDAO {
 
         if (rs.next()) {
             Shipment sh = mapShipment(rs);
+            Coordinates coordinates = new Coordinates(rs.getDouble("wh_latitude"),
+                    rs.getDouble("wh_longitude"));
             sh.setWarehouse(new BriefWarehouse(
                     rs.getInt("wh_id"),
                     rs.getString("wh_name"),
                     rs.getString("wh_region"),
-                    rs.getInt("wh_postal_code")));
+                    rs.getInt("wh_postal_code"),
+                    coordinates));
             return sh;
         }
 
