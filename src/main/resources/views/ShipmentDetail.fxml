@@ -40,9 +40,9 @@
                   <Region prefHeight="42.0" prefWidth="9.0" />
                         <Label fx:id="totalCostLabel" minWidth="-Infinity" styleClass="sd-info-cost" text="54,46 €" />
                         <Region prefWidth="20" />
-                        <Button fx:id="costBreakdownBtn" onAction="#onCostBreakdown" styleClass="sd-btn-breakdown" text="%shipment_detail.cost_breakdown" />
+                        <Button fx:id="costBreakdownBtn" onAction="#onCostBreakdown" styleClass="secondary-button" text="%shipment_detail.cost_breakdown" />
                         <Region prefWidth="20" />
-                        <Button fx:id="dailySummaryBtn" onAction="#onDailySummary" styleClass="sd-btn-action" text="%shipment_detail.daily_summary" />
+                        <Button fx:id="dailySummaryBtn" onAction="#onDailySummary" styleClass="tertiary-button" text="%shipment_detail.daily_summary" />
                     </HBox>
 
                     <Region prefHeight="18" />
@@ -53,7 +53,7 @@
                     <HBox alignment="CENTER_LEFT" spacing="14" styleClass="sd-state-row">
                         <Label minWidth="-Infinity" styleClass="sd-info-key" text="%shipment_detail.state" />
                         <Label fx:id="statusBadge" minWidth="-Infinity" styleClass="sd-badge, sd-badge-completed" text="%shipment_detail.state_completed" />
-                        <Button fx:id="changeStatusBtn" onAction="#onChangeStatus" styleClass="sd-btn-action" text="%shipment_detail.change_status" />
+                        <Button fx:id="changeStatusBtn" onAction="#onChangeStatus" styleClass="primary-button" text="%shipment_detail.change_status" />
                     </HBox>
 
                     <Region prefHeight="24" />

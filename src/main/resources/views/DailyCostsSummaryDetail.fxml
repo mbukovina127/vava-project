@@ -21,7 +21,7 @@
 
     <!-- ── Top bar: title + search + sort ───────────────────── -->
     <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT" spacing="8">
-        <Label fx:id="lblTitle" styleClass="page-title" text="1.4.2026 – Daily costs summary" />
+        <Label fx:id="lblTitle" styleClass="page-title" text="My Shipments" />
         <Region HBox.hgrow="ALWAYS" />
         <TextField fx:id="searchField"
                    styleClass="dcd-search-field"
