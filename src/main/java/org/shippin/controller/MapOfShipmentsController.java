@@ -92,34 +92,34 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
         int markerCount = 0;
         for (Shipment s : shipments) {
+
             double fromLat = 48.7;
             double fromLon = 19.15;
 
-            // ===== HARDCODED TEST PSČ =====
-            int testWarehousePsc = 80000;
-            if (s.getShipment_id() == 159) testWarehousePsc = 4001;
-            if (s.getShipment_id() == 158) testWarehousePsc = 94500;
+            if (s.getStartCoordinate() != null) {
+                fromLat = s.getStartCoordinate().getX();
+                fromLon = s.getStartCoordinate().getY();
 
-            try {
-                double[] coords = mapService.fetchCoordinatesForPostalCode(testWarehousePsc);
-                fromLat = coords[0];
-                fromLon = coords[1];
-                System.out.println("DEBUG: TEST PSC " + testWarehousePsc + " -> lat=" + fromLat + ", lon=" + fromLon);
-            } catch (Exception e) {
-                System.out.println("ERROR loading warehouse coords: " + e.getMessage());
-                e.printStackTrace();
+                /*
+                // FILTER NA Slovensko + okolie
+                if (fromLat < 47.0|| fromLat > 50.5 || fromLon < 14.0 || fromLon > 23.5) {
+                    log.warn("Warehouse outside region: {}, {}", fromLat, fromLon);
+                    continue;
+                }*/
             }
-
-            System.out.println("DEBUG: About to load dest for shipment " + s.getShipment_id());
 
             if (s.getDest_region() > 0) {
                 try {
-                    System.out.println("DEBUG: Fetching dest coords for PSC " + s.getDest_region());
                     double[] coords = mapService.fetchCoordinatesForPostalCode(s.getDest_region());
                     double toLat = coords[0];
                     double toLon = coords[1];
 
-                    System.out.println("DEBUG: Shipment #" + s.getShipment_id() + " dest OK");
+                    /*
+                    // FILTER NA destináciu!
+                    if (toLat < 47.0 || toLat > 50.5 || toLon < 14.0 || toLon > 23.5) {
+                        log.warn("Destination outside region: {}, {}", toLat, toLon);
+                        continue;
+                    }*/
 
                     if (markerCount > 0) markers.append("&");
                     markers.append(String.format("markers=color:green|%.4f,%.4f", fromLat, fromLon));
@@ -129,15 +129,10 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
                     markerCount++;
                 } catch (Exception e) {
-                    System.out.println("ERROR loading dest coords: " + e.getMessage());
-                    e.printStackTrace();
+                    System.out.println("ERROR: " + e.getMessage());
                 }
-            } else {
-                System.out.println("DEBUG: Shipment #" + s.getShipment_id() + " has no dest_region!");
             }
         }
-
-        System.out.println("🗺️ Final markers count: " + markerCount);
 
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/staticmap?" +
@@ -149,7 +144,6 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
                 "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc"
         );
 
-        System.out.println("🔗 Map URL: " + url);
         return url;
     }
 
