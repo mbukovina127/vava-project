@@ -1,7 +1,10 @@
+
 package org.shippin.infrastructure.xml;
 
+import org.shippin.infrastructure.validation.PriceListValidator;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.domain.Table;
 import org.w3c.dom.*;
 
@@ -15,7 +18,11 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class PriceListXmlParser implements XmlParser<PriceListRow> {
@@ -23,7 +30,7 @@ public class PriceListXmlParser implements XmlParser<PriceListRow> {
     private static final String SS_NS = "urn:schemas-microsoft-com:office:spreadsheet";
 
     @Override
-    public Table<PriceListRow> parseFromXml(String text) {
+    public Table<PriceListRow> parseFromXml(String text) throws ValidationException {
         PriceListFormatted table = new PriceListFormatted();
 
         //safety check
@@ -39,28 +46,51 @@ public class PriceListXmlParser implements XmlParser<PriceListRow> {
         //load region codes
         List<String> regionLine = rows.get(1);
         List<String> regionCodes = new ArrayList<>();
+        Set<String> seenCodes = new LinkedHashSet<>();
         for (int i = 2; i < regionLine.size(); i++) {
             String code = regionLine.get(i).trim();
             if (!code.isEmpty()) {
+                if (!seenCodes.add(code)) {
+                    throw new ValidationException(List.of("Duplicate zone column in header: " + code));
+                }
                 regionCodes.add(code);
             }
         }
+
+        List<String> hmotnostList = new ArrayList<>();
+        List<String> objemList    = new ArrayList<>();
+        Map<String, List<String>> regionColumns = new HashMap<>();
+        for (String code : regionCodes) regionColumns.put(code, new ArrayList<>());
 
         //load weight + volume and region prices for each line
         for (int i = 2; i < rows.size(); i++) {
             List<String> fields = rows.get(i);
             if (fields.size() < 2 + regionCodes.size()) continue;
 
-            float weight = parseNumber(fields.get(0));
-            float volume = parseNumber(fields.get(1));
-
-            PriceListRow row = new PriceListRow(weight, volume);
+            hmotnostList.add(fields.get(0).trim());
+            objemList.add(fields.get(1).trim());
 
             for (int j = 0; j < regionCodes.size(); j++) {
                 int colIndex = 2 + j;
                 if (colIndex < fields.size()) {
-                    float price = parseNumber(fields.get(colIndex));
-                    row.getRegions().put(regionCodes.get(j), price);
+                    regionColumns.get(regionCodes.get(j)).add(fields.get(colIndex).trim());
+                }
+            }
+        }
+
+        PriceListValidator.validate(hmotnostList, objemList, regionColumns);
+
+        //build table
+        for (int i = 0; i < hmotnostList.size(); i++) {
+            float weight = parseNumber(hmotnostList.get(i));
+            float volume = parseNumber(objemList.get(i));
+
+            PriceListRow row = new PriceListRow(weight, volume);
+
+            for (String code : regionCodes) {
+                List<String> prices = regionColumns.get(code);
+                if (i < prices.size()) {
+                    row.getRegions().put(code, parseNumber(prices.get(i)));
                 }
             }
 
