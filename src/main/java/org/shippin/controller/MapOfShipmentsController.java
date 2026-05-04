@@ -51,13 +51,9 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     private void loadAllShipments() {
         try {
             shipments = shipmentService.getAllShipments();
-            System.out.println("DEBUG: Loaded " + shipments.size() + " shipments");
-            log.info("✅ Loaded {} shipments", shipments.size());
-            // ...
+            log.info("Loaded {} shipments", shipments.size());
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
-            e.printStackTrace();
-            log.error("❌ Failed to load shipments", e);
+            log.error("Failed to load shipments", e);
             showMapFallback();
         }
     }

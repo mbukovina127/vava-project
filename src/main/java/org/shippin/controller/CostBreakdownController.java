@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -39,6 +40,7 @@ import java.util.ResourceBundle;
 import static org.shippin.dto.Screens.COST_ESTIMATION;
 import static org.shippin.dto.Screens.SHIPMENT_DETAIL;
 
+@Log4j2
 public class CostBreakdownController extends BaseController<Shipment> implements Initializable {
 
     @FXML private GridPane  breakdownGrid;
@@ -219,8 +221,10 @@ public class CostBreakdownController extends BaseController<Shipment> implements
             hideModal();
             try {
                 shipmentService.saveShipment(shipment, UserService.getUser().getId());
+                log.info("Shipment saved, navigating to detail");
                 loadScreen(SHIPMENT_DETAIL, shipment);
             } catch (SQLException ex) {
+                log.error("Failed to save shipment", ex);
                 new Alert(Alert.AlertType.ERROR, "Could not save shipment: " + ex.getMessage()).showAndWait();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -291,7 +295,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
             try {
                 writePdf(file);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("PDF export failed", e);
                 javafx.application.Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("PDF export failed");

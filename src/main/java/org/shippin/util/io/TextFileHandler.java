@@ -1,11 +1,13 @@
 package org.shippin.util.io;
 
+import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
+@Log4j2
 public class TextFileHandler {
 
     public String readFrom(File file) {
@@ -16,8 +18,7 @@ public class TextFileHandler {
         try {
             return Files.readString(file.toPath(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            System.err.println("Failed to read file: " + file.getAbsolutePath());
-            e.printStackTrace();
+            log.error("Failed to read file: {}", file.getAbsolutePath(), e);
             return "";
         }
     }
@@ -35,8 +36,7 @@ public class TextFileHandler {
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         } catch (IOException e) {
-            System.err.println("Failed to write to file: " + file.getAbsolutePath());
-            e.printStackTrace();
+            log.error("Failed to write to file: {}", file.getAbsolutePath(), e);
             return false;
         }
     }

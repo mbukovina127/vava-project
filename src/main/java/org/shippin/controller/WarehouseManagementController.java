@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.services.MapService;
 import org.shippin.controller.utils.GenericPopup;
 import org.shippin.controller.utils.InputValidator;
@@ -56,6 +57,7 @@ import java.util.ResourceBundle;
 import lombok.Getter;
 import lombok.Setter;
 
+@Log4j2
 public class WarehouseManagementController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML private ImageView addWarehouseIcon;
@@ -106,7 +108,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         try {
 			this.warehouseList = warehouseService.getBriefWarehouses();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
         renderWarehouses(warehouseList);
@@ -162,7 +164,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 			try {
 				new ReplaceWarehousePopup(resources).show(this, warehouse);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("Warehouse operation failed", e);
 				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 		});
@@ -227,8 +229,8 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	try {
 			loadScreen(EDIT_WAREHOUSE, briefWarehouse);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			log.error("Warehouse operation failed", e);
 		}
     }
     
@@ -238,13 +240,13 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     		try {
 				SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("Warehouse operation failed", e);
 				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			log.error("Warehouse operation failed", e);
 		}
     }
     
@@ -263,8 +265,8 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 		try {
 			smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
 		} catch (ValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.validation_problem");
 		}
 
@@ -274,7 +276,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	try {
         this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
       } catch (SQLException e) {
-        e.printStackTrace();
+        log.error("Warehouse operation failed", e);
         new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
       }
     }
@@ -283,14 +285,14 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	try {
 			this.warehouseService.deleteWarehouse(briefWarehouse);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_insert", "%generic.database_problem");
 		}
     	
     	try {
 			this.warehouseList = warehouseService.getBriefWarehouses();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_insert", "%generic.database_problem");
 		}
         renderWarehouses(warehouseList);

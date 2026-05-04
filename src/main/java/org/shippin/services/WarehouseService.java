@@ -17,6 +17,7 @@ import org.shippin.domain.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.RegionDAO;
 import org.shippin.database.dao.WarehouseDAO;
 
+@Log4j2
 @Data
 @AllArgsConstructor
 public class WarehouseService {
@@ -111,14 +113,13 @@ public class WarehouseService {
 			priceListDao.insertSmallPriceList(smallPriceList);
 			priceListDao.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to update small price list", e);
 			priceListDao.rollback();
 		} finally {
 			priceListDao.setAutoCommit(true);
 		}
 	}
-	
+
 	public void setSmallPriceListFormatted(SmallPriceListFormatted smallPriceListFormatted) throws SQLException {
 		SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(smallPriceListFormatted);
 		this.setSmallPriceList(smallPriceList);
@@ -147,8 +148,7 @@ public class WarehouseService {
 			priceListDao.commit();
 			regionDao.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to replace tables for warehouse #{}", warehouse.getId(), e);
 			priceListDao.rollback();
 			regionDao.rollback();
 		} finally {

@@ -1,5 +1,6 @@
 package org.shippin.util;
 
+import lombok.extern.log4j.Log4j2;
 import com.google.gson.Gson;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 
+@Log4j2
 public class FromCoordsDataGetter {
 
 	private static final String API_KEY = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
@@ -122,7 +124,7 @@ public class FromCoordsDataGetter {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Reverse geocoding failed", e);
 			}
 		}).start();
 	}

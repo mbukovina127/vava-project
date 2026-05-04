@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -35,6 +36,7 @@ import java.util.*;
 import static java.lang.Double.parseDouble;
 import static org.shippin.dto.Screens.COST_BREAKDOWN;
 
+@Log4j2
 public class CostEstimationController extends BaseController<Void> implements Initializable {
 
     // Title + Date
@@ -321,13 +323,16 @@ public class CostEstimationController extends BaseController<Void> implements In
                     serviceIds
             );
         } catch (SQLException e) {
+            log.error("Cost estimation failed for postal code {}", destPostalCode, e);
         	new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
             return;
         } catch (IllegalArgumentException e) {
+            log.warn("Cost estimation rejected: {}", e.getMessage());
             new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.map.postal_code_not_in_warehouse");
             return;
         }
 
+        log.info("Cost estimated: dest={}, total={}", destPostalCode, computedShipment.getTotalCost());
         loadScreen(COST_BREAKDOWN, computedShipment);
     }
 

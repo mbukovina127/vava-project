@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -22,6 +23,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Log4j2
 public class SmallPriceListViewController extends BaseController<Void> implements Initializable {
 
     @FXML
@@ -35,7 +37,7 @@ public class SmallPriceListViewController extends BaseController<Void> implement
         try {
         this.table = WarehouseService.getInstance().getSmallPriceListFormatted();
       } catch (SQLException e) {
-        e.printStackTrace();
+        log.error("Small price list operation failed", e);
         new GenericPopup(resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
       }
         populateGrid(table);
@@ -112,7 +114,7 @@ public class SmallPriceListViewController extends BaseController<Void> implement
         loadScreen(WAREHOUSE_MANAGEMENT);
       } catch (IOException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
+        log.error("Small price list operation failed", e);
       }
     }
 }
