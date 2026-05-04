@@ -22,6 +22,7 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.services.ShipmentService;
 
+import org.shippin.services.NavigationService;
 import org.shippin.util.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
 
@@ -107,17 +108,25 @@ public class CostEstimationController extends BaseController<Void> implements In
 
     private void buildServiceUI(List<AdditionalService> allServices)
     {
-        productsContainer.getChildren().add(createGroupLabel("Produkty pre ZBS:"));
-        servicesContainer.getChildren().add(createGroupLabel("Obstarávané služby:"));
-        paymentsContainer.getChildren().add(createGroupLabel("Príplatky:"));
+        ResourceBundle bundle = NavigationService.getBundle();
+        boolean isEnglish = bundle.getLocale().getLanguage().equals("en");
+
+        productsContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.zbs_products")));
+        servicesContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.procured_services")));
+        paymentsContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.surcharges")));
 
         for (AdditionalService service : allServices)
         {
+            String serviceName = isEnglish && service.getName_en() != null && !service.getName_en().isBlank()
+                    ? service.getName_en() : service.getName();
+            String serviceDesc = isEnglish && service.getDescription_en() != null && !service.getDescription_en().isBlank()
+                    ? service.getDescription_en() : service.getDescription();
+
             switch (service.getServiceType())
             {
                 case SERVICES ->
                 {
-                    RadioButton rb = new RadioButton(service.getName());
+                    RadioButton rb = new RadioButton(serviceName);
                     rb.setToggleGroup(productsToggleGroup);
                     rb.setMnemonicParsing(false);
 
@@ -126,9 +135,9 @@ public class CostEstimationController extends BaseController<Void> implements In
                     row.getStyleClass().add("ce-product-row");
                     row.getChildren().add(rb);
 
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        Label desc = new Label(service.getDescription());
+                        Label desc = new Label(serviceDesc);
                         desc.getStyleClass().add("ce-product-desc");
                         desc.setWrapText(true);
                         row.getChildren().add(desc);
@@ -139,22 +148,22 @@ public class CostEstimationController extends BaseController<Void> implements In
                 }
                 case ADDITIONAL_PAYMENTS ->
                 {
-                    CheckBox cb = new CheckBox(service.getName());
+                    CheckBox cb = new CheckBox(serviceName);
                     cb.getStyleClass().add("ce-check");
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(service.getDescription()));
+                        cb.setTooltip(new Tooltip(serviceDesc));
                     }
                     servicesContainer.getChildren().add(cb);
                     serviceCheckBoxes.put(cb, service);
                 }
                 case PRODUCTS ->
                 {
-                    CheckBox cb = new CheckBox(service.getName());
+                    CheckBox cb = new CheckBox(serviceName);
                     cb.getStyleClass().add("ce-check");
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(service.getDescription()));
+                        cb.setTooltip(new Tooltip(serviceDesc));
                     }
                     paymentsContainer.getChildren().add(cb);
                     serviceCheckBoxes.put(cb, service);
