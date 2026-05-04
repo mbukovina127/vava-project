@@ -112,8 +112,8 @@ public class WarehouseDaoTest {
     void upsertWarehouseStoresWarehouseInDatabase() throws SQLException {
         Warehouse warehouse = new Warehouse();
         warehouse.setId(99901);
-        warehouse.setName("Warehouse Upsert Test");
-        warehouse.setRegionName("upsert_prices.xlsx");
+        warehouse.setName("upsert_prices.xlsx");
+        warehouse.setRegionName("Warehouse Upsert Test");
 
         warehouseDAO.upsertWarehouse(warehouse);
 

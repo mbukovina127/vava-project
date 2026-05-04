@@ -1,12 +1,15 @@
 package org.shippin.database.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Coordinates;
 import org.shippin.domain.Warehouse;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class WarehouseDAO extends BaseDAO {
 
     private static WarehouseDAO instance;
@@ -24,8 +27,9 @@ public class WarehouseDAO extends BaseDAO {
 
     public Warehouse getById(int id) throws SQLException {
         String sql = """
-                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file
-                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
+                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file,
+                    w.storage_region, w.latitude, w.longitude
+                    FROM Warehouse w WHERE w.warehouse_id = ? AND w.is_active = true;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, id);
@@ -37,6 +41,9 @@ public class WarehouseDAO extends BaseDAO {
         warehouse.setId(rs.getInt("warehouse_ID"));
         warehouse.setName(rs.getString("warehouse_region_name"));
         warehouse.setRegionName(rs.getString("price_list_file"));
+        warehouse.setPostalCode(rs.getInt("storage_region"));
+        warehouse.setCoord(new Coordinates(
+        		rs.getDouble("latitude"), rs.getDouble("longitude")));
 
 
         RegionDAO regionDAO = RegionDAO.getInstance();
@@ -57,7 +64,8 @@ public class WarehouseDAO extends BaseDAO {
 
 
     public List<BriefWarehouse> getAllBriefWarehouses() throws SQLException {
-        String sql = "SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file FROM Warehouse w;";
+        String sql = "SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file,"
+        		+ "w.storage_region, w.latitude, w.longitude FROM Warehouse w WHERE w.is_active = true;";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -65,10 +73,13 @@ public class WarehouseDAO extends BaseDAO {
         List<BriefWarehouse> list = new ArrayList<>();
 
         while (rs.next()) {
+        	Coordinates coordinates = new Coordinates(rs.getDouble("latitude"), rs.getDouble("longitude"));
             BriefWarehouse bw = new BriefWarehouse(
                     rs.getInt("warehouse_ID"),
                     rs.getString("warehouse_region_name"),
-                    rs.getString("price_list_file")
+                    rs.getString("price_list_file"),
+                    rs.getInt("storage_region"),
+                    coordinates
             );
             list.add(bw);
         }
@@ -78,8 +89,9 @@ public class WarehouseDAO extends BaseDAO {
 
     public BriefWarehouse getlBriefWarehouse(int briefWarehouseID) throws SQLException {
         String sql = """
-                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file
-                    FROM Warehouse w WHERE w.warehouse_id = ?;""";
+                    SELECT w.warehouse_ID, w.warehouse_region_name, w.price_list_file,
+                    w.storage_region, w.latitude, w.longitude
+                    FROM Warehouse w WHERE w.warehouse_id = ? AND w.is_active = true;""";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, briefWarehouseID);
@@ -88,10 +100,13 @@ public class WarehouseDAO extends BaseDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
+        	Coordinates coordinates = new Coordinates(rs.getDouble("latitude"), rs.getDouble("longitude"));
             BriefWarehouse bw = new BriefWarehouse(
                     rs.getInt("warehouse_ID"),
                     rs.getString("warehouse_region_name"),
-                    rs.getString("price_list_file")
+                    rs.getString("price_list_file"),
+                    rs.getInt("storage_region"),
+                    coordinates
             );
             return bw;
         }
@@ -104,20 +119,37 @@ public class WarehouseDAO extends BaseDAO {
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-                INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file)
-                VALUES (?,?,?)
+                INSERT INTO Warehouse(warehouse_id, price_list_file, warehouse_region_name, storage_region, latitude, longitude, is_active)
+                VALUES (?,?,?,?,?,?,true)
                 ON CONFLICT(warehouse_id)
                 DO UPDATE SET
                     warehouse_id = EXCLUDED.warehouse_id,
                     warehouse_region_name = EXCLUDED.warehouse_region_name,
-                    price_list_file = EXCLUDED.price_list_file;""";
+                    price_list_file = EXCLUDED.price_list_file,
+                    storage_region = EXCLUDED.storage_region,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude;""";
 
+        double latitude;
+        double longitude;
+        if(w.getCoord() == null) {
+        	latitude = 0;
+        	longitude = 0;
+        } else {
+        	latitude = w.getCoord().getX();
+        	longitude = w.getCoord().getY();
+        }
+        
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, w.getId());
         stmt.setString(2, w.getName()); //SK PSC+region aka name
-        stmt.setString(3, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
-
+        stmt.setString(3, w.getRegionName());
+        stmt.setInt(4, w.getPostalCode());
+        stmt.setDouble(5, latitude);
+        stmt.setDouble(6, longitude);
+        
         stmt.executeUpdate();
+        log.info("Upserted warehouse #{} ({})", w.getId(), w.getName());
     }
 
     /**
@@ -128,7 +160,8 @@ public class WarehouseDAO extends BaseDAO {
         try {
             connection.setAutoCommit(false);
 
-            upsertWarehouse(warehouse);
+            int newId = insertWarehouse(warehouse);
+            warehouse.setId(newId);
 
             if (warehouse.getRegionTable() != null) {
                 RegionDAO regionDAO = RegionDAO.getInstance();
@@ -142,18 +175,53 @@ public class WarehouseDAO extends BaseDAO {
                 PriceListDAO priceListDAO = PriceListDAO.getInstance();
 
                 for (var item : warehouse.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, warehouse.getName());
+                    priceListDAO.insertPriceListEntry(item, warehouse.getId());
                 }
             }
 
             connection.commit();
+            log.info("Inserted full warehouse #{} ({})", warehouse.getId(), warehouse.getName());
 
         } catch (Exception e) {
+            log.error("insertFullWarehouse failed for warehouse #{}, rolling back", warehouse.getId(), e);
             connection.rollback();
             throw e;
         } finally {
             connection.setAutoCommit(true);
         }
+    }
+    
+    public int insertWarehouse(Warehouse w) throws SQLException {
+        String sql = """
+                INSERT INTO Warehouse(warehouse_region_name, price_list_file, storage_region, latitude, longitude, is_active)
+                VALUES (?,?,?,?,?,true)
+                RETURNING warehouse_id;
+                ;""";
+
+        double latitude;
+        double longitude;
+        if(w.getCoord() == null) {
+        	latitude = 0;
+        	longitude = 0;
+        } else {
+        	latitude = w.getCoord().getX();
+        	longitude = w.getCoord().getY();
+        }
+        
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, w.getName()); //SK PSC+region aka name
+        stmt.setString(2, w.getRegionName()); //F ZBS-BA aka filename aka excel sheet name
+        stmt.setInt(3, w.getPostalCode());
+        stmt.setDouble(4, latitude);
+        stmt.setDouble(5, longitude);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("warehouse_id");
+            return id;
+        }
+        
+        throw new SQLException("insert failed");
     }
 
 
@@ -161,16 +229,25 @@ public class WarehouseDAO extends BaseDAO {
         boolean autoCommit = connection.getAutoCommit();
         connection.setAutoCommit(false);
 
-        String sql = "DELETE FROM Warehouse where warehouse_ID = ?";
+        String sql = """
+        UPDATE Warehouse
+        SET is_active = false
+        WHERE warehouse_ID = ?
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, warehouseID);
 
-
-            int removed = stmt.executeUpdate();
+            int updated = stmt.executeUpdate();
             connection.commit();
-            return removed > 0;
+
+            if (updated > 0) log.info("Soft-deleted warehouse #{}", warehouseID);
+            else log.warn("deleteFullWarehouse: warehouse #{} not found", warehouseID);
+
+            return updated > 0;
+
         } catch (SQLException ex) {
+            log.error("deleteFullWarehouse failed for warehouse #{}, rolling back", warehouseID, ex);
             connection.rollback();
             throw ex;
         } finally {
@@ -211,14 +288,16 @@ public class WarehouseDAO extends BaseDAO {
                 priceListDAO.deletePriceListByWarehouseID(w.getId());
 
                 for (var item : w.getPriceList().getEntries()) {
-                    priceListDAO.insertPriceListEntry(item, w.getName());
+                    priceListDAO.insertPriceListEntry(item, w.getId());
                 }
             }
 
             connection.commit();
+            log.info("Updated full warehouse #{} ({})", w.getId(), w.getName());
             return true;
 
         } catch (Exception e) {
+            log.error("updateFullWarehouse failed for warehouse #{}, rolling back", w.getId(), e);
             connection.rollback();
             throw e;
         } finally {
@@ -226,26 +305,30 @@ public class WarehouseDAO extends BaseDAO {
         }
     }
 
-    private boolean updateWarehouse(Warehouse w) throws SQLException {
+    public boolean updateWarehouse(Warehouse w) throws SQLException {
 
         String sql = """
         UPDATE Warehouse
         SET warehouse_region_name = ?,
-            price_list_file = ?
+            price_list_file = ?,
+            storage_region = ?,
+            latitude = ?,
+            longitude = ?
         WHERE warehouse_ID = ?;
     """;
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setString(1, w.getName());          // warehouse_region_name
-        stmt.setString(2, w.getRegionName());    // price_list_file (your file/ref field)
-        stmt.setInt(3, w.getId());
+        stmt.setString(2, w.getRegionName());	// price_list_file (your file/ref field)
+        stmt.setInt(3, w.getPostalCode());
+        stmt.setDouble(4, w.getCoord().getX());
+        stmt.setDouble(5, w.getCoord().getY());
+        stmt.setInt(6, w.getId());
 
         int affectedRows = stmt.executeUpdate();
 
         return affectedRows > 0;
     }
-
-
 
 }

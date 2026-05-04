@@ -10,7 +10,11 @@
       fx:controller="org.shippin.controller.SmallPriceListViewController"
       spacing="0"
       styleClass="root-container"
-      stylesheets="@../css/shipinn.css, @../css/small-price-list-view.css">
+      stylesheets="@../css/shipinn.css, @../css/small-price-list-view.css"
+      HBox.hgrow="ALWAYS"
+      VBox.vgrow="ALWAYS"
+      maxWidth="Infinity"
+      maxHeight="Infinity">
 
     <!-- Title -->
     <Label text="%small_price_list.title" styleClass="page-title">
@@ -35,6 +39,6 @@
     </padding>
     
     <HBox spacing="32" alignment="CENTER_RIGHT" styleClass="button-row">
-        <Button text="%small_price_list.go_back" styleClass="tertiary-button" onAction="#handleLeave"/>
+        <Button text="%small_price_list.go_back" styleClass="secondary-button" onAction="#handleLeave"/>
     </HBox>
 </VBox>

@@ -5,6 +5,8 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <StackPane
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
@@ -30,7 +32,10 @@
             alignment="TOP_CENTER">
 
         <!-- Logo -->
-        <HBox styleClass="logo-box" alignment="CENTER" spacing="10">
+        <HBox styleClass="logo-box">
+            <ImageView fitHeight="40" preserveRatio="true">
+                <Image url="@../icons/png-dark/logoShippin_black.png"/>
+            </ImageView>
             <Label styleClass="logo-name" text="%register.logo"/>
         </HBox>
 
@@ -93,7 +98,7 @@
 
         <!-- Password -->
         <Label styleClass="field-label" text="%register.password"/>
-        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <HBox fx:id="passwordWrapper" styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordField"
                     styleClass="password-input"
@@ -109,7 +114,7 @@
             <Button
                     fx:id="eyeButton"
                     styleClass="eye-btn"
-                    text="👁"
+                    text="◉"
                     onAction="#onTogglePassword"/>
         </HBox>
 
@@ -126,7 +131,7 @@
 
         <!-- Repeat Password -->
         <Label styleClass="field-label" text="%register.repeat_password"/>
-        <HBox styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+        <HBox fx:id="passwordWrapperRep" styleClass="password-wrapper" maxWidth="Infinity" HBox.hgrow="ALWAYS">
             <PasswordField
                     fx:id="passwordFieldRep"
                     styleClass="password-input"
@@ -142,7 +147,7 @@
             <Button
                     fx:id="eyeButtonRep"
                     styleClass="eye-btn"
-                    text="👁"
+                    text="◉"
                     onAction="#onTogglePasswordRep"/>
         </HBox>
 
@@ -157,13 +162,13 @@
         <!-- Sign up button -->
         <Button
                 fx:id="registerButton"
-                styleClass="btn"
+                styleClass="primary-button"
                 text="%register.button"
                 maxWidth="Infinity"
                 onAction="#onRegister"/>
 
         <!-- Login link -->
-        <HBox styleClass="bottom-link-box" alignment="CENTER" spacing="4">
+        <HBox styleClass="bottom-link-box">
             <Label styleClass="muted-text" text="%register.have_account"/>
             <Hyperlink
                     fx:id="loginLink"

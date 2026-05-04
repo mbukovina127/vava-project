@@ -4,10 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
+import org.shippin.database.dao.UserDAO;
+import org.shippin.dto.Screens;
 import org.shippin.services.NavigationService;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.Role;
@@ -113,6 +116,15 @@ public class UserManagementController extends BaseController<Void> implements In
         HBox.setHgrow(inner, Priority.ALWAYS);
         outer.getStyleClass().add("um-row-outer");
         outer.setMaxWidth(Double.MAX_VALUE);
+        outer.setCursor(Cursor.HAND);
+        outer.setOnMouseClicked(e -> {
+            try {
+                User u = UserService.getUser(user.id());
+                loadScreen(Screens.MY_SHIPMENTS, u);
+            } catch (SQLException | java.io.IOException ex) {
+                log.error("Failed to navigate to My Shipments for user {}", user.id(), ex);
+            }
+        });
 
         return outer;
     }
