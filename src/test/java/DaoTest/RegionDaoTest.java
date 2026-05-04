@@ -25,6 +25,7 @@ import org.shippin.util.Range;
 public class RegionDaoTest {
 
     private static RegionDAO regionDAO;
+    String warehouseName = "Full Region Warehouse " + System.currentTimeMillis();
 
     @BeforeAll
     static void connect() {
@@ -58,6 +59,16 @@ public class RegionDaoTest {
         ResultSet rs = stmt.executeQuery();
         rs.next();
         return rs.getInt("warehouse_ID");
+    }
+
+    private void deleteWarehouseById(int warehouseId) throws SQLException {
+        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
+            DELETE FROM Warehouse
+            WHERE warehouse_ID = ?
+        """);
+
+        stmt.setInt(1, warehouseId);
+        stmt.executeUpdate();
     }
 
     @Test
@@ -127,22 +138,27 @@ public class RegionDaoTest {
     }
 
     @Test
-    @DisplayName("insertFullRegion executes or exposes bug")
+    @DisplayName("insertFullRegion executes without exception")
     void insertFullRegionExecutes() throws SQLException {
-        int warehouseId = insertWarehouse("Full Region Warehouse");
+        String warehouseName = "Full Region Warehouse " + System.currentTimeMillis();
+        int warehouseId = insertWarehouse(warehouseName);
 
-        Warehouse warehouse = new Warehouse();
-        warehouse.setId(warehouseId);
-        warehouse.setName("Full Region Warehouse");
-        warehouse.setRegionName("full_region_test.xlsx");
+        try {
+            Warehouse warehouse = new Warehouse();
+            warehouse.setId(warehouseId);
+            warehouse.setName(warehouseName);
+            warehouse.setRegionName("full_region_test.xlsx");
 
-        ArrayList<Range> ranges = new ArrayList<>();
-        ranges.add(new Range(20000, 29999));
+            ArrayList<Range> ranges = new ArrayList<>();
+            ranges.add(new Range(20000, 29999));
 
-        RegionTableEntry entry = new RegionTableEntry(0, ranges, "FULL1");
+            RegionTableEntry entry = new RegionTableEntry(0, ranges, "FULL1");
 
-        assertDoesNotThrow(() ->
-                regionDAO.insertFullRegion(entry, warehouse)
-        );
+            assertDoesNotThrow(() ->
+                    regionDAO.insertFullRegion(entry, warehouse)
+            );
+        } finally {
+            deleteWarehouseById(warehouseId);
+        }
     }
 }
