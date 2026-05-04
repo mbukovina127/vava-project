@@ -93,6 +93,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         destinationField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
                 toBox.getStyleClass().add("ce-to-box-focused");

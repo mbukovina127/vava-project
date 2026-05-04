@@ -18,6 +18,7 @@ import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.ZoneId;
@@ -81,9 +82,10 @@ public class MyShipmentsController extends BaseController<User> implements Initi
     }
 
     @FXML
-    private void handleAddShipment() {
+    private void handleAddShipment() throws IOException {
         // TODO: navigate to Add Shipment screen for viewedUser
         System.out.println("Add shipment for user " + viewedUser.getId());
+        loadScreen(Screens.COST_ESTIMATION);
     }
 
     private void loadFromService() {
