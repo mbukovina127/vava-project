@@ -151,7 +151,7 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/staticmap?" +
-                        "size=1000x600&" +
+                        "size=1000x300&" +
                         "%s%s" +
                         "&key=%s",
                 markers.toString(),
