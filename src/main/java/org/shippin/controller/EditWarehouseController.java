@@ -107,7 +107,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
         int columnsPerLine = 4;
         int rowIndex = 0;
 
-        addCell(regionGrid, "Rozdelenie PSČ:", 0, rowIndex, 1, 1, "header-cell");
+        addCell(regionGrid, "%edit_warehouse.postal_code_label", 0, rowIndex, 1, 1, "header-cell");
         addCell(regionGrid, "", 1, rowIndex, columnsPerLine, 1, "header-cell");
 
         rowIndex++;
