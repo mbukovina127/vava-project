@@ -238,7 +238,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 				SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
@@ -267,7 +267,7 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
       } catch (SQLException e) {
         e.printStackTrace();
-        new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+        new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
       }
     }
     
