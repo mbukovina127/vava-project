@@ -277,12 +277,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         buttons.setAlignment(Pos.CENTER_LEFT);
 
         Button cancelButton = new Button(bundle().getString("shipment_detail.popup_cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
+        cancelButton.getStyleClass().addAll("secondary-button");
         cancelButton.setPrefSize(140, 42);
         cancelButton.setOnAction(e -> hideModal());
 
         Button saveButton = new Button(bundle().getString("shipment_detail.popup_save"));
-        saveButton.getStyleClass().addAll("popup-button", "popup-primary-button");
+        saveButton.getStyleClass().addAll("tertiary-button");
         saveButton.setPrefSize(160, 42);
         saveButton.setOnAction(e -> {
             String picked = stateCombo.getValue();
