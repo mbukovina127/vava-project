@@ -1,21 +1,35 @@
+import java.util.Locale;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.shippin.controller.utils.ErrorHandler;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.shippin.services.NavigationService;
 
 public class ErrorHandlerTest {
 
+    @BeforeEach
+    void setUp() {
+        NavigationService.setLocale(Locale.ENGLISH);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        NavigationService.setLocale(Locale.ENGLISH);
+    }
+
     @Test
     void validateEmailReturnsErrorForBlankEmail() {
-        assertEquals("Email is required.", ErrorHandler.validateEmail(null));
-        assertEquals("Email is required.", ErrorHandler.validateEmail(""));
-        assertEquals("Email is required.", ErrorHandler.validateEmail("   "));
+        assertEquals("Field is required.", ErrorHandler.validateEmail(null));
+        assertEquals("Field is required.", ErrorHandler.validateEmail(""));
+        assertEquals("Field is required.", ErrorHandler.validateEmail("   "));
     }
 
     @Test
     void validateEmailReturnsErrorForInvalidEmail() {
         assertEquals(
-                "Email format is invalid. Example: test@gmail.com",
+                "Email format is invalid. Example: test@gmail.com.",
                 ErrorHandler.validateEmail("invalid-email")
         );
     }
@@ -27,9 +41,9 @@ public class ErrorHandlerTest {
 
     @Test
     void validatePasswordReturnsErrorForBlankPassword() {
-        assertEquals("Password is required.", ErrorHandler.validatePassword(null));
-        assertEquals("Password is required.", ErrorHandler.validatePassword(""));
-        assertEquals("Password is required.", ErrorHandler.validatePassword("   "));
+        assertEquals("Field is required.", ErrorHandler.validatePassword(null));
+        assertEquals("Field is required.", ErrorHandler.validatePassword(""));
+        assertEquals("Field is required.", ErrorHandler.validatePassword("   "));
     }
 
     @Test
@@ -100,90 +114,83 @@ public class ErrorHandlerTest {
     }
 
     @Test
-    void validateShipmentTypeReturnsErrorForBlankValue() {
-        assertEquals("Select shipment type.", ErrorHandler.validateShipmentType(null));
-        assertEquals("Select shipment type.", ErrorHandler.validateShipmentType(""));
-    }
-
-    @Test
-    void validateShipmentTypeReturnsEmptyStringForSelectedValue() {
-        assertEquals("", ErrorHandler.validateShipmentType("Package"));
-    }
-
-    @Test
     void validateRequiredReturnsErrorForBlankValue() {
-        assertEquals("Destination is required.", ErrorHandler.validateRequired(null, "Destination"));
-        assertEquals("Destination is required.", ErrorHandler.validateRequired("", "Destination"));
+        assertEquals("Field is required.", ErrorHandler.validateRequired(null));
+        assertEquals("Field is required.", ErrorHandler.validateRequired(""));
+        assertEquals("Field is required.", ErrorHandler.validateRequired("   "));
     }
 
     @Test
     void validateRequiredReturnsEmptyStringForFilledValue() {
-        assertEquals("", ErrorHandler.validateRequired("Bratislava", "Destination"));
+        assertEquals("", ErrorHandler.validateRequired("Bratislava"));
     }
 
     @Test
     void validatePositiveDoubleReturnsErrorForBlankValue() {
-        assertEquals("Weight is required.", ErrorHandler.validatePositiveDouble(null, "Weight"));
-        assertEquals("Weight is required.", ErrorHandler.validatePositiveDouble("", "Weight"));
+        assertEquals("Field is required.", ErrorHandler.validatePositiveDouble(null));
+        assertEquals("Field is required.", ErrorHandler.validatePositiveDouble(""));
     }
 
     @Test
     void validatePositiveDoubleReturnsErrorForNegativeValue() {
         assertEquals(
-                "Weight must be greater than or equal to 0.",
-                ErrorHandler.validatePositiveDouble("-1.5", "Weight")
+                "Input must be greater than 0.",
+                ErrorHandler.validatePositiveDouble("-1.5")
         );
     }
 
     @Test
     void validatePositiveDoubleReturnsErrorForNonNumericValue() {
         assertEquals(
-                "Weight must be a number.",
-                ErrorHandler.validatePositiveDouble("abc", "Weight")
+                "Input must be a number.",
+                ErrorHandler.validatePositiveDouble("abc")
         );
     }
 
     @Test
     void validatePositiveDoubleReturnsEmptyStringForValidValue() {
-        assertEquals("", ErrorHandler.validatePositiveDouble("0", "Weight"));
-        assertEquals("", ErrorHandler.validatePositiveDouble("12.5", "Weight"));
-        assertEquals("", ErrorHandler.validatePositiveDouble(" 12.5 ", "Weight"));
+        assertEquals("", ErrorHandler.validatePositiveDouble("0"));
+        assertEquals("", ErrorHandler.validatePositiveDouble("12.5"));
     }
 
     @Test
-    void validatePositiveIntegerReturnsErrorForBlankValue() {
-        assertEquals("Volume is required.", ErrorHandler.validatePositiveInteger(null, "Volume"));
-        assertEquals("Volume is required.", ErrorHandler.validatePositiveInteger("", "Volume"));
+    void validatePercentReturnsErrorForBlankValue() {
+        assertEquals("Field is required.", ErrorHandler.validatePercent(null));
+        assertEquals("Field is required.", ErrorHandler.validatePercent(""));
     }
 
     @Test
-    void validatePositiveIntegerReturnsErrorForNegativeValue() {
+    void validatePercentReturnsErrorForValueOutsideRange() {
         assertEquals(
-                "Volume must be greater than or equal to 0.",
-                ErrorHandler.validatePositiveInteger("-1", "Volume")
+                "Input must be between 0.0 - 1.0",
+                ErrorHandler.validatePercent("1.5")
         );
     }
 
     @Test
-    void validatePositiveIntegerReturnsErrorForDecimalValue() {
+    void validatePercentReturnsEmptyStringForValidValue() {
+        assertEquals("", ErrorHandler.validatePercent("0"));
+        assertEquals("", ErrorHandler.validatePercent("0.75"));
+        assertEquals("", ErrorHandler.validatePercent("1"));
+    }
+
+    @Test
+    void validatePostalCodeReturnsErrorForBlankValue() {
+        assertEquals("Field is required.", ErrorHandler.validatePostalCode(null));
+        assertEquals("Field is required.", ErrorHandler.validatePostalCode(""));
+    }
+
+    @Test
+    void validatePostalCodeReturnsErrorForInvalidValue() {
         assertEquals(
-                "Volume must be an integer.",
-                ErrorHandler.validatePositiveInteger("12.5", "Volume")
+                "Invalid postal code format. Example: 080 01",
+                ErrorHandler.validatePostalCode("abc")
         );
     }
 
     @Test
-    void validatePositiveIntegerReturnsErrorForNonNumericValue() {
-        assertEquals(
-                "Volume must be an integer.",
-                ErrorHandler.validatePositiveInteger("abc", "Volume")
-        );
-    }
-
-    @Test
-    void validatePositiveIntegerReturnsEmptyStringForValidValue() {
-        assertEquals("", ErrorHandler.validatePositiveInteger("0", "Volume"));
-        assertEquals("", ErrorHandler.validatePositiveInteger("12", "Volume"));
-        assertEquals("", ErrorHandler.validatePositiveInteger(" 12 ", "Volume"));
+    void validatePostalCodeReturnsEmptyStringForValidValue() {
+        assertEquals("", ErrorHandler.validatePostalCode("08001"));
+        assertEquals("", ErrorHandler.validatePostalCode("080 01"));
     }
 }
