@@ -3,11 +3,11 @@
    Consistent with shipinn.css base theme
    ============================================ */
 
-/*!* ---------- Root ---------- *!*/
-/*.ce-root {*/
-/*    -fx-background-color: #FFFFFF;*/
-/*    -fx-padding: 32 40 32 40;*/
-/*}*/
+/* ---------- Root ---------- */
+.ce-root {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 32 40 32 40;
+}
 
 /* ---------- Title row ---------- */
 .ce-title-row {
@@ -15,17 +15,17 @@
 }
 
 
-/*.ce-date-label {*/
-/*    -fx-font-family: 'System';*/
-/*    -fx-font-size: 13px;*/
-/*    -fx-font-weight: bold;*/
-/*    -fx-text-fill: #2C2C2C;*/
-/*}*/
+.ce-date-label {
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C2C2C;
+}
 
-/*.ce-date-field {*/
-/*    -fx-pref-width: 130;*/
-/*    -fx-pref-height: 34;*/
-/*}*/
+.ce-date-field {
+    -fx-pref-width: 130;
+    -fx-pref-height: 34;
+}
 
 /* ---------- Toggle checkboxes (Small Package / Shipment) ---------- */
 .ce-toggle-row {
@@ -65,24 +65,24 @@
 }
 
 /* ---------- Shared input-field (from shipinn.css, duplicated for standalone use) ---------- */
-/*.input-field {*/
-/*    -fx-pref-height: 36;*/
-/*    -fx-background-color: #FFFFFF;*/
-/*    -fx-border-color: #D8C0AE;*/
-/*    -fx-border-width: 1.5;*/
-/*    -fx-border-radius: 6;*/
-/*    -fx-background-radius: 6;*/
-/*    -fx-font-family: 'System';*/
-/*    -fx-font-size: 13px;*/
-/*    -fx-text-fill: #1E1E1E;*/
-/*    -fx-padding: 0 12 0 12;*/
-/*    -fx-prompt-text-fill: #C4A899;*/
-/*}*/
+.input-field {
+    -fx-pref-height: 36;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8C0AE;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: 'System';
+    -fx-font-size: 13px;
+    -fx-text-fill: #1E1E1E;
+    -fx-padding: 0 12 0 12;
+    -fx-prompt-text-fill: #C4A899;
+}
 
-/*.input-field:focused {*/
-/*    -fx-border-color: #9A7A6E;*/
-/*    -fx-effect: dropshadow(gaussian, rgba(154,122,110,0.25), 6, 0, 0, 0);*/
-/*}*/
+.input-field:focused {
+    -fx-border-color: #9A7A6E;
+    -fx-effect: dropshadow(gaussian, rgba(154,122,110,0.25), 6, 0, 0, 0);
+}
 
 /* ---------- From ComboBox ---------- */
 .ce-combo {
@@ -112,11 +112,6 @@
     -fx-pref-height: 36;
 }
 
-.ce-to-box-focused {
-    -fx-border-color: #9A7A6E;
-    -fx-effect: dropshadow(gaussian, rgba(154,122,110,0.25), 6, 0, 0, 0);
-}
-
 .ce-to-field {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -129,7 +124,6 @@
 }
 
 .ce-to-field:focused {
-    -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-effect: none;
 }
@@ -147,10 +141,10 @@
     -fx-text-fill: #1E1E1E;
 }
 
-/*!* ---------- Separator ---------- *!*/
-/*.ce-separator {*/
-/*    -fx-background-color: #D8C0AE;*/
-/*}*/
+/* ---------- Separator ---------- */
+.ce-separator {
+    -fx-background-color: #D8C0AE;
+}
 
 /* ---------- Additional fees header ---------- */
 .ce-fees-header-row {
@@ -267,10 +261,10 @@
 }
 
 /* ---------- Status label ---------- */
-/*.status-label {*/
-/*    -fx-text-fill: #cc0000;*/
-/*    -fx-font-size: 12px;*/
-/*}*/
+.status-label {
+    -fx-text-fill: #cc0000;
+    -fx-font-size: 12px;
+}
 
 /* ---------- Bottom row ---------- */
 .ce-bottom-row {
@@ -278,42 +272,4 @@
 }
 
 
-
-/* ── Cost Breakdown grid ── */
-.cb-grid {
-    -fx-padding: 16 24 8 0;
-}
-
-/* Ľavý stĺpec — popis */
-.cb-bold {
-    -fx-font-family: 'System';
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1E1E1E;
-}
-
-.cb-italic {
-    -fx-font-style: italic;
-}
-
-/* Pravý stĺpec — hodnota */
-.cb-value {
-    -fx-font-family: 'System';
-    -fx-font-size: 13px;
-    -fx-text-fill: #1E1E1E;
-    -fx-alignment: CENTER_RIGHT;
-}
-
-/* Separator — tenká hnedá čiara */
-.cb-separator-total {
-    -fx-background-color: #1E1E1E;
-    -fx-pref-height: 2;
-}
-
-/* Celková suma */
-.cb-total {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1E1E1E;
-}
 

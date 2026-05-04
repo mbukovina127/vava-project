@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.database.dao.ShipmentDAO;
@@ -15,11 +14,6 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.ServiceType;
 import org.shippin.services.ShipmentService;
-import org.shippin.database.dao.ShipmentDAO;
-import org.shippin.database.dao.WarehouseDAO;
-import org.shippin.domain.BriefWarehouse;
-import org.shippin.domain.Shipment;
-import org.shippin.services.ShipmentService;
 
 import org.shippin.app.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
@@ -27,8 +21,6 @@ import org.shippin.controller.MapPickerController;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.*;
 
 import static java.lang.Double.parseDouble;
@@ -45,7 +37,6 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Postal codes
     @FXML private ComboBox<String> fromCombo;
     @FXML private TextField destinationField;
-    @FXML private HBox toBox;
 
     // Size row
     @FXML private TextField weightField;
@@ -93,13 +84,6 @@ public class CostEstimationController extends BaseController<Void> implements In
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        destinationField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (isNowFocused) {
-                toBox.getStyleClass().add("ce-to-box-focused");
-            } else {
-                toBox.getStyleClass().remove("ce-to-box-focused");
-            }
-        });
     }
 
     private void buildServiceUI(List<AdditionalService> allServices)
@@ -241,6 +225,7 @@ public class CostEstimationController extends BaseController<Void> implements In
         statusLabelFuel.setText("");
         statusLabelToll.setText("");
     }
+
     @FXML
     private void onComputeCost() throws IOException
     {
@@ -251,12 +236,12 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-        String destinationError = ErrorHandler.validatePostalCode(destination);
-        String weightError = ErrorHandler.validatePositiveDouble(weightText);
-        String volumeError = ErrorHandler.validatePositiveDouble(volumeText);
+        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
+        String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
+        String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
 
-        String fuelSurchargeError = ErrorHandler.validatePercent(fuelSurchargeText);
-        String tollError = ErrorHandler.validatePercent(tollText);
+        String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
+        String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
 
         // SYNTACTICAL INPUT CHECKING
 
@@ -267,7 +252,6 @@ public class CostEstimationController extends BaseController<Void> implements In
                 || !volumeError.isEmpty()
                 || !fuelSurchargeError.isEmpty()
                 || !tollError.isEmpty()
-
         )
         {
             statusLabelDestination.setText(destinationError);
