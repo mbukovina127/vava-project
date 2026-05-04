@@ -1,8 +1,9 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ScreensTest {
 
@@ -59,5 +60,7 @@ public class ScreensTest {
         assertEquals("/views/EditWarehouse.fxml", Screens.resolveScreen(Screens.EDIT_WAREHOUSE));
         assertEquals("/views/ShipmentDetail.fxml", Screens.resolveScreen(Screens.SHIPMENT_DETAIL));
         assertEquals("/views/SmallPriceListView.fxml", Screens.resolveScreen(Screens.SMALL_PRICE_LIST_VIEW));
+        assertEquals("/views/MyShipments.fxml", Screens.resolveScreen(Screens.MY_SHIPMENTS));
+        assertEquals("/views/MapOfShipments.fxml", Screens.resolveScreen(Screens.MAP_OF_SHIPMENTS));
     }
 }
