@@ -84,7 +84,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 			this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
@@ -195,25 +195,25 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     	try {
     		String title = documentTitleField.getText();  		
     		if(!InputValidator.isNotBlank(title)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "generic.regex.blank_name");
     			return;
     		} else if(!InputValidator.isValidLength(title, 20)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.name_too_long");
     			return;
     		}
     		
     		String pickup = pickupPlaceField.getText(); 		
     		if(!InputValidator.isNotBlank(pickup)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "generic.regex.blank_pickup_place");
     			return;
     		} else if(!InputValidator.isValidLength(pickup, 30)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.pickup_too_long");
     			return;
     		}
     		
     		String postalCodeString = storageRegionField.getText();
     		if(!InputValidator.isPostalCode(postalCodeString)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid postal code: postal code must be a valid postal code value (examples: 917 08, 91708, 011 02).");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.regex.invalid_postal_code");
     			return;
     		}
     		
@@ -226,11 +226,11 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is an unknown problem with the database.");
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Coordinates fetch problem: problem during fetching the coordinates of the warehouse. Double check the correctness of the entered postal code.");
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.map.postal_code_to_coordinates_failed");
 		}
     }
 }
