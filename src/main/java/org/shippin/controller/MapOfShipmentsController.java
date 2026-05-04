@@ -10,6 +10,7 @@ import org.shippin.domain.Shipment;
 import org.shippin.services.MapService;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
+import org.shippin.domain.enums.State;
 
 import java.net.URL;
 import java.util.List;
@@ -51,8 +52,15 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     private void loadAllShipments() {
         try {
             shipments = shipmentService.getAllShipments();
-            System.out.println("DEBUG: Loaded " + shipments.size() + " shipments");
-            log.info("✅ Loaded {} shipments", shipments.size());
+
+            //ukáže len ongoing shipments
+            shipments = shipments.stream()
+                    .filter(s -> s.getState() != State.DELIVERED &&
+                            s.getState() != State.FAILED)
+                    .toList();
+
+            System.out.println("DEBUG: Loaded " + shipments.size() + " ongoing shipments");
+            log.info("✅ Loaded {} ongoing shipments", shipments.size());
             // ...
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -99,6 +107,7 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
             if (s.getStartCoordinate() != null) {
                 fromLat = s.getStartCoordinate().getX();
                 fromLon = s.getStartCoordinate().getY();
+
 
                 /*
                 // FILTER NA Slovensko + okolie
