@@ -11,6 +11,7 @@ import org.shippin.controller.utils.WarehouseManagementPopup;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.exception.IncompatibleTablesException;
+import org.shippin.exception.ValidationException;
 import org.shippin.services.WarehouseParsingService;
 import org.shippin.services.WarehouseService;
 import org.shippin.util.io.FilePicker;
@@ -151,7 +152,14 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 	                new FileChooser.ExtensionFilter("XML files", "*.xml")
 	        );
 	        if (file == null) { return; }
-	        PriceListFormatted priceListFormatted = WarehouseParsingService.getInstance().parsePriceList(file);
+	        PriceListFormatted priceListFormatted = null;
+			try {
+				priceListFormatted = WarehouseParsingService.getInstance().parsePriceList(file);
+			} catch (ValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
+			}
 	        if (priceListFormatted == null) { return; }
 	        controller.setSelectedPriceListFormatted(priceListFormatted);
 	        ((Label) addPriceListButton.getUserData()).setText(file.getName());
@@ -170,7 +178,14 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 	                new FileChooser.ExtensionFilter("XML files", "*.xml")
 	        );
 	        if (file == null) { return; }
-	        RegionTableFormatted regionTableFormatted = WarehouseParsingService.getInstance().parseRegionTable(file);
+	        RegionTableFormatted regionTableFormatted = null;
+			try {
+				regionTableFormatted = WarehouseParsingService.getInstance().parseRegionTable(file);
+			} catch (ValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
+			}
 	        if (regionTableFormatted == null) { return; }
 	        controller.setSelectedRegionTableFormatted(regionTableFormatted);
 	        ((Label) addRegionTableButton.getUserData()).setText(file.getName());
