@@ -109,8 +109,8 @@ public class WarehouseDAO extends BaseDAO {
      */
     public void upsertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-        INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file, is_active)
-        VALUES (?,?,?, true)
+        INSERT INTO Warehouse(warehouse_id, warehouse_region_name, price_list_file, storage_region, is_active)
+        VALUES (?,?,?,?,true)
         ON CONFLICT(warehouse_id)
         DO UPDATE SET
             warehouse_region_name = EXCLUDED.warehouse_region_name,
@@ -168,8 +168,8 @@ public class WarehouseDAO extends BaseDAO {
     
     public int insertWarehouse(Warehouse w) throws SQLException {
         String sql = """
-        INSERT INTO Warehouse(warehouse_region_name, price_list_file, is_active)
-        VALUES (?,?, true)
+        INSERT INTO Warehouse(warehouse_region_name, price_list_file, storage_region, is_active)
+        VALUES (?,?,?,true)
         RETURNING warehouse_id;
         """;
 
