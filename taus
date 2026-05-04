@@ -1,0 +1,1973 @@
+[33mcommit 22c0791cb9aa5d98be97d32f114dee4122a0aeba[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mVAVA-56-Frontend[m[33m)[m
+Author: martin <mato.kvietok@gmail.com>
+Date:   Mon May 4 10:46:14 2026 +0200
+
+    Refactor: buttons and ShipmentDetail navigation
+
+[33mcommit 5391280cf905fa17c6e311c8a76dca10c9d7f5a3[m[33m ([m[1;31morigin/develop[m[33m)[m
+Merge: 410fc02 a6b9e93
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 10:40:53 2026 +0200
+
+    Merge pull request #87 from mbukovina127/VAVA-backend-Martin
+    
+    Vava backend martin
+
+[33mcommit a6b9e938942098d4edf50b5d58dc5ce46f7634c5[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 10:39:18 2026 +0200
+
+    Fix merge
+
+[33mcommit 0442ad7c47aaef2cc52318b7625fc15c0038b42f[m
+Merge: 70b7088 410fc02
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 10:28:25 2026 +0200
+
+    Merge branch 'develop' into VAVA-backend-Martin
+
+[33mcommit 410fc025729f7ba7594406f73ef91dff1baf9966[m
+Merge: 20f80dc acf8183
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 04:33:24 2026 +0200
+
+    Merge pull request #86 from mbukovina127/feature/VAVA-83-WarehouseScreens
+    
+    Feature/vava 83 warehouse screens
+
+[33mcommit acf81836b7a4bc4347e6c0a7ec60a8bcf9ce8733[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 04:32:01 2026 +0200
+
+    Fixed tests
+
+[33mcommit e141120a31a936c2a6fdf689afa86ee1f9d65fb6[m
+Merge: 0debf2e 20f80dc
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 04:02:09 2026 +0200
+
+    Merge branch 'develop' into feature/VAVA-83-WarehouseScreens
+
+[33mcommit 0debf2ec5fd30e6f5284c039064b1cada5312fe0[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 03:44:41 2026 +0200
+
+    Fixed further the localization of edit warehouse screen
+
+[33mcommit 408710c1165d8ab986f2beac1daf932352802ff0[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 03:40:22 2026 +0200
+
+    Fixed localization in Edit warehouse
+
+[33mcommit 70b708872cc528ed3c71befa59e2e89f9a019939[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 03:18:27 2026 +0200
+
+    fixed a mistake in warehouse dao
+
+[33mcommit b2b70b9d05fdfe4c510d4767e54ebbf10839ae05[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Mon May 4 02:20:47 2026 +0200
+
+    Added postal code and coordinates for warehouse insertion
+
+[33mcommit 20f80dc57a9af5e27ec991a70415ee3c14a41c4c[m
+Merge: e1b5d7c e438c43
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 02:06:59 2026 +0200
+
+    Merge pull request #82 from mbukovina127/feature/shipment-detail-map
+    
+    feat: MapOfShipments feature - display all shipments on Google Maps
+
+[33mcommit e438c4363bd96facc070db048cdcef4c938a3183[m
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 02:05:32 2026 +0200
+
+    fix/build text not passing
+
+[33mcommit 29d7440dc739cb547d4ced9eafa1b9d7fb88f977[m
+Merge: d021ae1 e1b5d7c
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Mon May 4 01:59:10 2026 +0200
+
+    Merge branch 'develop' into feature/shipment-detail-map
+
+[33mcommit e1b5d7cd0ea48eab2c1923a639aac08a1f3e9782[m
+Merge: 40b2f5f 0e08671
+Author: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+Date:   Sun May 3 23:23:16 2026 +0200
+
+    Merge pull request #85 from mbukovina127/VAVA-56-Frontend
+    
+    Vava sk loc fix
+
+[33mcommit 0e086718dc39ac58ecc679d4f481fe787b7de024[m
+Author: martin <mato.kvietok@gmail.com>
+Date:   Sun May 3 23:22:02 2026 +0200
+
+    Refactor: Postal code check
+
+[33mcommit 2a571960a9d729d32aae25a6012ef9561e08d6a2[m
+Author: martin <mato.kvietok@gmail.com>
+Date:   Sun May 3 22:32:17 2026 +0200
+
+    Refactor: sk localization
+
+[33mcommit 40b2f5f1957080e55f039854e199c7359ebdb751[m
+Merge: 8e5230e 88128d8
+Author: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+Date:   Sun May 3 21:59:45 2026 +0200
+
+    Merge pull request #84 from mbukovina127/VAVA-56-Frontend
+    
+    VAVA-56-style/errors
+
+[33mcommit 88128d881e3fa23f153a55af2ee2d27a3f568cd4[m
+Author: martin <mato.kvietok@gmail.com>
+Date:   Sun May 3 21:52:40 2026 +0200
+
+    Refactor: error handling labels fix on login,register and CostEstimation
+
+[33mcommit 096dabe6d602862cb698f4ac149d5990c88a1a86[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Sun May 3 19:12:03 2026 +0200
+
+    implemented soft delete for UserDAO
+
+[33mcommit 22159c416ac826549d066445847fa2e6c783621f[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Sun May 3 19:03:21 2026 +0200
+
+    implemented soft delete for WarehouseDAO
+
+[33mcommit d021ae1830daa44c80572e9ca3301093d9b35895[m
+Author: Maximusinko <maximilian.bumbera@gmail.com>
+Date:   Sun May 3 18:08:28 2026 +0200
+
+    feat: MapOfShipments feature - display all shipments on Google Maps
+
+[33mcommit caeb3526d2263b2bd2c62116f311e8476c1af685[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 17:24:07 2026 +0200
+
+    Implementation of Daily Cost Summaries, Calculations, Cost Breakdown, Shipment details, Daily cost summaries and very uninportant warehouses (#74)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Added service types to database and dao objects
+    
+    * Cost estimation final implemntation (#69)
+    
+    * added descriptions and service types to dao services
+    
+    * fixed arguments order
+    
+    * updated CostEstimationController to load services dynamically from DB
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    
+    * VAVA-82 Daily cost summaries (#70)
+    
+    * Connected detailSummary+overview
+    added more detail overview
+    aded css for detail overview
+     replaced setDate() by loadScreen(scr,date)
+    
+    * fixed navbar buttons to summaries
+    loadScreen() now calls setActive() to change navbar item as active for current screen
+    
+    * fixed onSummaryRowClicked
+    
+    * Vava-56-frontend+CostBreakdown (#72)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Refactor: cleaning css,buttons,logo
+    
+    * Refactor: CostBreakdown partial sums in rows (including Servicies)
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    
+    * Revert "Merge branch 'main' into VAVA-backend-Martin"
+    
+    This reverts commit 4a3e26e68a8ff8e73540dd73371a17c7d5c3396f, reversing
+    changes made to fd0b3107a1fdb4f8c06f6ae1072d61bae332fca1.
+    
+    ---------
+    
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    Co-authored-by: ZEPHY <xbukovinam@stuba.sk>
+    
+    * VAVA-81 completing shipment details (#71)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * ShipmentDetail: added users to state history
+    
+    * Restrictions for state changes added
+    
+    * Shipmentdetail -> breakdown working but it needs a back button probably
+    
+    * Added navigation to daily cost summaries
+    
+    * VAVA-83 warehouse screens (#73)
+    
+    * Almost finished, few tweaks left
+    
+    * Screens finished
+    
+    * Functional screens, but not stylized enough.
+    
+    * Stylization of warehouse screens
+    
+    ---------
+    
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    
+    * My shipmets screen added (#79)
+    
+    fixed localization ...diky juro
+    
+    * Added project license
+    
+    * Feature/vava 83 warehouse screens (#80)
+    
+    * Almost finished, few tweaks left
+    
+    * Screens finished
+    
+    * Functional screens, but not stylized enough.
+    
+    * Stylization of warehouse screens
+    
+    * Added popups and edge cases
+    
+    * Fixed merge
+    
+    ---------
+    
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    
+    * added postal code
+    
+    Opravil som jurovi jebnuty sk subor 10 krat
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    Co-authored-by: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+
+[33mcommit 8e5230ea206740afee7994e2cdec0e365eb137aa[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sun May 3 17:23:23 2026 +0200
+
+    added postal code
+    
+    Opravil som jurovi jebnuty sk subor 10 krat
+
+[33mcommit 35bdb7bc1aefe3e78508a32eef62f7877776cad7[m
+Merge: 6656eb8 b296887
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 16:49:46 2026 +0200
+
+    Merge branch 'main' into develop
+
+[33mcommit 6656eb83844eb1c2766ed67e93c2b87805a3a979[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 16:28:49 2026 +0200
+
+    Feature/vava 83 warehouse screens (#80)
+    
+    * Almost finished, few tweaks left
+    
+    * Screens finished
+    
+    * Functional screens, but not stylized enough.
+    
+    * Stylization of warehouse screens
+    
+    * Added popups and edge cases
+    
+    * Fixed merge
+    
+    ---------
+    
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+
+[33mcommit 586c8f4922d744168e4dbb3d03237c5663a4cf0f[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sun May 3 15:30:42 2026 +0200
+
+    Fixed merge
+
+[33mcommit caa8bf7d659c73c19534f898b292ac7a7000482f[m
+Author: martin <mato.kvietok@gmail.com>
+Date:   Sun May 3 15:28:24 2026 +0200
+
+    Refactor: code, icons, added error handling labels
+
+[33mcommit cca471fce6348567aa8d42af3d4dd858fc161566[m
+Merge: e730b3e 0d7543a
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Sun May 3 15:24:16 2026 +0200
+
+    Merge branch 'develop' into feature/VAVA-83-WarehouseScreens
+
+[33mcommit b2968879359e2ccfd3cc1fa3a4e97d82776f573d[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 14:35:46 2026 +0200
+
+    fix ShipmentDaoTest for issue 55 (#75)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Added service types to database and dao objects
+    
+    * fix ShipmentDaoTest for issue 55
+    
+    * Cost estimation final implemntation (#69)
+    
+    * added descriptions and service types to dao services
+    
+    * fixed arguments order
+    
+    * updated CostEstimationController to load services dynamically from DB
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    
+    * VAVA-82 Daily cost summaries (#70)
+    
+    * Connected detailSummary+overview
+    added more detail overview
+    aded css for detail overview
+     replaced setDate() by loadScreen(scr,date)
+    
+    * fixed navbar buttons to summaries
+    loadScreen() now calls setActive() to change navbar item as active for current screen
+    
+    * fixed onSummaryRowClicked
+    
+    * Vava-56-frontend+CostBreakdown (#72)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Refactor: cleaning css,buttons,logo
+    
+    * Refactor: CostBreakdown partial sums in rows (including Servicies)
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    
+    * Revert "Merge branch 'main' into VAVA-backend-Martin"
+    
+    This reverts commit 4a3e26e68a8ff8e73540dd73371a17c7d5c3396f, reversing
+    changes made to fd0b3107a1fdb4f8c06f6ae1072d61bae332fca1.
+    
+    ---------
+    
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    Co-authored-by: ZEPHY <xbukovinam@stuba.sk>
+    
+    * VAVA-81 completing shipment details (#71)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * ShipmentDetail: added users to state history
+    
+    * Restrictions for state changes added
+    
+    * Shipmentdetail -> breakdown working but it needs a back button probably
+    
+    * Added navigation to daily cost summaries
+    
+    * VAVA-83 warehouse screens (#73)
+    
+    * Almost finished, few tweaks left
+    
+    * Screens finished
+    
+    * Functional screens, but not stylized enough.
+    
+    * Stylization of warehouse screens
+    
+    ---------
+    
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    
+    * fix PriceListDao test
+    
+    * fix RegionDao test
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    Co-authored-by: IvetaLeskova <xleskova@stuba.sk>
+    Co-authored-by: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+
+[33mcommit 0d7543a5525bc5d0074ccd958174bd00c783f898[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sun May 3 14:25:27 2026 +0200
+
+    Added project license
+
+[33mcommit 6563d145f943190e268f6d9dee7dac0ff212cb00[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 14:14:34 2026 +0200
+
+    My shipmets screen added (#79)
+    
+    fixed localization ...diky juro
+
+[33mcommit e730b3ecf6afb0e2d370c5dcfa8f824110ce3d07[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sun May 3 11:43:52 2026 +0200
+
+    Added popups and edge cases
+
+[33mcommit bf85c2022db8b8527d6c7da7d1c8eeddcb5151b2[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 01:14:01 2026 +0200
+
+    VAVA-83 warehouse screens (#73)
+    
+    * Almost finished, few tweaks left
+    
+    * Screens finished
+    
+    * Functional screens, but not stylized enough.
+    
+    * Stylization of warehouse screens
+    
+    ---------
+    
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+
+[33mcommit 2937f2c1ee17403096b5fd88c53d46f9f8e02080[m[33m ([m[1;31morigin/feature/VAVA-83-WarehouseScreens[m[33m)[m
+Merge: 512cbfe dc368e2
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sun May 3 01:12:48 2026 +0200
+
+    Merge remote-tracking branch 'origin/develop' into feature/VAVA-83-WarehouseScreens
+
+[33mcommit dc368e26dfa8352580570118cf566fe9773a042a[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sun May 3 01:09:55 2026 +0200
+
+    Added navigation to daily cost summaries
+
+[33mcommit 593a6b0f0e461078bd14fbde15c9d12e1a11dc8f[m
+Merge: b4f1cb9 2ffc9b3
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sun May 3 00:48:50 2026 +0200
+
+    Merged a very big conflict with main
+
+[33mcommit b4f1cb97b0367687c8c8a4a037e4c2b3788c3d8b[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun May 3 00:26:30 2026 +0200
+
+    VAVA-81 completing shipment details (#71)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * ShipmentDetail: added users to state history
+    
+    * Restrictions for state changes added
+    
+    * Shipmentdetail -> breakdown working but it needs a back button probably
+
+[33mcommit fde3d346dcdf974206e666ee505972ad6166c910[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Sun May 3 00:13:15 2026 +0200
+
+    VAVA-82 Daily cost summaries (#70)
+    
+    * Connected detailSummary+overview
+    added more detail overview
+    aded css for detail overview
+     replaced setDate() by loadScreen(scr,date)
+    
+    * fixed navbar buttons to summaries
+    loadScreen() now calls setActive() to change navbar item as active for current screen
+    
+    * fixed onSummaryRowClicked
+    
+    * Vava-56-frontend+CostBreakdown (#72)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Refactor: cleaning css,buttons,logo
+    
+    * Refactor: CostBreakdown partial sums in rows (including Servicies)
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    
+    * Revert "Merge branch 'main' into VAVA-backend-Martin"
+    
+    This reverts commit 4a3e26e68a8ff8e73540dd73371a17c7d5c3396f, reversing
+    changes made to fd0b3107a1fdb4f8c06f6ae1072d61bae332fca1.
+    
+    ---------
+    
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+    Co-authored-by: ZEPHY <xbukovinam@stuba.sk>
+
+[33mcommit 2ffc9b38fcdf88f55b9adf532b23217c71aa7808[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+Date:   Sat May 2 23:28:31 2026 +0200
+
+    Vava-56-frontend+CostBreakdown (#72)
+    
+    * Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    
+    * Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+    
+    * FIX: db creation (#66)
+    
+    FEAT: inserts added
+    
+    * VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+    
+    * Refactor: cleaning css,buttons,logo
+    
+    * Refactor: CostBreakdown partial sums in rows (including Servicies)
+    
+    ---------
+    
+    Co-authored-by: xnovomesky <xnovomesky@stuba.sk>
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+    Co-authored-by: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+    Co-authored-by: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+
+[33mcommit 1bd0359d2e3ccaeef70f89901ef26a9a80161497[m
+Author: xnovomesky <xnovomesky@stuba.sk>
+Date:   Sat May 2 23:22:55 2026 +0200
+
+    Cost estimation final implemntation (#69)
+    
+    * added descriptions and service types to dao services
+    
+    * fixed arguments order
+    
+    * updated CostEstimationController to load services dynamically from DB
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+
+[33mcommit 512cbfef9b4af023e2f69fff647e531d56ec3465[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sat May 2 22:47:11 2026 +0200
+
+    Stylization of warehouse screens
+
+[33mcommit 1f29989a0680dc243bdd0de0c3e56be3c4c938d4[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sat May 2 20:35:52 2026 +0200
+
+    Added service types to database and dao objects
+
+[33mcommit 0298cec6116515604c4f651e331c6c56e0350166[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sat May 2 19:04:34 2026 +0200
+
+    Functional screens, but not stylized enough.
+
+[33mcommit ba09ce11d3ae20aa74aa4552bbbc780a019f999a[m
+Merge: 6545c96 78fb666
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Sat May 2 18:17:41 2026 +0200
+
+    Merge pull request #68 from mbukovina127/develop
+    
+    Develop
+
+[33mcommit 6545c96c8c0865f2dfe853f2085b3531a20659d1[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sat May 2 18:13:55 2026 +0200
+
+    Screens finished
+
+[33mcommit 78fb6660f6f0102c674aaea6f78e0d3f793bb943[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sat May 2 18:06:26 2026 +0200
+
+    VAVA-81 Shipment detail mostly implemented (#67)
+    
+    * lots of changes
+    
+     and refractors of DAOs
+    
+    and logging
+    
+    * fix/ float casting
+
+[33mcommit 1fa7f3b8dbf172948bed227da7c38dac9c487606[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Sat May 2 18:05:30 2026 +0200
+
+    FIX: db creation (#66)
+    
+    FEAT: inserts added
+
+[33mcommit 38b24818c9d48935f3fc5698abb148575a07659d[m
+Author: xcernickaj <jurko.cnk@gmail.com>
+Date:   Sat May 2 17:08:00 2026 +0200
+
+    Almost finished, few tweaks left
+
+[33mcommit 74f1597a4ba107fc3aa1b6fb4b8816aa28755a23[m
+Author: Juraj Černička <145677632+xcernickaj@users.noreply.github.com>
+Date:   Sat May 2 12:10:38 2026 +0200
+
+    Warehouse implementation wip (#64)
+    
+    * Half done edit warehouse screen, warehouse management screen, and edit
+    small package list screen.
+    
+    * Merge branch 'VAVA-Parser-Marcel' of
+    https://github.com/mbukovina127/vava-project.git into VAVA-Parser-Marcel
+
+[33mcommit 018929d7ce39c86ad932a3dcb55a7fd165283bcd[m
+Author: xnovomesky <xnovomesky@stuba.sk>
+Date:   Sat May 2 11:58:48 2026 +0200
+
+    Shipment processing implementation (#60)
+    
+    * added small price list path
+    
+    * changed test for postal_codes, from "Postal codes:" to "Locations:"
+    
+    * added warehouseId and remvoed shipment_opt from CostEstimationInput
+    
+    * removed shipment Type selection
+    
+    * removed SMALL_PACKAGE and SHIPMENT
+    added serviceId mapping
+    
+    * removed shipment type toggle, date (will be set to current timestamp)
+    added warehouse list inicialization + serviceId init
+    
+    * added shipment creation, and saving to database
+    removed SMALL_PACKAGE options
+    
+    * adapted new dao refarcor
+    moved shipment calculation from CostBreakdownController to CostEstimationController
+    
+    * refactored estimateCost() from Shipment to ShipmentService
+    
+    * VAVA-81 WIP shipment details (#62)
+    
+    * Lot of changes:
+    
+    ShipmentDetails now works with Shipment but didn't test it yet we also have a problem with missing testing data in database
+    
+    Refractored Maps into a seperate service
+    
+    Shipment has new weight and volume attributes and updated the dao and a script with the changes
+    
+    also changed Cost estimation controller and cost breakdown to accept the Shipment object
+    
+    * Removed old depricated Session service
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+    Co-authored-by: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+
+[33mcommit 554bcadb51e55cddd33cac3bd7f2a29908ccf234[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Fri May 1 20:42:27 2026 +0200
+
+    feature: improved authentification
+
+[33mcommit edb852db45c633ce121a4790cad735bf65b4a019[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Fri May 1 20:26:20 2026 +0200
+
+    fix dao objects are now singletons and controllers rely only on services
+
+[33mcommit 73725c1c231a49dd452e7a0428db877d4768a15a[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri May 1 16:58:02 2026 +0200
+
+    VAVA-79 refractoring (#58)
+    
+    * VAVA-70 localization files and other stuff implemented
+    
+    * Button for changing languages added
+    
+    * Merged with main and lots of fixes
+    
+    * refractored a few things
+
+[33mcommit df704de4b5df14fde1b15fa40fe89aedb5e773e8[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Fri May 1 16:45:17 2026 +0200
+
+    get methods for small price list (#57)
+    
+    * added getSmallPriceListEntry(weight)
+    added getSmallPriceList
+
+[33mcommit 15bac9528b67c352bcaf865dc50271c72c0537cb[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Fri May 1 16:39:21 2026 +0200
+
+    Fix duplicate code
+
+[33mcommit 78de94121a1a63e9d296daffa1cf5f7dbd293bf8[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri May 1 13:33:12 2026 +0200
+
+    VAVA-70 Localization (#44)
+    
+    * VAVA-70 localization files and other stuff implemented
+    
+    * Button for changing languages added
+    
+    * Merged with main and lots of fixes
+    
+    Tests something is wrong with dao
+
+[33mcommit b3f26927fd3da6fb30665eeda310c393f887fb5b[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri May 1 12:17:12 2026 +0200
+
+    VAVA-76 Authentification service (#43)
+    
+    * VAVA-76 functions for restricting access to pages and disabling buttons added
+    
+    * Added database implementation
+    
+    * Implemented role changing
+
+[33mcommit a4906fe94b454034cdd4ec67e5f6583b71163abe[m
+Author: Maximilián Bumbera <xbumbera@stuba.sk>
+Date:   Thu Apr 30 22:37:07 2026 +0200
+
+    Map implementation with Google Maps API (#42)
+    
+    * ShipmentDetail map implementation with Google Maps API
+    
+    * zabudol som gradle kts more
+
+[33mcommit f3e121bfb46ed693907cc62ddc94604adc48c8f7[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Thu Apr 30 19:50:33 2026 +0200
+
+    feat: addition of missing queries (#41)
+    
+    rest of the queries done
+
+[33mcommit 0b3fe29bb7594df335ea95013f0af409f381ec12[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Wed Apr 29 21:40:11 2026 +0200
+
+    fix ffs finally
+
+[33mcommit dbf193ff2bb2e8df4bb27dfb97a9e0662fc4b54c[m
+Author: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+Date:   Wed Apr 29 21:23:22 2026 +0200
+
+    Feature/vava 56 new fxml screens (#27)
+    
+    * Added new screen did not run it yet
+    
+    * imporved input validation
+    
+    * Feat: add svg icons
+    
+    * Refactor: finalized Menu screen (+ .css),MenuController working and ready for next screens
+    
+    * Refactor: finalized Cost Estimation Screen according Figma design
+    
+    * Fix: icon formats
+    
+    * fix import
+    
+    * Semi-dynamic menu generation completed
+    
+    Bug: don't know how to set light versions of the buttons
+    
+    * Ligh and dark version of menu items working
+    
+    * Refactor: fixed syntactical error handling - login screen
+    
+    * Refactor: fixed syntactical error handling - login and register screen
+    
+    * Feat: added working BaseController for data transfer between screens, CostBreakdown,UserManagment screen prototype
+    
+    * Refactor: error handling and cleaning
+    
+    * fix CostEstimation can be opened in scene builder
+    
+    * feature/ imporoved cost estimation screen
+    
+    * Feat: add new screens [DailyCostSummaries,DailyCostsSummaryDetail,WarehouseManagment]
+    
+    * Warehouse Management screen. Including popups.
+    
+    * Refactor: show password on login,register + all functions in CostEstimation working
+    
+    * Fix: fixed bug with popups not darkening the whole screen correctly
+    
+    * Feat: Pridanie obrazovky "Edit warehouse"
+    
+    * Refactor: code refactor, show password button added
+    
+    * Fix: fixed scrollbar and phantom bug on "Edit warehouse" screen
+    
+    * Fix: Scrollbar in "Warehouse management" is now more like in figma
+    
+    * Fix: "Warehouse management" screen changing font size fixed
+    
+    * Feat: ShipmentDetail screen ready to use with popup
+    
+    * Feat: Added "Small price list" screen.
+    
+    * merge from main I don't have fucking clue what this does
+    
+    ---------
+    
+    Co-authored-by: ZEPHY <xbukovinam@stuba.sk>
+    Co-authored-by: Viktória Latičová <xlaticova@stuba.sk>
+    Co-authored-by: xcernickaj <jurko.cnk@gmail.com>
+
+[33mcommit a9b6219008406f315fc3c6f6e03ee563be22ad45[m
+Author: xnovomesky <xnovomesky@stuba.sk>
+Date:   Wed Apr 29 17:34:01 2026 +0200
+
+    VAVA-66 xml exporter (#39)
+    
+    * added XmlParser with implementations in PriceListXmlParser,RegionTableXmlParser, SmallPriceListXmlParser
+    
+    * added xml test files
+    
+    * added xml test to ParserTest
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+
+[33mcommit f5130ff0750db02a6719cef8da219290531c2366[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Wed Apr 29 17:13:55 2026 +0200
+
+    Vava backend martin (#40)
+    
+    * added shipment DAO, added brief warehouse to warehouseDAO
+    
+    * added getter for all services offered
+    
+    * fixed insertPriceListEntry missing required regionIDfor insert
+    
+    fixed getRegion not checking right column
+    
+    added getShipmentHistoryByShipmentID(), ShipmentHistory
+    
+    added core access token functions createAccessToken, validateAccessToken
+    
+    * added delete functions to DAOs
+    added update functions to DAOs
+    added update function to WarehouseDAO
+    implemented briefShippment into ShipmentDAO
+    implemented smallPriceList into PriceListDAO
+    moved config into external file /resources/config/config.properties
+
+[33mcommit 651d744c5e87d087602847d03c061c31835d91db[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Mon Apr 27 00:13:50 2026 +0200
+
+    VAVA-73 FIX: queries had many issues (#38)
+    
+    fixed issues:
+    switched parameters, not set constraints, structure of the database reworked, source_region and dest_region now integer !dont change it! @BakinGPUs , Set default password for user, warehouse had redundant parameters -> need to fix in the future - source_region gonna be needed for the future application features.
+    FIX: Tests had false labels and were missing critical components
+
+[33mcommit 82135fe48b4cd040c876c7a89c7442ca8d98ddc3[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Sun Apr 26 16:07:28 2026 +0200
+
+    Vava backend martin (#37)
+    
+    * added shipment DAO, added brief warehouse to warehouseDAO
+    
+    * added getter for all services offered
+    
+    * fixed insertPriceListEntry missing required regionIDfor insert
+    
+    fixed getRegion not checking right column
+    
+    added getShipmentHistoryByShipmentID(), ShipmentHistory
+    
+    added core access token functions createAccessToken, validateAccessToken
+
+[33mcommit 9d40dff22c3131751257e75f4ea9ecc91a8ce612[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun Apr 26 11:32:18 2026 +0200
+
+    VAVA-51 Dao tests (#36)
+    
+    * Vava-51 Add UserDao tests
+    
+    * Vava-51 Add WarehouseDao tests
+    
+    * Vava-51 Add PriceListDao & RegionDao tests
+    
+    * Vava-51 Add ShipmentDao tests
+    
+    * Vava-51 Extend tests coverage
+    
+    * Vava-51 fix
+    
+    ---------
+    
+    Co-authored-by: IvetaLeskova <xleskova@stuba.sk>
+
+[33mcommit 57ccb1576b36befefb96bf3e6a026683958db4f0[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sun Apr 26 11:28:02 2026 +0200
+
+    VAVA-44 Parser tests (#35)
+    
+    ---------
+    
+    Co-authored-by: Richard Zahoranský <zahoransky.richard@gmail.com>
+
+[33mcommit 7aed144834add4658abed41781089f97b0e44f9f[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Fri Apr 24 14:35:05 2026 +0200
+
+    Fix/vava 52 additional queries for dao (#30)
+    
+    * FEAT: added queries, but needs tuning
+    
+    FIX: adjusted user attributes for DAO use
+    
+    * FIX: Update from main
+    
+    * FEAT: Added rest of the queries
+    
+    FIX: Adjusted the DAO for the queries
+    
+    * FIX: test had wrong attribute to call
+    
+    * FIX: schema adjustments
+    
+    * FEAT:  added shipmentDAO queries
+    
+    FIX: expanded core shipment info and fixed names so it corresponds with already published documentation
+    FIX: added is_sp to the shipment table
+    
+    * FIX: name mislabels fixed
+    
+    * FIX: name conflict resolved
+
+[33mcommit a4e15dd3bb1071794f2c374624436d805fe868c5[m
+Author: xnovomesky <xnovomesky@stuba.sk>
+Date:   Thu Apr 23 15:35:33 2026 +0200
+
+    marcel converter (#28)
+    
+    * created WarehouseConvertor and supplementary tests WarehouseConvertorTest
+    updated PriceList and RegionTable stubs to actual lists
+    
+    * added SmallPriceList convertion as separate part from Warehouse, and updated its stubs
+    
+    * added ShipmentService, Updated Shipment from stub to actual code
+    
+    ---------
+    
+    Co-authored-by: Marcel Novomesky <marnov042@gmail.com>
+
+[33mcommit 5264271b6adf0e7c73a284336681502a2ba84d01[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Thu Apr 23 14:16:23 2026 +0200
+
+    feature/ database and dao additions and adjustments (#29)
+    
+    * FEAT: added queries, but needs tuning
+    
+    FIX: adjusted user attributes for DAO use
+    
+    * FIX: Update from main
+    
+    * FEAT: Added rest of the queries
+    
+    FIX: Adjusted the DAO for the queries
+    
+    * FIX: test had wrong attribute to call
+    
+    * FIX: schema adjustments
+    
+    * FEAT:  added shipmentDAO queries
+    
+    FIX: expanded core shipment info and fixed names so it corresponds with already published documentation
+    FIX: added is_sp to the shipment table
+
+[33mcommit 763c64eb39beb46cdf6420bc6a066e580462c643[m
+Merge: 6f68d40 a1d1761
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Wed Apr 22 16:03:26 2026 +0200
+
+    Merging main
+
+[33mcommit 6f68d4082a97722a757d71ef26bff998b9417c7d[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Wed Apr 22 16:02:50 2026 +0200
+
+    fix git attributes
+
+[33mcommit a1d17612d50bbc68fdf932be540cc0caf6b7ae2c[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Wed Apr 22 10:32:44 2026 +0200
+
+    Vava backend martin (#26)
+    
+    * added shipment DAO, added brief warehouse to warehouseDAO
+    
+    * added getter for all services offered
+
+[33mcommit cab678b9ff1e79d17fefd431251b749cafbb13f7[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Mon Apr 20 22:40:06 2026 +0200
+
+    Fix/vava 52 additional queries for dao (#25)
+    
+    * FEAT: added queries, but needs tuning
+    
+    FIX: adjusted user attributes for DAO use
+    
+    * FEAT: Added rest of the queries
+    
+    FIX: Adjusted the DAO for the queries
+    
+    * FIX: test had wrong attribute to call
+
+[33mcommit 75d2d2a442a4edb388a2cbe400529db1d6ca20df[m
+Author: Maximilián Bumbera <xbumbera@stuba.sk>
+Date:   Sun Apr 19 21:35:15 2026 +0200
+
+    AuthService (#24)
+    
+    * Maxove google maps skripty
+    
+    * fix package and add dependencies
+    
+    * remove duplicate Main class
+    
+    * Added AuthService class, changed location of google maps scripts
+
+[33mcommit 81b8d408fb1e0ced34d4839c8b9f2ba81ecd171e[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri Apr 17 22:11:15 2026 +0200
+
+    Semi-dynamic menu items (#23)
+    
+    * Added new screen did not run it yet
+    
+    * imporved input validation
+    
+    * Feat: add svg icons
+    
+    * Refactor: finalized Menu screen (+ .css),MenuController working and ready for next screens
+    
+    * Refactor: finalized Cost Estimation Screen according Figma design
+    
+    * Fix: icon formats
+    
+    * fix import
+    
+    * Semi-dynamic menu generation completed
+    
+    Bug: don't know how to set light versions of the buttons
+    
+    * Ligh and dark version of menu items working
+    
+    ---------
+    
+    Co-authored-by: Viktória Latičová <xlaticova@stuba.sk>
+    Co-authored-by: martin <mato.kvietok@gmail.com>
+    Co-authored-by: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+
+[33mcommit 59db90871e1863eac3b255da71ccd766a20c5980[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri Apr 17 22:02:48 2026 +0200
+
+    Icons added (#22)
+    
+    * Feat: add svg icons
+    
+    * Fix: icon formats
+    
+    ---------
+    
+    Viktória Latičová <xlaticova@stuba.sk>
+
+[33mcommit 53ff28363cc692ef5c8d9f9dd3fdff832560fbe1[m
+Author: Martin Kvietok <105906086+0MarrkvI0@users.noreply.github.com>
+Date:   Fri Apr 17 19:51:17 2026 +0200
+
+    Feature/vava 56 new fxml screens  (#21)
+    
+    * imporved input validation
+    
+    * Refactor: finalized Menu screen (+ .css),MenuController working and ready for next screens
+    
+    * Refactor: finalized Cost Estimation Screen according Figma design
+    
+    * fix import
+    
+    ---------
+    
+    Co-authored-by: ZEPHY <xbukovinam@stuba.sk>
+
+[33mcommit 55e77a2595918aef78f3cfe7fde6a6bda68e80a1[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Thu Apr 16 21:03:14 2026 +0200
+
+    created a class for testing inputs plu tests (#20)
+    
+    +jqwik dependency
+
+[33mcommit e26799634ad15e317171a881a3a94e343662a758[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Wed Apr 15 23:27:19 2026 +0200
+
+    Vava 49 javafx setup (#19)
+    
+    * small test page when it runs
+    
+    * Feature/ added first three screens and controllers, utilities for navigation
+
+[33mcommit 836569f8476e1da481a80c2e11a84fa33ee290ff[m
+Merge: 6299577 c25b525
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Wed Apr 15 23:07:52 2026 +0200
+
+    Merge pull request #18 from mbukovina127/VAVA-Backend-Martin
+    
+    Vava backend martin
+
+[33mcommit c25b525f86c1f6139063767412ac726cee47f1ed[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Wed Apr 15 23:03:12 2026 +0200
+
+    fixed price list entry
+
+[33mcommit f4ba5e31a0906e3d22811306b4f0e5e95ae0a24c[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Wed Apr 15 22:58:57 2026 +0200
+
+    fixed attributes of warehouse
+
+[33mcommit 629957794fd7c692d1637c8c8322cea190223ffa[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Wed Apr 15 22:33:14 2026 +0200
+
+    Disabled tests for user dao
+
+[33mcommit c1c309db03e9c4f1787343f057524ffdac5c9e96[m
+Author: Maximilián Bumbera <xbumbera@stuba.sk>
+Date:   Wed Apr 15 17:06:25 2026 +0200
+
+    Maxove google maps skripty (#16)
+    
+    * Maxove google maps skripty
+    
+    * fix package and add dependencies
+    
+    * remove duplicate Main class
+
+[33mcommit 8183bdbd3389f88b3501d91fa1a3b8ccac4a85b0[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Apr 14 17:38:01 2026 +0200
+
+    added warehouse dao
+
+[33mcommit 945138f8e01d72ca03a1e0a66e21b551d760c046[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Thu Apr 9 16:46:31 2026 +0200
+
+    switched to Range model under /util
+
+[33mcommit e5c16066a1ec8ac1c95b67946e9f623b9d0690c0[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Wed Apr 8 16:24:21 2026 +0200
+
+    merged models into domian folder
+
+[33mcommit f2778747621c32ac8bb35d4f23808cf20657e8cf[m[33m ([m[1;31morigin/VAVA-Parser-Marcel[m[33m)[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Tue Mar 31 17:43:03 2026 +0200
+
+    Revert "Vava backend martin (#14)"
+    
+    Wrong app structure and duplicate code
+
+[33mcommit d8cec535228fe93aa3e766b5b38c03c6ed7a6d50[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Tue Mar 31 13:47:56 2026 +0200
+
+    Vava backend martin (#14)
+    
+    * DAO price list + region added
+    
+    * added warehouse attributes
+    
+    * DAO price list + region added
+    
+    * added warehouse attributes
+    
+    * fixed region dao
+
+[33mcommit e66c5723bef1607615d63eb0c6d9b5707fbef18c[m
+Merge: 99c983c c903d6b
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 31 13:39:39 2026 +0200
+
+    Merge remote-tracking branch 'origin/VAVA-Backend-Martin' into VAVA-Backend-Martin
+    
+    # Conflicts:
+    #       src/main/java/org/shippin/app/DAO/RegionDAO.java
+    #       src/main/java/org/shippin/app/models/WareHouse.java
+
+[33mcommit 99c983cbe12964bdd2f688fc4c18ed5ce29b9eb9[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 31 13:31:52 2026 +0200
+
+    fixed region dao
+
+[33mcommit da0f052fc94e31fc6e95631a090ae35ff3b56015[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Tue Mar 31 13:27:40 2026 +0200
+
+    Vava database filko (#12)
+    
+    * fix: fixed the Region-Shipment connection
+    
+    * feat: database creation and queries
+    
+    fix: State missing enums
+    fix: adjusted wrong connection in warehouse-region tables
+    fix: Parameter_list and Parameter Table merge
+    issue: Queries are incomplete due to the unclear instructions
+    
+    * FIX: Added unclear queries
+    
+    and fixed latitude and longitude in warehouse
+
+[33mcommit 37828f33e62628133893c65145384b4360b6a39f[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 31 13:09:06 2026 +0200
+
+    added warehouse attributes
+
+[33mcommit eb2ad4e99e01441c802a1234bb6188094cf47ac6[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 24 10:00:19 2026 +0100
+
+    DAO price list + region added
+
+[33mcommit c903d6bae76e6596ce1549967d59864fcfef0a31[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 31 13:09:06 2026 +0200
+
+    added warehouse attributes
+
+[33mcommit d2c0e5a0acef0df4b759c5a299501e1afb814f96[m
+Merge: cac20ed d9ed408
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Sat Mar 28 14:02:00 2026 +0100
+
+    Merged csv parser onto the main branch
+
+[33mcommit cac20ed20bab2ee73b668a46f45622ba7c6de513[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sat Mar 28 13:56:47 2026 +0100
+
+    Revert "Merge branch 'jdbc-livecode' of https://github.com/mbukovina127/vava-project"
+    
+    This reverts commit 3343a971e043fe785f775c8cacb24128aa40e837, reversing
+    changes made to 92c94c5ca205f9e3ef48c241efe126fc8462fc8a.
+
+[33mcommit ff64000bc6b58dc43031a05886665abbe37674db[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Wed Mar 25 21:18:43 2026 +0100
+
+    Delete src/main/resources directory
+
+[33mcommit ff409fed27089b1b4804123af88a60ef4996935c[m
+Author: MartinOksa <104143266+BakinGPUs@users.noreply.github.com>
+Date:   Wed Mar 25 21:17:48 2026 +0100
+
+    Delete src/main/java/org/shippin/live_code_jdbc directory
+
+[33mcommit 0d1aeae90f9acbf10a42b085a10f49f64401ecd0[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Wed Mar 25 21:02:22 2026 +0100
+
+    added batch operation and backup of db
+
+[33mcommit 3343a971e043fe785f775c8cacb24128aa40e837[m
+Merge: 92c94c5 61257a9
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Wed Mar 25 20:39:37 2026 +0100
+
+    Merge branch 'jdbc-livecode' of https://github.com/mbukovina127/vava-project
+
+[33mcommit 92c94c5ca205f9e3ef48c241efe126fc8462fc8a[m
+Author: Filip Brutovský <128379193+AweFilko@users.noreply.github.com>
+Date:   Wed Mar 25 20:09:07 2026 +0100
+
+    Vava database filko (#10)
+    
+    * fix: fixed the Region-Shipment connection
+    
+    * feat: database creation and queries
+    
+    fix: State missing enums
+    fix: adjusted wrong connection in warehouse-region tables
+    fix: Parameter_list and Parameter Table merge
+    issue: Queries are incomplete due to the unclear instructions
+
+[33mcommit d9ed4083262459c287dd98bfb2efecc0ab197f6d[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Wed Mar 25 12:53:59 2026 +0100
+
+    - made CsvParser generic and fixed implementation
+    - fixed all warnings (besides "not used")
+
+[33mcommit 61257a95647ac2fae3d2332247a2c3c29d96efb4[m
+Author: Viktória Latičová <xlaticova@stuba.sk>
+Date:   Tue Mar 24 15:54:08 2026 +0100
+
+    Feat: Select & Insert for liveCode
+
+[33mcommit 020626c6b4940e5b13c12d0348b8e4a0ef391a14[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Tue Mar 24 13:46:03 2026 +0100
+
+    first
+
+[33mcommit 25544e145f48a2628ec43f79c86ad0d44192ca6f[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Tue Mar 24 11:27:26 2026 +0100
+
+    - removed unused stuff
+
+[33mcommit a6848abcb9d3c78cb4f6380064c7f9b782cb3ecb[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 24 10:00:19 2026 +0100
+
+    DAO price list + region added
+
+[33mcommit 0ec1366c9a78d7e41d62f334f6a1ffcc3d413386[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Sun Mar 22 02:30:02 2026 +0100
+
+    - added generalization to Table
+    - added addRow to Table interface
+
+[33mcommit 53151a8f06255e024a70e7e525e80c8f1f20ee59[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Sun Mar 22 02:09:11 2026 +0100
+
+    - added @Data @NoArgsConstructor @AllArgsConstructor anotations from lombok
+
+[33mcommit c5d7a8c554f9ac4ec89d4a5880a1a37cd1009077[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Sun Mar 22 01:59:57 2026 +0100
+
+    - moved domain objects to /domain
+
+[33mcommit 101c8d0f72ab186ca0da022e2c51eecf3d73a88b[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Sat Mar 21 00:28:17 2026 +0100
+
+    Fix: fixed user Dao test
+
+[33mcommit f506860acf45de5c5d2eb18993fa6b9e28354ee9[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri Mar 20 21:35:49 2026 +0100
+
+    Feat: Added domain objects
+
+[33mcommit fa723d340d1bd72b4ab135e076ae8b77a13cff36[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Fri Mar 20 15:15:32 2026 +0100
+
+    - added test .csv files for FileHandlerTest
+
+[33mcommit ea1da27435b0142ee69ed4f93fde7b54d5a93945[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Fri Mar 20 15:12:34 2026 +0100
+
+    - implemented TextFileHandler
+    - added test for TextFileHandler to FileHandlerTest
+
+[33mcommit ede44d6f4b3c345e816c4a6663c19051a1870cd3[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Fri Mar 20 13:27:19 2026 +0100
+
+    - implemented SmallPriceListCsvParser
+    - added test for SmallPriceListCsvParser to ParserTest
+
+[33mcommit fe5eb53e9c5a254c1dc7c1ddb3fe5a84655a732d[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Fri Mar 20 13:05:55 2026 +0100
+
+    - implemented RegionTableCsvParser
+    - implemented Range
+    - added support for floats with € to PriceListCsvParser
+    - added test for RegionTableCsvParser to ParserTest
+    - added postal code lookup example to ParserTest
+
+[33mcommit 01359ab9d2fa7cdf212ab72c63968158df503173[m
+Author: Marcel Novomesky <marnov042@gmail.com>
+Date:   Tue Mar 17 13:40:26 2026 +0100
+
+    + počiatočná štruktúra
+    + implementácia dátových štuktúr
+    + implementácia PriceListCsvParser (samotný csv parser)
+
+[33mcommit d7a8ae6462b974a1ac02943fb9998d30b05abc25[m[33m ([m[1;31morigin/VAVA-Backend-Marcel[m[33m)[m
+Merge: 7bc195d a1c3522
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri Mar 13 14:17:08 2026 +0000
+
+    Merge pull request #5 from mbukovina127/VAVA-Database-Filko
+    
+    Feat: Added a second iteration of database schema
+
+[33mcommit a1c3522a6e9d600bcd7905a618633c69b3e6f3b8[m
+Author: Filip Brutovský <filipbrutovsky12@gmail.com>
+Date:   Fri Mar 13 15:10:06 2026 +0100
+
+    Feat: Added a second iteration of database schema
+
+[33mcommit 7bc195d4de7a59c40eddf167b9a3417d5b01aaa3[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Thu Mar 12 22:59:06 2026 +0100
+
+    Fix: fixed github actions
+
+[33mcommit 390fe906678ccf459240cb955c4be5a9a0095ec6[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Thu Mar 12 22:49:37 2026 +0100
+
+    Refractor: changed project structure, simplified code, added github actions
+    
+    Removed boiler plate code, refractored DAO test into JUNIT test, Added github actions for running tests
+
+[33mcommit 4c187ad87d9a1cd2845736c4b5af3ec8fe45cbbb[m
+Merge: 1257376 38c463c
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 10 21:16:12 2026 +0100
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 1257376d9bd5c4cedd99728787e405f42c08727d[m
+Author: BakinGPUs <ok.haffi44@gmail.com>
+Date:   Tue Mar 10 21:15:00 2026 +0100
+
+    created db connector along with simple model&its data access object
+
+[33mcommit c2f6815c0c6a196c4a72af8f545641f6f1278875[m
+Merge: dcbdb94 d04070f
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Tue Mar 10 13:50:59 2026 +0000
+
+    Feat: Database schema added
+    
+    VAVA feat: Added the database into documentation
+
+[33mcommit 38c463c059a037715bf9cbde5d2dbe2e83b9bbfa[m
+Merge: dcbdb94 d04070f
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Tue Mar 10 13:50:59 2026 +0000
+
+    Feat: Database schema added
+    
+    VAVA feat: Added the database into documentation
+
+[33mcommit d04070f4c5adeb4a990fae3e6920ab08074bd0e4[m
+Author: Filip Brutovský <filipbrutovsky12@gmail.com>
+Date:   Tue Mar 10 14:48:58 2026 +0100
+
+    Name change
+    
+    Changed name from Database.md into Database_schema_v1.md
+    
+    + Added new directory for database schemas
+
+[33mcommit e56785dcb44bed7a95a47c9607b52c455a301677[m
+Author: Filip Brutovský <filipbrutovsky12@gmail.com>
+Date:   Tue Mar 10 14:36:12 2026 +0100
+
+    VAVA feat: Added the database into documentation and created assets directory
+    
+    assets directory will be used for pictures and other non .md files used in documentation
+
+[33mcommit dcbdb94712bbede1d6d7a2416896d53c3ac44541[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Mon Mar 9 22:36:24 2026 +0100
+
+    Fixed readme
+    
+    f***
+
+[33mcommit 0a226c7709f796f3d54270b41afb18f642e37489[m
+Author: ZEPHY <xbukovinam@stuba.sk>
+Date:   Mon Mar 9 22:34:12 2026 +0100
+
+    First commit
+
+[33mcommit 73f7d0fcc57db4b1b2a09d07ca5cf44e35ec3a9d[m
+Author: mbukovina127 <145677853+mbukovina127@users.noreply.github.com>
+Date:   Fri Feb 20 15:38:57 2026 +0100
+
+    Initial commit
