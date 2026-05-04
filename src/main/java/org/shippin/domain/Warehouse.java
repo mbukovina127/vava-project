@@ -19,4 +19,10 @@ public class Warehouse extends CoreWarehouseInfo{
     	this.priceList = priceList;
     	this.regionTable = regionTable;
     }
+
+    public Warehouse(String name, String regionName, int postalCode, PriceList priceList, RegionTable regionTable) {
+      super(-1, name, regionName, postalCode);
+    	this.priceList = priceList;
+    	this.regionTable = regionTable;
+    }
 }
