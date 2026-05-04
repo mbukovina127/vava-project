@@ -3,6 +3,7 @@ package org.shippin.controller.utils;
 import java.util.ResourceBundle;
 
 import org.shippin.controller.BaseController;
+import org.shippin.services.NavigationService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -111,7 +112,7 @@ public class GenericPopup {
     protected String t(String key) {
         if (this.resources == null) { return key; }
         try {
-            return this.resources.getString(key.substring(1));
+            return NavigationService.getBundle().getString(key.substring(1));
         } catch (java.util.MissingResourceException e) {
             System.err.println("Missing i18n key: " + key);
             return key;

@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
+import org.shippin.controller.utils.GenericPopup;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.AdditionalService;
@@ -21,14 +22,13 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.services.ShipmentService;
 
-import org.shippin.app.FromCoordsDataGetter;
+import org.shippin.util.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.*;
 
 import static java.lang.Double.parseDouble;
@@ -75,10 +75,12 @@ public class CostEstimationController extends BaseController<Void> implements In
     private final ToggleGroup productsToggleGroup = new ToggleGroup();
     private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
     private final Map<RadioButton, AdditionalService> productRadioButtons = new LinkedHashMap<>();
+	private ResourceBundle resources;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+    	this.resources = resources;
         try {
             WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
             warehouseList = warehouseDAO.getAllBriefWarehouses();
@@ -310,10 +312,10 @@ public class CostEstimationController extends BaseController<Void> implements In
                     serviceIds
             );
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Could not compute shipping cost: " + e.getMessage()).showAndWait();
+        	new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
             return;
         } catch (IllegalArgumentException e) {
-            new Alert(Alert.AlertType.ERROR, "Invalid input: " + e.getMessage()).showAndWait();
+            new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.map.postal_code_not_in_warehouse");
             return;
         }
 

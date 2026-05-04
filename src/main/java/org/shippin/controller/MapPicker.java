@@ -1,7 +1,8 @@
-package org.shippin.app;
+package org.shippin.controller;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.*;
+import org.shippin.util.FromCoordsDataGetter;
 
 import javax.swing.*;
 import java.awt.*;

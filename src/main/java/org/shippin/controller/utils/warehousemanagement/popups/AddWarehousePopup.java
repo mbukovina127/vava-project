@@ -128,17 +128,17 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 
 	    // --- Name ---
 	    Label nameLabel = createFormLabel(t("%warehouse_management.add.name"));
-	    TextField nameField = createPopupTextField("Value");
+	    TextField nameField = createPopupTextField("");
 	    Label nameError = createErrorLabel();
 
 	    // --- Pickup ---
 	    Label pickupLabel = createFormLabel(t("%warehouse_management.add.pickup_place"));
-	    TextField pickupField = createPopupTextField("Value");
+	    TextField pickupField = createPopupTextField("");
 	    Label pickupError = createErrorLabel();
 
 	    // --- Postal Code ---
 	    Label postalCodeLabel = createFormLabel(t("%warehouse_management.add.postal_code"));
-	    TextField postalCodeField = createPopupTextField("Value");
+	    TextField postalCodeField = createPopupTextField("");
 	    Label postalCodeError = createErrorLabel();
 
 	    // --- Price List ---
