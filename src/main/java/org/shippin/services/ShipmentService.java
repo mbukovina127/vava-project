@@ -61,6 +61,10 @@ public class ShipmentService {
         return shipment;
     }
 
+    public List<Shipment> getAllShipments() throws SQLException {
+        return shipmentDAO.getAllShipments();
+    }
+
     // ── Cost calculations ─────────────────────────────────────────
 
     public static float calculateBaseCost(Shipment shipment) throws SQLException {

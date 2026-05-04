@@ -15,7 +15,8 @@ public enum Screens {
     WAREHOUSE_MANAGEMENT(Role.POWER_USER),
     EDIT_WAREHOUSE(Role.POWER_USER),
     USER_MANAGEMENT(Role.ADMIN),
-    MY_SHIPMENTS(Role.USER);
+    MY_SHIPMENTS(Role.USER),
+    MAP_OF_SHIPMENTS(Role.ADMIN);
 
     private final Role requiredRole;
 
@@ -46,6 +47,7 @@ public enum Screens {
             case SHIPMENT_DETAIL -> "/views/ShipmentDetail.fxml";
             case SMALL_PRICE_LIST_VIEW -> "/views/SmallPriceListView.fxml";
             case MY_SHIPMENTS -> "/views/MyShipments.fxml";
+            case MAP_OF_SHIPMENTS -> "/views/MapOfShipments.fxml";
         };
     }
 }

@@ -55,7 +55,8 @@ public class MenuController implements Initializable {
             new NavItem(Screens.MY_SHIPMENTS, "My Shipments", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"),
             new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
             new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
-            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png") //FIXME testing menu item
+            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"), //FIXME testing menu item
+            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png") //MAX TLACITKO, na test, ak to nema byt tu presunut inde
 //            new NavItem(null, "Home", "", "")
 
     );
