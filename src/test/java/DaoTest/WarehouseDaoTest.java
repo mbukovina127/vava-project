@@ -39,11 +39,33 @@ public class WarehouseDaoTest {
 
     @AfterEach
     void rollback() throws SQLException {
-        if (!DBConnector.getInstance().getConnection().getAutoCommit()) {
-            DBConnector.getInstance().getConnection().rollback();
+        var connection = DBConnector.getInstance().getConnection();
+
+        if (!connection.getAutoCommit()) {
+            connection.rollback();
         }
 
-        DBConnector.getInstance().getConnection().setAutoCommit(true);
+        connection.setAutoCommit(true);
+
+        try (PreparedStatement stmt = connection.prepareStatement("""
+            DELETE FROM Warehouse
+            WHERE warehouse_region_name IN (
+                'Full Warehouse Test',
+                'After Full Update Warehouse',
+                'Delete Warehouse Test'
+            )
+            OR price_list_file IN (
+                'full_test.xlsx',
+                'after_full_update.xlsx',
+                'delete_warehouse.xlsx'
+            )
+            OR warehouse_region_name LIKE 'Warehouse Test %'
+            OR warehouse_region_name LIKE 'Inserted Warehouse%'
+            OR warehouse_region_name LIKE 'Before Update Warehouse%'
+            OR warehouse_region_name LIKE 'Before Full Update Warehouse%';
+        """)) {
+            stmt.executeUpdate();
+        }
     }
 
     @Test

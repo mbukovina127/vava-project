@@ -523,25 +523,34 @@ public class ShipmentServiceTest {
             UserService.logout();
         }
     }
+private int insertServiceDirectly(String name, float defaultCost, float costModifier) throws SQLException {
+    PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
+        INSERT INTO Service(
+            service_name,
+            service_name_en,
+            default_cost,
+            cost_modificator,
+            description,
+            description_en,
+            service_type
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        RETURNING service_ID
+    """);
 
-    private int insertServiceDirectly(String name, float defaultCost, float costModifier) throws SQLException {
-        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
-            INSERT INTO Service(service_name, default_cost, cost_modificator, description, service_type)
-            VALUES (?, ?, ?, ?, ?)
-            RETURNING service_ID
-        """);
+    stmt.setString(1, name);
+    stmt.setString(2, name);
+    stmt.setFloat(3, defaultCost);
+    stmt.setFloat(4, costModifier);
+    stmt.setString(5, "Test service");
+    stmt.setString(6, "Test service");
+    stmt.setString(7, ServiceType.SERVICES.name());
 
-        stmt.setString(1, name);
-        stmt.setFloat(2, defaultCost);
-        stmt.setFloat(3, costModifier);
-        stmt.setString(4, "Test service");
-        stmt.setString(5, ServiceType.SERVICES.name());
+    ResultSet rs = stmt.executeQuery();
+    rs.next();
 
-        ResultSet rs = stmt.executeQuery();
-        rs.next();
-
-        return rs.getInt("service_ID");
-    }
+    return rs.getInt("service_ID");
+}
 
     private RegionTable createRegionTable() {
         RegionTable regionTable = new RegionTable();
