@@ -36,7 +36,7 @@ public class DeleteWarehousePopup extends WarehouseManagementPopup {
         buttons.setAlignment(Pos.CENTER_LEFT);
 
         Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
+        cancelButton.getStyleClass().addAll("popup-button", "secondary-button");
         cancelButton.setPrefSize(160, 42);
         cancelButton.setOnAction(e -> controller.hideModal());
 

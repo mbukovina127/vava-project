@@ -12,6 +12,7 @@ import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.exception.IncompatibleTablesException;
 import org.shippin.util.WarehouseConvertor;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Coordinates;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -51,25 +52,35 @@ public class WarehouseService {
         return instance;
     }
 	
-	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName) throws SQLException {
+	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName, int postalCode) throws Exception {
 		Warehouse warehouse = this.getWarehouse(briefWarehouse);
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
+		warehouse.setPostal_code(postalCode);
+		
+		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
+		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
+		
+		warehouse.setCoord(coordinates);
+		
 		warehouseDao.updateWarehouse(warehouse);
 	}
 	
-	public void addWarehouse(String name, String regionName, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws IncompatibleTablesException, SQLException {
+	public void addWarehouse(String name, String regionName, int postalCode, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws Exception {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
 		
 		boolean compatibleTables = WarehouseParsingService.getInstance()
 				.checkTableCompatibility(priceList, regionTable);
 		
+		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
+		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
+		
 		if (!compatibleTables) {
 			throw new IncompatibleTablesException();
 		}
 		
-		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable);;
+		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable, postalCode, coordinates);;
 		warehouseDao.insertFullWarehouse(warehouse);
 	}
 	

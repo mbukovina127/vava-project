@@ -44,6 +44,8 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     private TextField documentTitleField;
     @FXML
     private TextField pickupPlaceField;
+    @FXML
+    private TextField storageRegionField;
 
     private PriceListFormatted priceList;
     private RegionTableFormatted regionTableFormatted;
@@ -86,6 +88,9 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
+    	System.out.println(briefWarehouse.getPostal_code());  
+    	System.out.println(String.valueOf(briefWarehouse.getPostal_code())); 
+    	storageRegionField.setText(String.valueOf(briefWarehouse.getPostal_code()));
     	this.priceList = this.warehouse.getPriceList();
     	setupPriceListTable();
     	this.regionTableFormatted = this.warehouse.getRegionTable();
@@ -204,16 +209,28 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     		} else if(!InputValidator.isValidLength(pickup, 30)) {
     			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
     			return;
-    		} 
+    		}
     		
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup);
+    		String postalCodeString = storageRegionField.getText();
+    		if(!InputValidator.isPostalCode(postalCodeString)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid postal code: postal code must be a valid postal code value (examples: 917 08, 91708, 011 02).");
+    			return;
+    		}
+    		
+    		int postalCode = Integer.valueOf(postalCodeString.replaceAll("\\s+", ""));
+    		
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, postalCode);
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is an unknown problem with the database.");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Coordinates fetch problem: problem during fetching the coordinates of the warehouse. Double check the correctness of the entered postal code.");
 		}
     }
 }

@@ -1,8 +1,20 @@
 package org.shippin.services;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class MapService {
 
     private static final String API_KEY = "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc";
+    static MapService instance;
+    
+    public static MapService getInstance() {
+    	if (instance == null) {
+    		instance = new MapService();
+    	}
+    	
+		return instance;
+    }
 
     public String buildStaticMapUrl(double fromLat, double fromLon, double toLat, double toLon) {
         double centerLat = (fromLat + toLat) / 2.0;

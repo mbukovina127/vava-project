@@ -44,7 +44,9 @@ public class ShipmentService {
         Shipment shipment = new Shipment();
         shipment.setServices(new ArrayList<>(selected));
         shipment.setWarehouse(new BriefWarehouse(
-                warehouse.getId(), warehouse.getName(), warehouse.getRegionName()));
+                warehouse.getId(), warehouse.getName(), warehouse.getRegionName(), 
+                warehouse.getPostal_code(), warehouse.getCoord()));
+        
         shipment.setCreated_at(new Timestamp(deliveryDate.getTime()));
         shipment.setDest_region(destPostalCode);
         shipment.setWeight(weight);
