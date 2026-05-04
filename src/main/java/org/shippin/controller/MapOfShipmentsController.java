@@ -123,6 +123,12 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
                     double toLat = coords[0];
                     double toLon = coords[1];
 
+                    //RANDOM OFFSET
+                    double offsetLat = (Math.random() - 0.5) * 0.06;  // ±3km na sever/juh
+                    double offsetLon = (Math.random() - 0.5) * 0.06;  // ±3km na východ/západ
+                    toLat += offsetLat;
+                    toLon += offsetLon;
+
                     /*
                     // FILTER NA destináciu!
                     if (toLat < 47.0 || toLat > 50.5 || toLon < 14.0 || toLon > 23.5) {
