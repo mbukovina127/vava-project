@@ -64,7 +64,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     private List<HistoryEntry> history = List.of();
 
-    // ── BaseController ────────────────────────────────────────────
+    // BaseController
 
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
@@ -96,7 +96,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     @Override
     public void initialize(URL location, ResourceBundle resources) {}
 
-    // ── Header ────────────────────────────────────────────────────
+    // Header
 
     private void populateHeader() {
         titleLabel.setText("Shipment number: #" + shipment.getShipment_id());
@@ -116,7 +116,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         totalCostLabel.setText(String.format("%.2f €", shipment.getTotalCost()));
     }
 
-    // ── Status row ────────────────────────────────────────────────
+    // Status row
 
     private void populateStatusRow() {
         currentStatus = stateToDisplay(currentState);
@@ -157,7 +157,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
 
     private ResourceBundle bundle() { return NavigationService.getBundle(); }
 
-    // ── History grid ──────────────────────────────────────────────
+    // History grid
 
     private void loadHistoryAsync() {
         new Thread(() -> {
@@ -202,7 +202,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         return lbl;
     }
 
-    // ── Map ───────────────────────────────────────────────────────
+    // Map
 
     private void loadMapImage() {
         try {
@@ -239,7 +239,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         }).start();
     }
 
-    // ── Change status popup ───────────────────────────────────────
+    // Change status popup
 
     private void showChangeStatusPopup() {
         VBox popup = createPopupRoot();
@@ -311,7 +311,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         showModal(popup);
     }
 
-    // ── Popup helpers ─────────────────────────────────────────────
+    //  Popup helpers
 
     private VBox createPopupRoot() {
         VBox root = new VBox(28);
@@ -333,7 +333,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         return label;
     }
 
-    // ── Actions ───────────────────────────────────────────────────
+    // Actions
 
     @FXML
     private void onCostBreakdown() {
@@ -355,6 +355,7 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     private void onDailySummary() throws java.io.IOException {
         try {
             LocalDate date = shipment.getCreated_at().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            System.out.println(date);
             loadScreen(DAILY_COST_SUM, date);
         } catch (Exception ex) {
             log.error("Exception probably caused by shipment={} createdat={}", shipment.getShipment_id(), shipment.getCreated_at(), ex);
