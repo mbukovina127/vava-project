@@ -44,6 +44,8 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     private TextField documentTitleField;
     @FXML
     private TextField pickupPlaceField;
+    @FXML
+    private TextField storageRegionField;
 
     private PriceListFormatted priceList;
     private RegionTableFormatted regionTableFormatted;
@@ -82,10 +84,13 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 			this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
+    	System.out.println(briefWarehouse.getPostalCode());  
+    	System.out.println(String.valueOf(briefWarehouse.getPostalCode())); 
+    	storageRegionField.setText(String.valueOf(briefWarehouse.getPostalCode()));
     	this.priceList = this.warehouse.getPriceList();
     	setupPriceListTable();
     	this.regionTableFormatted = this.warehouse.getRegionTable();
@@ -102,7 +107,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
         int columnsPerLine = 4;
         int rowIndex = 0;
 
-        addCell(regionGrid, "Rozdelenie PSČ:", 0, rowIndex, 1, 1, "header-cell");
+        addCell(regionGrid, "%edit_warehouse.postal_code_label", 0, rowIndex, 1, 1, "header-cell");
         addCell(regionGrid, "", 1, rowIndex, columnsPerLine, 1, "header-cell");
 
         rowIndex++;
@@ -190,30 +195,42 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     	try {
     		String title = documentTitleField.getText();  		
     		if(!InputValidator.isNotBlank(title)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "generic.regex.blank_name");
     			return;
     		} else if(!InputValidator.isValidLength(title, 20)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.name_too_long");
     			return;
     		}
     		
     		String pickup = pickupPlaceField.getText(); 		
     		if(!InputValidator.isNotBlank(pickup)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "generic.regex.blank_pickup_place");
     			return;
     		} else if(!InputValidator.isValidLength(pickup, 30)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.pickup_too_long");
     			return;
-    		} 
+    		}
     		
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, 0);
+    		String postalCodeString = storageRegionField.getText();
+    		if(!InputValidator.isPostalCode(postalCodeString)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.regex.invalid_postal_code");
+    			return;
+    		}
+    		
+    		int postalCode = Integer.valueOf(postalCodeString.replaceAll("\\s+", ""));
+    		
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, postalCode);
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.map.postal_code_to_coordinates_failed");
 		}
     }
     

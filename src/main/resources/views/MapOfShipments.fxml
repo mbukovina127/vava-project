@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane styleClass="sd-root" stylesheets="@../css/shipinn.css, @../css/shipment-detail.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.MapOfShipmentsController">
+
+    <center>
+        <VBox spacing="20" styleClass="sd-content" VBox.vgrow="ALWAYS">
+
+            <Label styleClass="page-title" text="Map of Shipments" />
+
+            <StackPane fx:id="mapContainer" alignment="CENTER" prefHeight="450" VBox.vgrow="ALWAYS">
+                <ImageView fx:id="mapImageView" fitWidth="1050" preserveRatio="true" styleClass="sd-map-image" />
+                <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="Map unavailable" visible="false" />
+            </StackPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>
