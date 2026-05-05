@@ -1,5 +1,6 @@
 package org.shippin.controller.utils.warehousemanagement.popups;
 
+import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -29,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+@Log4j2
 public class AddWarehousePopup extends WarehouseManagementPopup {
 
 	private WarehouseManagementController controller;
@@ -88,17 +90,17 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 	        regionTableError.setText(t("%generic.incompatible_tables"));
 	        valid = false;
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        log.error("Add warehouse failed", e);
 	        new GenericPopup(this.resources).showOkPopup(this.controller, "%generic.failed_to_import", "%generic.database_problem");
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        log.error("Add warehouse failed", e);
 	        postalCodeError.setText(t("%generic.map.postal_code_to_coordinates_failed"));
 	    }
 
 	    try {
 	        this.controller.setWarehouseList(WarehouseService.getInstance().getBriefWarehouses());
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        log.error("Add warehouse failed", e);
 	        new GenericPopup(this.resources).showOkPopup(this.controller, "%generic.failed_to_fetch", "%generic.database_problem");
 	    }
 	    this.controller.renderWarehouses(this.controller.getWarehouseList());
@@ -157,7 +159,7 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 				priceListFormatted = WarehouseParsingService.getInstance().parsePriceList(file);
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("Add warehouse failed", e);
 				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
 			}
 	        if (priceListFormatted == null) { return; }
@@ -182,8 +184,7 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 			try {
 				regionTableFormatted = WarehouseParsingService.getInstance().parseRegionTable(file);
 			} catch (ValidationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("Add warehouse failed", e);
 				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
 			}
 	        if (regionTableFormatted == null) { return; }

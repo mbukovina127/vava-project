@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -30,6 +31,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class MyShipmentsController extends BaseController<User> implements Initializable {
     private record ShipmentEntry(
             int    shipmentId,
@@ -85,7 +87,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     @FXML
     private void handleAddShipment() throws IOException {
-        System.out.println("Add shipment for user " + viewedUser.getId());
+        log.info("Add shipment for user " + viewedUser.getId());
         loadScreen(Screens.COST_ESTIMATION);
     }
 
@@ -119,7 +121,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
             updateTitle();
             applyFilterAndSort();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load shipments for user #{}", viewedUser.getId(), e);
         }
     }
 
@@ -218,7 +220,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
             Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
-            e.printStackTrace();
+            log.error("Failed to open shipment #{}", entry.shipmentId(), e);
         }
     }
 

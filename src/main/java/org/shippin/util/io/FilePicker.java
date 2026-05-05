@@ -1,10 +1,12 @@
 package org.shippin.util.io;
 
+import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 
+@Log4j2
 public class FilePicker {
 
     /**
@@ -38,7 +40,7 @@ public class FilePicker {
             try {
                 file.createNewFile();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Failed to create file", e);
                 return null;
             }
         }

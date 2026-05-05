@@ -70,7 +70,7 @@
                                   <!-- Time -->
                                   <ColumnConstraints minWidth="80" prefWidth="100" />
                                   <!-- Driver -->
-                                  <ColumnConstraints minWidth="120" prefWidth="160" />
+                                  <ColumnConstraints minWidth="200" prefWidth="240" />
                                   <!-- Location -->
                                   <ColumnConstraints minWidth="120" prefWidth="180" />
                                   <!-- Status -->
