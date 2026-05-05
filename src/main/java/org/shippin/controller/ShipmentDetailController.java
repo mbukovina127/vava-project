@@ -112,7 +112,8 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
             log.error("Shipment has unknown warehouse");
         }
         routeLabel.setText(route_text);
-        distanceLabel.setText("(- km)");
+        double distance = calculateDistance(fromLat, fromLon, toLat, toLon);
+        distanceLabel.setText(String.format("(%.2f km)", distance));
         totalCostLabel.setText(String.format("%.2f €", shipment.getTotalCost()));
     }
 
@@ -139,12 +140,12 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
     private String stateToDisplay(State state) {
         if (state == null) return bundle().getString("shipment_detail.state_unknown");
         return switch (state) {
-            case NOT_READY          -> bundle().getString("shipment_detail.state_not_ready");
+            case NOT_READY -> bundle().getString("shipment_detail.state_not_ready");
             case READY_FOR_DELIVERY -> bundle().getString("shipment_detail.state_ready_for_delivery");
-            case BEING_DELIVERED    -> bundle().getString("shipment_detail.state_being_delivered");
-            case DELIVERED          -> bundle().getString("shipment_detail.state_completed");
-            case CANCELED           -> bundle().getString("shipment_detail.state_canceled");
-            case FAILED             -> bundle().getString("shipment_detail.state_failed");
+            case BEING_DELIVERED -> bundle().getString("shipment_detail.state_being_delivered");
+            case DELIVERED -> bundle().getString("shipment_detail.state_completed");
+            case CANCELED -> bundle().getString("shipment_detail.state_canceled");
+            case FAILED -> bundle().getString("shipment_detail.state_failed");
         };
     }
 
@@ -231,15 +232,29 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
                 double[] coords = mapService.fetchCoordinatesForPostalCode(postalCode);
                 toLat = coords[0];
                 toLon = coords[1];
+
+                double distance = calculateDistance(fromLat, fromLon, toLat, toLon);
+                Platform.runLater(() -> {
+                    distanceLabel.setText(String.format("(%.2f km)", distance));
+                    loadMapImage();
+                });
             } catch (Exception e) {
                 log.error("Failed to fetch coordinates for postal code {}", postalCode, e);
-            } finally {
-                Platform.runLater(this::loadMapImage);
+                Platform.runLater(this::loadMapImage);  // ← len ak je error
             }
         }).start();
     }
 
-    // Change status popup
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
 
     private void showChangeStatusPopup() {
         VBox popup = createPopupRoot();
