@@ -16,14 +16,17 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.domain.Shipment;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.AuthUtils;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 
 import org.shippin.controller.utils.ShipmentData;
@@ -49,16 +52,17 @@ public class MenuController implements Initializable {
     @FXML private StackPane modalOverlay;
     @FXML private VBox modalContentHolder;
 
+    private final ShipmentService shipmentService = new ShipmentService();
     //Left sidebar
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
             new NavItem(Screens.MY_SHIPMENTS, "My Shipments", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"),
-            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
-            new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
-            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"), //FIXME testing menu item
-            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"), //MAX TLACITKO, na test, ak to nema byt tu presunut inde
+            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"),
+            new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"),
+            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"),
             new NavItem(Screens.SERVICES_MANAGEMENT, "Services Management", "/icons/png-light/truck_white.png", "/icons/png-dark/truck_black.png")
+            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/map_white.png", "/icons/png-dark/map_black.png")
 
     );
 
@@ -199,7 +203,17 @@ public class MenuController implements Initializable {
                     var s = getClass().getResourceAsStream(item.icon_light());
                     if (s != null) finalIcon.setImage(new Image(s));
                 }
-                loadScreen(item.screen(),null);
+                if (item.screen == Screens.MAP_OF_SHIPMENTS) {
+                    List<Shipment> shipments = null;
+                    try {
+                        shipments = shipmentService.getAllShipments();
+                        loadScreen(item.screen, shipments);
+                    } catch (SQLException ex) {
+                        log.error("Couldn't load shipments from database");
+                    }
+                } else {
+                    loadScreen(item.screen(),null);
+                }
             });
 
             leftSidebar.getChildren().add(btn);

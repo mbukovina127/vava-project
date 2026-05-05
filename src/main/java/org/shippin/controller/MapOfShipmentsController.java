@@ -51,7 +51,6 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
     private void loadAllShipments() {
         try {
-            shipments = shipmentService.getAllShipments();
             log.info("Loaded {} shipments", shipments.size());
 
             //ukáže len ongoing shipments
