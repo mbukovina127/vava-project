@@ -20,8 +20,6 @@ public class ShipmentService {
 
     private final ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
-    public ShipmentDAO getDao() { return shipmentDAO; }
-
     public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
         return shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
     }
@@ -255,7 +253,7 @@ public class ShipmentService {
     public List<Shipment> getShipmentsByUser(int userId) throws SQLException {
         return shipmentDAO.getShipmentByUserID(userId);
     }
-
-
-
+    public Shipment getShipmentById(int id) throws SQLException{
+        return shipmentDAO.getShipmentById(id);
+    }
 }
