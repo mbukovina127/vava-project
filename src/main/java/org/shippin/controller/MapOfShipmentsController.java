@@ -52,6 +52,7 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     private void loadAllShipments() {
         try {
             shipments = shipmentService.getAllShipments();
+            log.info("Loaded {} shipments", shipments.size());
 
             //ukáže len ongoing shipments
             shipments = shipments.stream()
@@ -59,13 +60,9 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
                             s.getState() != State.FAILED)
                     .toList();
 
-            System.out.println("DEBUG: Loaded " + shipments.size() + " ongoing shipments");
             log.info("✅ Loaded {} ongoing shipments", shipments.size());
-            // ...
-        } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
-            e.printStackTrace();
-            log.error("❌ Failed to load shipments", e);
+          } catch (Exception e) {
+            log.error("Failed to load shipments", e);
             showMapFallback();
         }
     }
@@ -153,7 +150,7 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
                     markerCount++;
                 } catch (Exception e) {
-                    System.out.println("ERROR: " + e.getMessage());
+                    log.error("ERROR farbicky: ", e);
                 }
             }
         }

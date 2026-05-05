@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -28,6 +29,7 @@ import java.util.*;
  *  - Highlight the selected / today date
  *  - Populate the "most recent summaries" list on the right
  */
+@Log4j2
 public class DailyCostsSummariesController
         extends BaseController<Void>
         implements Initializable {
@@ -229,7 +231,7 @@ public class DailyCostsSummariesController
             loadScreen(Screens.DAILY_COST_SUM, selectedDate);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to navigate to daily cost summary", e);
         }
     }
 
@@ -257,7 +259,7 @@ public class DailyCostsSummariesController
                     });
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load daily summaries for {}", currentYearMonth, e);
         }
     }
 
@@ -296,7 +298,7 @@ public class DailyCostsSummariesController
         try {
             loadScreen(Screens.DAILY_COST_SUM, date);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to navigate to daily cost summary", e);
         }
     }
     // ── Public API (call from parent controller if needed) ───────────────────

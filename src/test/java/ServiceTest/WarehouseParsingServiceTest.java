@@ -31,6 +31,7 @@ import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.services.WarehouseParsingService;
 import org.shippin.services.WarehouseService;
 import org.shippin.util.Range;
@@ -214,7 +215,7 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parsePriceListCsvReadsFileContent() throws IOException {
+    void parsePriceListCsvReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("price.csv", """
                 Hmotnosť do (v kg);Objem do (v m³);Zóny;
                 ;;BA;NR
@@ -233,7 +234,7 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parsePriceListXmlReadsFileContent() throws IOException {
+    void parsePriceListXmlReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("price.xml", priceListXml());
 
         PriceListFormatted result = service.parsePriceList(file);
@@ -295,10 +296,10 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parseRegionTableCsvReadsFileContent() throws IOException {
+    void parseRegionTableCsvReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("regions.csv", """
                 Rozdelenie PSČ:;;;;;;
-                BA;;81000-81999;82100
+                BA;;81000-81999;82100-82100
                 """);
 
         RegionTableFormatted result = service.parseRegionTable(file);
@@ -313,7 +314,7 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parseRegionTableXmlReadsFileContent() throws IOException {
+    void parseRegionTableXmlReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("regions.xml", regionTableXml());
 
         RegionTableFormatted result = service.parseRegionTable(file);
@@ -375,7 +376,7 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parseSmallPriceListCsvReadsFileContent() throws IOException {
+    void parseSmallPriceListCsvReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("small.csv", """
                 Hmotnosť;Cena
                 do 5 kg;2,50
@@ -389,7 +390,7 @@ public class WarehouseParsingServiceTest {
     }
 
     @Test
-    void parseSmallPriceListXmlReadsFileContent() throws IOException {
+    void parseSmallPriceListXmlReadsFileContent() throws IOException, ValidationException {
         File file = writeTempFile("small.xml", smallPriceListXml());
 
         SmallPriceListFormatted result = service.parseSmallPriceList(file);

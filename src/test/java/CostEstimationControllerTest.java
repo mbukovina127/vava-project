@@ -1,3 +1,22 @@
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.shippin.controller.CostEstimationController;
+import org.shippin.domain.AdditionalService;
+import org.shippin.domain.enums.ServiceType;
+
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -7,21 +26,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.shippin.controller.CostEstimationController;
-import org.shippin.domain.AdditionalService;
-import org.shippin.domain.enums.ServiceType;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CostEstimationControllerTest {
 
@@ -207,30 +211,36 @@ class CostEstimationControllerTest {
 
     private static List<AdditionalService> createServices() {
         return List.of(
-                new AdditionalService(
-                        1,
-                        "Base service",
-                        5f,
-                        1f,
-                        ServiceType.SERVICES,
-                        "Base service description"
-                ),
-                new AdditionalService(
-                        2,
-                        "Additional payment",
-                        3f,
-                        1f,
-                        ServiceType.ADDITIONAL_PAYMENTS,
-                        "Additional payment description"
-                ),
-                new AdditionalService(
-                        3,
-                        "Product",
-                        2f,
-                        1f,
-                        ServiceType.PRODUCTS,
-                        "Product description"
-                )
+            new AdditionalService(
+                    1,
+                    "Base service",
+                    5f,
+                    1f,
+                    ServiceType.SERVICES,
+                    "Base service description",
+                    "Base service description",
+                    "Base service"
+            ),
+            new AdditionalService(
+                    2,
+                    "Additional payment",
+                    3f,
+                    1f,
+                    ServiceType.ADDITIONAL_PAYMENTS,
+                    "Additional payment description",
+                    "Additional payment description",
+                    "Additional payment"
+            ),
+            new AdditionalService(
+                    3,
+                    "Product",
+                    2f,
+                    1f,
+                    ServiceType.PRODUCTS,
+                    "Product description",
+                    "Product description",
+                    "Product"
+            )
         );
     }
 

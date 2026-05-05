@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  * <p>Data model: {@link ShipmentEntry} — a lightweight record holding
  * the time string, description, and cost for one shipment row.</p>
  */
+@Log4j2
 public class DailyCostsSummaryDetailController
         extends BaseController<LocalDate>
         implements Initializable {
@@ -225,7 +227,7 @@ public class DailyCostsSummaryDetailController
             Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
-            e.printStackTrace();
+            log.error("Daily summary operation failed", e);
         }
     }
 
@@ -278,7 +280,7 @@ public class DailyCostsSummaryDetailController
             }
             applyFilterAndSort();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Daily summary operation failed", e);
         }
     }
 
