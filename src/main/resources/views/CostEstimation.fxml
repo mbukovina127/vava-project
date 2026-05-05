@@ -18,6 +18,9 @@
     <HBox alignment="CENTER_LEFT" styleClass="ce-title-row">
         <Label fx:id="sectionTitleLabel" styleClass="page-title" text="%cost_estimation.title" />
         <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="viewRegionsButton" onAction="#onViewRegions" styleClass="secondary-button" text="%cost_estimation.view_regions">
+            <HBox.margin><Insets right="8" /></HBox.margin>
+        </Button>
     </HBox>
 
     <!-- FIELDS ROW -->
