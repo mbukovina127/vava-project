@@ -23,7 +23,22 @@ import java.util.Set;
 import static org.shippin.controller.utils.ErrorHandler.msg;
 
 @Log4j2
-public class RegisterController extends AuthController {
+public class RegisterController extends AuthController implements StatePreservable {
+
+    private record RegisterState(String firstName, String lastName, String email) {}
+
+    @Override
+    public Object captureState() {
+        return new RegisterState(firstNameField.getText(), lastNameField.getText(), emailField.getText());
+    }
+
+    @Override
+    public void restoreState(Object rawState) {
+        if (!(rawState instanceof RegisterState s)) return;
+        firstNameField.setText(s.firstName());
+        lastNameField.setText(s.lastName());
+        emailField.setText(s.email());
+    }
 
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
@@ -54,11 +69,12 @@ public class RegisterController extends AuthController {
     public void initialize()
     {
         initLangButton(langButton);
-        //change password visibility observer
         setEyeIcon(eyeButton,false);
         setEyeIcon(eyeButtonRep,false);
         bindPasswordFocus(passwordWrapper, passwordField, passwordVisible);
         bindPasswordFocus(passwordWrapperRep, passwordFieldRep, passwordVisibleRep);
+        Object s = NavigationService.consumePreservedState();
+        if (s != null) restoreState(s);
     }
 
     // action handlers

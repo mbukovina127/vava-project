@@ -26,8 +26,9 @@ public class UserManagementController extends BaseController<Void> implements In
     private record UserEntry(int id, String fullName, Role role) {}
 
     // ── FXML — page ───────────────────────────────────────────────────────────
-    @FXML private Button addUserButton;
-    @FXML private VBox   userListContainer;
+    @FXML private Button    addUserButton;
+    @FXML private TextField searchField;
+    @FXML private VBox      userListContainer;
 
     // ── FXML — overlay + dialog card ─────────────────────────────────────────
     @FXML private Region        dimOverlay;
@@ -57,6 +58,7 @@ public class UserManagementController extends BaseController<Void> implements In
             log.error("Failed to load users", e);
         }
         populateList();
+        searchField.textProperty().addListener((obs, old, val) -> applyFilter());
     }
 
     @Override
@@ -64,10 +66,16 @@ public class UserManagementController extends BaseController<Void> implements In
 
     // ── List builder ──────────────────────────────────────────────────────────
     private void populateList() {
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        String query = searchField == null ? "" : searchField.getText().trim().toLowerCase();
         userListContainer.getChildren().clear();
-        for (UserEntry user : users) {
-            userListContainer.getChildren().add(buildUserRow(user));
-        }
+        users.stream()
+            .filter(u -> query.isEmpty() || u.fullName().toLowerCase().contains(query))
+            .map(this::buildUserRow)
+            .forEach(userListContainer.getChildren()::add);
     }
 
     private HBox buildUserRow(UserEntry user) {

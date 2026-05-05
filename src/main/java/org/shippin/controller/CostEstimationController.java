@@ -37,7 +37,54 @@ import static java.lang.Double.parseDouble;
 import static org.shippin.dto.Screens.COST_BREAKDOWN;
 
 @Log4j2
-public class CostEstimationController extends BaseController<Void> implements Initializable {
+public class CostEstimationController extends BaseController<Void> implements Initializable, StatePreservable {
+
+    private record FormState(
+        String from, String destination,
+        String weight, String volume, String fuel, String toll,
+        Set<Integer> checkedServiceIds, Integer selectedProductId
+    ) {}
+
+    @Override
+    public Object captureState() {
+        Set<Integer> checkedIds = new LinkedHashSet<>();
+        for (Map.Entry<CheckBox, AdditionalService> e : serviceCheckBoxes.entrySet()) {
+            if (e.getKey().isSelected()) checkedIds.add(e.getValue().getId());
+        }
+        Integer selectedProductId = null;
+        Toggle t = productsToggleGroup.getSelectedToggle();
+        if (t instanceof RadioButton rb && productRadioButtons.containsKey(rb)) {
+            selectedProductId = productRadioButtons.get(rb).getId();
+        }
+        return new FormState(
+            fromCombo.getValue(), destinationField.getText(),
+            weightField.getText(), volumeField.getText(),
+            fuelSurchargeField.getText(), tollField.getText(),
+            checkedIds, selectedProductId
+        );
+    }
+
+    @Override
+    public void restoreState(Object rawState) {
+        if (!(rawState instanceof FormState s)) return;
+        if (s.from() != null) fromCombo.setValue(s.from());
+        destinationField.setText(s.destination());
+        weightField.setText(s.weight());
+        volumeField.setText(s.volume());
+        fuelSurchargeField.setText(s.fuel());
+        tollField.setText(s.toll());
+        for (Map.Entry<CheckBox, AdditionalService> e : serviceCheckBoxes.entrySet()) {
+            e.getKey().setSelected(s.checkedServiceIds().contains(e.getValue().getId()));
+        }
+        if (s.selectedProductId() != null) {
+            for (Map.Entry<RadioButton, AdditionalService> e : productRadioButtons.entrySet()) {
+                if (e.getValue().getId() == s.selectedProductId()) {
+                    productsToggleGroup.selectToggle(e.getKey());
+                    break;
+                }
+            }
+        }
+    }
 
     // Title + Date
     @FXML private Label     sectionTitleLabel;
