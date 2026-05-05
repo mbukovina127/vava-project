@@ -10,6 +10,7 @@ import org.shippin.domain.Shipment;
 import org.shippin.services.MapService;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
+import org.shippin.domain.enums.State;
 
 import java.net.URL;
 import java.util.List;
@@ -51,13 +52,17 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     private void loadAllShipments() {
         try {
             shipments = shipmentService.getAllShipments();
-            System.out.println("DEBUG: Loaded " + shipments.size() + " shipments");
-            log.info("✅ Loaded {} shipments", shipments.size());
-            // ...
-        } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
-            e.printStackTrace();
-            log.error("❌ Failed to load shipments", e);
+            log.info("Loaded {} shipments", shipments.size());
+
+            //ukáže len ongoing shipments
+            shipments = shipments.stream()
+                    .filter(s -> s.getState() != State.DELIVERED &&
+                            s.getState() != State.FAILED)
+                    .toList();
+
+            log.info("✅ Loaded {} ongoing shipments", shipments.size());
+          } catch (Exception e) {
+            log.error("Failed to load shipments", e);
             showMapFallback();
         }
     }
@@ -92,64 +97,73 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
         int markerCount = 0;
         for (Shipment s : shipments) {
+
             double fromLat = 48.7;
             double fromLon = 19.15;
 
-            // ===== HARDCODED TEST PSČ =====
-            int testWarehousePsc = 80000;
-            if (s.getShipment_id() == 159) testWarehousePsc = 4001;
-            if (s.getShipment_id() == 158) testWarehousePsc = 94500;
+            if (s.getStartCoordinate() != null) {
+                fromLat = s.getStartCoordinate().getX();
+                fromLon = s.getStartCoordinate().getY();
 
-            try {
-                double[] coords = mapService.fetchCoordinatesForPostalCode(testWarehousePsc);
-                fromLat = coords[0];
-                fromLon = coords[1];
-                System.out.println("DEBUG: TEST PSC " + testWarehousePsc + " -> lat=" + fromLat + ", lon=" + fromLon);
-            } catch (Exception e) {
-                System.out.println("ERROR loading warehouse coords: " + e.getMessage());
-                e.printStackTrace();
+
+                /*
+                // FILTER NA Slovensko + okolie
+                if (fromLat < 47.0|| fromLat > 50.5 || fromLon < 14.0 || fromLon > 23.5) {
+                    log.warn("Warehouse outside region: {}, {}", fromLat, fromLon);
+                    continue;
+                }*/
             }
-
-            System.out.println("DEBUG: About to load dest for shipment " + s.getShipment_id());
 
             if (s.getDest_region() > 0) {
                 try {
-                    System.out.println("DEBUG: Fetching dest coords for PSC " + s.getDest_region());
                     double[] coords = mapService.fetchCoordinatesForPostalCode(s.getDest_region());
                     double toLat = coords[0];
                     double toLon = coords[1];
 
-                    System.out.println("DEBUG: Shipment #" + s.getShipment_id() + " dest OK");
+                    //RANDOM OFFSET
+                    double offsetLat = (Math.random() - 0.5) * 0.06;  // ±3km na sever/juh
+                    double offsetLon = (Math.random() - 0.5) * 0.06;  // ±3km na východ/západ
+                    toLat += offsetLat;
+                    toLon += offsetLon;
+
+                    /*
+                    // FILTER NA destináciu!
+                    if (toLat < 47.0 || toLat > 50.5 || toLon < 14.0 || toLon > 23.5) {
+                        log.warn("Destination outside region: {}, {}", toLat, toLon);
+                        continue;
+                    }*/
 
                     if (markerCount > 0) markers.append("&");
                     markers.append(String.format("markers=color:green|%.4f,%.4f", fromLat, fromLon));
-                    markers.append(String.format("&markers=color:red|%.4f,%.4f", toLat, toLon));
-                    paths.append(String.format("&path=color:0x0000ff|weight:1|%.4f,%.4f|%.4f,%.4f",
+
+                    String destColor = switch (s.getState()) {
+                        case NOT_READY          -> "0xFF5555"; //cervena
+                        case READY_FOR_DELIVERY -> "0x3366FF"; //modra
+                        case BEING_DELIVERED    -> "0xFF9900"; //oranzova
+                        case CANCELED           -> "0x999999"; //siva
+                        default                 -> "0xFF0000";
+                    };
+
+                    markers.append(String.format("&markers=color:%s|%.4f,%.4f", destColor, toLat, toLon));
+                    paths.append(String.format("&path=color:0x0000ff|weight:2|%.4f,%.4f|%.4f,%.4f",
                             fromLat, fromLon, toLat, toLon));
 
                     markerCount++;
                 } catch (Exception e) {
-                    System.out.println("ERROR loading dest coords: " + e.getMessage());
-                    e.printStackTrace();
+                    log.error("ERROR farbicky: ", e);
                 }
-            } else {
-                System.out.println("DEBUG: Shipment #" + s.getShipment_id() + " has no dest_region!");
             }
         }
 
-        System.out.println("🗺️ Final markers count: " + markerCount);
-
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/staticmap?" +
-                        "size=1000x600&" +
+                        "size=1000x300&" +
                         "%s%s" +
                         "&key=%s",
                 markers.toString(),
                 paths.toString(),
                 "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc"
         );
-
-        System.out.println("🔗 Map URL: " + url);
         return url;
     }
 

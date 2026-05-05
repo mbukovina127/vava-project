@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -30,6 +31,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class MyShipmentsController extends BaseController<User> implements Initializable {
     private record ShipmentEntry(
             int    shipmentId,
@@ -46,9 +48,11 @@ public class MyShipmentsController extends BaseController<User> implements Initi
     @FXML private TextField   searchField;
     @FXML private ComboBox<String> sortCombo;
     @FXML private Button      btnAddShipment;
+    @FXML private Button      btnShowOnMap;
 
 
     private User viewedUser;
+    private List<Shipment> rawShipments = new ArrayList<>();
     private List<ShipmentEntry> entries = new ArrayList<>();
 
     private enum SortType { TIME, COST, STATE }
@@ -83,14 +87,22 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     @FXML
     private void handleAddShipment() throws IOException {
-        // TODO: navigate to Add Shipment screen for viewedUser
-        System.out.println("Add shipment for user " + viewedUser.getId());
+        log.info("Add shipment for user " + viewedUser.getId());
         loadScreen(Screens.COST_ESTIMATION);
+    }
+
+    @FXML
+    private void handleShowOnMap() throws IOException {
+        List<Shipment> active = rawShipments.stream()
+                .filter(s -> s.getState() != State.FAILED && s.getState() != State.DELIVERED)
+                .toList();
+        loadScreen(Screens.MAP_OF_SHIPMENTS, active);
     }
 
     private void loadFromService() {
         try {
             List<Shipment> shipments = shipmentService.getShipmentsByUser(viewedUser.getId());
+            rawShipments = shipments;
             entries.clear();
             for (Shipment s : shipments) {
                 entries.add(new ShipmentEntry(
@@ -109,7 +121,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
             updateTitle();
             applyFilterAndSort();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load shipments for user #{}", viewedUser.getId(), e);
         }
     }
 
@@ -208,7 +220,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
             Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
-            e.printStackTrace();
+            log.error("Failed to open shipment #{}", entry.shipmentId(), e);
         }
     }
 

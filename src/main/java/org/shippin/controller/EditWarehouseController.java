@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class EditWarehouseController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML
@@ -85,7 +87,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     	try {
 			this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
@@ -207,7 +209,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
         loadScreen(WAREHOUSE_MANAGEMENT);
       } catch (IOException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
+        log.error("Warehouse operation failed", e);
       }
     }
     
@@ -244,13 +246,13 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.map.postal_code_to_coordinates_failed");
 		}
     }

@@ -14,8 +14,8 @@
 
             <Label styleClass="page-title" text="Map of Shipments" />
 
-            <StackPane fx:id="mapContainer" alignment="CENTER" prefHeight="450" VBox.vgrow="ALWAYS">
-                <ImageView fx:id="mapImageView" fitWidth="1050" preserveRatio="true" styleClass="sd-map-image" />
+            <StackPane fx:id="mapContainer" alignment="CENTER" prefHeight="300" VBox.vgrow="ALWAYS">
+                <ImageView fx:id="mapImageView" fitWidth="1000" preserveRatio="true" styleClass="sd-map-image" />
                 <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="Map unavailable" visible="false" />
             </StackPane>
 

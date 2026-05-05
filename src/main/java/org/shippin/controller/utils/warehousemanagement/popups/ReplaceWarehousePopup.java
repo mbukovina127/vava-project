@@ -1,5 +1,6 @@
 package org.shippin.controller.utils.warehousemanagement.popups;
 
+import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -29,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+@Log4j2
 public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 
 	private WarehouseManagementController controller;
@@ -57,7 +59,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 				this.controller.getSelectedRegionTableFormatted(), this.controller.getSelectedWarehouse());
     		this.controller.hideModal();
     	} catch (SQLException e) {
-    		e.printStackTrace();
+    		log.error("Replace warehouse tables failed", e);
     		new GenericPopup(this.resources).showOkPopup(this.controller, "%generic.failed_to_insert", "%generic.database_problem");
     	} catch (IncompatibleTablesException e) {
     		priceListError.setText(t("%generic.incompatible_tables"));
@@ -128,8 +130,8 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 				chosenPriceList = WarehouseParsingService.getInstance().parsePriceList(file);
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				priceListError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
+				log.error("Replace warehouse tables failed", e);
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
 			}
 
             if (chosenPriceList == null) { return; }
@@ -160,8 +162,8 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 				chosenRegionTable = WarehouseParsingService.getInstance().parseRegionTable(file);
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				regionTableError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
+				log.error("Replace warehouse tables failed", e);
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
 			}
 
             if (chosenRegionTable == null) { return; }

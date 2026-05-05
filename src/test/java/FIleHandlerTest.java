@@ -83,6 +83,78 @@ class FileHandlerTest {
     }
 
     @Test
+    void readFromShouldReturnEmptyStringForNullFile() {
+        String content = handler.readFrom(null);
+
+        assertEquals("", content);
+    }
+
+    @Test
+    void readFromShouldReturnEmptyStringForDirectory() {
+        File directory = tempDir.toFile();
+
+        String content = handler.readFrom(directory);
+
+        assertEquals("", content);
+    }
+
+    @Test
+    void readFromShouldReturnEmptyStringForNonExistingFile() {
+        File file = tempDir.resolve("non-existing-file.csv").toFile();
+
+        String content = handler.readFrom(file);
+
+        assertEquals("", content);
+    }
+
+    @Test
+    void readFromShouldReturnEmptyStringForEmptyFile() throws IOException {
+        File file = tempDir.resolve("empty.txt").toFile();
+
+        Files.writeString(file.toPath(), "");
+
+        String content = handler.readFrom(file);
+
+        assertEquals("", content);
+    }
+
+    @Test
+    void writeToShouldReturnFalseForNullFile() {
+        boolean success = handler.writeTo(null, "content");
+
+        assertFalse(success);
+    }
+
+    @Test
+void writeToShouldReturnFalseWhenTargetIsDirectory() {
+    File directory = tempDir.toFile();
+
+    boolean success = handler.writeTo(directory, "content");
+
+    assertFalse(success);
+}
+
+    @Test
+    void writeToShouldReturnFalseForNullContent() {
+        File file = tempDir.resolve("null-content.txt").toFile();
+
+        boolean success = handler.writeTo(file, null);
+
+        assertFalse(success);
+    }
+
+    @Test
+    void writeToShouldCreateParentDirectories() throws IOException {
+        File file = tempDir.resolve("nested/folder/output.txt").toFile();
+
+        boolean success = handler.writeTo(file, "hello");
+
+        assertTrue(success);
+        assertTrue(file.exists());
+        assertEquals("hello", Files.readString(file.toPath()));
+    }
+
+    @Test
     void writeToShouldWriteContentToFile() throws IOException {
         File file = tempDir.resolve("output.txt").toFile();
 
@@ -109,25 +181,5 @@ class FileHandlerTest {
 
         assertTrue(success);
         assertEquals(content, readBack);
-    }
-
-    @Test
-    void readFromShouldReturnEmptyStringForNonExistingFile() {
-        File file = tempDir.resolve("non-existing-file.csv").toFile();
-
-        String content = handler.readFrom(file);
-
-        assertEquals("", content);
-    }
-
-    @Test
-    void readFromShouldReturnEmptyStringForEmptyFile() throws IOException {
-        File file = tempDir.resolve("empty.txt").toFile();
-
-        Files.writeString(file.toPath(), "");
-
-        String content = handler.readFrom(file);
-
-        assertEquals("", content);
     }
 }
