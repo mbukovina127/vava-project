@@ -61,7 +61,7 @@ public class MenuController implements Initializable {
             new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"),
             new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"),
             new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"),
-            new NavItem(Screens.SERVICES_MANAGEMENT, "Services Management", "/icons/png-light/truck_white.png", "/icons/png-dark/truck_black.png")
+            new NavItem(Screens.SERVICES_MANAGEMENT, "Services Management", "/icons/png-light/truck_white.png", "/icons/png-dark/truck_black.png"),
             new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/map_white.png", "/icons/png-dark/map_black.png")
 
     );
