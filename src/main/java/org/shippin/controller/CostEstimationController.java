@@ -125,7 +125,9 @@ public class CostEstimationController extends BaseController<Void> implements In
     private final ToggleGroup productsToggleGroup = new ToggleGroup();
     private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
     private final Map<RadioButton, AdditionalService> productRadioButtons = new LinkedHashMap<>();
-	private ResourceBundle resources;
+    private final ToggleGroup paymentsToggleGroup = new ToggleGroup();
+    private final Map<RadioButton, AdditionalService> paymentRadioButtons = new LinkedHashMap<>();
+    private ResourceBundle resources;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
@@ -208,19 +210,39 @@ public class CostEstimationController extends BaseController<Void> implements In
                 }
                 case PRODUCTS ->
                 {
-                    CheckBox cb = new CheckBox(serviceName);
-                    cb.getStyleClass().add("ce-check");
+                    RadioButton rb = new RadioButton(serviceName);
+                    rb.setToggleGroup(paymentsToggleGroup);
+                    rb.setMnemonicParsing(false);
+                    rb.getStyleClass().add("ce-radio");
+
+                    HBox row = new HBox(8);
+                    row.setAlignment(Pos.CENTER_LEFT);
+                    row.getStyleClass().add("ce-product-row");
+                    row.getChildren().add(rb);
+
                     if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(serviceDesc));
+                        Label desc = new Label(serviceDesc);
+                        desc.getStyleClass().add("ce-product-desc");
+                        desc.setWrapText(true);
+                        row.getChildren().add(desc);
                     }
-                    paymentsContainer.getChildren().add(cb);
-                    serviceCheckBoxes.put(cb, service);
+
+                    paymentsContainer.getChildren().add(row);
+                    paymentRadioButtons.put(rb, service);
                 }
             }
         }
 
-        productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+        if (!productsToggleGroup.getToggles().isEmpty())
+        {
+            productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+        }
+
+        if (!paymentsToggleGroup.getToggles().isEmpty())
+        {
+            paymentsToggleGroup.selectToggle(null);
+        }
     }
 
     private Label createGroupLabel(String text)
@@ -238,6 +260,12 @@ public class CostEstimationController extends BaseController<Void> implements In
         if (selectedProduct instanceof RadioButton rb && productRadioButtons.containsKey(rb))
         {
             ids.add(productRadioButtons.get(rb).getId());
+        }
+
+        Toggle selectedPayment = paymentsToggleGroup.getSelectedToggle();
+        if (selectedPayment instanceof RadioButton rb && paymentRadioButtons.containsKey(rb))
+        {
+            ids.add(paymentRadioButtons.get(rb).getId());
         }
 
         for (Map.Entry<CheckBox, AdditionalService> entry : serviceCheckBoxes.entrySet())
@@ -301,6 +329,10 @@ public class CostEstimationController extends BaseController<Void> implements In
         statusLabelVolume.setText("");
         statusLabelFuel.setText("");
         statusLabelToll.setText("");
+        if (!paymentsToggleGroup.getToggles().isEmpty())
+        {
+            paymentsToggleGroup.selectToggle(null);
+        }
     }
     @FXML
     private void onComputeCost() throws IOException

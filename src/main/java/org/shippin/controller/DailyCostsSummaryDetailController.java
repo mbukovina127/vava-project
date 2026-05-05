@@ -1,5 +1,7 @@
 package org.shippin.controller;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +33,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+
 /**
  * Controller for DailyCostsSummaryDetail.fxml
  *
@@ -53,6 +56,9 @@ public class DailyCostsSummaryDetailController
     @FXML private Label               lblTotal;
     @FXML private TextField           searchField;
     @FXML private ComboBox<String>    sortCombo;
+
+    private Image editIcon;
+    private Image deleteIcon;
 
     // State
     private LocalDate            currentDate = java.time.LocalDate.now();
@@ -87,6 +93,9 @@ public class DailyCostsSummaryDetailController
     public void initialize(URL location, ResourceBundle resources) {
         shipmentService = new ShipmentService();
 
+        editIcon = loadImage("/icons/png-dark/rewrite_black.png");
+        deleteIcon = loadImage("/icons/png-dark/delete_black.png");
+
         ResourceBundle bundle = NavigationService.getBundle();
         sortCombo.getItems().addAll(
                 bundle.getString("my_shipments.sort_time"),
@@ -97,6 +106,10 @@ public class DailyCostsSummaryDetailController
 
         searchField.textProperty().addListener((obs, old, val) -> applyFilterAndSort());
         sortCombo.valueProperty().addListener((obs, old, val) -> applyFilterAndSort());
+
+        if (currentDate != null) {
+            lblTitle.setText(currentDate.format(TITLE_FMT) + " – " + bundle.getString("daily_cost.header"));
+        }
     }
 
     // Public API — called by the parent controller
@@ -124,9 +137,7 @@ public class DailyCostsSummaryDetailController
     }
 
     private void renderRows(List<ShipmentEntry> rows) {
-        if (currentDate != null) {
-            lblTitle.setText(currentDate.format(TITLE_FMT) + " – Daily costs summary");
-        }
+
 
         shipmentList.getChildren().clear();
         for (ShipmentEntry entry : rows) {
@@ -183,14 +194,24 @@ public class DailyCostsSummaryDetailController
         rightBox.getChildren().addAll(lblState, lblAmount);
 
         // Action buttons
-        VBox btnBox = new VBox(4);
+        HBox btnBox = new HBox(6);
         btnBox.setAlignment(Pos.CENTER);
 
-        Button btnEdit = new Button("✎");
+        Button btnEdit = new Button();
+        ImageView editView = new ImageView(editIcon);
+        editView.setFitWidth(18);
+        editView.setFitHeight(18);
+        editView.setPreserveRatio(true);
+        btnEdit.setGraphic(editView);
         btnEdit.getStyleClass().add("dcd-icon-btn");
         btnEdit.setOnAction(e -> handleEdit(entry));
 
-        Button btnDelete = new Button("🗑");
+        Button btnDelete = new Button();
+        ImageView deleteView = new ImageView(deleteIcon);
+        deleteView.setFitWidth(18);
+        deleteView.setFitHeight(18);
+        deleteView.setPreserveRatio(true);
+        btnDelete.setGraphic(deleteView);
         btnDelete.getStyleClass().addAll("dcd-icon-btn", "dcd-icon-btn-delete");
         btnDelete.setOnAction(e -> handleDelete(entry));
 
