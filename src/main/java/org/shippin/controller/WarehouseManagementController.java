@@ -40,6 +40,7 @@ import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.exception.IncompatibleTablesException;
+import org.shippin.exception.ValidationException;
 import org.shippin.services.WarehouseService;
 
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
@@ -258,7 +259,14 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
         if (file == null) { return; }
         
-    	SmallPriceListFormatted smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
+    	SmallPriceListFormatted smallPriceListFormatted = null;
+		try {
+			smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
+		} catch (ValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.validation_problem");
+		}
 
         // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
     	if (smallPriceListFormatted == null) { return; }

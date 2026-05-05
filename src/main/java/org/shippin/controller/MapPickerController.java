@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.*;
-import org.shippin.app.FromCoordsDataGetter;
+import org.shippin.util.FromCoordsDataGetter;
 import org.shippin.services.NavigationService;
 
 import javax.swing.*;

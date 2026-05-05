@@ -18,6 +18,7 @@ tasks.named<JavaExec>("run") {
         it.key.toString() })
 }
 
+
 repositories {
     mavenCentral()
 }
@@ -25,6 +26,17 @@ repositories {
 javafx {
     version = "26"
     modules("javafx.controls", "javafx.fxml", "javafx.web", "javafx.swing")
+}
+tasks.test {
+    jvmArgs(
+        "-Djava.awt.headless=true",
+        "-Dtestfx.robot=glass",
+        "-Dtestfx.headless=true",
+        "-Dprism.order=sw",
+        "-Dprism.text=t2k",
+        "-Dglass.platform=Monocle",
+        "-Dmonocle.platform=Headless"
+    )
 }
 
 dependencies {
@@ -56,6 +68,8 @@ dependencies {
 
     //pdf
     implementation("org.apache.pdfbox:pdfbox:3.0.2")
+
+    testImplementation("org.testfx:openjfx-monocle:jdk-12.0.1+2")
 }
 
 tasks.test {
@@ -75,3 +89,4 @@ tasks.jacocoTestReport {
         csv.required.set(false)
     }
 }
+

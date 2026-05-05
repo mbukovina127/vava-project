@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +25,6 @@ import org.shippin.domain.Shipment;
 import org.shippin.domain.ShipmentHistory;
 import org.shippin.domain.enums.ServiceType;
 import org.shippin.domain.enums.State;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ShipmentDaoTest {
 
@@ -506,20 +509,29 @@ public class ShipmentDaoTest {
         return rs.getInt("shipment_ID");
     }
 
-    private int insertServiceDirectly(String name) throws SQLException {
-        PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
-            INSERT INTO Service(service_name, default_cost, cost_modificator, description, service_type)
-            VALUES (?, 5, 1, 'Test service', 'SERVICES')
-            RETURNING service_ID
-        """);
+private int insertServiceDirectly(String name) throws SQLException {
+    PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
+        INSERT INTO Service(
+            service_name,
+            service_name_en,
+            default_cost,
+            cost_modificator,
+            description,
+            description_en,
+            service_type
+        )
+        VALUES (?, ?, 5, 1, 'Test service', 'Test service', 'SERVICES')
+        RETURNING service_ID
+    """);
 
-        stmt.setString(1, name);
+    stmt.setString(1, name);
+    stmt.setString(2, name);
 
-        ResultSet rs = stmt.executeQuery();
-        rs.next();
+    ResultSet rs = stmt.executeQuery();
+    rs.next();
 
-        return rs.getInt("service_ID");
-    }
+    return rs.getInt("service_ID");
+}
 
     private void insertServiceListDirectly(int serviceId, int shipmentId) throws SQLException {
         PreparedStatement stmt = DBConnector.getInstance().getConnection().prepareStatement("""
