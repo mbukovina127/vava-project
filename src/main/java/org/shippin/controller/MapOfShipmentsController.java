@@ -1,5 +1,9 @@
 package org.shippin.controller;
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -9,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.Shipment;
 import org.shippin.domain.enums.State;
@@ -33,10 +38,13 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     @FXML private ImageView mapImageView;
     @FXML private Label     mapFallbackLabel;
     @FXML private HBox      legendRow;
+    @FXML private StackPane loadingOverlay;
+    @FXML private ImageView spinnerImageView;
 
     private final MapService mapService = new MapService();
 
     private List<Shipment> shipments = List.of();
+    private RotateTransition spinnerAnimation;
 
     @Override
     protected Class<List<Shipment>> getDataType() {
@@ -47,17 +55,20 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     protected void onData(List<Shipment> data) {
         if (data != null) {
             this.shipments = data;
-        } else {
-            filterShipments();
         }
+        filterShipments();
         loadMapImage();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("MapOfShipmentsController initialized");
+        spinnerAnimation = new RotateTransition(Duration.millis(1200), spinnerImageView);
+        spinnerAnimation.setByAngle(360);
+        spinnerAnimation.setCycleCount(Animation.INDEFINITE);
+        spinnerAnimation.setInterpolator(Interpolator.LINEAR);
         buildLegend();
-        filterShipments();
+        showLoading();
     }
 
     private void filterShipments() {
@@ -68,7 +79,6 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
             log.info("Loaded {} ongoing shipments", shipments.size());
         } catch (Exception e) {
             log.error("Failed to filter shipments", e);
-            showMapFallback();
         }
     }
 
@@ -77,19 +87,45 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
             showMapFallback();
             return;
         }
-        try {
-            String url = buildMultipleShipmentsUrl();
-            Image mapImage = new Image(url, true);
-            mapImage.errorProperty().addListener((obs, old, isError) -> {
-                if (isError) showMapFallback();
-            });
-            mapImageView.setImage(mapImage);
-            mapImageView.setVisible(true);
-            mapFallbackLabel.setVisible(false);
-        } catch (Exception ex) {
-            log.error("Failed to load map", ex);
-            showMapFallback();
-        }
+        showLoading();
+        new Thread(() -> {
+            try {
+                String url = buildMultipleShipmentsUrl();
+                Platform.runLater(() -> {
+                    Image mapImage = new Image(url, true);
+                    mapImage.progressProperty().addListener((obs, old, progress) -> {
+                        if (progress.doubleValue() >= 1.0) stopLoading();
+                    });
+                    mapImage.errorProperty().addListener((obs, old, isError) -> {
+                        if (isError) { stopLoading(); showMapFallback(); }
+                    });
+                    mapImageView.setImage(mapImage);
+                    // guard: image may already be done if cached
+                    if (mapImage.isError()) { stopLoading(); showMapFallback(); }
+                    else if (mapImage.getProgress() >= 1.0) stopLoading();
+                });
+            } catch (Exception ex) {
+                log.error("Failed to build map URL", ex);
+                Platform.runLater(() -> {
+                    stopLoading();
+                    showMapFallback();
+                });
+            }
+        }).start();
+    }
+
+    private void showLoading() {
+        loadingOverlay.setVisible(true);
+        mapImageView.setVisible(false);
+        mapFallbackLabel.setVisible(false);
+        spinnerAnimation.play();
+    }
+
+    private void stopLoading() {
+        spinnerAnimation.stop();
+        spinnerAnimation.jumpTo(Duration.ZERO);
+        loadingOverlay.setVisible(false);
+        mapImageView.setVisible(true);
     }
 
     private String buildMultipleShipmentsUrl() {
@@ -180,6 +216,8 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     }
 
     private void showMapFallback() {
+        spinnerAnimation.stop();
+        loadingOverlay.setVisible(false);
         mapImageView.setVisible(false);
         mapFallbackLabel.setVisible(true);
     }
