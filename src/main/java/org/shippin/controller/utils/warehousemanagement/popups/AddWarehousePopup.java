@@ -160,7 +160,9 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				log.error("Add warehouse failed", e);
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
+				priceListError.setText(
+				        t("%generic.validation_problem") + "\n" + String.join("\n", e.getErrors().getFirst())
+				);
 			}
 	        if (priceListFormatted == null) { return; }
 	        controller.setSelectedPriceListFormatted(priceListFormatted);
@@ -185,7 +187,7 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 				regionTableFormatted = WarehouseParsingService.getInstance().parseRegionTable(file);
 			} catch (ValidationException e) {
 				log.error("Add warehouse failed", e);
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem " + e.getErrors());
+				regionTableError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
 			}
 	        if (regionTableFormatted == null) { return; }
 	        controller.setSelectedRegionTableFormatted(regionTableFormatted);

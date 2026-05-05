@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
 
     private static final String SS_NS = "urn:schemas-microsoft-com:office:spreadsheet";
@@ -32,7 +31,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
     public Table<RegionTableRow> parseFromXml(String text) throws ValidationException {
         RegionTableFormatted table = new RegionTableFormatted();
 
-        //safety check
+        // safety check
         if (text == null || text.trim().isEmpty()) {
             return table;
         }
@@ -45,8 +44,9 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
         Map<String, List<String>> rawRegionRanges = new HashMap<>();
         Map<String, List<Range>> regionToRanges = new HashMap<>();
         String currentRegion = null;
+        List<String> regionCodesInOrder = new ArrayList<>();   // for duplicate detection
 
-        //load data (skip header row)
+        // load data (skip header row)
         for (int i = 1; i < rows.size(); i++) {
             List<String> fields = rows.get(i);
             if (fields.isEmpty()) continue;
@@ -56,6 +56,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
             // if first cell has a region code, update current region
             if (!firstCell.isEmpty()) {
                 currentRegion = firstCell;
+                regionCodesInOrder.add(currentRegion);   // record every explicit region code occurrence
             }
 
             if (currentRegion == null) continue;
@@ -91,7 +92,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
             regionToRanges.computeIfAbsent(currentRegion, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
 
-        RegionTableValidator.validate(rawRegionRanges, NavigationService.getBundle());
+        RegionTableValidator.validate(rawRegionRanges, regionCodesInOrder, NavigationService.getBundle());
 
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {
@@ -105,7 +106,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
 
     @Override
     public String exportToXml(Table<RegionTableRow> table) {
-        //safety check
+        // safety check
         if (!(table instanceof RegionTableFormatted rtf)) {
             return "";
         }
@@ -132,12 +133,12 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
             Element tableEl = doc.createElementNS(SS_NS, "Table");
             worksheet.appendChild(tableEl);
 
-            //build header
+            // build header
             Element headerRow = createRow(doc);
             headerRow.appendChild(createStringCell(doc, "Rozdelenie PSČ:"));
             tableEl.appendChild(headerRow);
 
-            //build data for each line
+            // build data for each line
             for (RegionTableRow row : rows) {
                 String code = row.getRegionCode();
                 List<Range> ranges = row.getRanges();

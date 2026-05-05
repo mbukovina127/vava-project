@@ -110,7 +110,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         Label postalCodeValue = createValueLabel(String.valueOf(briefWarehouse.getPostalCode()));
 
         Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));
-        Label priceListFile = createFileLabel("Original price list");
+        Label priceListFile = createFileLabel(t("%warehouse_management.replace.original_price_list"));
         Label priceListError = createErrorLabel();
         Button replacePriceListButton = new Button(t("%warehouse_management.button.replace"));
         replacePriceListButton.getStyleClass().addAll("popup-button", "danger-button");
@@ -131,7 +131,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				log.error("Replace warehouse tables failed", e);
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+				priceListError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
 			}
 
             if (chosenPriceList == null) { return; }
@@ -142,7 +142,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         });
 
         Label regionTableLabel = createFormLabel(t("%warehouse_management.replace.region_table"));
-        Label regionTableFile = createFileLabel("Original region table");
+        Label regionTableFile = createFileLabel(t("%warehouse_management.replace.original_region_table"));
         Label regionTableError = createErrorLabel();
         Button replaceRegionTableButton = new Button(t("%warehouse_management.button.replace"));
         replaceRegionTableButton.getStyleClass().addAll("popup-button", "danger-button");
@@ -163,7 +163,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				log.error("Replace warehouse tables failed", e);
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+				regionTableError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
 			}
 
             if (chosenRegionTable == null) { return; }
