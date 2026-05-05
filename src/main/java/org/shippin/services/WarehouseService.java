@@ -12,10 +12,12 @@ import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.exception.IncompatibleTablesException;
 import org.shippin.util.WarehouseConvertor;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Coordinates;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.RegionDAO;
 import org.shippin.database.dao.WarehouseDAO;
 
+@Log4j2
 @Data
 @AllArgsConstructor
 public class WarehouseService {
@@ -51,26 +54,35 @@ public class WarehouseService {
         return instance;
     }
 	
-	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName, int postalCode) throws SQLException {
+	public void updateWarehouse(BriefWarehouse briefWarehouse, String name, String regionName, int postalCode) throws Exception {
 		Warehouse warehouse = this.getWarehouse(briefWarehouse);
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
 		warehouse.setPostalCode(postalCode);
+		
+		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
+		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
+		
+		warehouse.setCoord(coordinates);
+		
 		warehouseDao.updateWarehouse(warehouse);
 	}
 	
-	public void addWarehouse(String name, String regionName, int postalCode, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws IncompatibleTablesException, SQLException {
+	public void addWarehouse(String name, String regionName, int postalCode, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws Exception {
 		PriceList priceList = WarehouseConvertor.convertPriceList(priceListFormatted);
 		RegionTable regionTable = WarehouseConvertor.convertRegionTable(regionTableFormatted);
-
+		
 		boolean compatibleTables = WarehouseParsingService.getInstance()
 				.checkTableCompatibility(priceList, regionTable);
-
+		
+		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
+		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
+		
 		if (!compatibleTables) {
 			throw new IncompatibleTablesException();
 		}
-
-		Warehouse warehouse = new Warehouse(name, regionName, postalCode, priceList, regionTable);
+		
+		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable, postalCode, coordinates);;
 		warehouseDao.insertFullWarehouse(warehouse);
 	}
 	
@@ -101,14 +113,13 @@ public class WarehouseService {
 			priceListDao.insertSmallPriceList(smallPriceList);
 			priceListDao.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to update small price list", e);
 			priceListDao.rollback();
 		} finally {
 			priceListDao.setAutoCommit(true);
 		}
 	}
-	
+
 	public void setSmallPriceListFormatted(SmallPriceListFormatted smallPriceListFormatted) throws SQLException {
 		SmallPriceList smallPriceList = WarehouseConvertor.toSmallPriceList(smallPriceListFormatted);
 		this.setSmallPriceList(smallPriceList);
@@ -137,8 +148,7 @@ public class WarehouseService {
 			priceListDao.commit();
 			regionDao.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to replace tables for warehouse #{}", warehouse.getId(), e);
 			priceListDao.rollback();
 			regionDao.rollback();
 		} finally {

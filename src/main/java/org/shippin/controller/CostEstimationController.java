@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -8,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
+import org.shippin.controller.utils.GenericPopup;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.AdditionalService;
@@ -21,20 +23,68 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.services.ShipmentService;
 
-import org.shippin.app.FromCoordsDataGetter;
+import org.shippin.services.NavigationService;
+import org.shippin.util.FromCoordsDataGetter;
 import org.shippin.controller.MapPickerController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.*;
 
 import static java.lang.Double.parseDouble;
 import static org.shippin.dto.Screens.COST_BREAKDOWN;
 
-public class CostEstimationController extends BaseController<Void> implements Initializable {
+@Log4j2
+public class CostEstimationController extends BaseController<Void> implements Initializable, StatePreservable {
+
+    private record FormState(
+        String from, String destination,
+        String weight, String volume, String fuel, String toll,
+        Set<Integer> checkedServiceIds, Integer selectedProductId
+    ) {}
+
+    @Override
+    public Object captureState() {
+        Set<Integer> checkedIds = new LinkedHashSet<>();
+        for (Map.Entry<CheckBox, AdditionalService> e : serviceCheckBoxes.entrySet()) {
+            if (e.getKey().isSelected()) checkedIds.add(e.getValue().getId());
+        }
+        Integer selectedProductId = null;
+        Toggle t = productsToggleGroup.getSelectedToggle();
+        if (t instanceof RadioButton rb && productRadioButtons.containsKey(rb)) {
+            selectedProductId = productRadioButtons.get(rb).getId();
+        }
+        return new FormState(
+            fromCombo.getValue(), destinationField.getText(),
+            weightField.getText(), volumeField.getText(),
+            fuelSurchargeField.getText(), tollField.getText(),
+            checkedIds, selectedProductId
+        );
+    }
+
+    @Override
+    public void restoreState(Object rawState) {
+        if (!(rawState instanceof FormState s)) return;
+        if (s.from() != null) fromCombo.setValue(s.from());
+        destinationField.setText(s.destination());
+        weightField.setText(s.weight());
+        volumeField.setText(s.volume());
+        fuelSurchargeField.setText(s.fuel());
+        tollField.setText(s.toll());
+        for (Map.Entry<CheckBox, AdditionalService> e : serviceCheckBoxes.entrySet()) {
+            e.getKey().setSelected(s.checkedServiceIds().contains(e.getValue().getId()));
+        }
+        if (s.selectedProductId() != null) {
+            for (Map.Entry<RadioButton, AdditionalService> e : productRadioButtons.entrySet()) {
+                if (e.getValue().getId() == s.selectedProductId()) {
+                    productsToggleGroup.selectToggle(e.getKey());
+                    break;
+                }
+            }
+        }
+    }
 
     // Title + Date
     @FXML private Label     sectionTitleLabel;
@@ -75,10 +125,12 @@ public class CostEstimationController extends BaseController<Void> implements In
     private final ToggleGroup productsToggleGroup = new ToggleGroup();
     private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
     private final Map<RadioButton, AdditionalService> productRadioButtons = new LinkedHashMap<>();
+	private ResourceBundle resources;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+    	this.resources = resources;
         try {
             WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
             warehouseList = warehouseDAO.getAllBriefWarehouses();
@@ -93,21 +145,37 @@ public class CostEstimationController extends BaseController<Void> implements In
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        destinationField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                toBox.getStyleClass().add("ce-to-box-focused");
+            } else {
+                toBox.getStyleClass().remove("ce-to-box-focused");
+            }
+        });
     }
 
     private void buildServiceUI(List<AdditionalService> allServices)
     {
-        productsContainer.getChildren().add(createGroupLabel("Produkty pre ZBS:"));
-        servicesContainer.getChildren().add(createGroupLabel("Obstarávané služby:"));
-        paymentsContainer.getChildren().add(createGroupLabel("Príplatky:"));
+        ResourceBundle bundle = NavigationService.getBundle();
+        boolean isEnglish = bundle.getLocale().getLanguage().equals("en");
+
+        productsContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.zbs_products")));
+        servicesContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.procured_services")));
+        paymentsContainer.getChildren().add(createGroupLabel(bundle.getString("cost_estimation.surcharges")));
 
         for (AdditionalService service : allServices)
         {
+            String serviceName = isEnglish && service.getName_en() != null && !service.getName_en().isBlank()
+                    ? service.getName_en() : service.getName();
+            String serviceDesc = isEnglish && service.getDescription_en() != null && !service.getDescription_en().isBlank()
+                    ? service.getDescription_en() : service.getDescription();
+
             switch (service.getServiceType())
             {
                 case SERVICES ->
                 {
-                    RadioButton rb = new RadioButton(service.getName());
+                    RadioButton rb = new RadioButton(serviceName);
                     rb.setToggleGroup(productsToggleGroup);
                     rb.setMnemonicParsing(false);
 
@@ -116,9 +184,9 @@ public class CostEstimationController extends BaseController<Void> implements In
                     row.getStyleClass().add("ce-product-row");
                     row.getChildren().add(rb);
 
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        Label desc = new Label(service.getDescription());
+                        Label desc = new Label(serviceDesc);
                         desc.getStyleClass().add("ce-product-desc");
                         desc.setWrapText(true);
                         row.getChildren().add(desc);
@@ -129,22 +197,22 @@ public class CostEstimationController extends BaseController<Void> implements In
                 }
                 case ADDITIONAL_PAYMENTS ->
                 {
-                    CheckBox cb = new CheckBox(service.getName());
+                    CheckBox cb = new CheckBox(serviceName);
                     cb.getStyleClass().add("ce-check");
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(service.getDescription()));
+                        cb.setTooltip(new Tooltip(serviceDesc));
                     }
                     servicesContainer.getChildren().add(cb);
                     serviceCheckBoxes.put(cb, service);
                 }
                 case PRODUCTS ->
                 {
-                    CheckBox cb = new CheckBox(service.getName());
+                    CheckBox cb = new CheckBox(serviceName);
                     cb.getStyleClass().add("ce-check");
-                    if (service.getDescription() != null && !service.getDescription().isBlank())
+                    if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(service.getDescription()));
+                        cb.setTooltip(new Tooltip(serviceDesc));
                     }
                     paymentsContainer.getChildren().add(cb);
                     serviceCheckBoxes.put(cb, service);
@@ -244,12 +312,12 @@ public class CostEstimationController extends BaseController<Void> implements In
         String fuelSurchargeText = fuelSurchargeField.getText().trim();
         String tollText = tollField.getText().trim();
 
-        String destinationError = ErrorHandler.validateRequired(destination, "Destination");
-        String weightError = ErrorHandler.validatePositiveDouble(weightText, "Weight");
-        String volumeError = ErrorHandler.validatePositiveDouble(volumeText, "Volume");
+        String destinationError = ErrorHandler.validatePostalCode(destination);
+        String weightError = ErrorHandler.validatePositiveDouble(weightText);
+        String volumeError = ErrorHandler.validatePositiveDouble(volumeText);
 
-        String fuelSurchargeError = ErrorHandler.validatePositiveDouble(fuelSurchargeText, "Fuel surcharge");
-        String tollError = ErrorHandler.validatePositiveDouble(tollText, "Toll");
+        String fuelSurchargeError = ErrorHandler.validatePercent(fuelSurchargeText);
+        String tollError = ErrorHandler.validatePercent(tollText);
 
         // SYNTACTICAL INPUT CHECKING
 
@@ -260,6 +328,7 @@ public class CostEstimationController extends BaseController<Void> implements In
                 || !volumeError.isEmpty()
                 || !fuelSurchargeError.isEmpty()
                 || !tollError.isEmpty()
+
         )
         {
             statusLabelDestination.setText(destinationError);
@@ -301,13 +370,16 @@ public class CostEstimationController extends BaseController<Void> implements In
                     serviceIds
             );
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, "Could not compute shipping cost: " + e.getMessage()).showAndWait();
+            log.error("Cost estimation failed for postal code {}", destPostalCode, e);
+        	new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
             return;
         } catch (IllegalArgumentException e) {
-            new Alert(Alert.AlertType.ERROR, "Invalid input: " + e.getMessage()).showAndWait();
+            log.warn("Cost estimation rejected: {}", e.getMessage());
+            new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.map.postal_code_not_in_warehouse");
             return;
         }
 
+        log.info("Cost estimated: dest={}, total={}", destPostalCode, computedShipment.getTotalCost());
         loadScreen(COST_BREAKDOWN, computedShipment);
     }
 

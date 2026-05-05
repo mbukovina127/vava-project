@@ -1,7 +1,10 @@
 package org.shippin.infrastructure.xml;
 
+import org.shippin.infrastructure.validation.SmallPriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.domain.Table;
 import org.shippin.util.NumberUtils;
 import org.w3c.dom.*;
@@ -24,7 +27,7 @@ public class SmallPriceListXmlParser implements XmlParser<SmallPriceListRow> {
     private static final String SS_NS = "urn:schemas-microsoft-com:office:spreadsheet";
 
     @Override
-    public Table<SmallPriceListRow> parseFromXml(String text) {
+    public Table<SmallPriceListRow> parseFromXml(String text) throws ValidationException {
         SmallPriceListFormatted table = new SmallPriceListFormatted();
 
         //safety check
@@ -37,13 +40,27 @@ public class SmallPriceListXmlParser implements XmlParser<SmallPriceListRow> {
             return table;
         }
 
+        List<String> header = rows.getFirst();
+        String headerCol0 = header.size() > 0 ? header.get(0).trim() : "";
+        String headerCol1 = header.size() > 1 ? header.get(1).trim() : "";
+
+        List<String> weightDescs = new ArrayList<>();
+        List<String> priceStrs   = new ArrayList<>();
+
         // skip header row
         for (int i = 1; i < rows.size(); i++) {
             List<String> fields = rows.get(i);
             if (fields.size() < 2) continue;
 
-            String weightDesc = fields.get(0).trim();
-            String costStr   = fields.get(1).trim();
+            weightDescs.add(fields.get(0).trim());
+            priceStrs.add(fields.get(1).trim());
+        }
+
+        SmallPriceListValidator.validate(headerCol0, headerCol1, weightDescs, priceStrs, NavigationService.getBundle());
+
+        for (int i = 0; i < weightDescs.size(); i++) {
+            String weightDesc = weightDescs.get(i);
+            String costStr    = priceStrs.get(i);
 
             // parse the upper weight limit from "do X kg"
             float weightLimit = 0f;

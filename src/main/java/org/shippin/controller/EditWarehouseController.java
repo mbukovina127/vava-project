@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -23,6 +25,7 @@ import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.WarehouseFormatted;
+import org.shippin.services.NavigationService;
 import org.shippin.services.WarehouseService;
 import org.shippin.util.Range;
 import static org.shippin.dto.Screens.WAREHOUSE_MANAGEMENT;
@@ -36,6 +39,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class EditWarehouseController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML
@@ -44,6 +48,8 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     private TextField documentTitleField;
     @FXML
     private TextField pickupPlaceField;
+    @FXML
+    private TextField storageRegionField;
 
     private PriceListFormatted priceList;
     private RegionTableFormatted regionTableFormatted;
@@ -81,11 +87,14 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     	try {
 			this.warehouse = this.warehouseService.getWarehouseFormatted(briefWarehouse);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
     	documentTitleField.setText(briefWarehouse.getName()); 
     	pickupPlaceField.setText(briefWarehouse.getRegionName());
+    	System.out.println(briefWarehouse.getPostalCode());  
+    	System.out.println(String.valueOf(briefWarehouse.getPostalCode())); 
+    	storageRegionField.setText(String.valueOf(briefWarehouse.getPostalCode()));
     	this.priceList = this.warehouse.getPriceList();
     	setupPriceListTable();
     	this.regionTableFormatted = this.warehouse.getRegionTable();
@@ -102,7 +111,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
         int columnsPerLine = 4;
         int rowIndex = 0;
 
-        addCell(regionGrid, "Rozdelenie PSČ:", 0, rowIndex, 1, 1, "header-cell");
+        addCell(regionGrid, t("%edit_warehouse.postal_code_label"), 0, rowIndex, 1, 1, "header-cell");
         addCell(regionGrid, "", 1, rowIndex, columnsPerLine, 1, "header-cell");
 
         rowIndex++;
@@ -140,40 +149,59 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     private GridPane priceListGrid;
 	private BriefWarehouse briefWarehouse;
 
-    private void setupPriceListTable() {
-        // Remove only dynamically added children, keep the static FXML labels
-        priceListGrid.getChildren().removeIf(
-            node -> GridPane.getColumnIndex(node) != null && GridPane.getColumnIndex(node) > 1
-                    || GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0
-        );
+	private void setupPriceListTable() {
+	    priceListGrid.getChildren().removeIf(
+	        node -> GridPane.getColumnIndex(node) != null && GridPane.getColumnIndex(node) > 1
+	                || GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) > 0
+	    );
 
-        List<String> regionNames = priceList.getRows().isEmpty()
-                ? List.of()
-                : new ArrayList<>(priceList.getRows().get(0).getRegions().keySet());
+	    List<String> regionNames = priceList.getRows().isEmpty()
+	            ? List.of()
+	            : new ArrayList<>(priceList.getRows().get(0).getRegions().keySet());
 
-        // Only dynamic header cells (region names)
-        for (int i = 0; i < regionNames.size(); i++) {
-            addCell(priceListGrid, regionNames.get(i), i + 2, 0, 1, 1, "header-cell");
-        }
+	    priceListGrid.getColumnConstraints().clear();
 
-        // Data rows
-        List<PriceListRow> rows = priceList.getRows();
-        for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
-            PriceListRow row = rows.get(rowIdx);
-            int gridRow = rowIdx + 1;
+	    ColumnConstraints weightColumn = new ColumnConstraints();
+	    weightColumn.setPrefWidth(120);
 
-            addCell(priceListGrid, String.format("%.0f", row.getWeight()),
-                    0, gridRow, 1, 1, "range-cell");
-            addCell(priceListGrid, String.format("%.1f", row.getVolume()).replace(".", ","),
-                    1, gridRow, 1, 1, "range-cell");
+	    ColumnConstraints volumeColumn = new ColumnConstraints();
+	    volumeColumn.setPrefWidth(120);
 
-            for (int i = 0; i < regionNames.size(); i++) {
-                Float price = row.getRegions().get(regionNames.get(i));
-                String text = price == null ? "" : String.format("%.2f €", price).replace(".", ",");
-                addCell(priceListGrid, text, i + 2, gridRow, 1, 1, "range-cell");
-            }
-        }
-    }
+	    priceListGrid.getColumnConstraints().addAll(weightColumn, volumeColumn);
+
+	    for (int i = 0; i < regionNames.size(); i++) {
+	        ColumnConstraints regionColumn = new ColumnConstraints();
+	        regionColumn.setPrefWidth(110);
+	        regionColumn.setHgrow(Priority.ALWAYS);
+	        priceListGrid.getColumnConstraints().add(regionColumn);
+	    }
+
+	    addCell(priceListGrid, t("%edit_warehouse.weight_limit"), 0, 0, 1, 1, "header-cell");
+	    addCell(priceListGrid, t("%edit_warehouse.volume_limit"), 1, 0, 1, 1, "header-cell");
+
+	    for (int i = 0; i < regionNames.size(); i++) {
+	        addCell(priceListGrid, regionNames.get(i), i + 2, 0, 1, 1, "header-cell");
+	    }
+
+	    List<PriceListRow> rows = priceList.getRows();
+
+	    for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
+	        PriceListRow row = rows.get(rowIdx);
+	        int gridRow = rowIdx + 1;
+
+	        addCell(priceListGrid, String.format("%.0f", row.getWeight()),
+	                0, gridRow, 1, 1, "range-cell");
+
+	        addCell(priceListGrid, String.format("%.1f", row.getVolume()).replace(".", ","),
+	                1, gridRow, 1, 1, "range-cell");
+
+	        for (int i = 0; i < regionNames.size(); i++) {
+	            Float price = row.getRegions().get(regionNames.get(i));
+	            String text = price == null ? "" : String.format("%.2f €", price).replace(".", ",");
+	            addCell(priceListGrid, text, i + 2, gridRow, 1, 1, "range-cell");
+	        }
+	    }
+	}
     
     @FXML
     private void handleLeave() {
@@ -181,7 +209,7 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
         loadScreen(WAREHOUSE_MANAGEMENT);
       } catch (IOException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
+        log.error("Warehouse operation failed", e);
       }
     }
     
@@ -190,31 +218,52 @@ public class EditWarehouseController extends BaseController<BriefWarehouse> impl
     	try {
     		String title = documentTitleField.getText();  		
     		if(!InputValidator.isNotBlank(title)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.regex.blank_name");
     			return;
     		} else if(!InputValidator.isValidLength(title, 20)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.name_too_long");
     			return;
     		}
     		
     		String pickup = pickupPlaceField.getText(); 		
     		if(!InputValidator.isNotBlank(pickup)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.regex.blank_pickup_place");
     			return;
     		} else if(!InputValidator.isValidLength(pickup, 30)) {
-    			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%warehouse_management.add.regex.pickup_too_long");
     			return;
-    		} 
+    		}
     		
-    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, 0);
+    		String postalCodeString = storageRegionField.getText();
+    		if(!InputValidator.isPostalCode(postalCodeString)) {
+    			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.regex.invalid_postal_code");
+    			return;
+    		}
+    		
+    		int postalCode = Integer.valueOf(postalCodeString.replaceAll("\\s+", ""));
+    		
+    		this.warehouseService.updateWarehouse(this.briefWarehouse, title, pickup, postalCode);
 			loadScreen(WAREHOUSE_MANAGEMENT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Warehouse operation failed", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.map.postal_code_to_coordinates_failed");
 		}
     }
     
+    protected String t(String key) {
+        if (this.resources == null) { return key; }
+        try {
+            return NavigationService.getBundle().getString(key.substring(1));
+        } catch (java.util.MissingResourceException e) {
+            System.err.println("Missing i18n key: " + key);
+            return key;
+        }
+    }
 }

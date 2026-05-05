@@ -20,14 +20,17 @@
     <!-- ── Page content ─────────────────────────────────────────────────── -->
     <VBox styleClass="cb-root" spacing="0">
 
-        <HBox alignment="CENTER_LEFT" styleClass="um-header">
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="um-header">
             <Label text="%user_management.title" styleClass="page-title" HBox.hgrow="ALWAYS"/>
             <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField"
+                       styleClass="popup-text-field"
+                       promptText="%user_management.search_placeholder"/>
             <Button
                     fx:id="addUserButton"
                     text="%user_management.add"
                     onAction="#onAddUser"
-                    styleClass="btn"
+                    styleClass="tertiary-button"
                     prefHeight="46"/>
         </HBox>
 

@@ -24,6 +24,9 @@ public class InputValidator {
     public static boolean isValidMinLength(String password, int minLength) {
         return password != null && password.length() >= minLength;
     }
+    public static boolean isLength(String password, int length) {
+        return password != null && password.length() == length;
+    }
     public static boolean stringMatch(String str1, String str2) {
         return str1 != null && str1.equals(str2);
     }
@@ -54,7 +57,17 @@ public class InputValidator {
     public static boolean hasSpecial(String password) {
         return password != null && HAS_SPECIAL.matcher(password).matches();
     }
+    
+    public static boolean isPostalCode(String text) {
+    	return text != null && InputValidator.isInteger(text.replaceAll("\\s+", "")) 
+		    && InputValidator.isLength(text.replaceAll("\\s+", ""), 5);
+	}
+    
+    public static boolean isInteger(String text) {
+        return IS_DIGIT.matcher(text).matches();
+    }
 
+    private static final Pattern IS_DIGIT = Pattern.compile("[0-9]+");
     private static final Pattern HAS_LOWERCASE = Pattern.compile(".*[a-z].*");
     private static final Pattern HAS_UPPERCASE = Pattern.compile(".*[A-Z].*");
     private static final Pattern HAS_DIGIT     = Pattern.compile(".*\\d.*");

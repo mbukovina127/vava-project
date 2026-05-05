@@ -197,7 +197,7 @@
     .status-label {
         -fx-text-fill: #cc0000;
         -fx-font-size: 12px;
-        -fx-padding: 4 0 0 0;
+        -fx-padding: 0 0 0 0;
     }
 
 
@@ -633,7 +633,7 @@
 	}
 
     .page-title {
-        -fx-font-family: 'Georgia';
+        -fx-font-family: 'System';
         -fx-font-size: 26px;
         -fx-font-weight: bold;
         -fx-text-fill: #1E1E1E;

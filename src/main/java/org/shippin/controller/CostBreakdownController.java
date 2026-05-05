@@ -1,5 +1,6 @@
 package org.shippin.controller;
 
+import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -17,8 +18,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.shippin.controller.utils.AuthUtils;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.Shipment;
+import org.shippin.domain.enums.Role;
+import org.shippin.dto.Screens;
 import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
 
@@ -36,6 +40,7 @@ import java.util.ResourceBundle;
 import static org.shippin.dto.Screens.COST_ESTIMATION;
 import static org.shippin.dto.Screens.SHIPMENT_DETAIL;
 
+@Log4j2
 public class CostBreakdownController extends BaseController<Shipment> implements Initializable {
 
     @FXML private GridPane  breakdownGrid;
@@ -55,7 +60,9 @@ public class CostBreakdownController extends BaseController<Shipment> implements
     private final List<PdfRow> pdfRows = new ArrayList<>();
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources)
+    {
+    }
 
     @Override
     protected Class<Shipment> getDataType() { return Shipment.class; }
@@ -74,7 +81,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         // Route
         String from = data.getWarehouse() != null ? data.getWarehouse().getName() : "—";
         String dest = data.getDest_region() > 0 ? String.format("%05d", data.getDest_region()) : "—";
-        addRow("Route:", from + " – " + dest, "", true, false);
+        addRow("Route:", from + " –> " + dest, "", true, false);
 
         // Size
         String size = data.getWeight() + " kg";
@@ -109,9 +116,14 @@ public class CostBreakdownController extends BaseController<Shipment> implements
 
         saveButton.setVisible(shipment.getShipment_id() == 0);
         saveButton.setManaged(shipment.getShipment_id() == 0);
+
+        if (shipment.getShipment_id() != 0)
+        {
+            deleteButton.setText("Go Back");
+        }
     }
 
-    // ── Grid helpers ──────────────────────────────────────────────
+    // Grid helpers
 
     private void addRow(String leftText, String middleText, String rightText, boolean bold, boolean italic) {
         Label left = new Label(leftText);
@@ -175,7 +187,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         gridRow++;
     }
 
-    // ── Save popup ────────────────────────────────────────────────
+    //Save popup
 
     private void showSaveEstimationPopup() {
         VBox popup = createPopupRoot();
@@ -191,19 +203,28 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         buttons.setAlignment(Pos.CENTER_LEFT);
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().addAll("popup-button", "popup-secondary-button");
+        cancelButton.getStyleClass().addAll("secondary-button");
         cancelButton.setPrefSize(150, 42);
         cancelButton.setOnAction(e -> hideModal());
 
         Button confirmButton = new Button("Save");
-        confirmButton.getStyleClass().addAll("popup-button", "popup-primary-button");
+        confirmButton.getStyleClass().addAll("tertiary-button");
         confirmButton.setPrefSize(150, 42);
+
+//        Role required = Screens.COST_BREAKDOWN.getRequiredRole();
+//        if (required != null) //
+
+//        //TODO: toto Marko takto? ze save estimation moze len ADMIN?
+//        AuthUtils.guard(confirmButton, Role.USER);
+
         confirmButton.setOnAction(e -> {
             hideModal();
             try {
                 shipmentService.saveShipment(shipment, UserService.getUser().getId());
+                log.info("Shipment saved, navigating to detail");
                 loadScreen(SHIPMENT_DETAIL, shipment);
             } catch (SQLException ex) {
+                log.error("Failed to save shipment", ex);
                 new Alert(Alert.AlertType.ERROR, "Could not save shipment: " + ex.getMessage()).showAndWait();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -218,7 +239,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         showModal(popup);
     }
 
-    // ── Popup helpers ─────────────────────────────────────────────
+    // Popup helpers
 
     private VBox createPopupRoot() {
         VBox root = new VBox(24);
@@ -234,11 +255,20 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         return label;
     }
 
-    // ── Button handlers ───────────────────────────────────────────
+    // Button handlers
 
     @FXML
-    private void onDelete() throws IOException {
-        loadScreen(COST_ESTIMATION, null);
+    private void onDelete() throws IOException
+    {
+        if (shipment.getShipment_id() == 0)
+        {
+            loadScreen(COST_ESTIMATION, null);
+        }
+        else
+        {
+            loadScreen(SHIPMENT_DETAIL, shipment);
+        }
+
     }
 
     @FXML
@@ -246,7 +276,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
         showSaveEstimationPopup();
     }
 
-    // ── PDF export ────────────────────────────────────────────────
+    // PDF export
 
     @FXML
     private void onPrintPdf() {
@@ -265,7 +295,7 @@ public class CostBreakdownController extends BaseController<Shipment> implements
             try {
                 writePdf(file);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("PDF export failed", e);
                 javafx.application.Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("PDF export failed");

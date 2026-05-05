@@ -16,20 +16,21 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import lombok.extern.log4j.Log4j2;
+import org.shippin.domain.Shipment;
 import org.shippin.services.NavigationService;
 import org.shippin.controller.utils.AuthUtils;
 import org.shippin.domain.enums.Role;
 import org.shippin.dto.Screens;
+import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.util.*;
 
 import org.shippin.controller.utils.ShipmentData;
+import org.shippin.controller.utils.menu.LogoutChoicePopup;
 import org.shippin.controller.utils.CostEstimationInput;
 
 @Log4j2
@@ -51,15 +52,17 @@ public class MenuController implements Initializable {
     @FXML private StackPane modalOverlay;
     @FXML private VBox modalContentHolder;
 
+    private final ShipmentService shipmentService = new ShipmentService();
     //Left sidebar
     @FXML private VBox   leftSidebar;
     private static final List<NavItem> NAV_ITEMS = List.of(
             new NavItem(Screens.COST_ESTIMATION, "Cost Estimation", "/icons/png-light/plus_white.png", "/icons/png-dark/plus_black.png"),
             new NavItem(Screens.MY_SHIPMENTS, "My Shipments", "/icons/png-light/list_white.png", "/icons/png-dark/list_black.png"),
-            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
-            new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
-            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png") //FIXME testing menu item
-//            new NavItem(null, "Home", "", "")
+            new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"),
+            new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"),
+            new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"),
+            new NavItem(Screens.SERVICES_MANAGEMENT, "Services Management", "/icons/png-light/truck_white.png", "/icons/png-dark/truck_black.png"),
+            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/map_white.png", "/icons/png-dark/map_black.png")
 
     );
 
@@ -68,7 +71,24 @@ public class MenuController implements Initializable {
     @FXML private StackPane contentArea;
     private Screens currentScreen;
     private Object  currentData;
+    private Object  currentController;
+    private Object  preservedState;
     private List<Button> buttons = new ArrayList<>();
+	private ResourceBundle resources;
+
+
+    private void setProfilePicture()
+    {
+        ImageView profileIcon = new ImageView(new Image(
+                Objects.requireNonNull(getClass().getResourceAsStream("/icons/png-dark/user.png"))
+        ));
+        profileIcon.setFitHeight(48);
+        profileIcon.setFitWidth(48);
+        profileIcon.setPreserveRatio(true);
+        profileIcon.setSmooth(true);
+        profileButton.setGraphic(profileIcon);
+        profileButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
 
     public void showOverlay(javafx.scene.Node content) {
     	if (content instanceof Region region) {
@@ -86,6 +106,8 @@ public class MenuController implements Initializable {
         modalOverlay.setManaged(false);
         modalOverlay.getChildren().clear();
     }
+
+
 
     // package-private — len BaseController to vidí
     void loadScreen(Screens screen, Object data) {
@@ -106,6 +128,7 @@ public class MenuController implements Initializable {
             Node node = loader.load();
 
             Object ctrl = loader.getController();
+            currentController = ctrl;
 
             if (ctrl instanceof BaseController<?> bc) {
                 bc.setMenuController(this);
@@ -113,6 +136,11 @@ public class MenuController implements Initializable {
 
             if (ctrl instanceof Navigatable nav) {
                 nav.onNavigatedTo(data);
+            }
+
+            if (ctrl instanceof StatePreservable sp && preservedState != null) {
+                sp.restoreState(preservedState);
+                preservedState = null;
             }
 
             contentArea.getChildren().setAll(node);
@@ -126,7 +154,9 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+    	this.resources = resources;
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
+        setProfilePicture();
         UserNameLabel.setText(UserService.getUser().getFullUserName());
 
 
@@ -181,7 +211,17 @@ public class MenuController implements Initializable {
                     var s = getClass().getResourceAsStream(item.icon_light());
                     if (s != null) finalIcon.setImage(new Image(s));
                 }
-                loadScreen(item.screen(),null);
+                if (item.screen == Screens.MAP_OF_SHIPMENTS) {
+                    List<Shipment> shipments = null;
+                    try {
+                        shipments = shipmentService.getAllShipments();
+                        loadScreen(item.screen, shipments);
+                    } catch (SQLException ex) {
+                        log.error("Couldn't load shipments from database");
+                    }
+                } else {
+                    loadScreen(item.screen(),null);
+                }
             });
 
             leftSidebar.getChildren().add(btn);
@@ -189,10 +229,15 @@ public class MenuController implements Initializable {
         loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
 
-    @FXML private void onProfileClicked() {}
+    @FXML private void onProfileClicked() {
+    	new LogoutChoicePopup(this.resources).show(this);
+    }
 
     @FXML
     private void onToggleLanguage() {
+        if (currentController instanceof StatePreservable sp) {
+            preservedState = sp.captureState();
+        }
         Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
                 ? Locale.ENGLISH
                 : new Locale("sk");

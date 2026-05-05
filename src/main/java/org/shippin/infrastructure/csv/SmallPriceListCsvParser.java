@@ -1,17 +1,21 @@
 package org.shippin.infrastructure.csv;
 
+import org.shippin.infrastructure.validation.SmallPriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.domain.Table;
 import org.shippin.util.NumberUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class SmallPriceListCsvParser implements CsvParser<SmallPriceListRow> {
 
     @Override
-    public Table<SmallPriceListRow> parseFromCsv(String text) {
+    public Table<SmallPriceListRow> parseFromCsv(String text) throws ValidationException {
         SmallPriceListFormatted table = new SmallPriceListFormatted();
 
         //safety check
@@ -19,10 +23,17 @@ public class SmallPriceListCsvParser implements CsvParser<SmallPriceListRow> {
             return table;
         }
 
-        String[] lines = text.split("\\r?\\n");
+        String[] lines = text.split("\r?\n");
         if (lines.length < 2) {
             return table;
         }
+
+        String[] headerFields = lines[0].split(";");
+        String headerCol0 = headerFields.length > 0 ? headerFields[0].trim() : "";
+        String headerCol1 = headerFields.length > 1 ? headerFields[1].trim() : "";
+
+        List<String> weightDescs = new ArrayList<>();
+        List<String> priceStrs   = new ArrayList<>();
 
         // skip header row
         for (int i = 1; i < lines.length; i++) {
@@ -32,8 +43,15 @@ public class SmallPriceListCsvParser implements CsvParser<SmallPriceListRow> {
             String[] fields = line.split(";");
             if (fields.length < 2) continue;
 
-            String weightDesc = fields[0].trim();
-            String costStr   = fields[1].trim();
+            weightDescs.add(fields[0].trim());
+            priceStrs.add(fields[1].trim());
+        }
+
+        SmallPriceListValidator.validate(headerCol0, headerCol1, weightDescs, priceStrs, NavigationService.getBundle());
+
+        for (int i = 0; i < weightDescs.size(); i++) {
+            String weightDesc = weightDescs.get(i);
+            String costStr    = priceStrs.get(i);
 
             // parse the upper weight limit from "do X kg"
             float weightLimit = 0f;

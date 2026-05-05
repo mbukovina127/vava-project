@@ -1,5 +1,6 @@
 package org.shippin.services;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.database.dao.PriceListDAO;
 import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.database.dao.WarehouseDAO;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
 
+@Log4j2
 public class ShipmentService {
 
     private final ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
@@ -26,6 +28,7 @@ public class ShipmentService {
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
         shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
         updateShipmentState(shipment, shipment.getState());
+        log.info("Saved shipment #{} for user #{}", shipment.getShipment_id(), userId);
         return shipment;
     }
 
@@ -44,7 +47,9 @@ public class ShipmentService {
         Shipment shipment = new Shipment();
         shipment.setServices(new ArrayList<>(selected));
         shipment.setWarehouse(new BriefWarehouse(
-                warehouse.getId(), warehouse.getName(), warehouse.getRegionName(), warehouse.getPostalCode()));
+                warehouse.getId(), warehouse.getName(), warehouse.getRegionName(), 
+                warehouse.getPostalCode(), warehouse.getCoord()));
+        
         shipment.setCreated_at(new Timestamp(deliveryDate.getTime()));
         shipment.setDest_region(destPostalCode);
         shipment.setWeight(weight);
@@ -55,10 +60,16 @@ public class ShipmentService {
         shipment.setState(State.NOT_READY);
 
         float baseCost = calculateBaseCost(shipment);
-        System.out.println(baseCost);
         shipment.setTotalCost(calculateTotalCost(shipment, baseCost));
 
+        log.info("Created shipment: dest={}, weight={}, volume={}, services={}, totalCost={}",
+                destPostalCode, weight, volume, serviceIds.size(), shipment.getTotalCost());
+
         return shipment;
+    }
+
+    public List<Shipment> getAllShipments() throws SQLException {
+        return shipmentDAO.getAllShipments();
     }
 
     // ── Cost calculations ─────────────────────────────────────────
@@ -196,8 +207,10 @@ public class ShipmentService {
             shipmentDAO.addShipmentHistory(entry);
 
             shipmentDAO.commit();
+            log.info("Shipment #{} state changed to {}", shipment.getShipment_id(), newState);
             return shipment;
         } catch (SQLException e) {
+            log.error("Failed to update state for shipment #{}", shipment.getShipment_id(), e);
             shipmentDAO.rollback();
             throw e;
         } finally {

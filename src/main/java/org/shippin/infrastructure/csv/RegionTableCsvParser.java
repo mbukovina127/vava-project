@@ -1,8 +1,11 @@
 package org.shippin.infrastructure.csv;
 
+import org.shippin.infrastructure.validation.RegionTableValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.util.Range;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.domain.Table;
 
 import java.util.ArrayList;
@@ -10,25 +13,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
 
     @Override
-    public Table<RegionTableRow> parseFromCsv(String text) {
+    public Table<RegionTableRow> parseFromCsv(String text) throws ValidationException {
         RegionTableFormatted table = new RegionTableFormatted();
 
-        //safety check
+        // safety check
         if (text == null || text.trim().isEmpty()) {
             return table;
         }
 
-        String[] lines = text.split("\\r?\\n");
+        String[] lines = text.split("\r?\n");
         if (lines.length < 2) {
             return table;
         }
 
+        Map<String, List<String>> rawRegionRanges = new HashMap<>();
         Map<String, List<Range>> regionToRanges = new HashMap<>();
-        //load data
+        List<String> regionCodesInOrder = new ArrayList<>();   // for duplicate detection
+
+        // load data
         for (int i = 1; i < lines.length; i++) {
             String line = lines[i].trim();
             if (line.isEmpty() || line.startsWith(";")) continue;
@@ -37,13 +42,17 @@ public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
             if (fields.length < 1) continue;
 
             String regionCode = fields[0].trim();
-            if (regionCode.isEmpty()) continue;
+            if (!regionCode.isEmpty()) {
+                regionCodesInOrder.add(regionCode);
+            }
 
             List<Range> rangesThisLine = new ArrayList<>();
 
             for (int j = 2; j < fields.length; j++) {
                 String cell = fields[j].trim();
                 if (cell.isEmpty()) continue;
+
+                rawRegionRanges.computeIfAbsent(regionCode, _ -> new ArrayList<>()).add(cell);
 
                 if (cell.contains("-")) {
                     String[] parts = cell.split("-", 2);
@@ -66,6 +75,9 @@ public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
 
             regionToRanges.computeIfAbsent(regionCode, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
+
+        RegionTableValidator.validate(rawRegionRanges, regionCodesInOrder, NavigationService.getBundle());
+
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {
             RegionTableRow row = new RegionTableRow(entry.getKey());
@@ -78,7 +90,7 @@ public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
 
     @Override
     public String exportToCsv(Table<RegionTableRow> table) {
-        //safety chcek
+        // safety check
         if (!(table instanceof RegionTableFormatted rtf)) {
             return "";
         }
@@ -90,10 +102,10 @@ public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
 
         StringBuilder sb = new StringBuilder();
 
-        //build header
+        // build header
         sb.append("Rozdelenie PSČ:;;;;;;\n");
 
-        //build data for each line
+        // build data for each line
         for (RegionTableRow row : rows) {
             String code = row.getRegionCode();
             List<Range> ranges = row.getRanges();

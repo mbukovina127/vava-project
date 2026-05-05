@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
+import lombok.extern.log4j.Log4j2;
+import org.shippin.services.MapService;
 import org.shippin.controller.utils.GenericPopup;
 import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.warehousemanagement.popups.AddWarehousePopup;
@@ -28,6 +30,7 @@ import org.shippin.controller.utils.warehousemanagement.popups.DeleteWarehousePo
 import org.shippin.controller.utils.warehousemanagement.popups.ExportChoicePopup;
 import org.shippin.controller.utils.warehousemanagement.popups.ReplaceWarehousePopup;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.Coordinates;
 import org.shippin.domain.CoreWarehouseInfo;
 import org.shippin.domain.Warehouse;
 import org.shippin.services.WarehouseParsingService;
@@ -38,6 +41,7 @@ import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.WarehouseFormatted;
 import org.shippin.exception.IncompatibleTablesException;
+import org.shippin.exception.ValidationException;
 import org.shippin.services.WarehouseService;
 
 import static org.shippin.dto.Screens.EDIT_WAREHOUSE;
@@ -53,6 +57,7 @@ import java.util.ResourceBundle;
 import lombok.Getter;
 import lombok.Setter;
 
+@Log4j2
 public class WarehouseManagementController extends BaseController<BriefWarehouse> implements Initializable {
 
     @FXML private ImageView addWarehouseIcon;
@@ -69,8 +74,9 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     
     private WarehouseParsingService warehouseParsingService;
 	private WarehouseService warehouseService;
-	private List<BriefWarehouse> warehouseList;
 	
+	@Getter @Setter
+	private List<BriefWarehouse> warehouseList;
 	@Getter @Setter
 	private Warehouse selectedWarehouse;
 	@Getter @Setter
@@ -102,13 +108,13 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         try {
 			this.warehouseList = warehouseService.getBriefWarehouses();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 		}
         renderWarehouses(warehouseList);
     }
 
-    private void renderWarehouses(List<BriefWarehouse> warehouses) {
+    public void renderWarehouses(List<BriefWarehouse> warehouses) {
         warehouseRowsContainer.getChildren().clear();
 
         for (BriefWarehouse warehouse : warehouses) {
@@ -158,8 +164,8 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 			try {
 				new ReplaceWarehousePopup(resources).show(this, warehouse);
 			} catch (SQLException e) {
-				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+				log.error("Warehouse operation failed", e);
+				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 		});
         GridPane.setColumnIndex(replaceButton, 2);
@@ -223,52 +229,9 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	try {
 			loadScreen(EDIT_WAREHOUSE, briefWarehouse);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			log.error("Warehouse operation failed", e);
 		}
-    }
-    
-    public void handleAddWarehouseSaved(String name, String pickup) {
-    	if(!InputValidator.isNotBlank(name)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must not be blank.");
-			return;
-		} else if(!InputValidator.isValidLength(name, 20)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid name: name must be less than 20 characters.");
-			return;
-		}
-				
-		if(!InputValidator.isNotBlank(pickup)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup place: pickup place must not be blank.");
-			return;
-		} else if(!InputValidator.isValidLength(pickup, 30)) {
-			new GenericPopup(this.resources).showOkPopup(this, "Save failed", "Invalid pickup: pickup place must be less than 30 characters.");
-			return;
-		} 
-    	
-    	if (this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
-    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Missing table: you need to upload both a price list and a region table.");
-    	}
-    	
-    	try {
-    		this.warehouseService.addWarehouse(name, pickup, 0,
-    				this.selectedPriceListFormatted, this.selectedRegionTableFormatted);
-    		hideModal();
-    	} catch (IncompatibleTablesException e) {
-    		System.out.println(this.selectedPriceListFormatted);
-    		System.out.println(this.selectedRegionTableFormatted);
-    		new GenericPopup(this.resources).showOkPopup(this, "Insert failed", "Invalid tables: imported price list and region tables are incompatible. Both tables must include the same set of regions.");
-    	} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
-    	
-        try {
-			this.warehouseList = warehouseService.getBriefWarehouses();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-		}
-        renderWarehouses(warehouseList);
     }
     
     @FXML
@@ -277,13 +240,13 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     		try {
 				SmallPriceListFormatted priceListFormatted = this.warehouseService.getSmallPriceListFormatted();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+				log.error("Warehouse operation failed", e);
+				new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 			}
 			loadScreen(SMALL_PRICE_LIST_VIEW);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			log.error("Warehouse operation failed", e);
 		}
     }
     
@@ -298,7 +261,13 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 
         if (file == null) { return; }
         
-    	SmallPriceListFormatted smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
+    	SmallPriceListFormatted smallPriceListFormatted = null;
+		try {
+			smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
+		} catch (ValidationException e) {
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.validation_problem");
+		}
 
         // Once the parser has some kind of format check, I can add a popup informing the user the format is wrong
     	if (smallPriceListFormatted == null) { return; }
@@ -306,43 +275,24 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
     	try {
         this.warehouseService.setSmallPriceListFormatted(smallPriceListFormatted);
       } catch (SQLException e) {
-        e.printStackTrace();
-        new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+        log.error("Warehouse operation failed", e);
+        new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.database_problem");
       }
-    }
-    
-    public void handleReplaceSaved() {
-    	
-    	if(this.selectedPriceListFormatted == null || this.selectedRegionTableFormatted == null) {
-    		new GenericPopup(this.resources).showOkPopup(this, "Replace failed", "Missing table: you need to upload both a price list and a region table.");
-    		return;
-    	}
-    	
-    	try {
-    		warehouseService.replaceTables(this.selectedPriceListFormatted, 
-    				this.selectedRegionTableFormatted, this.selectedWarehouse);
-    		hideModal();
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    		new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
-    	} catch (IncompatibleTablesException e) {
-    		new GenericPopup(this.resources).showOkPopup(this, "Invalid tables", "Imported price list and region tables are incompatible. Both tables must include the same set of regions.");
-    	}
     }
     
     public void deleteWarehouse(BriefWarehouse briefWarehouse) {
     	try {
 			this.warehouseService.deleteWarehouse(briefWarehouse);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_insert", "%generic.database_problem");
 		}
     	
     	try {
 			this.warehouseList = warehouseService.getBriefWarehouses();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			new GenericPopup(this.resources).showOkPopup(this, "SQL exception", "There is a problem with the database.");
+			log.error("Warehouse operation failed", e);
+			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_insert", "%generic.database_problem");
 		}
         renderWarehouses(warehouseList);
     }

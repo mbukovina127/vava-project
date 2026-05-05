@@ -18,6 +18,15 @@ public class NavigationService {
     private static Stage primaryStage;
 
     private static ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.ENGLISH);
+    private static Object preservedState;
+
+    public static void setPreservedState(Object state) { preservedState = state; }
+
+    public static Object consumePreservedState() {
+        Object s = preservedState;
+        preservedState = null;
+        return s;
+    }
 
     public static ResourceBundle getBundle() {
         return bundle;

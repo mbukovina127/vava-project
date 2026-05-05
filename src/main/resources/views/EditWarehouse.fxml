@@ -32,6 +32,10 @@
                 <Label text="%edit_warehouse.pickup_place"/>
                 <TextField fx:id="pickupPlaceField" prefWidth="280"/>
             </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="%edit_warehouse.storage_region"/>
+                <TextField fx:id="storageRegionField" prefWidth="280"/>
+            </HBox>
         </HBox>
 
         <VBox spacing="34" styleClass="tables-column">
@@ -40,15 +44,7 @@
                       styleClass="region-grid"
                       hgap="0"
                       vgap="0">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                </columnConstraints>
+                      
                 <rowConstraints>
                     <RowConstraints minHeight="50" prefHeight="50"/>
                 </rowConstraints>

@@ -21,12 +21,16 @@
 
     <!-- ── Top bar: title + search + sort ───────────────────── -->
     <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT" spacing="8">
-        <Label fx:id="lblTitle" styleClass="page-title" text="1.4.2026 – Daily costs summary" />
+        <Label fx:id="lblTitle" styleClass="page-title" text="..." />
         <Region HBox.hgrow="ALWAYS" />
         <TextField fx:id="searchField"
                    styleClass="dcd-search-field"
                    promptText="%my_shipments.search_placeholder" />
         <ComboBox fx:id="sortCombo" styleClass="dcd-sort-combo" />
+        <Button fx:id="btnShowOnMap"
+                styleClass="dcd-btn-add"
+                text="%my_shipments.show_on_map"
+                onAction="#handleShowOnMap" />
     </HBox>
 
     <!-- ── Shipment list ────────────────────────────────────── -->

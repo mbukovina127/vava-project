@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.services.NavigationService;
@@ -25,6 +26,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Shippin");
         primaryStage.setScene(new Scene(root));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/png-light/logoShippin_white.png")));
 
         // Register the stage so NavigationUtilities can switch scenes from anywhere
         NavigationService.setPrimaryStage(primaryStage);

@@ -1,5 +1,6 @@
 package org.shippin.controller.utils.warehousemanagement.popups;
 
+import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -24,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
+@Log4j2
 public class ExportChoicePopup extends WarehouseManagementPopup {
 
 	public ExportChoicePopup(ResourceBundle resources) {
@@ -58,7 +60,7 @@ public class ExportChoicePopup extends WarehouseManagementPopup {
         buttons.setAlignment(Pos.CENTER_LEFT);
 
         Button cancelButton = new Button(t("%warehouse_management.button.cancel"));
-        cancelButton.getStyleClass().addAll("popup-button", "tertiary-button");
+        cancelButton.getStyleClass().addAll("popup-button", "secondary-button");
         cancelButton.setPrefSize(160, 42);
         cancelButton.setOnAction(e -> controller.hideModal());
 
@@ -80,8 +82,8 @@ public class ExportChoicePopup extends WarehouseManagementPopup {
             try {
 				WarehouseParsingService.getInstance().exportTable(briefWarehouse, isPriceList, file);
 			} catch (SQLException e1) {
-				e1.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(controller, "SQL exception", "There is a problem with the database.");
+				log.error("Export warehouse table failed", e1);
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_insert", "%generic.database_problem");
 			}
             controller.hideModal();
         });
