@@ -44,15 +44,7 @@
                       styleClass="region-grid"
                       hgap="0"
                       vgap="0">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                    <ColumnConstraints prefWidth="110"/>
-                </columnConstraints>
+                      
                 <rowConstraints>
                     <RowConstraints minHeight="50" prefHeight="50"/>
                 </rowConstraints>

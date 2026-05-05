@@ -1,6 +1,7 @@
 package org.shippin.infrastructure.csv;
 
 import org.shippin.infrastructure.validation.PriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.exception.ValidationException;
@@ -12,7 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import static org.shippin.infrastructure.validation.ValidationMessages.msg;
 
 public class PriceListCsvParser implements CsvParser<PriceListRow> {
 
@@ -38,7 +39,9 @@ public class PriceListCsvParser implements CsvParser<PriceListRow> {
             String code = regionLineParts[i].trim();
             if (!code.isEmpty()) {
                 if (!seenCodes.add(code)) {
-                    throw new ValidationException(List.of("Duplicate zone column in header: " + code));
+                    throw new ValidationException(List.of(
+                            msg("csv.price_list.duplicate_zone_column", code)
+                    		));
                 }
                 regionCodes.add(code);
             }
@@ -68,7 +71,7 @@ public class PriceListCsvParser implements CsvParser<PriceListRow> {
             }
         }
 
-        PriceListValidator.validate(hmotnostList, objemList, regionColumns);
+        PriceListValidator.validate(hmotnostList, objemList, regionColumns, NavigationService.getBundle());
 
         //build table
         for (int i = 0; i < hmotnostList.size(); i++) {

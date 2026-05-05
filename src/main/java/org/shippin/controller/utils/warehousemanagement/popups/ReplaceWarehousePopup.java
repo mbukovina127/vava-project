@@ -81,13 +81,13 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         
         VBox popup = createPopupRoot();
         popup.setMaxWidth(560);
-        popup.setPrefWidth(560);
+        popup.setPrefWidth(700);
 
         Label title = createPopupTitle(t("%warehouse_management.replace.title"));
 
         GridPane formGrid = new GridPane();
         formGrid.setHgap(16);
-        formGrid.setVgap(8);
+        formGrid.setVgap(12);
 
         ColumnConstraints labelColumn = new ColumnConstraints();
         labelColumn.setPrefWidth(135);
@@ -106,7 +106,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         Label pickupPlaceLabel = createFormLabel(t("%warehouse_management.replace.pickup_place"));
         Label pickupPlaceValue = createValueLabel(briefWarehouse.getRegionName());
         
-        Label postalCodeLabel = createFormLabel(t("%warehouse_management.popup.postal_code"));
+        Label postalCodeLabel = createFormLabel(t("%warehouse_management.replace.postal_code"));
         Label postalCodeValue = createValueLabel(String.valueOf(briefWarehouse.getPostalCode()));
 
         Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));

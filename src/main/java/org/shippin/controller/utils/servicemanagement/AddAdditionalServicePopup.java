@@ -7,7 +7,7 @@ import org.shippin.controller.utils.InputValidator;
 import org.shippin.controller.utils.ServicesManagementPopup;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.enums.ServiceType;
-
+import javafx.util.StringConverter;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -75,6 +75,17 @@ public class AddAdditionalServicePopup extends ServicesManagementPopup {
         Label serviceTypeLabel = createFormLabel(t("%services_management.add_popup.service_type"));
         ComboBox<ServiceType> serviceTypeComboBox = createServiceTypeComboBox();
         serviceTypeComboBox.setPromptText(t("%services_management.add_popup.type_prompt"));
+        serviceTypeComboBox.setConverter(new StringConverter<ServiceType>() {
+            @Override
+            public String toString(ServiceType serviceType) {
+                return serviceType == null ? "" : serviceType.getLocalized(resources);
+            }
+
+            @Override
+            public ServiceType fromString(String string) {
+                return null;
+            }
+        });
         Label serviceTypeError = createErrorLabel();
 
         // --- Default cost ---

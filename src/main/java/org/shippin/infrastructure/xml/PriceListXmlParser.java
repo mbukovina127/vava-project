@@ -2,6 +2,7 @@
 package org.shippin.infrastructure.xml;
 
 import org.shippin.infrastructure.validation.PriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.exception.ValidationException;
@@ -14,6 +15,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import static org.shippin.infrastructure.validation.ValidationMessages.msg;
+
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +55,9 @@ public class PriceListXmlParser implements XmlParser<PriceListRow> {
             String code = regionLine.get(i).trim();
             if (!code.isEmpty()) {
                 if (!seenCodes.add(code)) {
-                    throw new ValidationException(List.of("Duplicate zone column in header: " + code));
+                	throw new ValidationException(List.of(
+                            msg("csv.price_list.duplicate_zone_column", code)
+                    		));
                 }
                 regionCodes.add(code);
             }
@@ -78,7 +84,7 @@ public class PriceListXmlParser implements XmlParser<PriceListRow> {
             }
         }
 
-        PriceListValidator.validate(hmotnostList, objemList, regionColumns);
+        PriceListValidator.validate(hmotnostList, objemList, regionColumns, NavigationService.getBundle());
 
         //build table
         for (int i = 0; i < hmotnostList.size(); i++) {

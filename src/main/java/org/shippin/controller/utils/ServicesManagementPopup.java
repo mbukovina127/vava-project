@@ -2,6 +2,8 @@ package org.shippin.controller.utils;
 
 import java.util.ResourceBundle;
 
+import org.shippin.domain.enums.ServiceType;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -12,6 +14,14 @@ public abstract class ServicesManagementPopup {
 
     public ServicesManagementPopup(ResourceBundle resources) {
         this.resources = resources;
+    }
+    
+    private String getLocalizedServiceType(ServiceType serviceType) {
+        if (serviceType == null) {
+            return t("%services_management.no_type");
+        }
+
+        return t(serviceType.getI18nKey());
     }
 
     protected String t(String key) {

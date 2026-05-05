@@ -2,64 +2,67 @@ package org.shippin.infrastructure.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.shippin.exception.ValidationException;
 
+import static org.shippin.infrastructure.validation.ValidationMessages.msg;
+
 public class SmallPriceListValidator {
 
-    /**
-     * Validates small price list rows. Call after splitting lines but before
-     * building domain objects.
-     *
-     * @param headerCol0  first header cell (expected: "Hmotnosť")
-     * @param headerCol1  second header cell (expected: "Cena")
-     * @param weightDescs raw weight description strings, one per data row
-     * @param priceStrs   raw price strings, one per data row
-     * @throws ValidationException with all found errors if validation fails
-     */
-    public static void validate(String headerCol0, String headerCol1,
-                                List<String> weightDescs, List<String> priceStrs) throws ValidationException {
+    public static void validate(String headerCol0,
+                                String headerCol1,
+                                List<String> weightDescs,
+                                List<String> priceStrs,
+                                ResourceBundle resources) throws ValidationException {
         List<String> errors = new ArrayList<>();
 
-        // header cells must be non-empty strings (not numbers)
         if (isNullOrBlank(headerCol0) || isNumeric(headerCol0)) {
-            errors.add("Header row: first column must be a non-numeric string, got \""
-                    + headerCol0 + "\".");
+            errors.add(msg("validator.small_price_list.header_first_invalid",
+                    headerCol0));
         }
+
         if (isNullOrBlank(headerCol1) || isNumeric(headerCol1)) {
-            errors.add("Header row: second column must be a non-numeric string, got \""
-                    + headerCol1 + "\".");
+            errors.add(msg("validator.small_price_list.header_second_invalid",
+                    headerCol1));
         }
 
-        // at least one data row
         if (weightDescs == null || weightDescs.isEmpty()) {
-            errors.add("Small price list must have at least one data row.");
-            if (!errors.isEmpty()) throw new ValidationException(errors);
+            errors.add(msg("validator.small_price_list.no_data_rows"));
+            throw new ValidationException(errors);
         }
 
-        // per-row checks
         for (int i = 0; i < weightDescs.size(); i++) {
-            int rowNum = i + 2; // 1-based + 1 for header
+            int rowNum = i + 2;
             String col0 = weightDescs.get(i);
             String col1 = priceStrs.get(i);
 
             if (isNullOrBlank(col0)) {
-                errors.add("Row " + rowNum + ": weight description (column 1) is empty.");
+                errors.add(msg("validator.small_price_list.empty_weight_description",
+                        rowNum));
             }
 
             if (isNullOrBlank(col1)) {
-                errors.add("Row " + rowNum + ": price (column 2) is missing.");
+                errors.add(msg("validator.small_price_list.missing_price",
+                        rowNum));
             } else if (!isNumeric(col1)) {
-                errors.add("Row " + rowNum + ": price \"" + col1 + "\" is not a valid number.");
+                errors.add(msg("validator.small_price_list.invalid_price",
+                        rowNum,
+                        col1));
             } else {
                 float price = Float.parseFloat(col1.replace(',', '.'));
+
                 if (price <= 0f) {
-                    errors.add("Row " + rowNum + ": price must be > 0, got " + price + ".");
+                    errors.add(msg("validator.small_price_list.price_must_be_positive",
+                            rowNum,
+                            price));
                 }
             }
         }
 
-        if (!errors.isEmpty()) throw new ValidationException(errors);
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
     }
 
     private static boolean isNullOrBlank(String s) {
@@ -67,6 +70,8 @@ public class SmallPriceListValidator {
     }
 
     private static boolean isNumeric(String s) {
+        if (s == null || s.isBlank()) return false;
+
         try {
             Float.parseFloat(s.replace(',', '.'));
             return true;

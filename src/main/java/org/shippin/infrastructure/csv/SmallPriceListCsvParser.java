@@ -1,6 +1,7 @@
 package org.shippin.infrastructure.csv;
 
 import org.shippin.infrastructure.validation.SmallPriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
 import org.shippin.exception.ValidationException;
@@ -46,7 +47,7 @@ public class SmallPriceListCsvParser implements CsvParser<SmallPriceListRow> {
             priceStrs.add(fields[1].trim());
         }
 
-        SmallPriceListValidator.validate(headerCol0, headerCol1, weightDescs, priceStrs);
+        SmallPriceListValidator.validate(headerCol0, headerCol1, weightDescs, priceStrs, NavigationService.getBundle());
 
         for (int i = 0; i < weightDescs.size(); i++) {
             String weightDesc = weightDescs.get(i);

@@ -1,6 +1,7 @@
 package org.shippin.infrastructure.xml;
 
 import org.shippin.infrastructure.validation.RegionTableValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.util.Range;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
@@ -90,7 +91,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
             regionToRanges.computeIfAbsent(currentRegion, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
 
-        RegionTableValidator.validate(rawRegionRanges);
+        RegionTableValidator.validate(rawRegionRanges, NavigationService.getBundle());
 
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {

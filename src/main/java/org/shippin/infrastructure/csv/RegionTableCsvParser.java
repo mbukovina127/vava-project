@@ -1,6 +1,7 @@
 package org.shippin.infrastructure.csv;
 
 import org.shippin.infrastructure.validation.RegionTableValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.util.Range;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
@@ -72,7 +73,7 @@ public class RegionTableCsvParser implements CsvParser<RegionTableRow> {
             regionToRanges.computeIfAbsent(regionCode, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
 
-        RegionTableValidator.validate(rawRegionRanges);
+        RegionTableValidator.validate(rawRegionRanges, NavigationService.getBundle());
 
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {
