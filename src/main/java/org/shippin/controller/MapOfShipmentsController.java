@@ -138,8 +138,17 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
                     if (markerCount > 0) markers.append("&");
                     markers.append(String.format("markers=color:green|%.4f,%.4f", fromLat, fromLon));
-                    markers.append(String.format("&markers=color:red|%.4f,%.4f", toLat, toLon));
-                    paths.append(String.format("&path=color:0x0000ff|weight:1|%.4f,%.4f|%.4f,%.4f",
+
+                    String destColor = switch (s.getState()) {
+                        case NOT_READY          -> "0xFF5555";
+                        case READY_FOR_DELIVERY -> "0xD0E8FF"; //"0x3366FF";
+                        case BEING_DELIVERED    -> "0xFFF0c0"; //"0x#FF9900";
+                        case CANCELED           -> "#F0F0F0";  //"0x999999";
+                        default                 -> "0xFF0000";
+                    };
+
+                    markers.append(String.format("&markers=color:%s|%.4f,%.4f", destColor, toLat, toLon));
+                    paths.append(String.format("&path=color:0x0000ff|weight:2|%.4f,%.4f|%.4f,%.4f",
                             fromLat, fromLon, toLat, toLon));
 
                     markerCount++;
@@ -158,7 +167,6 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
                 paths.toString(),
                 "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc"
         );
-
         return url;
     }
 
