@@ -110,7 +110,7 @@ public class AddWarehousePopup extends WarehouseManagementPopup {
 	    this.controller.setSelectedRegionTableFormatted(null);
 	    VBox popup = createPopupRoot();
 	    popup.setMaxWidth(510);
-	    popup.setPrefWidth(510);
+	    popup.setPrefWidth(680);
 
 	    Label title = createPopupTitle(t("%warehouse_management.add.title"));
 

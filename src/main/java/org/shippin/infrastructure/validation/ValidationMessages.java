@@ -6,11 +6,11 @@ import java.util.ResourceBundle;
 
 import org.shippin.services.NavigationService;
 
-final class ValidationMessages {
+public class ValidationMessages {
 
     private ValidationMessages() {}
 
-    static String msg(String key, Object... args) {
+    public static String msg(String key, Object... args) {
         ResourceBundle bundle = NavigationService.getBundle();
 
         if (bundle == null) {

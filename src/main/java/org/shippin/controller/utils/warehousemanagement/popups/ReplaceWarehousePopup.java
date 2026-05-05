@@ -79,7 +79,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         
         VBox popup = createPopupRoot();
         popup.setMaxWidth(560);
-        popup.setPrefWidth(560);
+        popup.setPrefWidth(700);
 
         Label title = createPopupTitle(t("%warehouse_management.replace.title"));
 
