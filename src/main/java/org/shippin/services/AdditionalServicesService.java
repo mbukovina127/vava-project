@@ -1,13 +1,13 @@
 package org.shippin.services;
 
+import lombok.extern.log4j.Log4j2;
 import org.shippin.database.dao.AdditionalServiceDAO;
-import org.shippin.database.dao.ShipmentDAO;
 import org.shippin.domain.AdditionalService;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class AdditionalServicesService {
 	
 	private static AdditionalServicesService instance;
@@ -26,22 +26,34 @@ public class AdditionalServicesService {
     }
     
     public List<AdditionalService> getAllServices() throws SQLException {
-        return additionalServiceDAO.getAllServices();
+        List<AdditionalService> services = additionalServiceDAO.getAllServices();
+        log.debug("Fetched {} additional services", services.size());
+        return services;
     }
 
     public AdditionalService getServiceById(int id) throws SQLException {
-        return additionalServiceDAO.getServiceById(id);
+        AdditionalService service = additionalServiceDAO.getServiceById(id);
+        if (service == null) log.warn("Additional service #{} not found", id);
+        return service;
     }
 
     public int createService(AdditionalService service) throws SQLException {
-        return additionalServiceDAO.insertService(service);
+        int id = additionalServiceDAO.insertService(service);
+        log.info("Created additional service '{}' with id #{}", service.getName(), id);
+        return id;
     }
 
     public boolean updateService(AdditionalService service) throws SQLException {
-        return additionalServiceDAO.updateService(service);
+        boolean updated = additionalServiceDAO.updateService(service);
+        if (updated) log.info("Updated additional service #{}", service.getId());
+        else log.warn("Update had no effect for additional service #{}", service.getId());
+        return updated;
     }
 
     public boolean deleteService(int id) throws SQLException {
-        return additionalServiceDAO.deleteService(id);
+        boolean deleted = additionalServiceDAO.deleteService(id);
+        if (deleted) log.info("Deleted additional service #{}", id);
+        else log.warn("Delete had no effect for additional service #{}", id);
+        return deleted;
     }
 }

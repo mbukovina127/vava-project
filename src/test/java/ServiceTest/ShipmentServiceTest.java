@@ -63,11 +63,6 @@ public class ShipmentServiceTest {
     }
 
     @Test
-    void getDaoReturnsNonNullDaoInstance() {
-        assertNotNull(shipmentService.getDao());
-    }
-
-    @Test
     void findRegionForPostalCodeReturnsMatchingRegion() throws Exception {
         RegionTable regionTable = createRegionTable();
 

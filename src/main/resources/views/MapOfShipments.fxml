@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
@@ -12,12 +14,22 @@
     <center>
         <VBox spacing="20" styleClass="sd-content" VBox.vgrow="ALWAYS">
 
-            <Label styleClass="page-title" text="Map of Shipments" />
+            <Label styleClass="page-title" text="%map_of_shipments.title" />
 
             <StackPane fx:id="mapContainer" alignment="CENTER" prefHeight="300" VBox.vgrow="ALWAYS">
-                <ImageView fx:id="mapImageView" fitWidth="1000" preserveRatio="true" styleClass="sd-map-image" />
-                <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="Map unavailable" visible="false" />
+                <ImageView fx:id="mapImageView" fitWidth="1000" preserveRatio="true" styleClass="sd-map-image" visible="false" />
+                <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="%shipment_detail.map_unavailable" visible="false" />
+                <StackPane fx:id="loadingOverlay" alignment="CENTER" visible="true">
+                    <ImageView fx:id="logoImageView" fitWidth="150" fitHeight="150" preserveRatio="true">
+                        <image><Image url="@../icons/png-dark/logoShippin.png"/></image>
+                    </ImageView>
+                    <ImageView fx:id="spinnerImageView" fitWidth="220" fitHeight="220" preserveRatio="true">
+                        <image><Image url="@../icons/png-light/progress_indicator.png"/></image>
+                    </ImageView>
+                </StackPane>
             </StackPane>
+
+            <HBox fx:id="legendRow" styleClass="map-legend-row" spacing="10" />
 
         </VBox>
     </center>

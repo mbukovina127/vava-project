@@ -59,13 +59,14 @@ public class WarehouseService {
 		warehouse.setName(name);
 		warehouse.setRegionName(regionName);
 		warehouse.setPostalCode(postalCode);
-		
+
 		double[] coordinatesDouble = MapService.getInstance().fetchCoordinatesForPostalCode(postalCode);
 		Coordinates coordinates = new Coordinates(coordinatesDouble[0], coordinatesDouble[1]);
-		
+
 		warehouse.setCoord(coordinates);
-		
+
 		warehouseDao.updateWarehouse(warehouse);
+		log.info("Updated warehouse #{} — name='{}', region='{}', postalCode={}", warehouse.getId(), name, regionName, postalCode);
 	}
 	
 	public void addWarehouse(String name, String regionName, int postalCode, PriceListFormatted priceListFormatted, RegionTableFormatted regionTableFormatted) throws Exception {
@@ -82,12 +83,14 @@ public class WarehouseService {
 			throw new IncompatibleTablesException();
 		}
 		
-		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable, postalCode, coordinates);;
+		Warehouse warehouse = new Warehouse(name, regionName, priceList, regionTable, postalCode, coordinates);
 		warehouseDao.insertFullWarehouse(warehouse);
+		log.info("Added new warehouse '{}' in region '{}', postalCode={}", name, regionName, postalCode);
 	}
 	
 	public void deleteWarehouse(CoreWarehouseInfo warehouseInfo) throws SQLException {
 		warehouseDao.deleteFullWarehouse(warehouseInfo.getId());
+		log.info("Deleted warehouse #{}", warehouseInfo.getId());
 	}
 	
 	public List<BriefWarehouse> getBriefWarehouses() throws SQLException {
@@ -112,6 +115,7 @@ public class WarehouseService {
 			priceListDao.deleteSmallPriceList();
 			priceListDao.insertSmallPriceList(smallPriceList);
 			priceListDao.commit();
+			log.info("Small price list updated ({} entries)", smallPriceList.getEntries().size());
 		} catch (SQLException e) {
 			log.error("Failed to update small price list", e);
 			priceListDao.rollback();
@@ -147,6 +151,7 @@ public class WarehouseService {
 			
 			priceListDao.commit();
 			regionDao.commit();
+			log.info("Replaced price list and region table for warehouse #{}", warehouse.getId());
 		} catch (SQLException e) {
 			log.error("Failed to replace tables for warehouse #{}", warehouse.getId(), e);
 			priceListDao.rollback();
