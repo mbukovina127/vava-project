@@ -31,8 +31,8 @@
     -fx-border-radius: 12;
     -fx-background-radius: 12;
     -fx-padding: 16 14 18 14;
-    -fx-pref-width: 295;
-    -fx-max-width: 295;
+    -fx-pref-width: 360;
+    -fx-max-width: 360;
 }
 
 /* ── Month / year nav row ───────────────────── */
@@ -89,7 +89,7 @@
     -fx-font-weight: bold;
     -fx-text-fill: #888888;
     -fx-alignment: CENTER;
-    -fx-pref-width: 36;
+    -fx-pref-width: 46;
     -fx-pref-height: 28;
 }
 
@@ -106,8 +106,8 @@
     -fx-font-size: 16px;
     -fx-text-fill: #1E1E1E;
     -fx-cursor: hand;
-    -fx-pref-width: 36;
-    -fx-pref-height: 36;
+    -fx-pref-width: 46;
+    -fx-pref-height: 46;
     -fx-alignment: CENTER;
     -fx-background-radius: 50;
     -fx-border-radius: 50;
@@ -125,8 +125,8 @@
     -fx-background-radius: 50;
     -fx-border-radius: 50;
     -fx-cursor: hand;
-    -fx-pref-width: 36;
-    -fx-pref-height: 36;
+    -fx-pref-width: 46;
+    -fx-pref-height: 46;
     -fx-alignment: CENTER;
     -fx-font-size: 16px;
 }
@@ -143,8 +143,8 @@
     -fx-font-size: 16px;
     -fx-text-fill: #C8C8C8;
     -fx-cursor: default;
-    -fx-pref-width: 36;
-    -fx-pref-height: 36;
+    -fx-pref-width: 46;
+    -fx-pref-height: 46;
     -fx-alignment: CENTER;
     -fx-background-radius: 50;
     -fx-border-radius: 50;
