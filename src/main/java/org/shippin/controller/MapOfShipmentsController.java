@@ -140,10 +140,10 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
                     markers.append(String.format("markers=color:green|%.4f,%.4f", fromLat, fromLon));
 
                     String destColor = switch (s.getState()) {
-                        case NOT_READY          -> "0xFF5555";
-                        case READY_FOR_DELIVERY -> "0xD0E8FF"; //"0x3366FF";
-                        case BEING_DELIVERED    -> "0xFFF0c0"; //"0x#FF9900";
-                        case CANCELED           -> "#F0F0F0";  //"0x999999";
+                        case NOT_READY          -> "0xFF5555"; //cervena
+                        case READY_FOR_DELIVERY -> "0x3366FF"; //modra
+                        case BEING_DELIVERED    -> "0xFF9900"; //oranzova
+                        case CANCELED           -> "0x999999"; //siva
                         default                 -> "0xFF0000";
                     };
 
