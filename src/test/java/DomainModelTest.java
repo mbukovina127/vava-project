@@ -42,6 +42,8 @@ public class DomainModelTest {
         service.setCostModifier(0.2f);
         service.setServiceType(ServiceType.SERVICES);
         service.setDescription("Shipment insurance");
+    service.setDescription_en("Shipment insurance");
+    service.setName_en("Insurance");
 
         assertEquals(1, service.getId());
         assertEquals("Insurance", service.getName());
@@ -49,6 +51,8 @@ public class DomainModelTest {
         assertEquals(0.2f, service.getCostModifier(), 0.001f);
         assertEquals(ServiceType.SERVICES, service.getServiceType());
         assertEquals("Shipment insurance", service.getDescription());
+        assertEquals("Shipment insurance", service.getDescription_en());
+        assertEquals("Insurance", service.getName_en());
 
         AdditionalService same = new AdditionalService(
                 1,
@@ -56,7 +60,9 @@ public class DomainModelTest {
                 10.5f,
                 0.2f,
                 ServiceType.SERVICES,
-                "Shipment insurance"
+                "Shipment insurance",
+                "Shipment insurance",
+                "Insurance"
         );
 
         AdditionalService different = new AdditionalService(
@@ -65,7 +71,9 @@ public class DomainModelTest {
                 4f,
                 0.1f,
                 ServiceType.PRODUCTS,
-                "Packing material"
+                "Packing material",
+                "Packing material",
+                "Packing"
         );
 
         assertEquals(service, same);
@@ -358,7 +366,9 @@ public class DomainModelTest {
                 10f,
                 0.2f,
                 ServiceType.SERVICES,
-                "Insurance description"
+                "Insurance description",
+                "Insurance description",
+                "Insurance"
         );
 
         ArrayList<AdditionalService> services = new ArrayList<>(List.of(service));
