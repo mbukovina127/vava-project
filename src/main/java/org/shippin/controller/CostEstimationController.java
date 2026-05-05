@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.GenericPopup;
+import org.shippin.controller.utils.RegionsPopup;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
@@ -111,6 +112,7 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Buttons
     @FXML private Button resetButton;
     @FXML private Button computeButton;
+    @FXML private Button viewRegionsButton;
 
     private final ToggleGroup productsToggleGroup = new ToggleGroup();
     private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
@@ -371,6 +373,24 @@ public class CostEstimationController extends BaseController<Void> implements In
 
         log.info("Cost estimated: dest={}, total={}", destPostalCode, computedShipment.getTotalCost());
         loadScreen(COST_BREAKDOWN, computedShipment);
+    }
+
+    @FXML
+    private void onViewRegions() {
+        String selectedName = fromCombo.getValue();
+        BriefWarehouse selected = warehouseList.stream()
+                .filter(w -> w.getName().equals(selectedName))
+                .findFirst()
+                .orElse(null);
+        if (selected == null) return;
+        try {
+            WarehouseService wService = WarehouseService.getInstance();
+            var regionTable = wService.getWarehouseFormatted(selected).getRegionTable();
+            new RegionsPopup(this.resources).show(this, selected, regionTable);
+        } catch (SQLException e) {
+            log.error("Failed to load region table for warehouse '{}'", selectedName, e);
+            new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
+        }
     }
 
     @FXML
