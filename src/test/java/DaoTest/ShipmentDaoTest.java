@@ -283,7 +283,7 @@ public class ShipmentDaoTest {
     @Test
     @DisplayName("getSAllServices returns non-null list")
     void getAllServicesReturnsList() throws SQLException {
-        ArrayList<AdditionalService> services = shipmentDAO.getSAllServices();
+        ArrayList<AdditionalService> services = shipmentDAO.getAllServices();
 
         assertNotNull(services);
     }
@@ -293,7 +293,7 @@ public class ShipmentDaoTest {
     void getAllServicesReturnsInsertedService() throws SQLException {
         int serviceId = insertServiceDirectly("All Services Test Service");
 
-        ArrayList<AdditionalService> services = shipmentDAO.getSAllServices();
+        ArrayList<AdditionalService> services = shipmentDAO.getAllServices();
 
         assertNotNull(services);
         assertTrue(services.stream().anyMatch(service -> service.getId() == serviceId));

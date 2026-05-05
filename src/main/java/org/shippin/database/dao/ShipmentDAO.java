@@ -141,7 +141,7 @@ public class ShipmentDAO extends BaseDAO {
         return serviceList;
     }
 
-    public ArrayList<AdditionalService> getSAllServices() throws SQLException {
+    public ArrayList<AdditionalService> getAllServices() throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
                     SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type,

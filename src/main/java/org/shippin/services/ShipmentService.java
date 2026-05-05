@@ -29,7 +29,9 @@ public class ShipmentService {
         log.info("Saved shipment #{} for user #{}", shipment.getShipment_id(), userId);
         return shipment;
     }
-
+    public List<AdditionalService> getAllServices() {
+        return shipmentDAO.getAllServices();
+    }
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
                                    float fuelSurchargeCoefficient, float toll, float weight, float volume,
                                    int warehouseId, List<Integer> serviceIds) throws SQLException {
@@ -38,7 +40,7 @@ public class ShipmentService {
 
         Warehouse warehouse = warehouseDAO.getById(warehouseId);
 
-        List<AdditionalService> allServices = shipmentDAO.getSAllServices();
+        List<AdditionalService> allServices = shipmentDAO.getAllServices();
         List<AdditionalService> selected = allServices.stream()
                 .filter(s -> serviceIds.contains(s.getId())).toList();
 
