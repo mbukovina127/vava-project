@@ -84,6 +84,8 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getString("wh_region"),
                     rs.getInt("wh_postal_code"),
                     coordinates));
+
+            sh.setStartCoordinate(coordinates);
             return sh;
         }
 

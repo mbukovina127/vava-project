@@ -81,6 +81,9 @@ public class ShipmentDetailController extends BaseController<Shipment> implement
         if (data.getStartCoordinate() != null) {
             fromLat = data.getStartCoordinate().getX();
             fromLon = data.getStartCoordinate().getY();
+            System.out.println("DEBUG: Using DB coords: " + fromLat + ", " + fromLon);
+        } else {
+            System.out.println("DEBUG: startCoordinate is NULL! Using fallback");
         }
 
         populateHeader();
