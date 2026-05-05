@@ -15,20 +15,18 @@
 
 <BorderPane styleClass="sd-root" stylesheets="@../css/shipinn.css, @../css/shipment-detail.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shippin.controller.ShipmentDetailController">
 
-    <!-- ══════════════════════════════════════════
-         MAIN CONTENT
-         ══════════════════════════════════════════ -->
+<!-- MAIN CONTENT-->
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <content>
                 <VBox spacing="0" styleClass="sd-content">
 
-                    <!-- ── Title ───────────────────────────── -->
+                    <!-- Title -->
                     <Label fx:id="titleLabel" styleClass="page-title" text="%shipment_detail.title" />
 
                     <Region prefHeight="18" />
 
-                    <!-- ── Total cost row ──────────────────── -->
+                    <!-- Total cost row -->
                     <HBox alignment="CENTER_LEFT" spacing="0" styleClass="sd-info-row">
                         <Label minWidth="-Infinity" styleClass="sd-info-key" text="%shipment_detail.route" />
                         <Region prefWidth="16" />
@@ -46,10 +44,10 @@
                     </HBox>
 
                     <Region prefHeight="18" />
-                    <Separator styleClass="sd-separator" />
+                    <Separator styleClass="separator" />
                     <Region prefHeight="18" />
 
-                    <!-- ── State row ───────────────────────── -->
+                    <!-- State row -->
                     <HBox alignment="CENTER_LEFT" spacing="14" styleClass="sd-state-row">
                         <Label minWidth="-Infinity" styleClass="sd-info-key" text="%shipment_detail.state" />
                         <Label fx:id="statusBadge" minWidth="-Infinity" styleClass="sd-badge, sd-badge-completed" text="%shipment_detail.state_completed" />
@@ -57,16 +55,16 @@
                     </HBox>
 
                     <Region prefHeight="24" />
-                    <Separator styleClass="sd-separator" />
+                    <Separator styleClass="separator" />
                     <Region prefHeight="18" />
 
-                    <!-- ── History header ──────────────────── -->
+                    <!-- History header -->
                     <Label styleClass="sd-section-header" text="%shipment_detail.history" />
                     <Region prefHeight="12" />
                <ScrollPane hbarPolicy="NEVER" maxHeight="100.0" styleClass="sd-history-container" stylesheets="@../css/shipment-detail.css">
                   <content>
 
-                                <!-- ── History grid ────────────────────── -->
+                      <!-- History grid -->
                           <GridPane fx:id="historyGrid" hgap="0" styleClass="sd-history-grid" vgap="4">
                               <columnConstraints>
                                   <!-- Time -->
@@ -87,7 +85,7 @@
                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
 
-                                <!-- ── Map view ────────────────────────── -->
+                      <!-- Map view  -->
                           <StackPane fx:id="mapContainer" alignment="TOP_LEFT" maxHeight="200" maxWidth="700" minHeight="200" prefHeight="200" prefWidth="700" styleClass="sd-map-container">
                               <ImageView fx:id="mapImageView" fitHeight="200" fitWidth="700" preserveRatio="false" styleClass="sd-map-image" />
                               <Label fx:id="mapFallbackLabel" styleClass="sd-map-fallback" text="%shipment_detail.map_loading" visible="false" />

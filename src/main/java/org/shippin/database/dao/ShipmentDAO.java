@@ -334,7 +334,8 @@ public class ShipmentDAO extends BaseDAO {
         String sql = """
     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
     s.created_at, s.dest_region, s.user_ID,
-    w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region
+    w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region,
+    w.latitude as wh_lat, w.longitude as wh_lon
     FROM Shipment s
     JOIN Warehouse w ON s.warehouse_ID = w.warehouse_ID;
     """;
@@ -346,17 +347,23 @@ public class ShipmentDAO extends BaseDAO {
 
         while (rs.next()) {
             Shipment sh = mapShipment(rs);
-            sh.setWarehouse(new BriefWarehouse(
+            BriefWarehouse warehouse = new BriefWarehouse(
                     rs.getInt("wh_id"),
                     rs.getString("wh_name"),
-                    rs.getString("wh_region")));
+                    rs.getString("wh_region"));
+
+            warehouse.setCoord(new Coordinates(
+                    rs.getDouble("wh_lat"),
+                    rs.getDouble("wh_lon")));
+
+            sh.setWarehouse(warehouse);
+            sh.setStartCoordinate(warehouse.getCoord());  // ← SET PRIAMO!
 
             shipments.add(sh);
         }
 
         return shipments;
     }
-
     public List<BriefShippment> getAllBriefShippments() throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,

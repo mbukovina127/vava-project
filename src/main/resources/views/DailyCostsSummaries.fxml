@@ -4,12 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
-<!--
-    DailyCostsSummaries.fxml
-    Stylesheets load order:
-      1. shipinn.css   — shared base tokens
-      2. daily-costs-page.css — screen-specific rules
--->
 <BorderPane
     xmlns="http://javafx.com/javafx"
     xmlns:fx="http://javafx.com/fxml"
@@ -20,7 +14,7 @@
     <center>
         <HBox styleClass="dcs-content" spacing="48" alignment="TOP_LEFT">
 
-            <!-- ══════════════ LEFT — Calendar ══════════════ -->
+            <!-- LEFT — Calendar -->
             <VBox styleClass="dcs-left" spacing="0">
 
                 <!-- Screen title -->

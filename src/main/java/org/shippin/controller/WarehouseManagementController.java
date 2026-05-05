@@ -265,7 +265,6 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
 		try {
 			smallPriceListFormatted = warehouseParsingService.parseSmallPriceList(file);
 		} catch (ValidationException e) {
-
 			log.error("Warehouse operation failed", e);
 			new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_update", "%generic.validation_problem");
 		}
