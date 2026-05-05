@@ -19,7 +19,9 @@ import org.shippin.controller.utils.servicemanagement.DeleteAdditionalServicePop
 import org.shippin.controller.utils.GenericPopup;
 import org.shippin.domain.AdditionalService;
 import org.shippin.domain.BriefWarehouse;
+import org.shippin.domain.enums.ServiceType;
 import org.shippin.services.AdditionalServicesService;
+import org.shippin.services.NavigationService;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -68,6 +70,24 @@ public class ServicesManagementController extends BaseController<Void> implement
 	                .showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
 	    }
 	}
+	
+	public String getLocalizedServiceType(ServiceType serviceType) {
+	    if (serviceType == null) {
+	        return t("%services_management.no_type");
+	    }
+
+	    return t(serviceType.getI18nKey());
+	}
+	
+	protected String t(String key) {
+        if (this.resources == null) { return key; }
+        try {
+            return NavigationService.getBundle().getString(key.substring(1));
+        } catch (java.util.MissingResourceException e) {
+            System.err.println("Missing i18n key: " + key);
+            return key;
+        }
+    }
 
 	private void handleAddNewService() {
 	    new AddAdditionalServicePopup(resources).show(this);
@@ -187,7 +207,7 @@ public class ServicesManagementController extends BaseController<Void> implement
 
     	    Label typeBadge = new Label(service.getServiceType() == null
     	            ? bundle.getString("services_management.no_type")
-    	            : service.getServiceType().name());
+    	            : service.getServiceType().getLocalized(resources));
 
     	    typeBadge.getStyleClass().add("service-type-badge");
 

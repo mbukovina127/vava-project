@@ -1,6 +1,7 @@
 package org.shippin.infrastructure.csv;
 
 import org.shippin.infrastructure.validation.PriceListValidator;
+import org.shippin.services.NavigationService;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
 import org.shippin.exception.ValidationException;
@@ -68,7 +69,7 @@ public class PriceListCsvParser implements CsvParser<PriceListRow> {
             }
         }
 
-        PriceListValidator.validate(hmotnostList, objemList, regionColumns);
+        PriceListValidator.validate(hmotnostList, objemList, regionColumns, NavigationService.getBundle());
 
         //build table
         for (int i = 0; i < hmotnostList.size(); i++) {

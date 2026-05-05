@@ -85,7 +85,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 
         GridPane formGrid = new GridPane();
         formGrid.setHgap(16);
-        formGrid.setVgap(8);
+        formGrid.setVgap(12);
 
         ColumnConstraints labelColumn = new ColumnConstraints();
         labelColumn.setPrefWidth(135);
@@ -104,7 +104,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
         Label pickupPlaceLabel = createFormLabel(t("%warehouse_management.replace.pickup_place"));
         Label pickupPlaceValue = createValueLabel(briefWarehouse.getRegionName());
         
-        Label postalCodeLabel = createFormLabel(t("%warehouse_management.popup.postal_code"));
+        Label postalCodeLabel = createFormLabel(t("%warehouse_management.replace.postal_code"));
         Label postalCodeValue = createValueLabel(String.valueOf(briefWarehouse.getPostalCode()));
 
         Label priceListLabel = createFormLabel(t("%warehouse_management.replace.price_list"));
@@ -129,7 +129,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+				priceListError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
 			}
 
             if (chosenPriceList == null) { return; }
@@ -161,7 +161,7 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+				regionTableError.setText(t("%generic.validation_problem") + e.getErrors().getFirst());
 			}
 
             if (chosenRegionTable == null) { return; }
