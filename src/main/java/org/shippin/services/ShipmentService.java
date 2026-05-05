@@ -256,6 +256,20 @@ public class ShipmentService {
         return shipmentDAO.getShipmentByUserID(userId);
     }
 
+    public void deleteShipmentByID(int shipment_id) throws SQLException{
+        ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
+        try {
+            shipmentDAO.deleteShipment(shipment_id);
+            log.info("Shipment #{} deleted", shipment_id);
+        } catch (SQLException e) {
+            log.error("Failed to delete shipment #{}",shipment_id, e);
+            shipmentDAO.rollback();
+            throw e;
+        } finally {
+            shipmentDAO.setAutoCommit(true);
+        }
+
+    }
 
 
 }

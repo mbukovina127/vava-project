@@ -232,6 +232,11 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     private void handleDelete(ShipmentEntry entry) {
         entries.remove(entry);
+        try {
+            shipmentService.deleteShipmentByID(entry.shipmentId);
+        } catch (SQLException e) {
+            log.error("Failed to delete shipment #{}", entry.shipmentId(), e);
+        }
         applyFilterAndSort();
     }
 
@@ -242,5 +247,6 @@ public class MyShipmentsController extends BaseController<User> implements Initi
         return String.format(Locale.ROOT, "%.2f€", cost).replace('.', ',');
     }
     private static String formatCost(float cost) { return formatCost((double) cost); }
+
 
 }
