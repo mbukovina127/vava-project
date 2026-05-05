@@ -27,6 +27,12 @@
     -fx-pref-height: 56;
 }
 
+.um-row:hover {
+    -fx-background-color: #F0E4D7;
+    -fx-border-color: #C4A899;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);
+}
+
 /* ── Name label ─────────────────────────────────────────────── */
 .um-user-name {
     -fx-font-size: 15px;

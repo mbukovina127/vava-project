@@ -12,6 +12,7 @@ import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
 import org.shippin.domain.formatted.WarehouseFormatted;
+import org.shippin.exception.ValidationException;
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
 import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
@@ -72,17 +73,17 @@ public class WarehouseParsingService {
     // Price list
     // ---------------------------------------------------------------------
 
-    private PriceListFormatted parsePriceListCsv(File file) {
+    private PriceListFormatted parsePriceListCsv(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (PriceListFormatted)priceListCsvParser.parseFromCsv(text);
     }
 
-    private PriceListFormatted parsePriceListXml(File file) {
+    private PriceListFormatted parsePriceListXml(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (PriceListFormatted)priceListXmlParser.parseFromXml(text);
     }
 
-    public PriceListFormatted parsePriceList(File file) {
+    public PriceListFormatted parsePriceList(File file) throws ValidationException {
         String extension = getExtension(file);
 
         return switch (extension) {
@@ -122,17 +123,17 @@ public class WarehouseParsingService {
     // Region table
     // ---------------------------------------------------------------------
 
-    private RegionTableFormatted parseRegionTableCsv(File file) {
+    private RegionTableFormatted parseRegionTableCsv(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (RegionTableFormatted)regionTableCsvParser.parseFromCsv(text);
     }
 
-    private RegionTableFormatted parseRegionTableXml(File file) {
+    private RegionTableFormatted parseRegionTableXml(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (RegionTableFormatted)regionTableXmlParser.parseFromXml(text);
     }
 
-    public RegionTableFormatted parseRegionTable(File file) {
+    public RegionTableFormatted parseRegionTable(File file) throws ValidationException {
         String extension = getExtension(file);
 
         return switch (extension) {
@@ -172,17 +173,17 @@ public class WarehouseParsingService {
     // Small price list
     // ---------------------------------------------------------------------
 
-    private SmallPriceListFormatted parseSmallPriceListCsv(File file) {
+    private SmallPriceListFormatted parseSmallPriceListCsv(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (SmallPriceListFormatted)smallPriceListCsvParser.parseFromCsv(text);
     }
 
-    private SmallPriceListFormatted parseSmallPriceListXml(File file) {
+    private SmallPriceListFormatted parseSmallPriceListXml(File file) throws ValidationException {
         String text = textFileHandler.readFrom(file);
         return (SmallPriceListFormatted)smallPriceListXmlParser.parseFromXml(text);
     }
 
-    public SmallPriceListFormatted parseSmallPriceList(File file) {
+    public SmallPriceListFormatted parseSmallPriceList(File file) throws ValidationException {
         String extension = getExtension(file);
 
         return switch (extension) {

@@ -27,6 +27,10 @@
                    styleClass="dcd-search-field"
                    promptText="%my_shipments.search_placeholder" />
         <ComboBox fx:id="sortCombo" styleClass="dcd-sort-combo" />
+        <Button fx:id="btnShowOnMap"
+                styleClass="dcd-btn-add"
+                text="%my_shipments.show_on_map"
+                onAction="#handleShowOnMap" />
     </HBox>
 
     <!-- ── Shipment list ────────────────────────────────────── -->

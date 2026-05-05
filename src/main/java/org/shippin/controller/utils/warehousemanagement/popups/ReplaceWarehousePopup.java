@@ -11,6 +11,7 @@ import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.exception.IncompatibleTablesException;
+import org.shippin.exception.ValidationException;
 import org.shippin.services.WarehouseParsingService;
 import org.shippin.services.WarehouseService;
 import org.shippin.util.WarehouseConvertor;
@@ -122,7 +123,14 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 
             if (file == null) { return; }
 
-            PriceListFormatted chosenPriceList = WarehouseParsingService.getInstance().parsePriceList(file);
+            PriceListFormatted chosenPriceList = null;
+			try {
+				chosenPriceList = WarehouseParsingService.getInstance().parsePriceList(file);
+			} catch (ValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+			}
 
             if (chosenPriceList == null) { return; }
             controller.setSelectedPriceListFormatted(chosenPriceList);
@@ -147,7 +155,14 @@ public class ReplaceWarehousePopup extends WarehouseManagementPopup {
 
             if (file == null) { return; }
 
-            RegionTableFormatted chosenRegionTable = WarehouseParsingService.getInstance().parseRegionTable(file);
+            RegionTableFormatted chosenRegionTable = null;
+			try {
+				chosenRegionTable = WarehouseParsingService.getInstance().parseRegionTable(file);
+			} catch (ValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				new GenericPopup(this.resources).showOkPopup(controller, "%generic.failed_to_import", "%generic.validation_problem" + e.getErrors());
+			}
 
             if (chosenRegionTable == null) { return; }
             controller.setSelectedRegionTableFormatted(chosenRegionTable);

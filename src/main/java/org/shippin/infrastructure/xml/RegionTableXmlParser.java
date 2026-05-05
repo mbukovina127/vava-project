@@ -1,8 +1,10 @@
 package org.shippin.infrastructure.xml;
 
+import org.shippin.infrastructure.validation.RegionTableValidator;
 import org.shippin.util.Range;
 import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.domain.Table;
 import org.w3c.dom.*;
 
@@ -26,7 +28,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
     private static final String SS_NS = "urn:schemas-microsoft-com:office:spreadsheet";
 
     @Override
-    public Table<RegionTableRow> parseFromXml(String text) {
+    public Table<RegionTableRow> parseFromXml(String text) throws ValidationException {
         RegionTableFormatted table = new RegionTableFormatted();
 
         //safety check
@@ -39,6 +41,7 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
             return table;
         }
 
+        Map<String, List<String>> rawRegionRanges = new HashMap<>();
         Map<String, List<Range>> regionToRanges = new HashMap<>();
         String currentRegion = null;
 
@@ -63,6 +66,8 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
                 String cell = fields.get(j).trim();
                 if (cell.isEmpty()) continue;
 
+                rawRegionRanges.computeIfAbsent(currentRegion, _ -> new ArrayList<>()).add(cell);
+
                 if (cell.contains("-")) {
                     String[] parts = cell.split("-", 2);
                     if (parts.length == 2) {
@@ -84,6 +89,8 @@ public class RegionTableXmlParser implements XmlParser<RegionTableRow> {
 
             regionToRanges.computeIfAbsent(currentRegion, _ -> new ArrayList<>()).addAll(rangesThisLine);
         }
+
+        RegionTableValidator.validate(rawRegionRanges);
 
         // convert data to table
         for (Map.Entry<String, List<Range>> entry : regionToRanges.entrySet()) {
