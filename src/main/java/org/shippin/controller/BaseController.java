@@ -1,9 +1,11 @@
 package org.shippin.controller;
+import javafx.scene.image.Image;
 import org.shippin.dto.Screens;
 
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 
 public abstract class BaseController<T> implements Navigatable {
@@ -74,5 +76,13 @@ public abstract class BaseController<T> implements Navigatable {
         if (menuController != null) {
             menuController.hideOverlay();
         }
+    }
+
+    public Image loadImage(String path) {
+        URL resource = getClass().getResource(path);
+        if (resource == null) {
+            throw new IllegalStateException("Missing icon resource: " + path);
+        }
+        return new Image(resource.toExternalForm());
     }
 }

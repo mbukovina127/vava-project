@@ -216,13 +216,6 @@ public class WarehouseManagementController extends BaseController<BriefWarehouse
         new AddWarehousePopup(resources).show(this);
     }
 
-    private Image loadImage(String path) {
-        URL resource = getClass().getResource(path);
-        if (resource == null) {
-            throw new IllegalStateException("Missing icon resource: " + path);
-        }
-        return new Image(resource.toExternalForm());
-    }
     
     private void handleOpenWarehouse(BriefWarehouse briefWarehouse) {
     	
