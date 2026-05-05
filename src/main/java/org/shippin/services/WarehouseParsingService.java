@@ -20,12 +20,14 @@ import org.shippin.infrastructure.xml.PriceListXmlParser;
 import org.shippin.infrastructure.xml.RegionTableXmlParser;
 import org.shippin.infrastructure.xml.SmallPriceListXmlParser;
 import org.shippin.util.WarehouseConvertor;
+import lombok.extern.log4j.Log4j2;
 import org.shippin.util.io.TextFileHandler;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
+@Log4j2
 public class WarehouseParsingService {
 	
 	private static WarehouseParsingService instance;
@@ -44,9 +46,10 @@ public class WarehouseParsingService {
     public boolean checkTableCompatibility(PriceList priceList, RegionTable regionTable) {
     	List<String> priceListRegions = priceList.getRegions();
     	List<String> regionTableRegions = regionTable.getRegions();
-    	
-    	return priceListRegions.containsAll(regionTableRegions) && 
+    	boolean compatible = priceListRegions.containsAll(regionTableRegions) &&
     		       regionTableRegions.containsAll(priceListRegions);
+    	if (!compatible) log.warn("Price list and region table have mismatched regions");
+    	return compatible;
     }
 
     public WarehouseParsingService() {
@@ -85,7 +88,7 @@ public class WarehouseParsingService {
 
     public PriceListFormatted parsePriceList(File file) throws ValidationException {
         String extension = getExtension(file);
-
+        log.debug("Parsing price list from '{}' ({})", file.getName(), extension);
         return switch (extension) {
             case "csv" -> parsePriceListCsv(file);
             case "xml" -> parsePriceListXml(file);
@@ -111,12 +114,14 @@ public class WarehouseParsingService {
 
     public boolean writePriceList(File file, Table<PriceListRow> table) {
         String extension = getExtension(file);
-
-        return switch (extension) {
+        log.debug("Writing price list to '{}' ({})", file.getName(), extension);
+        boolean ok = switch (extension) {
             case "csv" -> writePriceListCsv(file, table);
             case "xml" -> writePriceListXml(file, table);
             default -> throw new IllegalArgumentException("Unsupported price list file type: " + extension);
         };
+        if (!ok) log.warn("Writing price list to '{}' reported failure", file.getName());
+        return ok;
     }
 
     // ---------------------------------------------------------------------
@@ -135,7 +140,7 @@ public class WarehouseParsingService {
 
     public RegionTableFormatted parseRegionTable(File file) throws ValidationException {
         String extension = getExtension(file);
-
+        log.debug("Parsing region table from '{}' ({})", file.getName(), extension);
         return switch (extension) {
             case "csv" -> parseRegionTableCsv(file);
             case "xml" -> parseRegionTableXml(file);
@@ -161,12 +166,14 @@ public class WarehouseParsingService {
 
     public boolean writeRegionTable(File file, Table<RegionTableRow> table) {
         String extension = getExtension(file);
-
-        return switch (extension) {
+        log.debug("Writing region table to '{}' ({})", file.getName(), extension);
+        boolean ok = switch (extension) {
             case "csv" -> writeRegionTableCsv(file, table);
             case "xml" -> writeRegionTableXml(file, table);
             default -> throw new IllegalArgumentException("Unsupported region table file type: " + extension);
         };
+        if (!ok) log.warn("Writing region table to '{}' reported failure", file.getName());
+        return ok;
     }
 
     // ---------------------------------------------------------------------
@@ -185,7 +192,7 @@ public class WarehouseParsingService {
 
     public SmallPriceListFormatted parseSmallPriceList(File file) throws ValidationException {
         String extension = getExtension(file);
-
+        log.debug("Parsing small price list from '{}' ({})", file.getName(), extension);
         return switch (extension) {
             case "csv" -> parseSmallPriceListCsv(file);
             case "xml" -> parseSmallPriceListXml(file);
@@ -211,12 +218,14 @@ public class WarehouseParsingService {
 
     public boolean writeSmallPriceList(File file, Table<SmallPriceListRow> table) {
         String extension = getExtension(file);
-
-        return switch (extension) {
+        log.debug("Writing small price list to '{}' ({})", file.getName(), extension);
+        boolean ok = switch (extension) {
             case "csv" -> writeSmallPriceListCsv(file, table);
             case "xml" -> writeSmallPriceListXml(file, table);
             default -> throw new IllegalArgumentException("Unsupported small price list file type: " + extension);
         };
+        if (!ok) log.warn("Writing small price list to '{}' reported failure", file.getName());
+        return ok;
     }
 
     // ---------------------------------------------------------------------
@@ -239,15 +248,14 @@ public class WarehouseParsingService {
     }
     
     public void exportTable(BriefWarehouse briefWarehouse, boolean isPriceList, File file) throws SQLException {
-    	Warehouse warehouse;
-		
-    	warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
+    	log.info("Exporting {} for warehouse '{}' to '{}'",
+    			isPriceList ? "price list" : "region table", briefWarehouse.getName(), file.getName());
+    	Warehouse warehouse = WarehouseService.getInstance().getWarehouse(briefWarehouse);
     	WarehouseFormatted warehouseFormatted = WarehouseConvertor.toWarehouseFormatted(warehouse);
 
-    	if(isPriceList) {
+    	if (isPriceList) {
     		this.writePriceList(file, warehouseFormatted.getPriceList());
-    	}
-    	else {
+    	} else {
     		this.writeRegionTable(file, warehouseFormatted.getRegionTable());
     	}
     }

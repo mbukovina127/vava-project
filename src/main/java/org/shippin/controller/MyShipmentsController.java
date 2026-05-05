@@ -223,7 +223,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     private void handleEdit(ShipmentEntry entry) {
         try {
-            Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
+            Shipment shipment = shipmentService.getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
             log.error("Failed to open shipment #{}", entry.shipmentId(), e);

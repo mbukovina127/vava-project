@@ -229,7 +229,7 @@ public class DailyCostsSummaryDetailController
 
     private void handleEdit(ShipmentEntry entry) {
         try {
-            Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
+            Shipment shipment = shipmentService.getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
             log.error("Daily summary operation failed", e);
@@ -288,6 +288,7 @@ public class DailyCostsSummaryDetailController
             log.error("Daily summary operation failed", e);
         }
     }
+
 
     // ══════════════════════════════════════════════════════════════════
     // Data model

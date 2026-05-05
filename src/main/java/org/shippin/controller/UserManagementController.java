@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.controller.utils.ErrorHandler;
-import org.shippin.database.dao.UserDAO;
 import org.shippin.dto.Screens;
 import org.shippin.services.NavigationService;
 import org.shippin.domain.User;
