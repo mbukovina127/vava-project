@@ -262,7 +262,9 @@ public class ShipmentDaoTest {
                 5f,
                 1f,
                 ServiceType.SERVICES,
-                "Test service"
+                "Test service",
+                "Test service",
+                "Insert Shipment Service"
         ));
         shipment.setServices(services);
 

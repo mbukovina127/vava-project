@@ -1,3 +1,9 @@
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.shippin.domain.formatted.PriceListFormatted;
 import org.shippin.domain.formatted.PriceListRow;
@@ -5,6 +11,7 @@ import org.shippin.domain.formatted.RegionTableFormatted;
 import org.shippin.domain.formatted.RegionTableRow;
 import org.shippin.domain.formatted.SmallPriceListFormatted;
 import org.shippin.domain.formatted.SmallPriceListRow;
+import org.shippin.exception.ValidationException;
 import org.shippin.infrastructure.csv.PriceListCsvParser;
 import org.shippin.infrastructure.csv.RegionTableCsvParser;
 import org.shippin.infrastructure.csv.SmallPriceListCsvParser;
@@ -13,16 +20,12 @@ import org.shippin.infrastructure.xml.RegionTableXmlParser;
 import org.shippin.infrastructure.xml.SmallPriceListXmlParser;
 import org.shippin.util.Range;
 
-import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ParserTest {
 
     private static final Random RANDOM = new Random(25);
 
     @Test
-    void priceListParserShouldParseRandomCsv() {
+    void priceListParserShouldParseRandomCsv() throws ValidationException {
         String priceCsv = generatePriceCsv(10);
 
         PriceListCsvParser parser = new PriceListCsvParser();
@@ -46,7 +49,7 @@ public class ParserTest {
     }
 
     @Test
-    void priceListParserShouldExportParsedCsv() {
+    void priceListParserShouldExportParsedCsv() throws ValidationException {
         String priceCsv = generatePriceCsv(5);
 
         PriceListCsvParser parser = new PriceListCsvParser();
@@ -62,7 +65,7 @@ public class ParserTest {
     }
 
     @Test
-    void regionTableParserShouldParseRandomCsv() {
+    void regionTableParserShouldParseRandomCsv() throws ValidationException {
         String regionCsv = generateRegionCsv();
 
         RegionTableCsvParser parser = new RegionTableCsvParser();
@@ -83,7 +86,7 @@ public class ParserTest {
     }
 
     @Test
-    void regionTableParserShouldFindPostalCodeInsideGeneratedRange() {
+    void regionTableParserShouldFindPostalCodeInsideGeneratedRange() throws ValidationException {
         int min = 82100;
         int max = 82199;
 
@@ -110,7 +113,7 @@ public class ParserTest {
     }
 
     @Test
-    void smallPriceListParserShouldParseRandomCsv() {
+    void smallPriceListParserShouldParseRandomCsv() throws ValidationException {
         String smallPriceCsv = generateSmallPriceCsv(8);
 
         SmallPriceListCsvParser parser = new SmallPriceListCsvParser();
@@ -126,7 +129,7 @@ public class ParserTest {
     }
 
     @Test
-    void smallPriceListParserShouldExportParsedCsv() {
+    void smallPriceListParserShouldExportParsedCsv() throws ValidationException {
         String smallPriceCsv = generateSmallPriceCsv(5);
 
         SmallPriceListCsvParser parser = new SmallPriceListCsvParser();
@@ -224,7 +227,7 @@ public class ParserTest {
     }
 
     @Test
-    void priceListXmlParserShouldParseXml() {
+    void priceListXmlParserShouldParseXml() throws ValidationException {
         String priceXml = generatePriceXml(10);
 
         PriceListXmlParser parser = new PriceListXmlParser();
@@ -248,7 +251,7 @@ public class ParserTest {
     }
 
     @Test
-    void priceListXmlParserShouldExportParsedXml() {
+    void priceListXmlParserShouldExportParsedXml() throws ValidationException {
         String priceXml = generatePriceXml(5);
 
         PriceListXmlParser parser = new PriceListXmlParser();
@@ -263,7 +266,7 @@ public class ParserTest {
     }
 
     @Test
-    void priceListXmlParserShouldRoundFloatPrecision() {
+    void priceListXmlParserShouldRoundFloatPrecision() throws ValidationException {
         String priceXml = """
                 <?xml version="1.0"?>
                 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -296,7 +299,7 @@ public class ParserTest {
     }
 
     @Test
-    void regionTableXmlParserShouldParseXml() {
+    void regionTableXmlParserShouldParseXml() throws ValidationException {
         String regionXml = generateRegionXml();
 
         RegionTableXmlParser parser = new RegionTableXmlParser();
@@ -317,7 +320,7 @@ public class ParserTest {
     }
 
     @Test
-    void regionTableXmlParserShouldHandleContinuationRows() {
+    void regionTableXmlParserShouldHandleContinuationRows() throws ValidationException {
         String regionXml = """
                 <?xml version="1.0"?>
                 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -352,7 +355,7 @@ public class ParserTest {
     }
 
     @Test
-    void regionTableXmlParserShouldFindPostalCode() {
+    void regionTableXmlParserShouldFindPostalCode() throws ValidationException {
         String regionXml = """
                 <?xml version="1.0"?>
                 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -392,7 +395,7 @@ public class ParserTest {
     }
 
     @Test
-    void smallPriceListXmlParserShouldParseXml() {
+    void smallPriceListXmlParserShouldParseXml() throws ValidationException {
         String smallPriceXml = generateSmallPriceXml(8);
 
         SmallPriceListXmlParser parser = new SmallPriceListXmlParser();
@@ -408,7 +411,7 @@ public class ParserTest {
     }
 
     @Test
-    void smallPriceListXmlParserShouldExportParsedXml() {
+    void smallPriceListXmlParserShouldExportParsedXml() throws ValidationException {
         String smallPriceXml = generateSmallPriceXml(5);
 
         SmallPriceListXmlParser parser = new SmallPriceListXmlParser();

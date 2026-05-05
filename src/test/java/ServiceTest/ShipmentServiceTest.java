@@ -251,13 +251,15 @@ public class ShipmentServiceTest {
         shipment.setFuel_payment(0.10f);
         shipment.setToll(0.20f);
 
-        AdditionalService service = new AdditionalService(
+        AdditionalService service =new AdditionalService(
                 1,
                 "Insurance",
                 5f,
                 0.10f,
                 ServiceType.SERVICES,
-                "Insurance service"
+                "Insurance service",
+                "Insurance service",
+                "Insurance"
         );
 
         float result = ShipmentService.calculateServiceCost(shipment, 100f, service);
@@ -606,7 +608,9 @@ private int insertServiceDirectly(String name, float defaultCost, float costModi
                 5f,
                 0.10f,
                 ServiceType.SERVICES,
-                "Insurance service"
+                "Insurance service",
+                "Insurance service",
+                "Insurance"
         ));
         services.add(new AdditionalService(
                 2,
@@ -614,7 +618,9 @@ private int insertServiceDirectly(String name, float defaultCost, float costModi
                 3f,
                 0.20f,
                 ServiceType.SERVICES,
-                "Fragile handling service"
+                "Fragile handling service",
+                "Fragile handling service",
+                "Fragile handling"
         ));
 
         shipment.setServices(services);
