@@ -21,7 +21,9 @@ public class ShipmentService {
     private final ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
     public List<ShipmentHistory> getShipmentHistory(int shipmentId) throws SQLException {
-        return shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
+        List<ShipmentHistory> history = shipmentDAO.getShipmentHistoryByShipmentID(shipmentId);
+        log.debug("Fetched {} history entries for shipment #{}", history.size(), shipmentId);
+        return history;
     }
     public Shipment saveShipment(Shipment shipment, int userId) throws SQLException {
         shipmentDAO.insertShipment(shipment, shipment.getWarehouse().getId(), userId);
@@ -29,7 +31,7 @@ public class ShipmentService {
         log.info("Saved shipment #{} for user #{}", shipment.getShipment_id(), userId);
         return shipment;
     }
-    public List<AdditionalService> getAllServices() {
+    public List<AdditionalService> getAllServices() throws SQLException {
         return shipmentDAO.getAllServices();
     }
     public Shipment createShipment(String name, Date deliveryDate, int destPostalCode,
@@ -69,7 +71,9 @@ public class ShipmentService {
     }
 
     public List<Shipment> getAllShipments() throws SQLException {
-        return shipmentDAO.getAllShipments();
+        List<Shipment> shipments = shipmentDAO.getAllShipments();
+        log.debug("Fetched {} shipments", shipments.size());
+        return shipments;
     }
 
     // ── Cost calculations ─────────────────────────────────────────
@@ -219,6 +223,7 @@ public class ShipmentService {
     }
 
     public Map<LocalDate, Double> getDailySummaries(YearMonth ym) throws SQLException {
+        log.debug("Computing daily cost summaries for {}", ym);
 
         ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
@@ -243,6 +248,7 @@ public class ShipmentService {
     }
 
     public List<Shipment> getShipmentsForDay(LocalDate date) throws SQLException {
+        log.debug("Fetching shipments for {}", date);
 
         ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
 
@@ -253,9 +259,14 @@ public class ShipmentService {
     }
 
     public List<Shipment> getShipmentsByUser(int userId) throws SQLException {
-        return shipmentDAO.getShipmentByUserID(userId);
+        List<Shipment> shipments = shipmentDAO.getShipmentByUserID(userId);
+        log.debug("Fetched {} shipments for user #{}", shipments.size(), userId);
+        return shipments;
     }
-    public Shipment getShipmentById(int id) throws SQLException{
-        return shipmentDAO.getShipmentById(id);
+
+    public Shipment getShipmentById(int id) throws SQLException {
+        Shipment shipment = shipmentDAO.getShipmentById(id);
+        if (shipment == null) log.warn("Shipment #{} not found", id);
+        return shipment;
     }
 }
