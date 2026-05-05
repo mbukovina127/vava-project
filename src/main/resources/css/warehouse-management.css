@@ -90,7 +90,7 @@
 
 .popup-error-message {
     -fx-text-fill: #9E1B1B;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-padding: 0 0 0 2;
 }

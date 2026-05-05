@@ -3,7 +3,7 @@
 }
 
 .label {
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #222;
 }
 
@@ -31,7 +31,7 @@
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
     -fx-padding: 6px 10px;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
 }
 
 .table-view {
@@ -54,7 +54,7 @@
 
 .table-view .column-header .label {
     -fx-font-weight: bold;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: black;
     -fx-alignment: center;
     -fx-text-alignment: center;
@@ -72,7 +72,7 @@
 
 .table-cell {
     -fx-alignment: center;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: black;
     -fx-border-color: #8f8f8f;
     -fx-border-width: 0 1px 1px 0;
@@ -126,7 +126,7 @@
     -fx-padding: 3px 12px;
     -fx-min-height: 36px;
     -fx-pref-height: 36px;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
 }
 
 .header-cell {

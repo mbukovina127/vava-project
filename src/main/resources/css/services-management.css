@@ -88,7 +88,7 @@
 
 .service-description {
     -fx-font-family: "System";
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-text-fill: #555555;
 }
 
@@ -101,7 +101,7 @@
 
 .popup-error-message {
     -fx-text-fill: #9E1B1B;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
@@ -118,7 +118,7 @@
     -fx-background-color: #FFECCD;
     -fx-padding: 8 18 8 18;
     -fx-font-family: "System";
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #102418;
 	-fx-font-weight: bold;
     -fx-alignment: CENTER;
@@ -142,7 +142,7 @@
 
 .service-modifier {
     -fx-font-family: "System";
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-text-fill: #555555;
 }
 

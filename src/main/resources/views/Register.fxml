@@ -22,14 +22,14 @@
                 fx:id="langButton"
                 text="SK"
                 onAction="#onToggleLanguage"
-                styleClass="profile-btn"/>
+                styleClass="locale-btn"/>
     </HBox>
 
     <VBox
             styleClass="card"
             maxWidth="380"
             spacing="0"
-            alignment="TOP_CENTER">
+            alignment="CENTER">
 
         <!-- Logo -->
         <HBox styleClass="logo-box">
