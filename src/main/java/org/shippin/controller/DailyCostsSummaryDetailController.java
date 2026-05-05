@@ -17,6 +17,7 @@ import org.shippin.dto.Screens;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -53,6 +54,7 @@ public class DailyCostsSummaryDetailController
 
     // State
     private LocalDate            currentDate = java.time.LocalDate.now();
+    private List<Shipment>       rawShipments = new ArrayList<>();
     private List<ShipmentEntry>  entries = new ArrayList<>();
 
     private enum SortType { TIME, COST, STATE }
@@ -210,6 +212,14 @@ public class DailyCostsSummaryDetailController
     }
 
     /** Edit action for a shipment row. */
+    @FXML
+    private void handleShowOnMap() throws IOException {
+        List<Shipment> active = rawShipments.stream()
+                .filter(s -> s.getState() != State.FAILED && s.getState() != State.DELIVERED)
+                .toList();
+        loadScreen(Screens.MAP_OF_SHIPMENTS, active);
+    }
+
     private void handleEdit(ShipmentEntry entry) {
         try {
             Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
@@ -249,6 +259,7 @@ public class DailyCostsSummaryDetailController
     private void loadFromService() {
         try {
             List<Shipment> shipments = shipmentService.getShipmentsForDay(currentDate);
+            rawShipments = shipments;
             entries.clear();
 
             for (Shipment s : shipments) {
