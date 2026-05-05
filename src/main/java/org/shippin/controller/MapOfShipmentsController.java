@@ -1,16 +1,24 @@
 package org.shippin.controller;
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
 import org.shippin.domain.Shipment;
+import org.shippin.domain.enums.State;
 import org.shippin.services.MapService;
 import org.shippin.services.NavigationService;
-import org.shippin.services.ShipmentService;
-import org.shippin.domain.enums.State;
 
 import java.net.URL;
 import java.util.List;
@@ -19,14 +27,24 @@ import java.util.ResourceBundle;
 @Log4j2
 public class MapOfShipmentsController extends BaseController<List<Shipment>> implements Initializable {
 
+    // ── pin colors — single source of truth for map URL and legend ─────────
+    static final String COLOR_ORIGIN          = "#00AA00";
+    static final String COLOR_NOT_READY       = "#FF5555";
+    static final String COLOR_READY           = "#3366FF";
+    static final String COLOR_BEING_DELIVERED = "#FF9900";
+    static final String COLOR_CANCELED        = "#999999";
+
     @FXML private StackPane mapContainer;
     @FXML private ImageView mapImageView;
-    @FXML private javafx.scene.control.Label mapFallbackLabel;
+    @FXML private Label     mapFallbackLabel;
+    @FXML private HBox      legendRow;
+    @FXML private StackPane loadingOverlay;
+    @FXML private ImageView spinnerImageView;
 
     private final MapService mapService = new MapService();
-    private final ShipmentService shipmentService = new ShipmentService();
 
     private List<Shipment> shipments = List.of();
+    private RotateTransition spinnerAnimation;
 
     @Override
     protected Class<List<Shipment>> getDataType() {
@@ -37,110 +55,109 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
     protected void onData(List<Shipment> data) {
         if (data != null) {
             this.shipments = data;
-        } else {
-            loadAllShipments();
         }
+        filterShipments();
         loadMapImage();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("MapOfShipmentsController initialized");
-        loadAllShipments();
+        spinnerAnimation = new RotateTransition(Duration.millis(1200), spinnerImageView);
+        spinnerAnimation.setByAngle(360);
+        spinnerAnimation.setCycleCount(Animation.INDEFINITE);
+        spinnerAnimation.setInterpolator(Interpolator.LINEAR);
+        buildLegend();
+        showLoading();
     }
 
-    private void loadAllShipments() {
+    private void filterShipments() {
         try {
-            log.info("Loaded {} shipments", shipments.size());
-
-            //ukáže len ongoing shipments
             shipments = shipments.stream()
-                    .filter(s -> s.getState() != State.DELIVERED &&
-                            s.getState() != State.FAILED)
+                    .filter(s -> s.getState() != State.DELIVERED && s.getState() != State.FAILED)
                     .toList();
-
-            log.info("✅ Loaded {} ongoing shipments", shipments.size());
-          } catch (Exception e) {
-            log.error("Failed to load shipments", e);
-            showMapFallback();
+            log.info("Loaded {} ongoing shipments", shipments.size());
+        } catch (Exception e) {
+            log.error("Failed to filter shipments", e);
         }
     }
-
 
     private void loadMapImage() {
         if (shipments.isEmpty()) {
             showMapFallback();
             return;
         }
+        showLoading();
+        new Thread(() -> {
+            try {
+                String url = buildMultipleShipmentsUrl();
+                Platform.runLater(() -> {
+                    Image mapImage = new Image(url, true);
+                    mapImage.progressProperty().addListener((obs, old, progress) -> {
+                        if (progress.doubleValue() >= 1.0) stopLoading();
+                    });
+                    mapImage.errorProperty().addListener((obs, old, isError) -> {
+                        if (isError) { stopLoading(); showMapFallback(); }
+                    });
+                    mapImageView.setImage(mapImage);
+                    // guard: image may already be done if cached
+                    if (mapImage.isError()) { stopLoading(); showMapFallback(); }
+                    else if (mapImage.getProgress() >= 1.0) stopLoading();
+                });
+            } catch (Exception ex) {
+                log.error("Failed to build map URL", ex);
+                Platform.runLater(() -> {
+                    stopLoading();
+                    showMapFallback();
+                });
+            }
+        }).start();
+    }
 
-        try {
-            // Zostav všetky trasy do jedného URL
-            String url = buildMultipleShipmentsUrl();
+    private void showLoading() {
+        loadingOverlay.setVisible(true);
+        mapImageView.setVisible(false);
+        mapFallbackLabel.setVisible(false);
+        spinnerAnimation.play();
+    }
 
-            Image mapImage = new Image(url, true);
-            mapImage.errorProperty().addListener((obs, old, isError) -> {
-                if (isError) showMapFallback();
-            });
-            mapImageView.setImage(mapImage);
-            mapImageView.setVisible(true);
-            mapFallbackLabel.setVisible(false);
-        } catch (Exception ex) {
-            log.error("Failed to load map", ex);
-            showMapFallback();
-        }
+    private void stopLoading() {
+        spinnerAnimation.stop();
+        spinnerAnimation.jumpTo(Duration.ZERO);
+        loadingOverlay.setVisible(false);
+        mapImageView.setVisible(true);
     }
 
     private String buildMultipleShipmentsUrl() {
         StringBuilder markers = new StringBuilder();
-        StringBuilder paths = new StringBuilder();
-
+        StringBuilder paths   = new StringBuilder();
         int markerCount = 0;
-        for (Shipment s : shipments) {
 
+        for (Shipment s : shipments) {
             double fromLat = 48.7;
             double fromLon = 19.15;
 
             if (s.getStartCoordinate() != null) {
                 fromLat = s.getStartCoordinate().getX();
                 fromLon = s.getStartCoordinate().getY();
-
-
-                /*
-                // FILTER NA Slovensko + okolie
-                if (fromLat < 47.0|| fromLat > 50.5 || fromLon < 14.0 || fromLon > 23.5) {
-                    log.warn("Warehouse outside region: {}, {}", fromLat, fromLon);
-                    continue;
-                }*/
             }
 
             if (s.getDest_region() > 0) {
                 try {
                     double[] coords = mapService.fetchCoordinatesForPostalCode(s.getDest_region());
-                    double toLat = coords[0];
-                    double toLon = coords[1];
-
-                    //RANDOM OFFSET
-                    double offsetLat = (Math.random() - 0.5) * 0.06;  // ±3km na sever/juh
-                    double offsetLon = (Math.random() - 0.5) * 0.06;  // ±3km na východ/západ
-                    toLat += offsetLat;
-                    toLon += offsetLon;
-
-                    /*
-                    // FILTER NA destináciu!
-                    if (toLat < 47.0 || toLat > 50.5 || toLon < 14.0 || toLon > 23.5) {
-                        log.warn("Destination outside region: {}, {}", toLat, toLon);
-                        continue;
-                    }*/
+                    double toLat = coords[0] + (Math.random() - 0.5) * 0.06;
+                    double toLon = coords[1] + (Math.random() - 0.5) * 0.06;
 
                     if (markerCount > 0) markers.append("&");
-                    markers.append(String.format("markers=color:green|%.4f,%.4f", fromLat, fromLon));
+                    markers.append(String.format("markers=color:%s|%.4f,%.4f",
+                            toMapColor(COLOR_ORIGIN), fromLat, fromLon));
 
                     String destColor = switch (s.getState()) {
-                        case NOT_READY          -> "0xFF5555"; //cervena
-                        case READY_FOR_DELIVERY -> "0x3366FF"; //modra
-                        case BEING_DELIVERED    -> "0xFF9900"; //oranzova
-                        case CANCELED           -> "0x999999"; //siva
-                        default                 -> "0xFF0000";
+                        case NOT_READY          -> toMapColor(COLOR_NOT_READY);
+                        case READY_FOR_DELIVERY -> toMapColor(COLOR_READY);
+                        case BEING_DELIVERED    -> toMapColor(COLOR_BEING_DELIVERED);
+                        case CANCELED           -> toMapColor(COLOR_CANCELED);
+                        default                 -> toMapColor(COLOR_NOT_READY);
                     };
 
                     markers.append(String.format("&markers=color:%s|%.4f,%.4f", destColor, toLat, toLon));
@@ -149,26 +166,59 @@ public class MapOfShipmentsController extends BaseController<List<Shipment>> imp
 
                     markerCount++;
                 } catch (Exception e) {
-                    log.error("ERROR farbicky: ", e);
+                    log.error("Failed to resolve coordinates for shipment {}", s.getShipment_id(), e);
                 }
             }
         }
 
-        String url = String.format(
-                "https://maps.googleapis.com/maps/api/staticmap?" +
-                        "size=1000x300&" +
-                        "%s%s" +
-                        "&key=%s",
-                markers.toString(),
-                paths.toString(),
-                "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc"
+        return String.format(
+                "https://maps.googleapis.com/maps/api/staticmap?size=1000x300&%s%s&key=%s",
+                markers, paths,
+                "AIzaSyAuHM5wJRSqhMhzLQSj_VIpwvamKoaZjrc");
+    }
+
+    private void buildLegend() {
+        ResourceBundle bundle = NavigationService.getBundle();
+
+        record LegendEntry(String color, String key) {}
+        List<LegendEntry> entries = List.of(
+                new LegendEntry(COLOR_ORIGIN,          "map_of_shipments.legend.origin"),
+                new LegendEntry(COLOR_NOT_READY,       "map_of_shipments.legend.not_ready"),
+                new LegendEntry(COLOR_READY,           "map_of_shipments.legend.ready_for_delivery"),
+                new LegendEntry(COLOR_BEING_DELIVERED, "map_of_shipments.legend.being_delivered"),
+                new LegendEntry(COLOR_CANCELED,        "map_of_shipments.legend.canceled")
         );
-        return url;
+
+        legendRow.getChildren().clear();
+        for (LegendEntry e : entries) {
+            legendRow.getChildren().add(buildLegendItem(e.color(), bundle.getString(e.key())));
+        }
+    }
+
+    private HBox buildLegendItem(String color, String text) {
+        Region dot = new Region();
+        dot.setPrefSize(14, 14);
+        dot.setMinSize(14, 14);
+        dot.setMaxSize(14, 14);
+        dot.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 7;");
+
+        Label label = new Label(text);
+        label.getStyleClass().add("map-legend-label");
+
+        HBox item = new HBox(6, dot, label);
+        item.getStyleClass().add("map-legend-item");
+        item.setAlignment(Pos.CENTER_LEFT);
+        return item;
+    }
+
+    private static String toMapColor(String hex) {
+        return "0x" + hex.substring(1);
     }
 
     private void showMapFallback() {
+        spinnerAnimation.stop();
+        loadingOverlay.setVisible(false);
         mapImageView.setVisible(false);
         mapFallbackLabel.setVisible(true);
-        mapFallbackLabel.setText("Map unavailable or no shipments");
     }
 }

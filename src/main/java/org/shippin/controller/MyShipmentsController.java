@@ -15,6 +15,7 @@ import org.shippin.domain.Shipment;
 import org.shippin.domain.User;
 import org.shippin.domain.enums.State;
 import org.shippin.dto.Screens;
+import org.shippin.controller.utils.GenericPopup;
 import org.shippin.services.NavigationService;
 import org.shippin.services.ShipmentService;
 import org.shippin.services.UserService;
@@ -93,9 +94,14 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     @FXML
     private void handleShowOnMap() throws IOException {
-        List<Shipment> active = rawShipments.stream()
+        List<Shipment> active = rawShipments == null ? List.of() : rawShipments.stream()
                 .filter(s -> s.getState() != State.FAILED && s.getState() != State.DELIVERED)
                 .toList();
+        if (active.isEmpty()) {
+            new GenericPopup(NavigationService.getBundle())
+                    .showOkPopup(this, "%map_of_shipments.no_active.title", "%map_of_shipments.no_active.message");
+            return;
+        }
         loadScreen(Screens.MAP_OF_SHIPMENTS, active);
     }
 
