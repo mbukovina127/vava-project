@@ -65,6 +65,7 @@ public class DailyCostsSummaryDetailController
     private LocalDate            currentDate = java.time.LocalDate.now();
     private List<Shipment>       rawShipments = new ArrayList<>();
     private List<ShipmentEntry>  entries = new ArrayList<>();
+    private ResourceBundle bundle;
 
     private enum SortType { TIME, COST, STATE }
 
@@ -86,7 +87,9 @@ public class DailyCostsSummaryDetailController
         if(date != null){
             this.currentDate = date;
         }
-
+        if (currentDate != null) {
+            lblTitle.setText(currentDate.format(TITLE_FMT) + " – " + this.bundle.getString("daily_cost.header"));
+        }
         loadFromService();
     }
 
@@ -97,7 +100,7 @@ public class DailyCostsSummaryDetailController
         editIcon = loadImage("/icons/png-dark/rewrite_black.png");
         deleteIcon = loadImage("/icons/png-dark/delete_black.png");
 
-        ResourceBundle bundle = NavigationService.getBundle();
+        this.bundle = NavigationService.getBundle();
         sortCombo.getItems().addAll(
                 bundle.getString("my_shipments.sort_time"),
                 bundle.getString("my_shipments.sort_cost"),
@@ -108,9 +111,6 @@ public class DailyCostsSummaryDetailController
         searchField.textProperty().addListener((obs, old, val) -> applyFilterAndSort());
         sortCombo.valueProperty().addListener((obs, old, val) -> applyFilterAndSort());
 
-        if (currentDate != null) {
-            lblTitle.setText(currentDate.format(TITLE_FMT) + " – " + bundle.getString("daily_cost.header"));
-        }
     }
 
     // Public API — called by the parent controller
