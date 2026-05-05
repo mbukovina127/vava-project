@@ -112,7 +112,8 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getShipmentServices(int shipmentID) throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type,
+                    s.description_en, s.service_name_en
                     FROM Service_list sl JOIN Service s ON sl.service_ID = s.service_id
                     WHERE sl.shipment_ID = ?;
                     """;
@@ -128,7 +129,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
                     ServiceType.valueOf(rs.getString("service_type")),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("description_en"),
+                    rs.getString("service_name_en")
             );
             serviceList.add(as);
         }
@@ -139,7 +142,8 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getSAllServices() throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type,
+                    s.description_en, s.service_name_en
                     FROM Service s;
                     """;
 
@@ -153,7 +157,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
                     ServiceType.valueOf(rs.getString("service_type")),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("description_en"),
+                    rs.getString("service_name_en")
             );
             serviceList.add(as);
         }

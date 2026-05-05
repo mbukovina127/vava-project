@@ -20,8 +20,9 @@
     <HBox styleClass="dcd-topbar" alignment="CENTER_LEFT" spacing="8">
         <Label fx:id="lblTitle" styleClass="page-title" text="My Shipments" />
         <Region HBox.hgrow="ALWAYS" />
+        <ComboBox fx:id="sortCombo" styleClass="dcd-sort-combo" />
         <TextField fx:id="searchField"
-                   styleClass="dcd-search-field"
+                   styleClass="popup-text-field"
                    promptText="%my_shipments.search_placeholder" />
         <ComboBox fx:id="sortCombo" styleClass="dcd-sort-combo" />
         <Button fx:id="btnShowOnMap"
