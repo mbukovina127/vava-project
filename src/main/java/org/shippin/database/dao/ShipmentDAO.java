@@ -112,7 +112,8 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getShipmentServices(int shipmentID) throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type,
+                    s.description_en, s.service_name_en
                     FROM Service_list sl JOIN Service s ON sl.service_ID = s.service_id
                     WHERE sl.shipment_ID = ?;
                     """;
@@ -128,7 +129,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
                     ServiceType.valueOf(rs.getString("service_type")),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("description_en"),
+                    rs.getString("service_name_en")
             );
             serviceList.add(as);
         }
@@ -139,7 +142,8 @@ public class ShipmentDAO extends BaseDAO {
     public ArrayList<AdditionalService> getSAllServices() throws SQLException {
         ArrayList<AdditionalService> serviceList = new ArrayList<>();
         String sql = """
-                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type
+                    SELECT s.service_ID, s.service_name, s.default_cost, s.cost_modificator, s.description, s.service_type,
+                    s.description_en, s.service_name_en
                     FROM Service s;
                     """;
 
@@ -153,7 +157,9 @@ public class ShipmentDAO extends BaseDAO {
                     rs.getFloat("default_cost"),
                     rs.getFloat("cost_modificator"),
                     ServiceType.valueOf(rs.getString("service_type")),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("description_en"),
+                    rs.getString("service_name_en")
             );
             serviceList.add(as);
         }
@@ -328,7 +334,8 @@ public class ShipmentDAO extends BaseDAO {
         String sql = """
     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.toll, s.total_cost,
     s.created_at, s.dest_region, s.user_ID,
-    w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region
+    w.warehouse_ID as wh_id, w.warehouse_region_name as wh_name, w.price_list_file as wh_region,
+    w.latitude as wh_lat, w.longitude as wh_lon
     FROM Shipment s
     JOIN Warehouse w ON s.warehouse_ID = w.warehouse_ID;
     """;
@@ -340,17 +347,23 @@ public class ShipmentDAO extends BaseDAO {
 
         while (rs.next()) {
             Shipment sh = mapShipment(rs);
-            sh.setWarehouse(new BriefWarehouse(
+            BriefWarehouse warehouse = new BriefWarehouse(
                     rs.getInt("wh_id"),
                     rs.getString("wh_name"),
-                    rs.getString("wh_region")));
+                    rs.getString("wh_region"));
+
+            warehouse.setCoord(new Coordinates(
+                    rs.getDouble("wh_lat"),
+                    rs.getDouble("wh_lon")));
+
+            sh.setWarehouse(warehouse);
+            sh.setStartCoordinate(warehouse.getCoord());  // ← SET PRIAMO!
 
             shipments.add(sh);
         }
 
         return shipments;
     }
-
     public List<BriefShippment> getAllBriefShippments() throws SQLException {
         String sql = """
                     SELECT s.shipment_ID, s.status, s.weight, s.volume, s.fuel_payment, s.total_cost,

@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.*;
 
 import org.shippin.controller.utils.ShipmentData;
+import org.shippin.controller.utils.menu.LogoutChoicePopup;
 import org.shippin.controller.utils.CostEstimationInput;
 
 @Log4j2
@@ -56,7 +57,7 @@ public class MenuController implements Initializable {
             new NavItem(Screens.USER_MANAGEMENT, "User Management", "/icons/png-light/admin_white.png", "/icons/png-dark/admin_black.png"), //FIXME testing menu item
             new NavItem(Screens.DAILY_COST, "Daily Costs", "/icons/png-light/calendar_white.png", "/icons/png-dark/calendar_black.png"), //FIXME testing menu item
             new NavItem(Screens.WAREHOUSE_MANAGEMENT, "Warehouse Management", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png"), //FIXME testing menu item
-            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/edit_white.png", "/icons/png-dark/edit_black.png") //MAX TLACITKO, na test, ak to nema byt tu presunut inde
+            new NavItem(Screens.MAP_OF_SHIPMENTS, "Map", "/icons/png-light/map_white.png", "/icons/png-dark/map_white.png") //MAX TLACITKO, na test, ak to nema byt tu presunut inde
 //            new NavItem(null, "Home", "", "")
 
     );
@@ -67,6 +68,7 @@ public class MenuController implements Initializable {
     private Screens currentScreen;
     private Object  currentData;
     private List<Button> buttons = new ArrayList<>();
+	private ResourceBundle resources;
 
 
     private void setProfilePicture()
@@ -140,6 +142,7 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+    	this.resources = resources;
         langButton.setText(NavigationService.getBundle().getLocale().getLanguage().equals("sk") ? "EN" : "SK");
         setProfilePicture();
         UserNameLabel.setText(UserService.getUser().getFullUserName());
@@ -204,7 +207,9 @@ public class MenuController implements Initializable {
         loadScreen(NAV_ITEMS.getFirst().screen(),null);
     }
 
-    @FXML private void onProfileClicked() {}
+    @FXML private void onProfileClicked() {
+    	new LogoutChoicePopup(this.resources).show(this);
+    }
 
     @FXML
     private void onToggleLanguage() {
