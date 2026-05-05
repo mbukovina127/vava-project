@@ -1013,34 +1013,35 @@ INSERT INTO SP_price_list (sp_price_list_ID, weight_sp, cost_sp) VALUES
 
 -- Users 
 INSERT INTO Users (first_name, last_name, email, password, role) VALUES
-  ('Martin', 'Novák', 'martin.novak@shippin.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1),
-  ('Jana', 'Kováčová', 'jana.kovacova@shippin.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 1),
-  ('Peter', 'Horváth', 'peter.horvath@shippin.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 0),
-  ('Zuzana', 'Blahová', 'zuzana.blahova@shippin.com', '1ba3d16e9881959f8c9a9762854f72c6e6321cdd44358a10a4e939033117eab9', 0),
-  ('Tomáš', 'Mináč', 'tomas.minac@shippin.com', '9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0', 0);
+  ('Martin', 'Novák', 'martin.novak@shipin.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1),
+  ('Jana', 'Kováčová', 'jana.kovacova@shipin.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 1),
+  ('Peter', 'Horváth', 'peter.horvath@shipin.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 0),
+  ('Zuzana', 'Blahová', 'zuzana.blahova@shipin.com', '1ba3d16e9881959f8c9a9762854f72c6e6321cdd44358a10a4e939033117eab9', 0),
+  ('Tomáš', 'Mináč', 'tomas.minac@shipin.com', '9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0', 0),
+  ('admin', 'admin', 'admin@shipin.com', 'd07e7c4cce2afb5fdab874b1f6c1f95a06564921bad3486805e5bd27fad62457', 2);
 
 -- Service
-INSERT INTO Service (service_ID, service_name, default_cost, cost_modificator, description, service_type) VALUES
-  (1, 'ŠTANDARD', 0.0, 1.0, 'Základná služba zahrnutá v cene prepravy', 'SERVICES'),
-  (2, 'PREMIUM', 5.0, 1.15, 'Garancia vrátenia peňazí pri nedodržaní tranzitného času, príplatok 15% (min. 5€)', 'SERVICES'),
-  (3, 'PREMIUM 13', 10.0, 1.25, 'Doručenie do 13:00, príplatok PREMIUM + 10% (min. 10€)', 'SERVICES'),
-  (4, 'PREMIUM 10', 20.0, 1.45, 'Doručenie do 10:00, príplatok PREMIUM + 30% (min. 20€)', 'SERVICES'),
-  (5, 'FIX', 10.0, 1.2, 'Doručenie v požadovaný deň, príplatok 20% (min. 10€)', 'SERVICES'),
-  (6, 'FIX 13', 10.0, 1.3, 'FIX + doručenie do 13:00, príplatok FIX + 10% (min. 10€)', 'SERVICES'),
-  (7, 'FIX 10', 20.0, 1.5, 'FIX + doručenie do 10:00, príplatok FIX + 30% (min. 20€)', 'SERVICES'),
-  (8, 'FIX (dohodnuté s príjemcom)', 5.0, 1.05, 'Doručenie dohodnuté s príjemcom, príplatok FIX + 5€ (B2C povinné)', 'SERVICES'),
-  (9, 'ADR príplatok', 7.0, 1.3, 'Príplatok za ADR tovar 30% k cene prepravy (min. 7€)', 'ADDITIONAL_PAYMENTS'),
-  (10, 'Dobierka', 2.0, 1.0, 'Dobierka 2€/prípad, max. hodnota 5000€', 'ADDITIONAL_PAYMENTS'),
-  (11, 'Pripoistenie zásielky', 15.0, 0.004, '4‰ z hodnoty zásielky, min. 15€', 'ADDITIONAL_PAYMENTS'),
-  (12, 'Vrátenie EUP', 0.0, 1.0, 'Poplatok za vrátenie europáliet podľa dohody, amortizácia 15%', 'ADDITIONAL_PAYMENTS'),
-  (13, 'SMS avízo', 0.3, 1.0, 'SMS notifikácia príjemcovi, 0,30€/prípad', 'ADDITIONAL_PAYMENTS'),
-  (14, 'Vrátenie TDL', 1.0, 1.0, 'Vrátenie potvrdených tovarových dodacích listov, 1€/prípad', 'ADDITIONAL_PAYMENTS'),
-  (15, 'Skladovanie 4-11 dní', 2.49, 1.0, 'Skladovanie 4–11 dní: 2,49€/100 kg/deň', 'PRODUCTS'),
-  (16, 'Skladovanie 12-20 dní', 2.99, 1.0, 'Skladovanie 12–20 dní: 2,99€/100 kg/deň', 'PRODUCTS'),
-  (17, 'Skladovanie od 21 dní', 3.49, 1.0, 'Skladovanie od 21 dní: 3,49€/100 kg/deň', 'PRODUCTS'),
-  (18, 'Príplatok nadrozmerná zásielka', 10.0, 2.0, '100% (min. 10€) z ceny obstarania prepravy', 'ADDITIONAL_PAYMENTS'),
-  (19, 'Príplatok nadrozmerný balík', 6.0, 1.0, '6€/balík za nadrozmerný balík alebo balík nad 30 kg', 'ADDITIONAL_PAYMENTS'),
-  (20, 'Sezónny príplatok', 1.0, 1.0, 'Platný pre balíky 1.11.–24.12.: 1€/zásielka', 'ADDITIONAL_PAYMENTS');
+INSERT INTO Service (service_ID, service_name, service_name_en, default_cost, cost_modificator, description, description_en, service_type) VALUES
+    (1, 'ŠTANDARD', 'STANDARD', 0.0, 1.0, 'Základná služba zahrnutá v cene prepravy', 'Basic service included in the shipping price', 'SERVICES'),
+    (2, 'PREMIUM', 'PREMIUM', 5.0, 1.15, 'Garancia vrátenia peňazí pri nedodržaní tranzitného času, príplatok 15% (min. 5€)', 'Money-back guarantee if transit time is exceeded, 15% surcharge (min. €5)', 'SERVICES'),
+    (3, 'PREMIUM 13', 'PREMIUM 13:00', 10.0, 1.25, 'Doručenie do 13:00, príplatok PREMIUM + 10% (min. 10€)', 'Delivery by 1:00 PM, PREMIUM surcharge + 10% (min. €10)', 'SERVICES'),
+    (4, 'PREMIUM 10', 'PREMIUM 10:00', 20.0, 1.45, 'Doručenie do 10:00, príplatok PREMIUM + 30% (min. 20€)', 'Delivery by 10:00 AM, PREMIUM surcharge + 30% (min. €20)', 'SERVICES'),
+    (5, 'FIX', 'FIX', 10.0, 1.2, 'Doručenie v požadovaný deň, príplatok 20% (min. 10€)', 'Delivery on a requested day, 20% surcharge (min. €10)', 'SERVICES'),
+    (6, 'FIX 13', 'FIX 13:00', 10.0, 1.3, 'FIX + doručenie do 13:00, príplatok FIX + 10% (min. 10€)', 'FIX + delivery by 1:00 PM, FIX surcharge + 10% (min. €10)', 'SERVICES'),
+    (7, 'FIX 10', 'FIX 10:00', 20.0, 1.5, 'FIX + doručenie do 10:00, príplatok FIX + 30% (min. 20€)', 'FIX + delivery by 10:00 AM, FIX surcharge + 30% (min. €20)', 'SERVICES'),
+    (8, 'FIX (dohodnuté s príjemcom)', 'FIX (arranged with recipient)', 5.0, 1.05, 'Doručenie dohodnuté s príjemcom, príplatok FIX + 5€ (B2C povinné)', 'Delivery scheduled with the recipient, FIX surcharge + €5 (Mandatory for B2C)', 'SERVICES'),
+    (9, 'ADR príplatok', 'ADR Surcharge', 7.0, 1.3, 'Príplatok za ADR tovar 30% k cene prepravy (min. 7€)', 'ADR goods surcharge: 30% of shipping price (min. €7)', 'ADDITIONAL_PAYMENTS'),
+    (10, 'Dobierka', 'Cash on Delivery', 2.0, 1.0, 'Dobierka 2€/prípad, max. hodnota 5000€', 'Cash on Delivery (COD): €2/instance, max. value €5,000', 'ADDITIONAL_PAYMENTS'),
+    (11, 'Pripoistenie zásielky', 'Additional Insurance', 15.0, 0.004, '4‰ z hodnoty zásielky, min. 15€', 'Insurance: 4‰ of shipment value, min. €15', 'ADDITIONAL_PAYMENTS'),
+    (12, 'Vrátenie EUP', 'Euro-pallet Return', 0.0, 1.0, 'Poplatok za vrátenie europáliet podľa dohody, amortizácia 15%', 'Euro-pallet return fee as per agreement, 15% depreciation', 'ADDITIONAL_PAYMENTS'),
+    (13, 'SMS avízo', 'SMS Notification', 0.3, 1.0, 'SMS notifikácia príjemcovi, 0,30€/prípad', 'SMS notification to recipient, €0.30/instance', 'ADDITIONAL_PAYMENTS'),
+    (14, 'Vrátenie TDL', 'Delivery Note Return', 1.0, 1.0, 'Vrátenie potvrdených tovarových dodacích listov, 1€/prípad', 'Return of confirmed delivery notes, €1/instance', 'ADDITIONAL_PAYMENTS'),
+    (15, 'Skladovanie 4-11 dní', 'Storage 4-11 days', 2.49, 1.0, 'Skladovanie 4–11 dní: 2,49€/100 kg/deň', 'Storage 4–11 days: €2.49/100 kg/day', 'PRODUCTS'),
+    (16, 'Skladovanie 12-20 dní', 'Storage 12-20 days', 2.99, 1.0, 'Skladovanie 12–20 dní: 2,99€/100 kg/deň', 'Storage 12–20 days: €2.99/100 kg/day', 'PRODUCTS'),
+    (17, 'Skladovanie od 21 dní', 'Storage from 21 days', 3.49, 1.0, 'Skladovanie od 21 dní: 3,49€/100 kg/deň', 'Storage from 21 days: €3.49/100 kg/day', 'PRODUCTS'),
+    (18, 'Príplatok nadrozmerná zásielka', 'Oversized Shipment Surcharge', 10.0, 2.0, '100% (min. 10€) z ceny obstarania prepravy', '100% (min. €10) of the procurement shipping price', 'ADDITIONAL_PAYMENTS'),
+    (19, 'Príplatok nadrozmerný balík', 'Oversized Parcel Surcharge', 6.0, 1.0, '6€/balík za nadrozmerný balík alebo balík nad 30 kg', 'Oversized package fee or package over 30 kg: €6/parcel', 'ADDITIONAL_PAYMENTS'),
+    (20, 'Sezónny príplatok', 'Seasonal Surcharge', 1.0, 1.0, 'Platný pre balíky 1.11.–24.12.: 1€/zásielka', 'Seasonal Surcharge (Valid Nov 1 – Dec 24): €1/shipment', 'ADDITIONAL_PAYMENTS');
 
 -- Shipment (10 sample orders)
 INSERT INTO Shipment (shipment_ID, user_ID, warehouse_ID, dest_region, fuel_payment, toll, total_cost, weight, volume, created_at, status, is_sp) VALUES

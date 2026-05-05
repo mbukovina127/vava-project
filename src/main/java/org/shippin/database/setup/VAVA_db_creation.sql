@@ -18,7 +18,9 @@ CREATE TABLE Warehouse (
 	warehouse_region_name TEXT NOT NULL,
     latitude  DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
-	price_list_file TEXT NOT NULL
+    storage_region INT NOT NULL,
+	price_list_file TEXT NOT NULL,
+	is_active BOOLEAN NOT NULL DEFAULT true
 );
 
 CREATE TABLE Region (
@@ -61,7 +63,8 @@ CREATE TABLE Users (
     last_name TEXT NOT NULL,
     password TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    role INT NOT NULL DEFAULT 0
+    role INT NOT NULL DEFAULT 0,
+	is_active BOOLEAN NOT NULL DEFAULT true
 );
 
 CREATE TABLE Shipment (
@@ -90,9 +93,11 @@ CREATE TABLE History (
 CREATE TABLE Service (
     service_ID SERIAL PRIMARY KEY,
     service_name TEXT NOT NULL,
+	service_name_en TEXT NOT NULL,
     default_cost NUMERIC(10,2) NOT NULL DEFAULT 0,
     cost_modificator NUMERIC(10,2) NOT NULL DEFAULT 1,
-    description TEXT,
+    description TEXT NOT NULL DEFAULT 'Žiadny popis',
+	description_en TEXT NOT NULL DEFAULT 'No description',
     service_type TEXT NOT NULL CHECK (service_type IN ('SERVICES', 'PRODUCTS', 'ADDITIONAL_PAYMENTS'))
 );
 

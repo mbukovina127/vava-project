@@ -4,6 +4,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
     kotlin("jvm")
     id("jacoco")
+    id("com.gradleup.shadow") version "9.0.0-beta12"
 }
 
 group = "org.shippin"
@@ -17,7 +18,12 @@ tasks.named<JavaExec>("run") {
     systemProperties(System.getProperties().mapKeys {
         it.key.toString() })
 }
-
+tasks.shadowJar {
+    manifest {
+        attributes["Main-Class"] = "org.shippin.app.Launcher"
+    }
+    mergeServiceFiles()
+}
 
 repositories {
     mavenCentral()
