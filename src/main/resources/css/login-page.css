@@ -7,3 +7,7 @@
 /* No login-specific overrides yet.
    Add rules here if the login screen
    ever needs to deviate from shared styles. */
+
+.register-link{
+    -fx-font-size: 14px;
+}

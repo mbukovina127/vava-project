@@ -19,7 +19,7 @@
 /* App name label */
 .nav-app-name {
     -fx-font-family: 'Georgia';
-    -fx-font-size: 26px;
+    -fx-font-size: 35px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
 }
@@ -57,8 +57,9 @@
 /* Date label alebo meno usera  */
 .nav-date {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
-    -fx-text-fill: #6B5B52;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #39312b;
 }
 
 /* ---------- Left sidebar ---------- */
@@ -205,7 +206,7 @@
     -fx-background-radius: 8px;
     -fx-border-width: 1.5px;
     -fx-padding: 4px 10px;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-cursor: hand;
     -fx-cell-size: 32px;
 }
@@ -221,7 +222,7 @@
 .dcd-sort-combo .list-cell {
     -fx-background-color: transparent;
     -fx-text-fill: #1a1a1a;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-padding: 0px 10px;
 }
 
@@ -237,7 +238,7 @@
 .dcd-sort-combo .combo-box-popup .list-view .list-cell {
     -fx-background-color: transparent;
     -fx-text-fill: #1a1a1a;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-padding: 0px 12px;
     -fx-cell-size: 32px;
 }
@@ -397,7 +398,7 @@
 
 .popup-error-message {
     -fx-text-fill: #9E1B1B;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-padding: 0 0 0 2;
 }

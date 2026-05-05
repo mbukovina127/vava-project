@@ -22,18 +22,18 @@
                 fx:id="langButton"
                 text="SK"
                 onAction="#onToggleLanguage"
-                styleClass="profile-btn"/>
+                styleClass="locale-btn"/>
     </HBox>
 
     <VBox
             styleClass="card"
             maxWidth="380"
-            alignment="TOP_CENTER">
+            alignment="CENTER">
 
         <!-- Logo -->
         <HBox styleClass="logo-box">
             <!-- Picture (logo) -->
-            <ImageView fitHeight="40" preserveRatio="true">
+            <ImageView fitHeight="50" preserveRatio="true">
                 <Image url="@../icons/png-dark/logoShippin_black.png"/>
             </ImageView>
             <Label styleClass="logo-name" text="%login.logo"/>
@@ -53,7 +53,6 @@
                 text=""
                 wrapText="true"
                 maxWidth="360"/>
-
 
         <!-- Password -->
         <Label styleClass="field-label" text="%login.password"/>
@@ -102,7 +101,6 @@
                     text="%login.register_link"
                     onAction="#onGoToRegister"/>
         </HBox>
-
     </VBox>
 
 </StackPane>

@@ -38,14 +38,14 @@
 /* Route string */
 .sd-info-value {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
 }
 
 /* Distance — muted */
 .sd-info-muted {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #6B5B52;
 }
 
@@ -62,7 +62,7 @@
     -fx-background-color: #4A4A4A;
     -fx-text-fill: #FFFFFF;
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-border-color: #2C2C2C;
     -fx-border-width: 1.5;
@@ -103,7 +103,7 @@
 /* ── Status badge ────────────────────────────────────────────── */
 .sd-badge {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-padding: 7 22 7 22;
     -fx-background-radius: 7;
@@ -153,7 +153,7 @@
     -fx-background-color: #4A4A4A;
     -fx-text-fill: #FFFFFF;
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-border-color: #2C2C2C;
     -fx-border-width: 1.5;
@@ -195,7 +195,7 @@
 /* Time column — monospaced feel, right-padded */
 .sd-history-time {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #2C2C2C;
     -fx-padding: 4 16 4 0;
@@ -205,7 +205,7 @@
 /* Generic cell (driver, location) */
 .sd-history-cell {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
     -fx-padding: 4 16 4 0;
 }
@@ -213,7 +213,7 @@
 /* Status cell */
 .sd-history-status {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
     -fx-padding: 4 0 4 0;
