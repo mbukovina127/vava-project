@@ -6,30 +6,21 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.shippin.controller.utils.ErrorHandler;
 import org.shippin.controller.utils.GenericPopup;
-import org.shippin.database.dao.ShipmentDAO;
-import org.shippin.database.dao.WarehouseDAO;
+import org.shippin.controller.utils.RegionsPopup;
 import org.shippin.domain.AdditionalService;
-import org.shippin.domain.BriefWarehouse;
-import org.shippin.domain.Shipment;
-import org.shippin.domain.enums.ServiceType;
-import org.shippin.services.ShipmentService;
-import org.shippin.database.dao.ShipmentDAO;
-import org.shippin.database.dao.WarehouseDAO;
 import org.shippin.domain.BriefWarehouse;
 import org.shippin.domain.Shipment;
 import org.shippin.services.ShipmentService;
 
 import org.shippin.services.NavigationService;
+import org.shippin.services.WarehouseService;
 import org.shippin.util.FromCoordsDataGetter;
-import org.shippin.controller.MapPickerController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -121,26 +112,29 @@ public class CostEstimationController extends BaseController<Void> implements In
     // Buttons
     @FXML private Button resetButton;
     @FXML private Button computeButton;
+    @FXML private Button viewRegionsButton;
 
     private final ToggleGroup productsToggleGroup = new ToggleGroup();
     private final Map<CheckBox, AdditionalService> serviceCheckBoxes = new LinkedHashMap<>();
     private final Map<RadioButton, AdditionalService> productRadioButtons = new LinkedHashMap<>();
-	private ResourceBundle resources;
+    private final ToggleGroup paymentsToggleGroup = new ToggleGroup();
+    private final Map<RadioButton, AdditionalService> paymentRadioButtons = new LinkedHashMap<>();
+    private ResourceBundle resources;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
     	this.resources = resources;
         try {
-            WarehouseDAO warehouseDAO = WarehouseDAO.getInstance();
-            warehouseList = warehouseDAO.getAllBriefWarehouses();
+            WarehouseService wService = new WarehouseService();
+            warehouseList = wService.getBriefWarehouses();
             for (BriefWarehouse bw : warehouseList) {
                 fromCombo.getItems().add(bw.getName());
             }
             fromCombo.setValue(fromCombo.getItems().getFirst());
 
-            ShipmentDAO shipmentDAO = ShipmentDAO.getInstance();
-            List<AdditionalService> allServices = shipmentDAO.getSAllServices();
+            ShipmentService sService = new ShipmentService();
+            List<AdditionalService> allServices = sService.getAllServices();
             buildServiceUI(allServices);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -208,19 +202,39 @@ public class CostEstimationController extends BaseController<Void> implements In
                 }
                 case PRODUCTS ->
                 {
-                    CheckBox cb = new CheckBox(serviceName);
-                    cb.getStyleClass().add("ce-check");
+                    RadioButton rb = new RadioButton(serviceName);
+                    rb.setToggleGroup(paymentsToggleGroup);
+                    rb.setMnemonicParsing(false);
+                    rb.getStyleClass().add("ce-radio");
+
+                    HBox row = new HBox(8);
+                    row.setAlignment(Pos.CENTER_LEFT);
+                    row.getStyleClass().add("ce-product-row");
+                    row.getChildren().add(rb);
+
                     if (serviceDesc != null && !serviceDesc.isBlank())
                     {
-                        cb.setTooltip(new Tooltip(serviceDesc));
+                        Label desc = new Label(serviceDesc);
+                        desc.getStyleClass().add("ce-product-desc");
+                        desc.setWrapText(true);
+                        row.getChildren().add(desc);
                     }
-                    paymentsContainer.getChildren().add(cb);
-                    serviceCheckBoxes.put(cb, service);
+
+                    paymentsContainer.getChildren().add(row);
+                    paymentRadioButtons.put(rb, service);
                 }
             }
         }
 
-        productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+        if (!productsToggleGroup.getToggles().isEmpty())
+        {
+            productsToggleGroup.selectToggle(productsToggleGroup.getToggles().getFirst());
+        }
+
+        if (!paymentsToggleGroup.getToggles().isEmpty())
+        {
+            paymentsToggleGroup.selectToggle(null);
+        }
     }
 
     private Label createGroupLabel(String text)
@@ -238,6 +252,12 @@ public class CostEstimationController extends BaseController<Void> implements In
         if (selectedProduct instanceof RadioButton rb && productRadioButtons.containsKey(rb))
         {
             ids.add(productRadioButtons.get(rb).getId());
+        }
+
+        Toggle selectedPayment = paymentsToggleGroup.getSelectedToggle();
+        if (selectedPayment instanceof RadioButton rb && paymentRadioButtons.containsKey(rb))
+        {
+            ids.add(paymentRadioButtons.get(rb).getId());
         }
 
         for (Map.Entry<CheckBox, AdditionalService> entry : serviceCheckBoxes.entrySet())
@@ -301,6 +321,10 @@ public class CostEstimationController extends BaseController<Void> implements In
         statusLabelVolume.setText("");
         statusLabelFuel.setText("");
         statusLabelToll.setText("");
+        if (!paymentsToggleGroup.getToggles().isEmpty())
+        {
+            paymentsToggleGroup.selectToggle(null);
+        }
     }
     @FXML
     private void onComputeCost() throws IOException
@@ -381,6 +405,24 @@ public class CostEstimationController extends BaseController<Void> implements In
 
         log.info("Cost estimated: dest={}, total={}", destPostalCode, computedShipment.getTotalCost());
         loadScreen(COST_BREAKDOWN, computedShipment);
+    }
+
+    @FXML
+    private void onViewRegions() {
+        String selectedName = fromCombo.getValue();
+        BriefWarehouse selected = warehouseList.stream()
+                .filter(w -> w.getName().equals(selectedName))
+                .findFirst()
+                .orElse(null);
+        if (selected == null) return;
+        try {
+            WarehouseService wService = WarehouseService.getInstance();
+            var regionTable = wService.getWarehouseFormatted(selected).getRegionTable();
+            new RegionsPopup(this.resources).show(this, selected, regionTable);
+        } catch (SQLException e) {
+            log.error("Failed to load region table for warehouse '{}'", selectedName, e);
+            new GenericPopup(this.resources).showOkPopup(this, "%generic.failed_to_fetch", "%generic.database_problem");
+        }
     }
 
     @FXML

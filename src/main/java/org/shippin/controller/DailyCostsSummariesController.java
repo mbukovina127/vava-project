@@ -205,7 +205,7 @@ public class DailyCostsSummariesController
         // Row constraints — equal height for each week row
         int totalRows = row + 1;
         for (int r = 0; r < totalRows; r++) {
-            RowConstraints rc = new RowConstraints(38);
+            RowConstraints rc = new RowConstraints(50);
             rc.setValignment(javafx.geometry.VPos.CENTER);
             dayGrid.getRowConstraints().add(rc);
         }

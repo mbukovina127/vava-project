@@ -1,5 +1,7 @@
 package org.shippin.controller;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import lombok.extern.log4j.Log4j2;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -51,6 +53,9 @@ public class MyShipmentsController extends BaseController<User> implements Initi
     @FXML private Button      btnAddShipment;
     @FXML private Button      btnShowOnMap;
 
+    private Image editIcon;
+    private Image deleteIcon;
+
 
     private User viewedUser;
     private List<Shipment> rawShipments = new ArrayList<>();
@@ -74,6 +79,8 @@ public class MyShipmentsController extends BaseController<User> implements Initi
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ResourceBundle bundle = NavigationService.getBundle();
+        editIcon = loadImage("/icons/png-dark/rewrite_black.png");
+        deleteIcon = loadImage("/icons/png-dark/delete_black.png");
 
         sortCombo.getItems().addAll(
                 bundle.getString("my_shipments.sort_time"),
@@ -195,14 +202,28 @@ public class MyShipmentsController extends BaseController<User> implements Initi
         lblAmount.getStyleClass().add("dcd-row-amount");
         rightBox.getChildren().addAll(lblState, lblAmount);
 
-        VBox btnBox = new VBox(4);
+        HBox btnBox = new HBox(6);
         btnBox.setAlignment(Pos.CENTER);
-        Button btnEdit = new Button("✎");
+
+        Button btnEdit = new Button();
+        ImageView editView = new ImageView(editIcon);
+        editView.setFitWidth(18);
+        editView.setFitHeight(18);
+        editView.setPreserveRatio(true);
+        btnEdit.setGraphic(editView);
         btnEdit.getStyleClass().add("dcd-icon-btn");
         btnEdit.setOnAction(e -> handleEdit(entry));
-        Button btnDelete = new Button("🗑");
+
+
+        Button btnDelete = new Button();
+        ImageView deleteView = new ImageView(deleteIcon);
+        deleteView.setFitWidth(18);
+        deleteView.setFitHeight(18);
+        deleteView.setPreserveRatio(true);
+        btnDelete.setGraphic(deleteView);
         btnDelete.getStyleClass().addAll("dcd-icon-btn", "dcd-icon-btn-delete");
         btnDelete.setOnAction(e -> handleDelete(entry));
+
         btnBox.getChildren().addAll(btnEdit, btnDelete);
 
         row.getChildren().addAll(leftBox, centerBox, rightBox, btnBox);
@@ -223,7 +244,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
 
     private void handleEdit(ShipmentEntry entry) {
         try {
-            Shipment shipment = shipmentService.getDao().getShipmentById(entry.shipmentId());
+            Shipment shipment = shipmentService.getShipmentById(entry.shipmentId());
             loadScreen(Screens.SHIPMENT_DETAIL, shipment);
         } catch (SQLException | java.io.IOException e) {
             log.error("Failed to open shipment #{}", entry.shipmentId(), e);

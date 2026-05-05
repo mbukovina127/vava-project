@@ -17,7 +17,7 @@
 
 /*.ce-date-label {*/
 /*    -fx-font-family: 'System';*/
-/*    -fx-font-size: 13px;*/
+/*    -fx-font-size: 16px;*/
 /*    -fx-font-weight: bold;*/
 /*    -fx-text-fill: #2C2C2C;*/
 /*}*/
@@ -34,7 +34,7 @@
 
 .ce-toggle {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
     -fx-cursor: hand;
 }
@@ -52,14 +52,14 @@
 
 .ce-row-label {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
 }
 
 .ce-sub-label {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
     -fx-padding: 0 8 0 0;
 }
@@ -73,7 +73,7 @@
 /*    -fx-border-radius: 6;*/
 /*    -fx-background-radius: 6;*/
 /*    -fx-font-family: 'System';*/
-/*    -fx-font-size: 13px;*/
+/*    -fx-font-size: 16px;*/
 /*    -fx-text-fill: #1E1E1E;*/
 /*    -fx-padding: 0 12 0 12;*/
 /*    -fx-prompt-text-fill: #C4A899;*/
@@ -93,7 +93,7 @@
     -fx-border-radius: 6;
     -fx-background-radius: 6;
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #1E1E1E;
     -fx-cursor: hand;
 }
@@ -121,7 +121,7 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #1E1E1E;
     -fx-prompt-text-fill: #C4A899;
     -fx-padding: 0 0 0 10;
@@ -164,7 +164,7 @@
 
 .ce-fees-group-label {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
 }
@@ -175,7 +175,7 @@
 
 .ce-product-row .radio-button {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
     -fx-cursor: hand;
     -fx-min-width: 220;
@@ -209,13 +209,13 @@
 
 .ce-product-desc {
     -fx-font-family: 'System';
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-text-fill: #555555;
 }
 
 .ce-check {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #2C2C2C;
     -fx-cursor: hand;
     -fx-padding: 0 0 0 16;
@@ -269,7 +269,7 @@
 /* ---------- Status label ---------- */
 /*.status-label {*/
 /*    -fx-text-fill: #cc0000;*/
-/*    -fx-font-size: 12px;*/
+/*    -fx-font-size: 14px;*/
 /*}*/
 
 /* ---------- Bottom row ---------- */
@@ -287,7 +287,7 @@
 /* Ľavý stĺpec — popis */
 .cb-bold {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #1E1E1E;
 }
@@ -299,7 +299,7 @@
 /* Pravý stĺpec — hodnota */
 .cb-value {
     -fx-font-family: 'System';
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #1E1E1E;
     -fx-alignment: CENTER_RIGHT;
 }

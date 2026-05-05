@@ -82,7 +82,7 @@ class CostEstimationControllerTest {
 
             assertTrue(containsRadioButton(productsContainer));
             assertTrue(containsCheckBox(servicesContainer));
-            assertTrue(containsCheckBox(paymentsContainer));
+            assertTrue(containsRadioButton(paymentsContainer));
         });
     }
 
@@ -97,7 +97,7 @@ class CostEstimationControllerTest {
             VBox paymentsContainer = getVBox(controller, "paymentsContainer");
 
             selectFirstCheckBox(servicesContainer);
-            selectFirstCheckBox(paymentsContainer);
+            selectFirstRadioButton(paymentsContainer);
 
             Object result = invokePrivateMethod(controller, "getSelectedServiceIds", new Class<?>[]{});
 
@@ -134,7 +134,7 @@ class CostEstimationControllerTest {
             getLabel(controller, "statusLabelToll").setText("toll error");
 
             selectFirstCheckBox(getVBox(controller, "servicesContainer"));
-            selectFirstCheckBox(getVBox(controller, "paymentsContainer"));
+            selectFirstRadioButton(getVBox(controller, "paymentsContainer"));
 
             invokePrivateMethod(controller, "onReset", new Class<?>[]{});
 
@@ -151,7 +151,7 @@ class CostEstimationControllerTest {
             assertEquals("", getLabel(controller, "statusLabelToll").getText());
 
             assertFalse(anyCheckBoxSelected(getVBox(controller, "servicesContainer")));
-            assertFalse(anyCheckBoxSelected(getVBox(controller, "paymentsContainer")));
+            assertFalse(anyRadioButtonSelected(getVBox(controller, "paymentsContainer")));
         });
     }
 
@@ -211,36 +211,36 @@ class CostEstimationControllerTest {
 
     private static List<AdditionalService> createServices() {
         return List.of(
-            new AdditionalService(
-                    1,
-                    "Base service",
-                    5f,
-                    1f,
-                    ServiceType.SERVICES,
-                    "Base service description",
-                    "Base service description",
-                    "Base service"
-            ),
-            new AdditionalService(
-                    2,
-                    "Additional payment",
-                    3f,
-                    1f,
-                    ServiceType.ADDITIONAL_PAYMENTS,
-                    "Additional payment description",
-                    "Additional payment description",
-                    "Additional payment"
-            ),
-            new AdditionalService(
-                    3,
-                    "Product",
-                    2f,
-                    1f,
-                    ServiceType.PRODUCTS,
-                    "Product description",
-                    "Product description",
-                    "Product"
-            )
+                new AdditionalService(
+                        1,
+                        "Base service",
+                        5f,
+                        1f,
+                        ServiceType.SERVICES,
+                        "Base service description",
+                        "Base service description",
+                        "Base service"
+                ),
+                new AdditionalService(
+                        2,
+                        "Additional payment",
+                        3f,
+                        1f,
+                        ServiceType.ADDITIONAL_PAYMENTS,
+                        "Additional payment description",
+                        "Additional payment description",
+                        "Additional payment"
+                ),
+                new AdditionalService(
+                        3,
+                        "Product",
+                        2f,
+                        1f,
+                        ServiceType.PRODUCTS,
+                        "Product description",
+                        "Product description",
+                        "Product"
+                )
         );
     }
 
@@ -309,6 +309,39 @@ class CostEstimationControllerTest {
             }
         }
 
+        return false;
+    }
+
+    private static void selectFirstRadioButton(VBox container) {
+        for (Node node : container.getChildren()) {
+            if (node instanceof HBox row) {
+                for (Node rowNode : row.getChildren()) {
+                    if (rowNode instanceof RadioButton rb) {
+                        rb.setSelected(true);
+                        return;
+                    }
+                }
+            }
+            if (node instanceof RadioButton rb) {
+                rb.setSelected(true);
+                return;
+            }
+        }
+    }
+
+    private static boolean anyRadioButtonSelected(VBox container) {
+        for (Node node : container.getChildren()) {
+            if (node instanceof HBox row) {
+                for (Node rowNode : row.getChildren()) {
+                    if (rowNode instanceof RadioButton rb && rb.isSelected()) {
+                        return true;
+                    }
+                }
+            }
+            if (node instanceof RadioButton rb && rb.isSelected()) {
+                return true;
+            }
+        }
         return false;
     }
 

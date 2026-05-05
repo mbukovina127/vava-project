@@ -14,7 +14,7 @@
 }
 
 .dialog-field-label {
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-text-fill: #444444;
 }
 
@@ -25,7 +25,7 @@
     -fx-background-radius: 6;
     -fx-border-width: 1.5;
     -fx-pref-height: 40;
-    -fx-font-size: 13px;
+    -fx-font-size: 16px;
     -fx-padding: 0 10 0 10;
 }
 .dialog-field:focused {
@@ -33,7 +33,7 @@
 }
 
 .dialog-status {
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-min-height: 16;
 }
 .dialog-status-error {

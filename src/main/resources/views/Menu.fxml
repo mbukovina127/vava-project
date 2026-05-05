@@ -21,17 +21,17 @@
 	        <HBox fx:id="topNavBar" alignment="CENTER_LEFT" prefHeight="100" prefWidth="1440" styleClass="nav-bar">
 				<!--LEFT TOP BAR-->
 	            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
-					<ImageView fitHeight="40" preserveRatio="true">
+					<ImageView fitHeight="50" preserveRatio="true">
 						<Image url="@../icons/png-dark/logoShippin_black.png"/>
 					</ImageView>
 	                <Label fx:id="appNameLabel" styleClass="nav-app-name" text="%menu.logo" />
 	            </HBox>
 				<!--RIGHT TOP BAR-->
 	            <HBox alignment="CENTER_RIGHT" spacing="14">
-					<Button fx:id="langButton" onAction="#onToggleLanguage" styleClass="profile-btn" text="SK" />
 					<Label fx:id="UserNameLabel" styleClass="nav-date"/>
 	                <Button fx:id="profileButton" onAction="#onProfileClicked" styleClass="profile-btn" />
-	            </HBox>
+					<Button fx:id="langButton" onAction="#onToggleLanguage" styleClass="locale-btn" text="SK" />
+				</HBox>
 	        </HBox>
 	    </top>
 

@@ -85,7 +85,7 @@
 
     .logo-name {
         -fx-font-family: 'Georgia';
-        -fx-font-size: 28px;
+        -fx-font-size: 35px;
         -fx-text-fill: #1E1E1E;
     }
 
@@ -102,7 +102,7 @@
     /* Bold label above an input field */
     .field-label {
         -fx-font-family: 'System';
-        -fx-font-size: 12.5px;
+        -fx-font-size: 14px;
         -fx-font-weight: bold;
         -fx-text-fill: #2C2C2C;
         -fx-padding: 0 0 4 0;
@@ -110,7 +110,7 @@
 
     /* Dimmed supporting text */
     .muted-text {
-        -fx-font-size: 12px;
+        -fx-font-size: 14px;
         -fx-text-fill: #6B5B52;
     }
 
@@ -127,7 +127,7 @@
         -fx-border-radius: 6;
         -fx-background-radius: 6;
         -fx-font-family: 'System';
-        -fx-font-size: 13px;
+        -fx-font-size: 16px;
         -fx-text-fill: #1E1E1E;
         -fx-padding: 0 12 0 12;
         -fx-prompt-text-fill: #C4A899;
@@ -163,7 +163,7 @@
         -fx-border-width: 0;
         -fx-background-radius: 0;
         -fx-font-family: 'System';
-        -fx-font-size: 13px;
+        -fx-font-size: 16px;
         -fx-text-fill: #1E1E1E;
         -fx-prompt-text-fill: #C4A899;
         -fx-padding: 0 0 0 12;
@@ -196,7 +196,7 @@
 
     .status-label {
         -fx-text-fill: #cc0000;
-        -fx-font-size: 12px;
+        -fx-font-size: 14px;
         -fx-padding: 0 0 0 0;
     }
 
@@ -299,12 +299,28 @@
         -fx-background-insets: 0;
     }
 
-    .profile-btn:hover {
-        -fx-background-color: #F5D9C4;
+    .locale-btn{
+        -fx-background-color: #FFFFFF;
+        -fx-border-color: #1e1e1e;
+        -fx-border-width: 1.5;
+        -fx-border-radius: 10;
+        -fx-background-radius: 10;
+        -fx-font-size: 16px;
+        -fx-font-weight: bold;
+        -fx-cursor: hand;
+        -fx-min-width: 60;
+        -fx-min-height: 50;
+        -fx-pref-width: 60;
+        -fx-pref-height: 50;
+        -fx-background-insets: 0;
+    }
+
+    .profile-btn:hover, .locale-btn:hover{
+        -fx-background-color: #ffca95;
         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
     }
 
-    .profile-btn:pressed {
+    .profile-btn:pressed, .locale-btn:pressed {
         -fx-scale-x: 0.96;
         -fx-scale-y: 0.96;
     }
@@ -339,7 +355,7 @@
 
     /* Inline hyperlink inside bottom-link-box */
     .nav-link {
-        -fx-font-size: 12px;
+        -fx-font-size: 14px;
         -fx-text-fill: #1E1E1E;
         -fx-border-color: transparent;
         -fx-underline: true;
@@ -402,7 +418,7 @@
     /*!* Date label in top bar *!*/
     /*.nav-date {*/
     /*    -fx-font-family: 'System';*/
-    /*    -fx-font-size: 13px;*/
+    /*    -fx-font-size: 16px;*/
     /*    -fx-text-fill: #6B5B52;*/
     /*}*/
 
@@ -558,7 +574,7 @@
     }
 
     .dialog-field-label {
-        -fx-font-size: 13px;
+        -fx-font-size: 16px;
         -fx-text-fill: #444444;
     }
 
@@ -570,7 +586,7 @@
         -fx-background-radius: 6;
         -fx-border-width: 1.5;
         -fx-pref-height: 40;
-        -fx-font-size: 13px;
+        -fx-font-size: 16px;
         -fx-padding: 0 10 0 10;
     }
 
@@ -579,7 +595,7 @@
     }
 
     .dialog-status {
-        -fx-font-size: 12px;
+        -fx-font-size: 14px;
         -fx-min-height: 16;
     }
 
