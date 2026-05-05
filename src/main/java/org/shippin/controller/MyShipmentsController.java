@@ -100,6 +100,7 @@ public class MyShipmentsController extends BaseController<User> implements Initi
     }
 
     private void loadFromService() {
+        updateTitle();
         try {
             List<Shipment> shipments = shipmentService.getShipmentsByUser(viewedUser.getId());
             rawShipments = shipments;
@@ -118,7 +119,6 @@ public class MyShipmentsController extends BaseController<User> implements Initi
                         s.getState()
                 ));
             }
-            updateTitle();
             applyFilterAndSort();
         } catch (SQLException e) {
             log.error("Failed to load shipments for user #{}", viewedUser.getId(), e);

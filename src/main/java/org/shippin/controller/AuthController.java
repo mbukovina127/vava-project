@@ -23,6 +23,9 @@ public abstract class AuthController {
     }
 
     protected void toggleLanguage(Screens currentScreen) {
+        if (this instanceof StatePreservable sp) {
+            NavigationService.setPreservedState(sp.captureState());
+        }
         Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
                 ? Locale.ENGLISH
                 : new Locale("sk");

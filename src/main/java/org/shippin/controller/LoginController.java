@@ -19,8 +19,19 @@ import java.util.Locale;
 import static org.shippin.controller.utils.ErrorHandler.msg;
 
 @Log4j2
-public class LoginController extends AuthController
+public class LoginController extends AuthController implements StatePreservable
 {
+    private record LoginState(String email) {}
+
+    @Override
+    public Object captureState() {
+        return new LoginState(emailTextField.getText());
+    }
+
+    @Override
+    public void restoreState(Object rawState) {
+        if (rawState instanceof LoginState s) emailTextField.setText(s.email());
+    }
     @FXML private TextField emailTextField;
     @FXML private PasswordField passwordField;
     @FXML private TextField passwordVisible;
@@ -36,9 +47,10 @@ public class LoginController extends AuthController
     private void initialize()
     {
         initLangButton(langButton);
-        //change password visibility observer
         setEyeIcon(eyeButton, false);
         bindPasswordFocus(passwordWrapper, passwordField, passwordVisible);
+        Object s = NavigationService.consumePreservedState();
+        if (s != null) restoreState(s);
     }
 
     @FXML private void onTogglePassword()

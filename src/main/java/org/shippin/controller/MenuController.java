@@ -71,6 +71,8 @@ public class MenuController implements Initializable {
     @FXML private StackPane contentArea;
     private Screens currentScreen;
     private Object  currentData;
+    private Object  currentController;
+    private Object  preservedState;
     private List<Button> buttons = new ArrayList<>();
 	private ResourceBundle resources;
 
@@ -126,6 +128,7 @@ public class MenuController implements Initializable {
             Node node = loader.load();
 
             Object ctrl = loader.getController();
+            currentController = ctrl;
 
             if (ctrl instanceof BaseController<?> bc) {
                 bc.setMenuController(this);
@@ -133,6 +136,11 @@ public class MenuController implements Initializable {
 
             if (ctrl instanceof Navigatable nav) {
                 nav.onNavigatedTo(data);
+            }
+
+            if (ctrl instanceof StatePreservable sp && preservedState != null) {
+                sp.restoreState(preservedState);
+                preservedState = null;
             }
 
             contentArea.getChildren().setAll(node);
@@ -227,6 +235,9 @@ public class MenuController implements Initializable {
 
     @FXML
     private void onToggleLanguage() {
+        if (currentController instanceof StatePreservable sp) {
+            preservedState = sp.captureState();
+        }
         Locale next = NavigationService.getBundle().getLocale().getLanguage().equals("sk")
                 ? Locale.ENGLISH
                 : new Locale("sk");
